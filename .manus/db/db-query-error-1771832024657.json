@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE virtual_teachers SET avatar_url = CASE \nWHEN name = 'Ingrid' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/ZaQZRZRxOcmtNnmc.jpg'\nWHEN name = 'Carlos' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qGafKvMoaryOnZBl.jpg'\nWHEN name = 'Jean' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/ybTpGuXhyvsfgcAd.jpg'\nELSE avatar_url END\nWHERE name IN ('Ingrid', 'Carlos', 'Jean');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute UPDATE virtual_teachers SET avatar_url = CASE \nWHEN name = 'Ingrid' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/ZaQZRZRxOcmtNnmc.jpg'\nWHEN name = 'Carlos' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qGafKvMoaryOnZBl.jpg'\nWHEN name = 'Jean' THEN 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/ybTpGuXhyvsfgcAd.jpg'\nELSE avatar_url END\nWHERE name IN ('Ingrid', 'Carlos', 'Jean');",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'avatar_url' in 'field list'"
+  ]
+}

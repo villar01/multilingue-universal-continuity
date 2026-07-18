@@ -1,0 +1,150 @@
+{
+  "query": "SELECT id, name, voice_language_code, gender, CASE WHEN photo_url IS NULL OR photo_url = 'NULL' THEN 'NO_PHOTO' ELSE 'HAS_PHOTO' END as photo_status FROM virtual_teachers ORDER BY id LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, voice_language_code, gender, CASE WHEN photo_url IS NULL OR photo_url = 'NULL' THEN 'NO_PHOTO' ELSE 'HAS_PHOTO' END as photo_status FROM virtual_teachers ORDER BY id LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Professor Ricardo",
+      "voice_language_code": "pt-BR",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "voice_language_code": "de-DE",
+      "gender": "female",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "voice_language_code": "de-DE",
+      "gender": "female",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "90003",
+      "name": "Professor Carlos",
+      "voice_language_code": "fr-FR",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "90004",
+      "name": "Professor Jean",
+      "voice_language_code": "fr-FR",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "150003",
+      "name": "Professor Carlos",
+      "voice_language_code": "en-US",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "150004",
+      "name": "Teacher Jeanne",
+      "voice_language_code": "en-US",
+      "gender": "female",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "voice_language_code": "en-US",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "210001",
+      "name": "Professora Mei",
+      "voice_language_code": "zh-CN",
+      "gender": "female",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "210002",
+      "name": "Professor Takeshi",
+      "voice_language_code": "ja-JP",
+      "gender": "male",
+      "photo_status": "HAS_PHOTO"
+    },
+    {
+      "id": "240001",
+      "name": "Jean Dubois",
+      "voice_language_code": "fr",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240002",
+      "name": "Hans Müller",
+      "voice_language_code": "de",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240003",
+      "name": "Sofia Rossi",
+      "voice_language_code": "it",
+      "gender": "female",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240004",
+      "name": "Dmitri Ivanov",
+      "voice_language_code": "ru",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240005",
+      "name": "Ahmed Al-Rashid",
+      "voice_language_code": "ar",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240006",
+      "name": "Min-ji Park",
+      "voice_language_code": "ko",
+      "gender": "female",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240007",
+      "name": "Priya Sharma",
+      "voice_language_code": "hi",
+      "gender": "female",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240008",
+      "name": "Mehmet Yılmaz",
+      "voice_language_code": "tr",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240009",
+      "name": "Emma van der Berg",
+      "voice_language_code": "nl",
+      "gender": "female",
+      "photo_status": "NO_PHOTO"
+    },
+    {
+      "id": "240010",
+      "name": "Erik Andersson",
+      "voice_language_code": "sv",
+      "gender": "male",
+      "photo_status": "NO_PHOTO"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tvoice_language_code\tgender\tphoto_status\n1\tProfessor Ricardo\tpt-BR\tmale\tHAS_PHOTO\n30001\tIngrid\tde-DE\tfemale\tHAS_PHOTO\n90002\tProfessora Ingrid\tde-DE\tfemale\tHAS_PHOTO\n90003\tProfessor Carlos\tfr-FR\tmale\tHAS_PHOTO\n90004\tProfessor Jean\tfr-FR\tmale\tHAS_PHOTO\n150003\tProfessor Carlos\ten-US\tmale\tHAS_PHOTO\n150004\tTeacher Jeanne\ten-US\tfemale\tHAS_PHOTO\n180001\tProfessor Kwame Asante\ten-US\tmale\tHAS_PHOTO\n210001\tProfessora Mei\tzh-CN\tfemale\tHAS_PHOTO\n210002\tProfessor Takeshi\tja-JP\tmale\tHAS_PHOTO\n240001\tJean Dubois\tfr\tmale\tNO_PHOTO\n240002\tHans Müller\tde\tmale\tNO_PHOTO\n240003\tSofia Rossi\tit\tfemale\tNO_PHOTO\n240004\tDmitri Ivanov\tru\tmale\tNO_PHOTO\n240005\tAhmed Al-Rashid\tar\tmale\tNO_PHOTO\n240006\tMin-ji Park\tko\tfemale\tNO_PHOTO\n240007\tPriya Sharma\thi\tfemale\tNO_PHOTO\n240008\tMehmet Yılmaz\ttr\tmale\tNO_PHOTO\n240009\tEmma van der Berg\tnl\tfemale\tNO_PHOTO\n240010\tErik Andersson\tsv\tmale\tNO_PHOTO\n",
+  "stderr": "",
+  "execution_time_ms": 260
+}

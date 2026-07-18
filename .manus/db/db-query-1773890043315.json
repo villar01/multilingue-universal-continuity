@@ -1,0 +1,66 @@
+{
+  "query": "\nUPDATE virtual_teachers \nSET photo_url = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face',\n    skin_tone = 'light'\nWHERE name = 'Ingrid' AND (photo_url IS NULL OR photo_url = 'NULL');\n\nUPDATE virtual_teachers \nSET voice_id = 'en-US-Wavenet-F',\n    voice_language_code = 'en-US',\n    voice_gender = 'FEMALE'\nWHERE name = 'Teacher Ingrid' AND voice_id = 'en-US-JennyNeural';\n\nUPDATE virtual_teachers \nSET voice_id = 'en-US-Wavenet-F',\n    voice_language_code = 'en-US',\n    voice_gender = 'FEMALE'\nWHERE voice_id LIKE '%Neural%' OR voice_id LIKE '%Jenny%' OR voice_id LIKE '%Guy%';\n\nSELECT id, name, photo_url, voice_id, voice_language_code FROM virtual_teachers WHERE name LIKE '%Ingrid%' OR name LIKE '%Ricardo%' OR name LIKE '%Kwame%' ORDER BY name;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \nUPDATE virtual_teachers \nSET photo_url = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face',\n    skin_tone = 'light'\nWHERE name = 'Ingrid' AND (photo_url IS NULL OR photo_url = 'NULL');\n\nUPDATE virtual_teachers \nSET voice_id = 'en-US-Wavenet-F',\n    voice_language_code = 'en-US',\n    voice_gender = 'FEMALE'\nWHERE name = 'Teacher Ingrid' AND voice_id = 'en-US-JennyNeural';\n\nUPDATE virtual_teachers \nSET voice_id = 'en-US-Wavenet-F',\n    voice_language_code = 'en-US',\n    voice_gender = 'FEMALE'\nWHERE voice_id LIKE '%Neural%' OR voice_id LIKE '%Jenny%' OR voice_id LIKE '%Guy%';\n\nSELECT id, name, photo_url, voice_id, voice_language_code FROM virtual_teachers WHERE name LIKE '%Ingrid%' OR name LIKE '%Ricardo%' OR name LIKE '%Kwame%' ORDER BY name;\n",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "es-ES-Wavenet-C",
+      "voice_language_code": "es-ES"
+    },
+    {
+      "id": "60001",
+      "name": "Ingrid",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "es-ES-Wavenet-C",
+      "voice_language_code": "es-ES"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black_cab7045b.jpg",
+      "voice_id": "en-US-Wavenet-D",
+      "voice_language_code": "en-US"
+    },
+    {
+      "id": "1",
+      "name": "Professor Ricardo",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg",
+      "voice_id": "pt-BR-Wavenet-B",
+      "voice_language_code": "pt-BR"
+    },
+    {
+      "id": "90001",
+      "name": "Professor Ricardo",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg",
+      "voice_id": "pt-BR-Wavenet-B",
+      "voice_language_code": "pt-BR"
+    },
+    {
+      "id": "150001",
+      "name": "Professor Ricardo",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg",
+      "voice_id": "en-US-Wavenet-D",
+      "voice_language_code": "en-US"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png",
+      "voice_id": "es-ES-Wavenet-C",
+      "voice_language_code": "es-ES"
+    },
+    {
+      "id": "150002",
+      "name": "Teacher Ingrid",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "en-US-Wavenet-F",
+      "voice_language_code": "en-US"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tphoto_url\tvoice_id\tvoice_language_code\n30001\tIngrid\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\tes-ES-Wavenet-C\tes-ES\n60001\tIngrid\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\tes-ES-Wavenet-C\tes-ES\n180001\tProfessor Kwame Asante\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black_cab7045b.jpg\ten-US-Wavenet-D\ten-US\n1\tProfessor Ricardo\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg\tpt-BR-Wavenet-B\tpt-BR\n90001\tProfessor Ricardo\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg\tpt-BR-Wavenet-B\tpt-BR\n150001\tProfessor Ricardo\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian_fe6115c8.jpg\ten-US-Wavenet-D\ten-US\n90002\tProfessora Ingrid\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png\tes-ES-Wavenet-C\tes-ES\n150002\tTeacher Ingrid\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\ten-US-Wavenet-F\ten-US\n",
+  "stderr": "",
+  "execution_time_ms": 101
+}

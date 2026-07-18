@@ -1,0 +1,25 @@
+{
+  "query": "SELECT courseLevel, COUNT(*) as total, GROUP_CONCAT(title ORDER BY id SEPARATOR ' | ') as titulos FROM lessons GROUP BY courseLevel ORDER BY courseLevel;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT courseLevel, COUNT(*) as total, GROUP_CONCAT(title ORDER BY id SEPARATOR ' | ') as titulos FROM lessons GROUP BY courseLevel ORDER BY courseLevel;",
+  "rows": [
+    {
+      "courseLevel": "basico",
+      "total": "21",
+      "titulos": "A Família | My Family | Colors Around Us | School Life | Scientific Research | Greetings & Introductions | Numbers 1-20 | Colors & Descriptions | The Family | Food & Drinks | Animals & Nature | Clothes & Shopping | Weather & Seasons | Greetings & Introductions | Numbers 1-20 | Colors & Descriptions | The Family | Food & Drinks | Animals & Nature | Clothes & Shopping | Weather & Seasons"
+    },
+    {
+      "courseLevel": "intermediario",
+      "total": "5",
+      "titulos": "At the Restaurant | Travel Adventures | Health and Fitness | Body Parts & Health | Body Parts & Health"
+    },
+    {
+      "courseLevel": "negocios_tecnologia",
+      "total": "4",
+      "titulos": "Business Meeting | Stock Market Basics | Daily Routines | Daily Routines"
+    }
+  ],
+  "messages": [],
+  "stdout": "courseLevel\ttotal\ttitulos\nbasico\t21\tA Família | My Family | Colors Around Us | School Life | Scientific Research | Greetings & Introductions | Numbers 1-20 | Colors & Descriptions | The Family | Food & Drinks | Animals & Nature | Clothes & Shopping | Weather & Seasons | Greetings & Introductions | Numbers 1-20 | Colors & Descriptions | The Family | Food & Drinks | Animals & Nature | Clothes & Shopping | Weather & Seasons\nintermediario\t5\tAt the Restaurant | Travel Adventures | Health and Fitness | Body Parts & Health | Body Parts & Health\nnegocios_tecnologia\t4\tBusiness Meeting | Stock Market Basics | Daily Routines | Daily Routines\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

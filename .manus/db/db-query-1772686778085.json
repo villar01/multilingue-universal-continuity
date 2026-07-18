@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, lessonId, type, question, correctAnswer, options, orderIndex FROM exercises WHERE lessonId = 390001 ORDER BY orderIndex;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, lessonId, type, question, correctAnswer, options, orderIndex FROM exercises WHERE lessonId = 390001 ORDER BY orderIndex;",
+  "rows": [
+    {
+      "id": "180006",
+      "lessonId": "390001",
+      "type": "multiple_choice",
+      "question": "What is the first word you learn in English?",
+      "correctAnswer": "Hello",
+      "options": "[\"Hello\", \"Goodbye\", \"Thanks\", \"Sorry\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180007",
+      "lessonId": "390001",
+      "type": "multiple_choice",
+      "question": "How do you greet someone in the morning?",
+      "correctAnswer": "Good morning",
+      "options": "[\"Good night\", \"Good morning\", \"Good evening\", \"Good afternoon\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180008",
+      "lessonId": "390001",
+      "type": "fill_blank",
+      "question": "Hello! My name _____ John.",
+      "correctAnswer": "is",
+      "options": "[\"is\", \"are\", \"am\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180009",
+      "lessonId": "390001",
+      "type": "fill_blank",
+      "question": "Nice to _____ you!",
+      "correctAnswer": "meet",
+      "options": "[\"meet\", \"met\", \"meeting\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180010",
+      "lessonId": "390001",
+      "type": "multiple_choice",
+      "question": "What do you say when leaving?",
+      "correctAnswer": "Goodbye",
+      "options": "[\"Hello\", \"Goodbye\", \"Please\", \"Thanks\"]",
+      "orderIndex": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlessonId\ttype\tquestion\tcorrectAnswer\toptions\torderIndex\n180006\t390001\tmultiple_choice\tWhat is the first word you learn in English?\tHello\t[\"Hello\", \"Goodbye\", \"Thanks\", \"Sorry\"]\t1\n180007\t390001\tmultiple_choice\tHow do you greet someone in the morning?\tGood morning\t[\"Good night\", \"Good morning\", \"Good evening\", \"Good afternoon\"]\t2\n180008\t390001\tfill_blank\tHello! My name _____ John.\tis\t[\"is\", \"are\", \"am\"]\t3\n180009\t390001\tfill_blank\tNice to _____ you!\tmeet\t[\"meet\", \"met\", \"meeting\"]\t4\n180010\t390001\tmultiple_choice\tWhat do you say when leaving?\tGoodbye\t[\"Hello\", \"Goodbye\", \"Please\", \"Thanks\"]\t5\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

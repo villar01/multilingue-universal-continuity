@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, name, gender, specialization, ethnicity, bio, photoUrl FROM virtual_teachers ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, specialization, ethnicity, bio, photoUrl FROM virtual_teachers ORDER BY id;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'specialization' in 'field list'"
+  ]
+}

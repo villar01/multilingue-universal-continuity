@@ -1,0 +1,79 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'virtual_teachers' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'virtual_teachers' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "language_id"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "title"
+    },
+    {
+      "COLUMN_NAME": "gender"
+    },
+    {
+      "COLUMN_NAME": "avatar_style"
+    },
+    {
+      "COLUMN_NAME": "skin_tone"
+    },
+    {
+      "COLUMN_NAME": "hair_color"
+    },
+    {
+      "COLUMN_NAME": "hair_style"
+    },
+    {
+      "COLUMN_NAME": "photo_url"
+    },
+    {
+      "COLUMN_NAME": "personality"
+    },
+    {
+      "COLUMN_NAME": "teaching_style"
+    },
+    {
+      "COLUMN_NAME": "specialties"
+    },
+    {
+      "COLUMN_NAME": "voice_gender"
+    },
+    {
+      "COLUMN_NAME": "voice_language_code"
+    },
+    {
+      "COLUMN_NAME": "voice_id"
+    },
+    {
+      "COLUMN_NAME": "specialty"
+    },
+    {
+      "COLUMN_NAME": "greetings"
+    },
+    {
+      "COLUMN_NAME": "encouragements"
+    },
+    {
+      "COLUMN_NAME": "corrections"
+    },
+    {
+      "COLUMN_NAME": "is_active"
+    },
+    {
+      "COLUMN_NAME": "created_at"
+    },
+    {
+      "COLUMN_NAME": "updated_at"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nlanguage_id\nname\ntitle\ngender\navatar_style\nskin_tone\nhair_color\nhair_style\nphoto_url\npersonality\nteaching_style\nspecialties\nvoice_gender\nvoice_language_code\nvoice_id\nspecialty\ngreetings\nencouragements\ncorrections\nis_active\ncreated_at\nupdated_at\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

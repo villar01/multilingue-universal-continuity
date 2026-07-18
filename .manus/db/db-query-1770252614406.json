@@ -1,0 +1,9 @@
+{
+  "query": "\nCREATE TABLE IF NOT EXISTS user_downloads (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  user_id INT NOT NULL,\n  month VARCHAR(7) NOT NULL,\n  download_count INT DEFAULT 0,\n  download_limit INT DEFAULT 0,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_user_month (user_id, month)\n);\n\n-- Inserir registro demo para usuário 1 (mês atual)\nINSERT INTO user_downloads (user_id, month, download_count, download_limit)\nVALUES (1, DATE_FORMAT(NOW(), '%Y-%m'), 2, 5)\nON DUPLICATE KEY UPDATE download_count = 2, download_limit = 5;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \nCREATE TABLE IF NOT EXISTS user_downloads (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  user_id INT NOT NULL,\n  month VARCHAR(7) NOT NULL,\n  download_count INT DEFAULT 0,\n  download_limit INT DEFAULT 0,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_user_month (user_id, month)\n);\n\n-- Inserir registro demo para usuário 1 (mês atual)\nINSERT INTO user_downloads (user_id, month, download_count, download_limit)\nVALUES (1, DATE_FORMAT(NOW(), '%Y-%m'), 2, 5)\nON DUPLICATE KEY UPDATE download_count = 2, download_limit = 5;\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 259
+}

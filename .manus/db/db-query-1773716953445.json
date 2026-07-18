@@ -1,0 +1,67 @@
+{
+  "query": "\n-- Colunas da tabela exercises\nSELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'exercises' AND TABLE_SCHEMA = DATABASE();\n\n-- Total de professores e sem voz\nSELECT COUNT(*) as total_teachers, SUM(CASE WHEN voice_id IS NULL OR voice_id = '' THEN 1 ELSE 0 END) as no_voice FROM virtual_teachers;\n\n-- Total de exercícios\nSELECT COUNT(*) as total_exercises FROM exercises;\n\n-- Total de lições\nSELECT COUNT(*) as total_lessons FROM lessons;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \n-- Colunas da tabela exercises\nSELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'exercises' AND TABLE_SCHEMA = DATABASE();\n\n-- Total de professores e sem voz\nSELECT COUNT(*) as total_teachers, SUM(CASE WHEN voice_id IS NULL OR voice_id = '' THEN 1 ELSE 0 END) as no_voice FROM virtual_teachers;\n\n-- Total de exercícios\nSELECT COUNT(*) as total_exercises FROM exercises;\n\n-- Total de lições\nSELECT COUNT(*) as total_lessons FROM lessons;\n",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "lessonId"
+    },
+    {
+      "COLUMN_NAME": "type"
+    },
+    {
+      "COLUMN_NAME": "question"
+    },
+    {
+      "COLUMN_NAME": "correctAnswer"
+    },
+    {
+      "COLUMN_NAME": "options"
+    },
+    {
+      "COLUMN_NAME": "orderIndex"
+    },
+    {
+      "COLUMN_NAME": "difficultyScore"
+    },
+    {
+      "COLUMN_NAME": "points"
+    },
+    {
+      "COLUMN_NAME": "audioUrl"
+    },
+    {
+      "COLUMN_NAME": "audioText"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "COLUMN_NAME": "total_teachers\tno_voice"
+    },
+    {
+      "COLUMN_NAME": "65\t0"
+    },
+    {
+      "COLUMN_NAME": "total_exercises"
+    },
+    {
+      "COLUMN_NAME": "105"
+    },
+    {
+      "COLUMN_NAME": "total_lessons"
+    },
+    {
+      "COLUMN_NAME": "30"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nlessonId\ntype\nquestion\ncorrectAnswer\noptions\norderIndex\ndifficultyScore\npoints\naudioUrl\naudioText\ncreatedAt\nupdatedAt\ntotal_teachers\tno_voice\n65\t0\ntotal_exercises\n105\ntotal_lessons\n30\n",
+  "stderr": "",
+  "execution_time_ms": 112
+}

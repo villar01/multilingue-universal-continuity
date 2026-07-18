@@ -1,0 +1,97 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1771645787994,
+      "tag": "0000_fuzzy_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1771990064928,
+      "tag": "0001_productive_xorn",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774089039417,
+      "tag": "0002_fancy_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1774521850120,
+      "tag": "0003_brave_blob",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1775352872417,
+      "tag": "0004_curious_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1777944776131,
+      "tag": "0005_past_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1777944981448,
+      "tag": "0006_fancy_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1780543015483,
+      "tag": "0007_milky_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1780660693452,
+      "tag": "0008_tricky_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1782473307169,
+      "tag": "0009_fast_power_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1782474838284,
+      "tag": "0010_lazy_black_tom",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1783162696275,
+      "tag": "0011_demonic_lila_cheney",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1783162978714,
+      "tag": "0012_shiny_colossus",
+      "breakpoints": true
+    }
+  ]
+}

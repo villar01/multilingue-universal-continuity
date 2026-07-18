@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, title, storyText, courseId FROM lessons WHERE id = 390003;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, title, storyText, courseId FROM lessons WHERE id = 390003;",
+  "rows": [
+    {
+      "id": "390003",
+      "title": "Colors Around Us",
+      "storyText": "Lucy loves colors! She looks at the sky - it is blue. She looks at the sun - it is yellow. The grass in her garden is green. Her favorite toy is a red ball. What colors do you see?",
+      "courseId": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tstoryText\tcourseId\n390003\tColors Around Us\tLucy loves colors! She looks at the sky - it is blue. She looks at the sun - it is yellow. The grass in her garden is green. Her favorite toy is a red ball. What colors do you see?\t1\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE lessons SET illustrationUrl = '/lesson-1-smith-family.png' WHERE id = 180001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute UPDATE lessons SET illustrationUrl = '/lesson-1-smith-family.png' WHERE id = 180001;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 74
+}

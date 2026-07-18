@@ -1,0 +1,334 @@
+{
+  "query": "SELECT id, name, voice_language_code, gender FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, voice_language_code, gender FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL' ORDER BY id;",
+  "rows": [
+    {
+      "id": "240001",
+      "name": "Jean Dubois",
+      "voice_language_code": "fr",
+      "gender": "male"
+    },
+    {
+      "id": "240002",
+      "name": "Hans Müller",
+      "voice_language_code": "de",
+      "gender": "male"
+    },
+    {
+      "id": "240003",
+      "name": "Sofia Rossi",
+      "voice_language_code": "it",
+      "gender": "female"
+    },
+    {
+      "id": "240004",
+      "name": "Dmitri Ivanov",
+      "voice_language_code": "ru",
+      "gender": "male"
+    },
+    {
+      "id": "240005",
+      "name": "Ahmed Al-Rashid",
+      "voice_language_code": "ar",
+      "gender": "male"
+    },
+    {
+      "id": "240006",
+      "name": "Min-ji Park",
+      "voice_language_code": "ko",
+      "gender": "female"
+    },
+    {
+      "id": "240007",
+      "name": "Priya Sharma",
+      "voice_language_code": "hi",
+      "gender": "female"
+    },
+    {
+      "id": "240008",
+      "name": "Mehmet Yılmaz",
+      "voice_language_code": "tr",
+      "gender": "male"
+    },
+    {
+      "id": "240009",
+      "name": "Emma van der Berg",
+      "voice_language_code": "nl",
+      "gender": "female"
+    },
+    {
+      "id": "240010",
+      "name": "Erik Andersson",
+      "voice_language_code": "sv",
+      "gender": "male"
+    },
+    {
+      "id": "240011",
+      "name": "Anna Kowalski",
+      "voice_language_code": "pl",
+      "gender": "female"
+    },
+    {
+      "id": "240012",
+      "name": "Nikos Papadopoulos",
+      "voice_language_code": "el",
+      "gender": "male"
+    },
+    {
+      "id": "240013",
+      "name": "Sarah Cohen",
+      "voice_language_code": "he",
+      "gender": "female"
+    },
+    {
+      "id": "240014",
+      "name": "Somchai Patel",
+      "voice_language_code": "th",
+      "gender": "male"
+    },
+    {
+      "id": "240015",
+      "name": "Linh Nguyen",
+      "voice_language_code": "vi",
+      "gender": "female"
+    },
+    {
+      "id": "240016",
+      "name": "Budi Santoso",
+      "voice_language_code": "id",
+      "gender": "male"
+    },
+    {
+      "id": "240017",
+      "name": "Fatimah Rahman",
+      "voice_language_code": "ms",
+      "gender": "female"
+    },
+    {
+      "id": "240018",
+      "name": "Maria Santos",
+      "voice_language_code": "tl",
+      "gender": "female"
+    },
+    {
+      "id": "240019",
+      "name": "Reza Hosseini",
+      "voice_language_code": "fa",
+      "gender": "male"
+    },
+    {
+      "id": "240020",
+      "name": "Ayesha Khan",
+      "voice_language_code": "ur",
+      "gender": "female"
+    },
+    {
+      "id": "240021",
+      "name": "Rahul Das",
+      "voice_language_code": "bn",
+      "gender": "male"
+    },
+    {
+      "id": "240022",
+      "name": "Amani Mwangi",
+      "voice_language_code": "sw",
+      "gender": "female"
+    },
+    {
+      "id": "240023",
+      "name": "Lars Hansen",
+      "voice_language_code": "no",
+      "gender": "male"
+    },
+    {
+      "id": "240024",
+      "name": "Sofie Nielsen",
+      "voice_language_code": "da",
+      "gender": "female"
+    },
+    {
+      "id": "240025",
+      "name": "Mika Virtanen",
+      "voice_language_code": "fi",
+      "gender": "male"
+    },
+    {
+      "id": "240026",
+      "name": "Petra Novák",
+      "voice_language_code": "cs",
+      "gender": "female"
+    },
+    {
+      "id": "240027",
+      "name": "István Nagy",
+      "voice_language_code": "hu",
+      "gender": "male"
+    },
+    {
+      "id": "240028",
+      "name": "Elena Popescu",
+      "voice_language_code": "ro",
+      "gender": "female"
+    },
+    {
+      "id": "240029",
+      "name": "Olena Kovalenko",
+      "voice_language_code": "uk",
+      "gender": "female"
+    },
+    {
+      "id": "240030",
+      "name": "Ivan Petrov",
+      "voice_language_code": "bg",
+      "gender": "male"
+    },
+    {
+      "id": "240031",
+      "name": "Marko Jovanović",
+      "voice_language_code": "sr",
+      "gender": "male"
+    },
+    {
+      "id": "240032",
+      "name": "Ana Horvat",
+      "voice_language_code": "hr",
+      "gender": "female"
+    },
+    {
+      "id": "240033",
+      "name": "Martin Horváth",
+      "voice_language_code": "sk",
+      "gender": "male"
+    },
+    {
+      "id": "240034",
+      "name": "Maja Novak",
+      "voice_language_code": "sl",
+      "gender": "female"
+    },
+    {
+      "id": "240035",
+      "name": "Jonas Kazlauskas",
+      "voice_language_code": "lt",
+      "gender": "male"
+    },
+    {
+      "id": "240036",
+      "name": "Līga Bērziņa",
+      "voice_language_code": "lv",
+      "gender": "female"
+    },
+    {
+      "id": "240037",
+      "name": "Toomas Tamm",
+      "voice_language_code": "et",
+      "gender": "male"
+    },
+    {
+      "id": "240038",
+      "name": "Guðrún Sigurðardóttir",
+      "voice_language_code": "is",
+      "gender": "female"
+    },
+    {
+      "id": "240039",
+      "name": "Jordi Martí",
+      "voice_language_code": "ca",
+      "gender": "male"
+    },
+    {
+      "id": "240040",
+      "name": "Carmen Fernández",
+      "voice_language_code": "gl",
+      "gender": "female"
+    },
+    {
+      "id": "240041",
+      "name": "Iker Etxebarria",
+      "voice_language_code": "eu",
+      "gender": "male"
+    },
+    {
+      "id": "240042",
+      "name": "Pieter van Wyk",
+      "voice_language_code": "af",
+      "gender": "male"
+    },
+    {
+      "id": "240043",
+      "name": "Thandi Dlamini",
+      "voice_language_code": "zu",
+      "gender": "female"
+    },
+    {
+      "id": "240044",
+      "name": "Sipho Mthembu",
+      "voice_language_code": "xh",
+      "gender": "male"
+    },
+    {
+      "id": "240045",
+      "name": "Selam Tesfaye",
+      "voice_language_code": "am",
+      "gender": "female"
+    },
+    {
+      "id": "240046",
+      "name": "Ibrahim Bello",
+      "voice_language_code": "ha",
+      "gender": "male"
+    },
+    {
+      "id": "240047",
+      "name": "Adebayo Okafor",
+      "voice_language_code": "yo",
+      "gender": "male"
+    },
+    {
+      "id": "240048",
+      "name": "Chiamaka Nwosu",
+      "voice_language_code": "ig",
+      "gender": "female"
+    },
+    {
+      "id": "240049",
+      "name": "Kofi Mensah",
+      "voice_language_code": "multi-af",
+      "gender": "male"
+    },
+    {
+      "id": "240050",
+      "name": "Luna Quetzal",
+      "voice_language_code": "multi-am",
+      "gender": "female"
+    },
+    {
+      "id": "240051",
+      "name": "Amara Okonkwo",
+      "voice_language_code": "multi-ac",
+      "gender": "female"
+    },
+    {
+      "id": "240052",
+      "name": "Raj Patel",
+      "voice_language_code": "multi-as",
+      "gender": "male"
+    },
+    {
+      "id": "240053",
+      "name": "Leila Al-Rashid",
+      "voice_language_code": "multi-om",
+      "gender": "female"
+    },
+    {
+      "id": "240054",
+      "name": "Soren Andersen",
+      "voice_language_code": "multi-en",
+      "gender": "male"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tvoice_language_code\tgender\n240001\tJean Dubois\tfr\tmale\n240002\tHans Müller\tde\tmale\n240003\tSofia Rossi\tit\tfemale\n240004\tDmitri Ivanov\tru\tmale\n240005\tAhmed Al-Rashid\tar\tmale\n240006\tMin-ji Park\tko\tfemale\n240007\tPriya Sharma\thi\tfemale\n240008\tMehmet Yılmaz\ttr\tmale\n240009\tEmma van der Berg\tnl\tfemale\n240010\tErik Andersson\tsv\tmale\n240011\tAnna Kowalski\tpl\tfemale\n240012\tNikos Papadopoulos\tel\tmale\n240013\tSarah Cohen\the\tfemale\n240014\tSomchai Patel\tth\tmale\n240015\tLinh Nguyen\tvi\tfemale\n240016\tBudi Santoso\tid\tmale\n240017\tFatimah Rahman\tms\tfemale\n240018\tMaria Santos\ttl\tfemale\n240019\tReza Hosseini\tfa\tmale\n240020\tAyesha Khan\tur\tfemale\n240021\tRahul Das\tbn\tmale\n240022\tAmani Mwangi\tsw\tfemale\n240023\tLars Hansen\tno\tmale\n240024\tSofie Nielsen\tda\tfemale\n240025\tMika Virtanen\tfi\tmale\n240026\tPetra Novák\tcs\tfemale\n240027\tIstván Nagy\thu\tmale\n240028\tElena Popescu\tro\tfemale\n240029\tOlena Kovalenko\tuk\tfemale\n240030\tIvan Petrov\tbg\tmale\n240031\tMarko Jovanović\tsr\tmale\n240032\tAna Horvat\thr\tfemale\n240033\tMartin Horváth\tsk\tmale\n240034\tMaja Novak\tsl\tfemale\n240035\tJonas Kazlauskas\tlt\tmale\n240036\tLīga Bērziņa\tlv\tfemale\n240037\tToomas Tamm\tet\tmale\n240038\tGuðrún Sigurðardóttir\tis\tfemale\n240039\tJordi Martí\tca\tmale\n240040\tCarmen Fernández\tgl\tfemale\n240041\tIker Etxebarria\teu\tmale\n240042\tPieter van Wyk\taf\tmale\n240043\tThandi Dlamini\tzu\tfemale\n240044\tSipho Mthembu\txh\tmale\n240045\tSelam Tesfaye\tam\tfemale\n240046\tIbrahim Bello\tha\tmale\n240047\tAdebayo Okafor\tyo\tmale\n240048\tChiamaka Nwosu\tig\tfemale\n240049\tKofi Mensah\tmulti-af\tmale\n240050\tLuna Quetzal\tmulti-am\tfemale\n240051\tAmara Okonkwo\tmulti-ac\tfemale\n240052\tRaj Patel\tmulti-as\tmale\n240053\tLeila Al-Rashid\tmulti-om\tfemale\n240054\tSoren Andersen\tmulti-en\tmale\n",
+  "stderr": "",
+  "execution_time_ms": 381
+}

@@ -1,0 +1,199 @@
+{
+  "query": "SHOW COLUMNS FROM virtual_teachers; SELECT id, name, gender, photo_url, voice_id FROM virtual_teachers WHERE name IN ('Ricardo','Kwame','Ingrid','Jean') ORDER BY name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SHOW COLUMNS FROM virtual_teachers; SELECT id, name, gender, photo_url, voice_id FROM virtual_teachers WHERE name IN ('Ricardo','Kwame','Ingrid','Jean') ORDER BY name;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "language_id",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "name",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "title",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "gender",
+      "Type": "enum('male','female','neutral')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "avatar_style",
+      "Type": "varchar(50)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "skin_tone",
+      "Type": "varchar(20)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "hair_color",
+      "Type": "varchar(20)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "hair_style",
+      "Type": "varchar(50)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "photo_url",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "personality",
+      "Type": "text",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "teaching_style",
+      "Type": "text",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "specialties",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "voice_gender",
+      "Type": "enum('MALE','FEMALE','NEUTRAL')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "voice_language_code",
+      "Type": "varchar(10)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "voice_id",
+      "Type": "varchar(100)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "specialty",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "greetings",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "encouragements",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "corrections",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "is_active",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "1",
+      "Extra": ""
+    },
+    {
+      "Field": "created_at",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "updated_at",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+    }
+  ],
+  "messages": [
+    "id\tname\tgender\tphoto_url\tvoice_id",
+    "30001\tIngrid\tfemale\tNULL\tes-ES-Wavenet-C",
+    "60001\tIngrid\tfemale\tNULL\tes-ES-Wavenet-C",
+    "60003\tJean\tmale\tNULL\tde-DE-Wavenet-B"
+  ],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\tauto_increment\nlanguage_id\tint\tNO\tMUL\tNULL\t\nname\tvarchar(100)\tNO\t\tNULL\t\ntitle\tvarchar(100)\tNO\t\tNULL\t\ngender\tenum('male','female','neutral')\tNO\t\tNULL\t\navatar_style\tvarchar(50)\tNO\t\tNULL\t\nskin_tone\tvarchar(20)\tNO\t\tNULL\t\nhair_color\tvarchar(20)\tNO\t\tNULL\t\nhair_style\tvarchar(50)\tNO\t\tNULL\t\nphoto_url\ttext\tYES\t\tNULL\t\npersonality\ttext\tNO\t\tNULL\t\nteaching_style\ttext\tNO\t\tNULL\t\nspecialties\tjson\tYES\t\tNULL\t\nvoice_gender\tenum('MALE','FEMALE','NEUTRAL')\tNO\t\tNULL\t\nvoice_language_code\tvarchar(10)\tNO\t\tNULL\t\nvoice_id\tvarchar(100)\tYES\t\tNULL\t\nspecialty\tvarchar(255)\tYES\t\tNULL\t\ngreetings\tjson\tYES\t\tNULL\t\nencouragements\tjson\tYES\t\tNULL\t\ncorrections\tjson\tYES\t\tNULL\t\nis_active\ttinyint(1)\tYES\t\t1\t\ncreated_at\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\nupdated_at\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\tDEFAULT_GENERATED on update CURRENT_TIMESTAMP\nid\tname\tgender\tphoto_url\tvoice_id\n30001\tIngrid\tfemale\tNULL\tes-ES-Wavenet-C\n60001\tIngrid\tfemale\tNULL\tes-ES-Wavenet-C\n60003\tJean\tmale\tNULL\tde-DE-Wavenet-B\n",
+  "stderr": "",
+  "execution_time_ms": 276
+}

@@ -1,0 +1,9 @@
+{
+  "query": "\n-- Deletar todos os professores sem foto\nDELETE FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL';\n\n-- Deletar duplicatas: manter apenas os 10 com fotos distintas\n-- IDs a manter: 1 (Ricardo caucasiano), 30001 (Ingrid), 90002 (Professora Ingrid manuscdn), \n-- 90003 (Carlos manuscdn), 90004 (Jean manuscdn), 150003 (Carlos Unsplash), \n-- 150004 (Jeanne Unsplash), 180001 (Kwame negro), 210001 (Mei asiática), 210002 (Takeshi asiático)\n-- Deletar duplicatas de Ricardo e Ingrid\nDELETE FROM virtual_teachers WHERE id IN (90001, 150001, 150002, 60001);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \n-- Deletar todos os professores sem foto\nDELETE FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL';\n\n-- Deletar duplicatas: manter apenas os 10 com fotos distintas\n-- IDs a manter: 1 (Ricardo caucasiano), 30001 (Ingrid), 90002 (Professora Ingrid manuscdn), \n-- 90003 (Carlos manuscdn), 90004 (Jean manuscdn), 150003 (Carlos Unsplash), \n-- 150004 (Jeanne Unsplash), 180001 (Kwame negro), 210001 (Mei asiática), 210002 (Takeshi asiático)\n-- Deletar duplicatas de Ricardo e Ingrid\nDELETE FROM virtual_teachers WHERE id IN (90001, 150001, 150002, 60001);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 81
+}

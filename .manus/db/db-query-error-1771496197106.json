@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO virtual_teachers (name, nativeLanguage, targetLanguage, specialty, bio, avatarUrl, voiceId, personalityTraits, teachingStyle, experienceYears, certifications, availability, createdAt, updatedAt) \nVALUES (\n  'Professora Ingrid',\n  'pt-BR',\n  'en-US',\n  'English',\n  'Professora experiente e paciente, especializada em ensinar inglês para falantes de português.',\n  '/professora-ingrid.jpg',\n  'en-US-Standard-F',\n  'friendly,patient,encouraging',\n  'conversational',\n  10,\n  'TEFL,TESOL',\n  'available',\n  NOW(),\n  NOW()\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute INSERT INTO virtual_teachers (name, nativeLanguage, targetLanguage, specialty, bio, avatarUrl, voiceId, personalityTraits, teachingStyle, experienceYears, certifications, availability, createdAt, updatedAt) \nVALUES (\n  'Professora Ingrid',\n  'pt-BR',\n  'en-US',\n  'English',\n  'Professora experiente e paciente, especializada em ensinar inglês para falantes de português.',\n  '/professora-ingrid.jpg',\n  'en-US-Standard-F',\n  'friendly,patient,encouraging',\n  'conversational',\n  10,\n  'TEFL,TESOL',\n  'available',\n  NOW(),\n  NOW()\n);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'nativeLanguage' in 'field list'"
+  ]
+}

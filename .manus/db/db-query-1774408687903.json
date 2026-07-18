@@ -1,0 +1,166 @@
+{
+  "query": "SELECT DISTINCT voice_language_code FROM virtual_teachers ORDER BY voice_language_code",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT DISTINCT voice_language_code FROM virtual_teachers ORDER BY voice_language_code",
+  "rows": [
+    {
+      "voice_language_code": "af-ZA"
+    },
+    {
+      "voice_language_code": "am-ET"
+    },
+    {
+      "voice_language_code": "ar-XA"
+    },
+    {
+      "voice_language_code": "bg-BG"
+    },
+    {
+      "voice_language_code": "bn-IN"
+    },
+    {
+      "voice_language_code": "ca-ES"
+    },
+    {
+      "voice_language_code": "cmn-CN"
+    },
+    {
+      "voice_language_code": "cs-CZ"
+    },
+    {
+      "voice_language_code": "da-DK"
+    },
+    {
+      "voice_language_code": "de-DE"
+    },
+    {
+      "voice_language_code": "el-GR"
+    },
+    {
+      "voice_language_code": "en-US"
+    },
+    {
+      "voice_language_code": "es-ES"
+    },
+    {
+      "voice_language_code": "et-EE"
+    },
+    {
+      "voice_language_code": "eu-ES"
+    },
+    {
+      "voice_language_code": "fa-IR"
+    },
+    {
+      "voice_language_code": "fi-FI"
+    },
+    {
+      "voice_language_code": "fr-FR"
+    },
+    {
+      "voice_language_code": "gl-ES"
+    },
+    {
+      "voice_language_code": "ha-NG"
+    },
+    {
+      "voice_language_code": "he-IL"
+    },
+    {
+      "voice_language_code": "hi-IN"
+    },
+    {
+      "voice_language_code": "hr-HR"
+    },
+    {
+      "voice_language_code": "hu-HU"
+    },
+    {
+      "voice_language_code": "id-ID"
+    },
+    {
+      "voice_language_code": "ig-NG"
+    },
+    {
+      "voice_language_code": "is-IS"
+    },
+    {
+      "voice_language_code": "it-IT"
+    },
+    {
+      "voice_language_code": "ja-JP"
+    },
+    {
+      "voice_language_code": "ko-KR"
+    },
+    {
+      "voice_language_code": "lt-LT"
+    },
+    {
+      "voice_language_code": "lv-LV"
+    },
+    {
+      "voice_language_code": "ms-MY"
+    },
+    {
+      "voice_language_code": "nb-NO"
+    },
+    {
+      "voice_language_code": "nl-NL"
+    },
+    {
+      "voice_language_code": "pl-PL"
+    },
+    {
+      "voice_language_code": "pt-BR"
+    },
+    {
+      "voice_language_code": "ro-RO"
+    },
+    {
+      "voice_language_code": "ru-RU"
+    },
+    {
+      "voice_language_code": "sk-SK"
+    },
+    {
+      "voice_language_code": "sl-SI"
+    },
+    {
+      "voice_language_code": "sr-RS"
+    },
+    {
+      "voice_language_code": "sv-SE"
+    },
+    {
+      "voice_language_code": "sw-KE"
+    },
+    {
+      "voice_language_code": "tr-TR"
+    },
+    {
+      "voice_language_code": "uk-UA"
+    },
+    {
+      "voice_language_code": "ur-IN"
+    },
+    {
+      "voice_language_code": "vi-VN"
+    },
+    {
+      "voice_language_code": "xh-ZA"
+    },
+    {
+      "voice_language_code": "yo-NG"
+    },
+    {
+      "voice_language_code": "zh-CN"
+    },
+    {
+      "voice_language_code": "zu-ZA"
+    }
+  ],
+  "messages": [],
+  "stdout": "voice_language_code\naf-ZA\nam-ET\nar-XA\nbg-BG\nbn-IN\nca-ES\ncmn-CN\ncs-CZ\nda-DK\nde-DE\nel-GR\nen-US\nes-ES\net-EE\neu-ES\nfa-IR\nfi-FI\nfr-FR\ngl-ES\nha-NG\nhe-IL\nhi-IN\nhr-HR\nhu-HU\nid-ID\nig-NG\nis-IS\nit-IT\nja-JP\nko-KR\nlt-LT\nlv-LV\nms-MY\nnb-NO\nnl-NL\npl-PL\npt-BR\nro-RO\nru-RU\nsk-SK\nsl-SI\nsr-RS\nsv-SE\nsw-KE\ntr-TR\nuk-UA\nur-IN\nvi-VN\nxh-ZA\nyo-NG\nzh-CN\nzu-ZA\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `lessons` ADD `courseLevel` enum('basico','intermediario','avancado','negocios_tecnologia') DEFAULT 'basico';

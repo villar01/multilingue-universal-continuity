@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO lessons (courseId, title, description, orderIndex, content)\nVALUES (\n  1,\n  'At the Restaurant - DEMO COMPLETA',\n  'Lição demonstração com áudio, vídeo e exercícios interativos',\n  999,\n  'Mike and Sarah went to a nice Italian restaurant. They ordered delicious food and practiced their English with the friendly waiter.'\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute INSERT INTO lessons (courseId, title, description, orderIndex, content)\nVALUES (\n  1,\n  'At the Restaurant - DEMO COMPLETA',\n  'Lição demonstração com áudio, vídeo e exercícios interativos',\n  999,\n  'Mike and Sarah went to a nice Italian restaurant. They ordered delicious food and practiced their English with the friendly waiter.'\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 68
+}

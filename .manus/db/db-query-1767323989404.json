@@ -1,0 +1,75 @@
+{
+  "query": "SELECT * FROM courses LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT * FROM courses LIMIT 5",
+  "rows": [
+    {
+      "id": "90001",
+      "languageId": "0",
+      "title": "English - Beginner",
+      "description": "Learn English at beginner level",
+      "level": "beginner",
+      "estimatedHours": "20",
+      "lessonCount": "20",
+      "isPublished": "1",
+      "createdAt": "2025-12-16 03:07:52",
+      "updatedAt": "2025-12-16 03:07:52",
+      "language_id": "1"
+    },
+    {
+      "id": "90002",
+      "languageId": "0",
+      "title": "English - Intermediate",
+      "description": "Learn English at intermediate level",
+      "level": "intermediate",
+      "estimatedHours": "20",
+      "lessonCount": "20",
+      "isPublished": "1",
+      "createdAt": "2025-12-16 03:07:52",
+      "updatedAt": "2025-12-16 03:07:52",
+      "language_id": "1"
+    },
+    {
+      "id": "90003",
+      "languageId": "0",
+      "title": "English - Advanced",
+      "description": "Learn English at advanced level",
+      "level": "advanced",
+      "estimatedHours": "20",
+      "lessonCount": "20",
+      "isPublished": "1",
+      "createdAt": "2025-12-16 03:07:52",
+      "updatedAt": "2025-12-16 03:07:52",
+      "language_id": "1"
+    },
+    {
+      "id": "90004",
+      "languageId": "0",
+      "title": "Spanish - Beginner",
+      "description": "Learn Spanish at beginner level",
+      "level": "beginner",
+      "estimatedHours": "20",
+      "lessonCount": "20",
+      "isPublished": "1",
+      "createdAt": "2025-12-16 03:07:52",
+      "updatedAt": "2025-12-16 03:07:52",
+      "language_id": "2"
+    },
+    {
+      "id": "90005",
+      "languageId": "0",
+      "title": "Spanish - Intermediate",
+      "description": "Learn Spanish at intermediate level",
+      "level": "intermediate",
+      "estimatedHours": "20",
+      "lessonCount": "20",
+      "isPublished": "1",
+      "createdAt": "2025-12-16 03:07:52",
+      "updatedAt": "2025-12-16 03:07:52",
+      "language_id": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlanguageId\ttitle\tdescription\tlevel\testimatedHours\tlessonCount\tisPublished\tcreatedAt\tupdatedAt\tlanguage_id\n90001\t0\tEnglish - Beginner\tLearn English at beginner level\tbeginner\t20\t20\t1\t2025-12-16 03:07:52\t2025-12-16 03:07:52\t1\n90002\t0\tEnglish - Intermediate\tLearn English at intermediate level\tintermediate\t20\t20\t1\t2025-12-16 03:07:52\t2025-12-16 03:07:52\t1\n90003\t0\tEnglish - Advanced\tLearn English at advanced level\tadvanced\t20\t20\t1\t2025-12-16 03:07:52\t2025-12-16 03:07:52\t1\n90004\t0\tSpanish - Beginner\tLearn Spanish at beginner level\tbeginner\t20\t20\t1\t2025-12-16 03:07:52\t2025-12-16 03:07:52\t2\n90005\t0\tSpanish - Intermediate\tLearn Spanish at intermediate level\tintermediate\t20\t20\t1\t2025-12-16 03:07:52\t2025-12-16 03:07:52\t2\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

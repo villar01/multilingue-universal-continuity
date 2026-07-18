@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, title FROM lessons WHERE courseId = 1 ORDER BY orderIndex LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, title FROM lessons WHERE courseId = 1 ORDER BY orderIndex LIMIT 10;",
+  "rows": [
+    {
+      "id": "390001",
+      "title": "Hello World"
+    },
+    {
+      "id": "390002",
+      "title": "My Family"
+    },
+    {
+      "id": "390003",
+      "title": "Colors Around Us"
+    },
+    {
+      "id": "390004",
+      "title": "At the Restaurant"
+    },
+    {
+      "id": "390005",
+      "title": "School Life"
+    },
+    {
+      "id": "390006",
+      "title": "Business Meeting"
+    },
+    {
+      "id": "390007",
+      "title": "Stock Market Basics"
+    },
+    {
+      "id": "390008",
+      "title": "Scientific Research"
+    },
+    {
+      "id": "390009",
+      "title": "Travel Adventures"
+    },
+    {
+      "id": "390010",
+      "title": "Health and Fitness"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\n390001\tHello World\n390002\tMy Family\n390003\tColors Around Us\n390004\tAt the Restaurant\n390005\tSchool Life\n390006\tBusiness Meeting\n390007\tStock Market Basics\n390008\tScientific Research\n390009\tTravel Adventures\n390010\tHealth and Fitness\n",
+  "stderr": "",
+  "execution_time_ms": 76
+}

@@ -1,0 +1,66 @@
+{
+  "query": "SELECT e.id, e.lessonId, l.title, e.question, e.correctAnswer FROM exercises e JOIN lessons l ON l.id = e.lessonId WHERE e.correctAnswer = 'hello' OR e.correctAnswer = 'one' OR e.correctAnswer = 'red' OR e.correctAnswer = 'mother' OR e.correctAnswer = 'breakfast' OR e.correctAnswer = 'wake up' OR e.correctAnswer = 'lion' OR e.correctAnswer = 'shirt' OR e.correctAnswer = 'sunny' OR e.correctAnswer = 'head' ORDER BY e.lessonId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT e.id, e.lessonId, l.title, e.question, e.correctAnswer FROM exercises e JOIN lessons l ON l.id = e.lessonId WHERE e.correctAnswer = 'hello' OR e.correctAnswer = 'one' OR e.correctAnswer = 'red' OR e.correctAnswer = 'mother' OR e.correctAnswer = 'breakfast' OR e.correctAnswer = 'wake up' OR e.correctAnswer = 'lion' OR e.correctAnswer = 'shirt' OR e.correctAnswer = 'sunny' OR e.correctAnswer = 'head' ORDER BY e.lessonId;",
+  "rows": [
+    {
+      "id": "180007",
+      "lessonId": "390001",
+      "title": "A Família",
+      "question": "What is the word for the female parent?",
+      "correctAnswer": "Mother"
+    },
+    {
+      "id": "240018",
+      "lessonId": "420013",
+      "title": "Colors & Descriptions",
+      "question": "Stop! The traffic light is _____.",
+      "correctAnswer": "red"
+    },
+    {
+      "id": "240021",
+      "lessonId": "420014",
+      "title": "The Family",
+      "question": "What do you call your father's wife?",
+      "correctAnswer": "Mother"
+    },
+    {
+      "id": "240026",
+      "lessonId": "420015",
+      "title": "Food & Drinks",
+      "question": "What is the first meal of the day called?",
+      "correctAnswer": "Breakfast"
+    },
+    {
+      "id": "240036",
+      "lessonId": "420017",
+      "title": "Animals & Nature",
+      "question": "Which animal is known as the king of the jungle?",
+      "correctAnswer": "Lion"
+    },
+    {
+      "id": "240043",
+      "lessonId": "420018",
+      "title": "Clothes & Shopping",
+      "question": "I wear a _____ and tie to work. (formal top)",
+      "correctAnswer": "shirt"
+    },
+    {
+      "id": "240048",
+      "lessonId": "420019",
+      "title": "Weather & Seasons",
+      "question": "It is very _____ today. I need sunscreen.",
+      "correctAnswer": "sunny"
+    },
+    {
+      "id": "240053",
+      "lessonId": "420020",
+      "title": "Body Parts & Health",
+      "question": "I have a headache. My _____ hurts.",
+      "correctAnswer": "head"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlessonId\ttitle\tquestion\tcorrectAnswer\n180007\t390001\tA Família\tWhat is the word for the female parent?\tMother\n240018\t420013\tColors & Descriptions\tStop! The traffic light is _____.\tred\n240021\t420014\tThe Family\tWhat do you call your father's wife?\tMother\n240026\t420015\tFood & Drinks\tWhat is the first meal of the day called?\tBreakfast\n240036\t420017\tAnimals & Nature\tWhich animal is known as the king of the jungle?\tLion\n240043\t420018\tClothes & Shopping\tI wear a _____ and tie to work. (formal top)\tshirt\n240048\t420019\tWeather & Seasons\tIt is very _____ today. I need sunscreen.\tsunny\n240053\t420020\tBody Parts & Health\tI have a headache. My _____ hurts.\thead\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}

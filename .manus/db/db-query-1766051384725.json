@@ -1,0 +1,52 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'lessons'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'lessons'",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "courseId"
+    },
+    {
+      "COLUMN_NAME": "title"
+    },
+    {
+      "COLUMN_NAME": "description"
+    },
+    {
+      "COLUMN_NAME": "orderIndex"
+    },
+    {
+      "COLUMN_NAME": "content"
+    },
+    {
+      "COLUMN_NAME": "vocabulary"
+    },
+    {
+      "COLUMN_NAME": "grammar"
+    },
+    {
+      "COLUMN_NAME": "estimatedMinutes"
+    },
+    {
+      "COLUMN_NAME": "difficultyScore"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "COLUMN_NAME": "audioUrl"
+    },
+    {
+      "COLUMN_NAME": "languageCode"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\ncourseId\ntitle\ndescription\norderIndex\ncontent\nvocabulary\ngrammar\nestimatedMinutes\ndifficultyScore\ncreatedAt\nupdatedAt\naudioUrl\nlanguageCode\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

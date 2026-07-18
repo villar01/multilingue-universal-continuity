@@ -1,0 +1,35 @@
+{
+  "query": "\nSELECT batch_number, title, status FROM knowledge_batches ORDER BY batch_number;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \nSELECT batch_number, title, status FROM knowledge_batches ORDER BY batch_number;\n",
+  "rows": [
+    {
+      "batch_number": "1",
+      "title": "Lote 1 — Fundamentos: Segurança, Moral, Qualidade e Monetização",
+      "status": "active"
+    },
+    {
+      "batch_number": "2",
+      "title": "Lote 2 — Conteúdo: Lições, Vocabulário, Gramática e Cultura",
+      "status": "pending"
+    },
+    {
+      "batch_number": "3",
+      "title": "Lote 3 — Tecnologia: RA, RV, Sincronismo Labial e Voz",
+      "status": "pending"
+    },
+    {
+      "batch_number": "4",
+      "title": "Lote 4 — Negócios: Preços, Planos, Marketing e Parcerias",
+      "status": "pending"
+    },
+    {
+      "batch_number": "5",
+      "title": "Lote 5 — Legal: Conformidade por País e Proteção de Dados",
+      "status": "pending"
+    }
+  ],
+  "messages": [],
+  "stdout": "batch_number\ttitle\tstatus\n1\tLote 1 — Fundamentos: Segurança, Moral, Qualidade e Monetização\tactive\n2\tLote 2 — Conteúdo: Lições, Vocabulário, Gramática e Cultura\tpending\n3\tLote 3 — Tecnologia: RA, RV, Sincronismo Labial e Voz\tpending\n4\tLote 4 — Negócios: Preços, Planos, Marketing e Parcerias\tpending\n5\tLote 5 — Legal: Conformidade por País e Proteção de Dados\tpending\n",
+  "stderr": "",
+  "execution_time_ms": 273
+}

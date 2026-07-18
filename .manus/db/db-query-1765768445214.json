@@ -1,0 +1,110 @@
+{
+  "query": "SELECT l.code, l.name, COUNT(les.id) as lesson_count \nFROM languages l \nLEFT JOIN courses c ON c.languageId = l.id \nLEFT JOIN lessons les ON les.courseId = c.id \nGROUP BY l.code, l.name \nORDER BY lesson_count DESC \nLIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT l.code, l.name, COUNT(les.id) as lesson_count \nFROM languages l \nLEFT JOIN courses c ON c.languageId = l.id \nLEFT JOIN lessons les ON les.courseId = c.id \nGROUP BY l.code, l.name \nORDER BY lesson_count DESC \nLIMIT 20",
+  "rows": [
+    {
+      "code": "en",
+      "name": "English",
+      "lesson_count": "221"
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "lesson_count": "221"
+    },
+    {
+      "code": "de",
+      "name": "German",
+      "lesson_count": "221"
+    },
+    {
+      "code": "fr",
+      "name": "French",
+      "lesson_count": "221"
+    },
+    {
+      "code": "pt",
+      "name": "Portuguese",
+      "lesson_count": "171"
+    },
+    {
+      "code": "bn",
+      "name": "Bengali",
+      "lesson_count": "21"
+    },
+    {
+      "code": "bg",
+      "name": "Bulgarian",
+      "lesson_count": "21"
+    },
+    {
+      "code": "ja",
+      "name": "Japanese",
+      "lesson_count": "21"
+    },
+    {
+      "code": "fr-CA",
+      "name": "Canadian French",
+      "lesson_count": "21"
+    },
+    {
+      "code": "gu",
+      "name": "Gujarati",
+      "lesson_count": "21"
+    },
+    {
+      "code": "fi",
+      "name": "Finnish",
+      "lesson_count": "21"
+    },
+    {
+      "code": "uk",
+      "name": "Ukrainian",
+      "lesson_count": "21"
+    },
+    {
+      "code": "zh",
+      "name": "Chinese (Mandarin)",
+      "lesson_count": "21"
+    },
+    {
+      "code": "sq",
+      "name": "Albanian",
+      "lesson_count": "21"
+    },
+    {
+      "code": "da",
+      "name": "Danish",
+      "lesson_count": "21"
+    },
+    {
+      "code": "tr",
+      "name": "Turkish",
+      "lesson_count": "21"
+    },
+    {
+      "code": "he",
+      "name": "Hebrew",
+      "lesson_count": "21"
+    },
+    {
+      "code": "hy",
+      "name": "Armenian",
+      "lesson_count": "21"
+    },
+    {
+      "code": "ur",
+      "name": "Urdu",
+      "lesson_count": "21"
+    },
+    {
+      "code": "ms",
+      "name": "Malay",
+      "lesson_count": "21"
+    }
+  ],
+  "messages": [],
+  "stdout": "code\tname\tlesson_count\nen\tEnglish\t221\nes\tSpanish\t221\nde\tGerman\t221\nfr\tFrench\t221\npt\tPortuguese\t171\nbn\tBengali\t21\nbg\tBulgarian\t21\nja\tJapanese\t21\nfr-CA\tCanadian French\t21\ngu\tGujarati\t21\nfi\tFinnish\t21\nuk\tUkrainian\t21\nzh\tChinese (Mandarin)\t21\nsq\tAlbanian\t21\nda\tDanish\t21\ntr\tTurkish\t21\nhe\tHebrew\t21\nhy\tArmenian\t21\nur\tUrdu\t21\nms\tMalay\t21\n",
+  "stderr": "",
+  "execution_time_ms": 201
+}

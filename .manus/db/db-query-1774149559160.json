@@ -1,0 +1,30 @@
+{
+  "query": "SELECT courseLevel, COUNT(*) as total, GROUP_CONCAT(title ORDER BY orderIndex SEPARATOR ' | ') as licoes FROM lessons GROUP BY courseLevel ORDER BY FIELD(courseLevel, 'basico', 'intermediario', 'avancado', 'negocios_tecnologia');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT courseLevel, COUNT(*) as total, GROUP_CONCAT(title ORDER BY orderIndex SEPARATOR ' | ') as licoes FROM lessons GROUP BY courseLevel ORDER BY FIELD(courseLevel, 'basico', 'intermediario', 'avancado', 'negocios_tecnologia');",
+  "rows": [
+    {
+      "courseLevel": "basico",
+      "total": "20",
+      "licoes": "Greetings & Introductions | A Família | Greetings & Introductions | Numbers 1-20 | My Family | Numbers 1-20 | Colors & Descriptions | Colors & Descriptions | Colors Around Us | The Family | The Family | Food & Drinks | School Life | Food & Drinks | Animals & Nature | Animals & Nature | Clothes & Shopping | Clothes & Shopping | Weather & Seasons | Weather & Seasons"
+    },
+    {
+      "courseLevel": "intermediario",
+      "total": "7",
+      "licoes": "At the Restaurant | Daily Routines | Daily Routines | Travel Adventures | Health and Fitness | Body Parts & Health | Body Parts & Health"
+    },
+    {
+      "courseLevel": "avancado",
+      "total": "1",
+      "licoes": "Scientific Research"
+    },
+    {
+      "courseLevel": "negocios_tecnologia",
+      "total": "2",
+      "licoes": "Business Meeting | Stock Market Basics"
+    }
+  ],
+  "messages": [],
+  "stdout": "courseLevel\ttotal\tlicoes\nbasico\t20\tGreetings & Introductions | A Família | Greetings & Introductions | Numbers 1-20 | My Family | Numbers 1-20 | Colors & Descriptions | Colors & Descriptions | Colors Around Us | The Family | The Family | Food & Drinks | School Life | Food & Drinks | Animals & Nature | Animals & Nature | Clothes & Shopping | Clothes & Shopping | Weather & Seasons | Weather & Seasons\nintermediario\t7\tAt the Restaurant | Daily Routines | Daily Routines | Travel Adventures | Health and Fitness | Body Parts & Health | Body Parts & Health\navancado\t1\tScientific Research\nnegocios_tecnologia\t2\tBusiness Meeting | Stock Market Basics\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

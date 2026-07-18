@@ -1,0 +1,31 @@
+{
+  "query": "SHOW TABLES LIKE '%user%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SHOW TABLES LIKE '%user%';",
+  "rows": [
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "userAchievements"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "userProgress"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "user_dialogue_progress"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "user_downloads"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "user_safety_profile"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "user_video_progress"
+    },
+    {
+      "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_Z3XkMfhwb3dv99M6Rf8thh (%user%)\nuserAchievements\nuserProgress\nuser_dialogue_progress\nuser_downloads\nuser_safety_profile\nuser_video_progress\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE lessons SET illustrationUrl = '/lesson-3-restaurant.png' WHERE id = 180003;\nUPDATE lessons SET illustrationUrl = '/lesson-4-school.png' WHERE id = 180004;\nUPDATE lessons SET illustrationUrl = '/lesson-5-work.png' WHERE id = 180005;\nUPDATE lessons SET illustrationUrl = '/lesson-6-traveling.png' WHERE id = 180006;\nUPDATE lessons SET illustrationUrl = '/lesson-7-health.png' WHERE id = 180007;\nUPDATE lessons SET illustrationUrl = '/lesson-8-hobbies.png' WHERE id = 180008;\nUPDATE lessons SET illustrationUrl = '/lesson-9-weather.png' WHERE id = 180009;\nUPDATE lessons SET illustrationUrl = '/lesson-10-shopping.png' WHERE id = 180010;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute UPDATE lessons SET illustrationUrl = '/lesson-3-restaurant.png' WHERE id = 180003;\nUPDATE lessons SET illustrationUrl = '/lesson-4-school.png' WHERE id = 180004;\nUPDATE lessons SET illustrationUrl = '/lesson-5-work.png' WHERE id = 180005;\nUPDATE lessons SET illustrationUrl = '/lesson-6-traveling.png' WHERE id = 180006;\nUPDATE lessons SET illustrationUrl = '/lesson-7-health.png' WHERE id = 180007;\nUPDATE lessons SET illustrationUrl = '/lesson-8-hobbies.png' WHERE id = 180008;\nUPDATE lessons SET illustrationUrl = '/lesson-9-weather.png' WHERE id = 180009;\nUPDATE lessons SET illustrationUrl = '/lesson-10-shopping.png' WHERE id = 180010;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 126
+}

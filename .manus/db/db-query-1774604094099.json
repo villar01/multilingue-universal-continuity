@@ -1,0 +1,434 @@
+{
+  "query": "SELECT id, name, gender, skin_tone, voice_language_code, CASE WHEN photo_url IS NULL OR photo_url = 'NULL' THEN 'SEM_FOTO' ELSE 'TEM_FOTO' END as foto_status FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, skin_tone, voice_language_code, CASE WHEN photo_url IS NULL OR photo_url = 'NULL' THEN 'SEM_FOTO' ELSE 'TEM_FOTO' END as foto_status FROM virtual_teachers WHERE photo_url IS NULL OR photo_url = 'NULL' ORDER BY id;",
+  "rows": [
+    {
+      "id": "3",
+      "name": "María García",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "es-ES",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "4",
+      "name": "Jean Dubois",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "fr-FR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "5",
+      "name": "Hans Müller",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "6",
+      "name": "Sofia Rossi",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "it-IT",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "7",
+      "name": "Yuki Tanaka",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "ja-JP",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "8",
+      "name": "Wei Chen",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "cmn-CN",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "9",
+      "name": "Dmitri Ivanov",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "ru-RU",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "10",
+      "name": "Ahmed Al-Rashid",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "ar-XA",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "11",
+      "name": "Min-ji Park",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "ko-KR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "12",
+      "name": "Priya Sharma",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "hi-IN",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "13",
+      "name": "Mehmet Yılmaz",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "tr-TR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "14",
+      "name": "Emma van der Berg",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "nl-NL",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "15",
+      "name": "Erik Andersson",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "sv-SE",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "16",
+      "name": "Anna Kowalski",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "pl-PL",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "17",
+      "name": "Nikos Papadopoulos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "el-GR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "18",
+      "name": "Sarah Cohen",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "he-IL",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "19",
+      "name": "Somchai Patel",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "20",
+      "name": "Linh Nguyen",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "vi-VN",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "21",
+      "name": "Budi Santoso",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "id-ID",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "22",
+      "name": "Fatimah Rahman",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "ms-MY",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "23",
+      "name": "Maria Santos",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "24",
+      "name": "Reza Hosseini",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "fa-IR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "25",
+      "name": "Ayesha Khan",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "ur-IN",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "26",
+      "name": "Rahul Das",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "bn-IN",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "27",
+      "name": "Amani Mwangi",
+      "gender": "female",
+      "skin_tone": "dark",
+      "voice_language_code": "sw-KE",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "28",
+      "name": "Lars Hansen",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "nb-NO",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "29",
+      "name": "Sofie Nielsen",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "da-DK",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "30",
+      "name": "Mika Virtanen",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "fi-FI",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "31",
+      "name": "Petra Novák",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "cs-CZ",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "32",
+      "name": "István Nagy",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "hu-HU",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "33",
+      "name": "Elena Popescu",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "ro-RO",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "34",
+      "name": "Olena Kovalenko",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "uk-UA",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "35",
+      "name": "Ivan Petrov",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "bg-BG",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "36",
+      "name": "Marko Jovanović",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "sr-RS",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "37",
+      "name": "Ana Horvat",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "hr-HR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "38",
+      "name": "Martin Horváth",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "sk-SK",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "39",
+      "name": "Maja Novak",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "sl-SI",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "40",
+      "name": "Jonas Kazlauskas",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "lt-LT",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "41",
+      "name": "Līga Bērziņa",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "lv-LV",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "42",
+      "name": "Toomas Tamm",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "et-EE",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "43",
+      "name": "Guðrún Sigurðardóttir",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "is-IS",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "44",
+      "name": "Jordi Martí",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "ca-ES",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "45",
+      "name": "Carmen Fernández",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "gl-ES",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "46",
+      "name": "Iker Etxebarria",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "eu-ES",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "47",
+      "name": "Pieter van Wyk",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "af-ZA",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "48",
+      "name": "Thandi Dlamini",
+      "gender": "female",
+      "skin_tone": "dark",
+      "voice_language_code": "zu-ZA",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "49",
+      "name": "Sipho Mthembu",
+      "gender": "male",
+      "skin_tone": "dark",
+      "voice_language_code": "xh-ZA",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "50",
+      "name": "Selam Tesfaye",
+      "gender": "female",
+      "skin_tone": "dark",
+      "voice_language_code": "am-ET",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "51",
+      "name": "Ibrahim Bello",
+      "gender": "male",
+      "skin_tone": "dark",
+      "voice_language_code": "ha-NG",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "52",
+      "name": "Adebayo Okafor",
+      "gender": "male",
+      "skin_tone": "dark",
+      "voice_language_code": "yo-NG",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "53",
+      "name": "Chiamaka Nwosu",
+      "gender": "female",
+      "skin_tone": "dark",
+      "voice_language_code": "ig-NG",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "60002",
+      "name": "Carlos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "fr-FR",
+      "foto_status": "SEM_FOTO"
+    },
+    {
+      "id": "60003",
+      "name": "Jean",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE",
+      "foto_status": "SEM_FOTO"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgender\tskin_tone\tvoice_language_code\tfoto_status\n3\tMaría García\tfemale\tmedium\tes-ES\tSEM_FOTO\n4\tJean Dubois\tmale\tlight\tfr-FR\tSEM_FOTO\n5\tHans Müller\tmale\tlight\tde-DE\tSEM_FOTO\n6\tSofia Rossi\tfemale\tmedium\tit-IT\tSEM_FOTO\n7\tYuki Tanaka\tfemale\tlight\tja-JP\tSEM_FOTO\n8\tWei Chen\tmale\tlight\tcmn-CN\tSEM_FOTO\n9\tDmitri Ivanov\tmale\tlight\tru-RU\tSEM_FOTO\n10\tAhmed Al-Rashid\tmale\tmedium\tar-XA\tSEM_FOTO\n11\tMin-ji Park\tfemale\tlight\tko-KR\tSEM_FOTO\n12\tPriya Sharma\tfemale\tmedium\thi-IN\tSEM_FOTO\n13\tMehmet Yılmaz\tmale\tmedium\ttr-TR\tSEM_FOTO\n14\tEmma van der Berg\tfemale\tlight\tnl-NL\tSEM_FOTO\n15\tErik Andersson\tmale\tlight\tsv-SE\tSEM_FOTO\n16\tAnna Kowalski\tfemale\tlight\tpl-PL\tSEM_FOTO\n17\tNikos Papadopoulos\tmale\tmedium\tel-GR\tSEM_FOTO\n18\tSarah Cohen\tfemale\tmedium\the-IL\tSEM_FOTO\n19\tSomchai Patel\tmale\tmedium\ten-US\tSEM_FOTO\n20\tLinh Nguyen\tfemale\tlight\tvi-VN\tSEM_FOTO\n21\tBudi Santoso\tmale\tmedium\tid-ID\tSEM_FOTO\n22\tFatimah Rahman\tfemale\tmedium\tms-MY\tSEM_FOTO\n23\tMaria Santos\tfemale\tmedium\ten-US\tSEM_FOTO\n24\tReza Hosseini\tmale\tmedium\tfa-IR\tSEM_FOTO\n25\tAyesha Khan\tfemale\tmedium\tur-IN\tSEM_FOTO\n26\tRahul Das\tmale\tmedium\tbn-IN\tSEM_FOTO\n27\tAmani Mwangi\tfemale\tdark\tsw-KE\tSEM_FOTO\n28\tLars Hansen\tmale\tlight\tnb-NO\tSEM_FOTO\n29\tSofie Nielsen\tfemale\tlight\tda-DK\tSEM_FOTO\n30\tMika Virtanen\tmale\tlight\tfi-FI\tSEM_FOTO\n31\tPetra Novák\tfemale\tlight\tcs-CZ\tSEM_FOTO\n32\tIstván Nagy\tmale\tlight\thu-HU\tSEM_FOTO\n33\tElena Popescu\tfemale\tlight\tro-RO\tSEM_FOTO\n34\tOlena Kovalenko\tfemale\tlight\tuk-UA\tSEM_FOTO\n35\tIvan Petrov\tmale\tlight\tbg-BG\tSEM_FOTO\n36\tMarko Jovanović\tmale\tlight\tsr-RS\tSEM_FOTO\n37\tAna Horvat\tfemale\tlight\thr-HR\tSEM_FOTO\n38\tMartin Horváth\tmale\tlight\tsk-SK\tSEM_FOTO\n39\tMaja Novak\tfemale\tlight\tsl-SI\tSEM_FOTO\n40\tJonas Kazlauskas\tmale\tlight\tlt-LT\tSEM_FOTO\n41\tLīga Bērziņa\tfemale\tlight\tlv-LV\tSEM_FOTO\n42\tToomas Tamm\tmale\tlight\tet-EE\tSEM_FOTO\n43\tGuðrún Sigurðardóttir\tfemale\tlight\tis-IS\tSEM_FOTO\n44\tJordi Martí\tmale\tmedium\tca-ES\tSEM_FOTO\n45\tCarmen Fernández\tfemale\tlight\tgl-ES\tSEM_FOTO\n46\tIker Etxebarria\tmale\tlight\teu-ES\tSEM_FOTO\n47\tPieter van Wyk\tmale\tlight\taf-ZA\tSEM_FOTO\n48\tThandi Dlamini\tfemale\tdark\tzu-ZA\tSEM_FOTO\n49\tSipho Mthembu\tmale\tdark\txh-ZA\tSEM_FOTO\n50\tSelam Tesfaye\tfemale\tdark\tam-ET\tSEM_FOTO\n51\tIbrahim Bello\tmale\tdark\tha-NG\tSEM_FOTO\n52\tAdebayo Okafor\tmale\tdark\tyo-NG\tSEM_FOTO\n53\tChiamaka Nwosu\tfemale\tdark\tig-NG\tSEM_FOTO\n60002\tCarlos\tmale\tmedium\tfr-FR\tSEM_FOTO\n60003\tJean\tmale\tlight\tde-DE\tSEM_FOTO\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}

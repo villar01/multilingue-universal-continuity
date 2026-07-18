@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO lessons (courseId, title, description, orderIndex, xpReward, isPublished, languageCode) VALUES\n(90001, 'Greetings', 'Learn basic greetings', 1, 50, 1, 'en'),\n(90001, 'Numbers 1-10', 'Count from 1 to 10', 2, 50, 1, 'en'),\n(90001, 'Colors', 'Basic colors', 3, 50, 1, 'en'),\n(90001, 'Family', 'Family members', 4, 50, 1, 'en'),\n(90001, 'Food', 'Common foods', 5, 50, 1, 'en'),\n(90001, 'Animals', 'Basic animals', 6, 50, 1, 'en'),\n(90001, 'Body Parts', 'Parts of the body', 7, 50, 1, 'en'),\n(90001, 'Clothes', 'Basic clothing', 8, 50, 1, 'en'),\n(90001, 'Weather', 'Weather words', 9, 50, 1, 'en'),\n(90001, 'Days', 'Days of the week', 10, 50, 1, 'en')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute INSERT INTO lessons (courseId, title, description, orderIndex, xpReward, isPublished, languageCode) VALUES\n(90001, 'Greetings', 'Learn basic greetings', 1, 50, 1, 'en'),\n(90001, 'Numbers 1-10', 'Count from 1 to 10', 2, 50, 1, 'en'),\n(90001, 'Colors', 'Basic colors', 3, 50, 1, 'en'),\n(90001, 'Family', 'Family members', 4, 50, 1, 'en'),\n(90001, 'Food', 'Common foods', 5, 50, 1, 'en'),\n(90001, 'Animals', 'Basic animals', 6, 50, 1, 'en'),\n(90001, 'Body Parts', 'Parts of the body', 7, 50, 1, 'en'),\n(90001, 'Clothes', 'Basic clothing', 8, 50, 1, 'en'),\n(90001, 'Weather', 'Weather words', 9, 50, 1, 'en'),\n(90001, 'Days', 'Days of the week', 10, 50, 1, 'en')",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'xpReward' in 'field list'"
+  ]
+}

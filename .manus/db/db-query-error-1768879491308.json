@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO lessons (courseId, title, description, orderIndex, content, vocabularyJson, grammarJson, phoneticJson, conversationPromptsJson)\nVALUES (\n  1,\n  'At the Restaurant - Demo',\n  'Aprenda a pedir comida em inglês',\n  999,\n  'Mike and Sarah went to a restaurant. They ordered food and talked with the waiter.',\n  '[{\"word\":\"menu\",\"translation\":\"cardápio\",\"phonetic\":\"/ˈmenjuː/\",\"example\":\"Can I see the menu?\"}]',\n  '[{\"title\":\"Would Like\",\"explanation\":\"Use would like para pedidos educados\"}]',\n  '[{\"title\":\"TH sounds\",\"explanation\":\"Pratique o som TH\"}]',\n  '[\"Peça uma mesa para duas pessoas\",\"Peça o cardápio\",\"Faça seu pedido\"]'\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute INSERT INTO lessons (courseId, title, description, orderIndex, content, vocabularyJson, grammarJson, phoneticJson, conversationPromptsJson)\nVALUES (\n  1,\n  'At the Restaurant - Demo',\n  'Aprenda a pedir comida em inglês',\n  999,\n  'Mike and Sarah went to a restaurant. They ordered food and talked with the waiter.',\n  '[{\"word\":\"menu\",\"translation\":\"cardápio\",\"phonetic\":\"/ˈmenjuː/\",\"example\":\"Can I see the menu?\"}]',\n  '[{\"title\":\"Would Like\",\"explanation\":\"Use would like para pedidos educados\"}]',\n  '[{\"title\":\"TH sounds\",\"explanation\":\"Pratique o som TH\"}]',\n  '[\"Peça uma mesa para duas pessoas\",\"Peça o cardápio\",\"Faça seu pedido\"]'\n);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'vocabularyJson' in 'field list'"
+  ]
+}

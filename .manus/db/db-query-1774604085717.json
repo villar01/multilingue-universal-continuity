@@ -1,0 +1,613 @@
+{
+  "query": "SELECT id, name, gender, photo_url, voice_id, voice_language_code, skin_tone FROM virtual_teachers ORDER BY id LIMIT 80;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, photo_url, voice_id, voice_language_code, skin_tone FROM virtual_teachers ORDER BY id LIMIT 80;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg",
+      "voice_id": "pt-BR-Wavenet-B",
+      "voice_language_code": "pt-BR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "3",
+      "name": "María García",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "es-ES-Wavenet-C",
+      "voice_language_code": "es-ES",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "4",
+      "name": "Jean Dubois",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "fr-FR-Wavenet-B",
+      "voice_language_code": "fr-FR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "5",
+      "name": "Hans Müller",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "de-DE-Wavenet-B",
+      "voice_language_code": "de-DE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "6",
+      "name": "Sofia Rossi",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "it-IT-Wavenet-A",
+      "voice_language_code": "it-IT",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "7",
+      "name": "Yuki Tanaka",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ja-JP-Wavenet-A",
+      "voice_language_code": "ja-JP",
+      "skin_tone": "light"
+    },
+    {
+      "id": "8",
+      "name": "Wei Chen",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "cmn-CN-Wavenet-B",
+      "voice_language_code": "cmn-CN",
+      "skin_tone": "light"
+    },
+    {
+      "id": "9",
+      "name": "Dmitri Ivanov",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "ru-RU-Wavenet-B",
+      "voice_language_code": "ru-RU",
+      "skin_tone": "light"
+    },
+    {
+      "id": "10",
+      "name": "Ahmed Al-Rashid",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "ar-XA-Wavenet-B",
+      "voice_language_code": "ar-XA",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "11",
+      "name": "Min-ji Park",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ko-KR-Wavenet-A",
+      "voice_language_code": "ko-KR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "12",
+      "name": "Priya Sharma",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "hi-IN-Wavenet-A",
+      "voice_language_code": "hi-IN",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "13",
+      "name": "Mehmet Yılmaz",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "tr-TR-Wavenet-B",
+      "voice_language_code": "tr-TR",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "14",
+      "name": "Emma van der Berg",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "nl-NL-Wavenet-A",
+      "voice_language_code": "nl-NL",
+      "skin_tone": "light"
+    },
+    {
+      "id": "15",
+      "name": "Erik Andersson",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "sv-SE-Wavenet-C",
+      "voice_language_code": "sv-SE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "16",
+      "name": "Anna Kowalski",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "pl-PL-Wavenet-A",
+      "voice_language_code": "pl-PL",
+      "skin_tone": "light"
+    },
+    {
+      "id": "17",
+      "name": "Nikos Papadopoulos",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "el-GR-Wavenet-A",
+      "voice_language_code": "el-GR",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "18",
+      "name": "Sarah Cohen",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "he-IL-Wavenet-A",
+      "voice_language_code": "he-IL",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "19",
+      "name": "Somchai Patel",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "en-US-Wavenet-F",
+      "voice_language_code": "en-US",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "20",
+      "name": "Linh Nguyen",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "vi-VN-Wavenet-A",
+      "voice_language_code": "vi-VN",
+      "skin_tone": "light"
+    },
+    {
+      "id": "21",
+      "name": "Budi Santoso",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "id-ID-Wavenet-B",
+      "voice_language_code": "id-ID",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "22",
+      "name": "Fatimah Rahman",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ms-MY-Wavenet-A",
+      "voice_language_code": "ms-MY",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "23",
+      "name": "Maria Santos",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "en-US-Wavenet-F",
+      "voice_language_code": "en-US",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "24",
+      "name": "Reza Hosseini",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "fa-IR-Standard-B",
+      "voice_language_code": "fa-IR",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "25",
+      "name": "Ayesha Khan",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ur-IN-Wavenet-A",
+      "voice_language_code": "ur-IN",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "26",
+      "name": "Rahul Das",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "bn-IN-Wavenet-B",
+      "voice_language_code": "bn-IN",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "27",
+      "name": "Amani Mwangi",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "sw-KE-Standard-A",
+      "voice_language_code": "sw-KE",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "28",
+      "name": "Lars Hansen",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "nb-NO-Wavenet-B",
+      "voice_language_code": "nb-NO",
+      "skin_tone": "light"
+    },
+    {
+      "id": "29",
+      "name": "Sofie Nielsen",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "da-DK-Wavenet-A",
+      "voice_language_code": "da-DK",
+      "skin_tone": "light"
+    },
+    {
+      "id": "30",
+      "name": "Mika Virtanen",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "fi-FI-Wavenet-A",
+      "voice_language_code": "fi-FI",
+      "skin_tone": "light"
+    },
+    {
+      "id": "31",
+      "name": "Petra Novák",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "cs-CZ-Standard-A",
+      "voice_language_code": "cs-CZ",
+      "skin_tone": "light"
+    },
+    {
+      "id": "32",
+      "name": "István Nagy",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "hu-HU-Wavenet-A",
+      "voice_language_code": "hu-HU",
+      "skin_tone": "light"
+    },
+    {
+      "id": "33",
+      "name": "Elena Popescu",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ro-RO-Standard-A",
+      "voice_language_code": "ro-RO",
+      "skin_tone": "light"
+    },
+    {
+      "id": "34",
+      "name": "Olena Kovalenko",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "uk-UA-Standard-A",
+      "voice_language_code": "uk-UA",
+      "skin_tone": "light"
+    },
+    {
+      "id": "35",
+      "name": "Ivan Petrov",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "bg-BG-Standard-A",
+      "voice_language_code": "bg-BG",
+      "skin_tone": "light"
+    },
+    {
+      "id": "36",
+      "name": "Marko Jovanović",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "sr-RS-Standard-A",
+      "voice_language_code": "sr-RS",
+      "skin_tone": "light"
+    },
+    {
+      "id": "37",
+      "name": "Ana Horvat",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "hr-HR-Standard-A",
+      "voice_language_code": "hr-HR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "38",
+      "name": "Martin Horváth",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "sk-SK-Wavenet-A",
+      "voice_language_code": "sk-SK",
+      "skin_tone": "light"
+    },
+    {
+      "id": "39",
+      "name": "Maja Novak",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "sl-SI-Standard-A",
+      "voice_language_code": "sl-SI",
+      "skin_tone": "light"
+    },
+    {
+      "id": "40",
+      "name": "Jonas Kazlauskas",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "lt-LT-Standard-A",
+      "voice_language_code": "lt-LT",
+      "skin_tone": "light"
+    },
+    {
+      "id": "41",
+      "name": "Līga Bērziņa",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "lv-LV-Standard-A",
+      "voice_language_code": "lv-LV",
+      "skin_tone": "light"
+    },
+    {
+      "id": "42",
+      "name": "Toomas Tamm",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "et-EE-Standard-A",
+      "voice_language_code": "et-EE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "43",
+      "name": "Guðrún Sigurðardóttir",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "is-IS-Standard-A",
+      "voice_language_code": "is-IS",
+      "skin_tone": "light"
+    },
+    {
+      "id": "44",
+      "name": "Jordi Martí",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "ca-ES-Standard-B",
+      "voice_language_code": "ca-ES",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "45",
+      "name": "Carmen Fernández",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "gl-ES-Standard-A",
+      "voice_language_code": "gl-ES",
+      "skin_tone": "light"
+    },
+    {
+      "id": "46",
+      "name": "Iker Etxebarria",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "eu-ES-Standard-A",
+      "voice_language_code": "eu-ES",
+      "skin_tone": "light"
+    },
+    {
+      "id": "47",
+      "name": "Pieter van Wyk",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "af-ZA-Standard-A",
+      "voice_language_code": "af-ZA",
+      "skin_tone": "light"
+    },
+    {
+      "id": "48",
+      "name": "Thandi Dlamini",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "zu-ZA-Standard-A",
+      "voice_language_code": "zu-ZA",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "49",
+      "name": "Sipho Mthembu",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "xh-ZA-Standard-A",
+      "voice_language_code": "xh-ZA",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "50",
+      "name": "Selam Tesfaye",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "am-ET-Standard-A",
+      "voice_language_code": "am-ET",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "51",
+      "name": "Ibrahim Bello",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "ha-NG-Standard-A",
+      "voice_language_code": "ha-NG",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "52",
+      "name": "Adebayo Okafor",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "yo-NG-Standard-A",
+      "voice_language_code": "yo-NG",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "53",
+      "name": "Chiamaka Nwosu",
+      "gender": "female",
+      "photo_url": "NULL",
+      "voice_id": "ig-NG-Standard-A",
+      "voice_language_code": "ig-NG",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "gender": "female",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "de-DE-Wavenet-C",
+      "voice_language_code": "de-DE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "60001",
+      "name": "Ingrid",
+      "gender": "female",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "de-DE-Wavenet-C",
+      "voice_language_code": "de-DE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "60002",
+      "name": "Carlos",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "fr-FR-Wavenet-B",
+      "voice_language_code": "fr-FR",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "60003",
+      "name": "Jean",
+      "gender": "male",
+      "photo_url": "NULL",
+      "voice_id": "de-DE-Wavenet-B",
+      "voice_language_code": "de-DE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "90001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg",
+      "voice_id": "pt-BR-Wavenet-B",
+      "voice_language_code": "pt-BR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "gender": "female",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png",
+      "voice_id": "de-DE-Wavenet-C",
+      "voice_language_code": "de-DE",
+      "skin_tone": "light"
+    },
+    {
+      "id": "90003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png",
+      "voice_id": "fr-FR-Wavenet-B",
+      "voice_language_code": "fr-FR",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "90004",
+      "name": "Professor Jean",
+      "gender": "male",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png",
+      "voice_id": "fr-FR-Wavenet-B",
+      "voice_language_code": "fr-FR",
+      "skin_tone": "light"
+    },
+    {
+      "id": "150001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg",
+      "voice_id": "en-US-Wavenet-D",
+      "voice_language_code": "en-US",
+      "skin_tone": "light"
+    },
+    {
+      "id": "150002",
+      "name": "Teacher Ingrid",
+      "gender": "female",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "en-US-Wavenet-F",
+      "voice_language_code": "en-US",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "150003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "photo_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "en-US-Wavenet-D",
+      "voice_language_code": "en-US",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "150004",
+      "name": "Teacher Jeanne",
+      "gender": "female",
+      "photo_url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face",
+      "voice_id": "en-US-Wavenet-F",
+      "voice_language_code": "en-US",
+      "skin_tone": "medium"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "gender": "male",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg",
+      "voice_id": "en-US-Wavenet-D",
+      "voice_language_code": "en-US",
+      "skin_tone": "dark"
+    },
+    {
+      "id": "210001",
+      "name": "Professora Mei",
+      "gender": "female",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp",
+      "voice_id": "zh-CN-Neural2-A",
+      "voice_language_code": "zh-CN",
+      "skin_tone": "yellow"
+    },
+    {
+      "id": "210002",
+      "name": "Professor Takeshi",
+      "gender": "male",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp",
+      "voice_id": "ja-JP-Neural2-B",
+      "voice_language_code": "ja-JP",
+      "skin_tone": "yellow"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgender\tphoto_url\tvoice_id\tvoice_language_code\tskin_tone\n1\tProfessor Ricardo\tmale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\tpt-BR-Wavenet-B\tpt-BR\tlight\n3\tMaría García\tfemale\tNULL\tes-ES-Wavenet-C\tes-ES\tmedium\n4\tJean Dubois\tmale\tNULL\tfr-FR-Wavenet-B\tfr-FR\tlight\n5\tHans Müller\tmale\tNULL\tde-DE-Wavenet-B\tde-DE\tlight\n6\tSofia Rossi\tfemale\tNULL\tit-IT-Wavenet-A\tit-IT\tmedium\n7\tYuki Tanaka\tfemale\tNULL\tja-JP-Wavenet-A\tja-JP\tlight\n8\tWei Chen\tmale\tNULL\tcmn-CN-Wavenet-B\tcmn-CN\tlight\n9\tDmitri Ivanov\tmale\tNULL\tru-RU-Wavenet-B\tru-RU\tlight\n10\tAhmed Al-Rashid\tmale\tNULL\tar-XA-Wavenet-B\tar-XA\tmedium\n11\tMin-ji Park\tfemale\tNULL\tko-KR-Wavenet-A\tko-KR\tlight\n12\tPriya Sharma\tfemale\tNULL\thi-IN-Wavenet-A\thi-IN\tmedium\n13\tMehmet Yılmaz\tmale\tNULL\ttr-TR-Wavenet-B\ttr-TR\tmedium\n14\tEmma van der Berg\tfemale\tNULL\tnl-NL-Wavenet-A\tnl-NL\tlight\n15\tErik Andersson\tmale\tNULL\tsv-SE-Wavenet-C\tsv-SE\tlight\n16\tAnna Kowalski\tfemale\tNULL\tpl-PL-Wavenet-A\tpl-PL\tlight\n17\tNikos Papadopoulos\tmale\tNULL\tel-GR-Wavenet-A\tel-GR\tmedium\n18\tSarah Cohen\tfemale\tNULL\the-IL-Wavenet-A\the-IL\tmedium\n19\tSomchai Patel\tmale\tNULL\ten-US-Wavenet-F\ten-US\tmedium\n20\tLinh Nguyen\tfemale\tNULL\tvi-VN-Wavenet-A\tvi-VN\tlight\n21\tBudi Santoso\tmale\tNULL\tid-ID-Wavenet-B\tid-ID\tmedium\n22\tFatimah Rahman\tfemale\tNULL\tms-MY-Wavenet-A\tms-MY\tmedium\n23\tMaria Santos\tfemale\tNULL\ten-US-Wavenet-F\ten-US\tmedium\n24\tReza Hosseini\tmale\tNULL\tfa-IR-Standard-B\tfa-IR\tmedium\n25\tAyesha Khan\tfemale\tNULL\tur-IN-Wavenet-A\tur-IN\tmedium\n26\tRahul Das\tmale\tNULL\tbn-IN-Wavenet-B\tbn-IN\tmedium\n27\tAmani Mwangi\tfemale\tNULL\tsw-KE-Standard-A\tsw-KE\tdark\n28\tLars Hansen\tmale\tNULL\tnb-NO-Wavenet-B\tnb-NO\tlight\n29\tSofie Nielsen\tfemale\tNULL\tda-DK-Wavenet-A\tda-DK\tlight\n30\tMika Virtanen\tmale\tNULL\tfi-FI-Wavenet-A\tfi-FI\tlight\n31\tPetra Novák\tfemale\tNULL\tcs-CZ-Standard-A\tcs-CZ\tlight\n32\tIstván Nagy\tmale\tNULL\thu-HU-Wavenet-A\thu-HU\tlight\n33\tElena Popescu\tfemale\tNULL\tro-RO-Standard-A\tro-RO\tlight\n34\tOlena Kovalenko\tfemale\tNULL\tuk-UA-Standard-A\tuk-UA\tlight\n35\tIvan Petrov\tmale\tNULL\tbg-BG-Standard-A\tbg-BG\tlight\n36\tMarko Jovanović\tmale\tNULL\tsr-RS-Standard-A\tsr-RS\tlight\n37\tAna Horvat\tfemale\tNULL\thr-HR-Standard-A\thr-HR\tlight\n38\tMartin Horváth\tmale\tNULL\tsk-SK-Wavenet-A\tsk-SK\tlight\n39\tMaja Novak\tfemale\tNULL\tsl-SI-Standard-A\tsl-SI\tlight\n40\tJonas Kazlauskas\tmale\tNULL\tlt-LT-Standard-A\tlt-LT\tlight\n41\tLīga Bērziņa\tfemale\tNULL\tlv-LV-Standard-A\tlv-LV\tlight\n42\tToomas Tamm\tmale\tNULL\tet-EE-Standard-A\tet-EE\tlight\n43\tGuðrún Sigurðardóttir\tfemale\tNULL\tis-IS-Standard-A\tis-IS\tlight\n44\tJordi Martí\tmale\tNULL\tca-ES-Standard-B\tca-ES\tmedium\n45\tCarmen Fernández\tfemale\tNULL\tgl-ES-Standard-A\tgl-ES\tlight\n46\tIker Etxebarria\tmale\tNULL\teu-ES-Standard-A\teu-ES\tlight\n47\tPieter van Wyk\tmale\tNULL\taf-ZA-Standard-A\taf-ZA\tlight\n48\tThandi Dlamini\tfemale\tNULL\tzu-ZA-Standard-A\tzu-ZA\tdark\n49\tSipho Mthembu\tmale\tNULL\txh-ZA-Standard-A\txh-ZA\tdark\n50\tSelam Tesfaye\tfemale\tNULL\tam-ET-Standard-A\tam-ET\tdark\n51\tIbrahim Bello\tmale\tNULL\tha-NG-Standard-A\tha-NG\tdark\n52\tAdebayo Okafor\tmale\tNULL\tyo-NG-Standard-A\tyo-NG\tdark\n53\tChiamaka Nwosu\tfemale\tNULL\tig-NG-Standard-A\tig-NG\tdark\n30001\tIngrid\tfemale\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\tde-DE-Wavenet-C\tde-DE\tlight\n60001\tIngrid\tfemale\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\tde-DE-Wavenet-C\tde-DE\tlight\n60002\tCarlos\tmale\tNULL\tfr-FR-Wavenet-B\tfr-FR\tmedium\n60003\tJean\tmale\tNULL\tde-DE-Wavenet-B\tde-DE\tlight\n90001\tProfessor Ricardo\tmale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\tpt-BR-Wavenet-B\tpt-BR\tlight\n90002\tProfessora Ingrid\tfemale\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png\tde-DE-Wavenet-C\tde-DE\tlight\n90003\tProfessor Carlos\tmale\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png\tfr-FR-Wavenet-B\tfr-FR\tmedium\n90004\tProfessor Jean\tmale\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png\tfr-FR-Wavenet-B\tfr-FR\tlight\n150001\tProfessor Ricardo\tmale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\ten-US-Wavenet-D\ten-US\tlight\n150002\tTeacher Ingrid\tfemale\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\ten-US-Wavenet-F\ten-US\tmedium\n150003\tProfessor Carlos\tmale\thttps://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face\ten-US-Wavenet-D\ten-US\tmedium\n150004\tTeacher Jeanne\tfemale\thttps://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face\ten-US-Wavenet-F\ten-US\tmedium\n180001\tProfessor Kwame Asante\tmale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg\ten-US-Wavenet-D\ten-US\tdark\n210001\tProfessora Mei\tfemale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp\tzh-CN-Neural2-A\tzh-CN\tyellow\n210002\tProfessor Takeshi\tmale\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp\tja-JP-Neural2-B\tja-JP\tyellow\n",
+  "stderr": "",
+  "execution_time_ms": 132
+}

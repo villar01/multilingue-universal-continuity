@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO lessons (courseId, title, description, orderIndex) VALUES\n(90001, 'Greetings', 'Learn basic greetings', 1),\n(90001, 'Numbers 1-10', 'Count from 1 to 10', 2),\n(90001, 'Colors', 'Basic colors', 3),\n(90001, 'Family', 'Family members', 4),\n(90001, 'Food', 'Common foods', 5),\n(90001, 'Animals', 'Basic animals', 6),\n(90001, 'Body Parts', 'Parts of the body', 7),\n(90001, 'Clothes', 'Basic clothing', 8),\n(90001, 'Weather', 'Weather words', 9),\n(90001, 'Days', 'Days of the week', 10)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute INSERT INTO lessons (courseId, title, description, orderIndex) VALUES\n(90001, 'Greetings', 'Learn basic greetings', 1),\n(90001, 'Numbers 1-10', 'Count from 1 to 10', 2),\n(90001, 'Colors', 'Basic colors', 3),\n(90001, 'Family', 'Family members', 4),\n(90001, 'Food', 'Common foods', 5),\n(90001, 'Animals', 'Basic animals', 6),\n(90001, 'Body Parts', 'Parts of the body', 7),\n(90001, 'Clothes', 'Basic clothing', 8),\n(90001, 'Weather', 'Weather words', 9),\n(90001, 'Days', 'Days of the week', 10)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 72
+}

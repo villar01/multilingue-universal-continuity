@@ -1,0 +1,160 @@
+{
+  "query": "SELECT l.id, l.title, COUNT(e.id) as exercise_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY l.id LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT l.id, l.title, COUNT(e.id) as exercise_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY l.id LIMIT 50;",
+  "rows": [
+    {
+      "id": "390001",
+      "title": "A Família",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390002",
+      "title": "My Family",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390003",
+      "title": "Colors Around Us",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390004",
+      "title": "At the Restaurant",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390005",
+      "title": "School Life",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390006",
+      "title": "Business Meeting",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390007",
+      "title": "Stock Market Basics",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390008",
+      "title": "Scientific Research",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390009",
+      "title": "Travel Adventures",
+      "exercise_count": "5"
+    },
+    {
+      "id": "390010",
+      "title": "Health and Fitness",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420001",
+      "title": "Greetings & Introductions",
+      "exercise_count": "2"
+    },
+    {
+      "id": "420002",
+      "title": "Numbers 1-20",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420003",
+      "title": "Colors & Descriptions",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420004",
+      "title": "The Family",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420005",
+      "title": "Food & Drinks",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420006",
+      "title": "Daily Routines",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420007",
+      "title": "Animals & Nature",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420008",
+      "title": "Clothes & Shopping",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420009",
+      "title": "Weather & Seasons",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420010",
+      "title": "Body Parts & Health",
+      "exercise_count": "0"
+    },
+    {
+      "id": "420011",
+      "title": "Greetings & Introductions",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420012",
+      "title": "Numbers 1-20",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420013",
+      "title": "Colors & Descriptions",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420014",
+      "title": "The Family",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420015",
+      "title": "Food & Drinks",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420016",
+      "title": "Daily Routines",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420017",
+      "title": "Animals & Nature",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420018",
+      "title": "Clothes & Shopping",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420019",
+      "title": "Weather & Seasons",
+      "exercise_count": "5"
+    },
+    {
+      "id": "420020",
+      "title": "Body Parts & Health",
+      "exercise_count": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\texercise_count\n390001\tA Família\t5\n390002\tMy Family\t5\n390003\tColors Around Us\t5\n390004\tAt the Restaurant\t5\n390005\tSchool Life\t5\n390006\tBusiness Meeting\t5\n390007\tStock Market Basics\t5\n390008\tScientific Research\t5\n390009\tTravel Adventures\t5\n390010\tHealth and Fitness\t5\n420001\tGreetings & Introductions\t2\n420002\tNumbers 1-20\t0\n420003\tColors & Descriptions\t0\n420004\tThe Family\t0\n420005\tFood & Drinks\t0\n420006\tDaily Routines\t0\n420007\tAnimals & Nature\t0\n420008\tClothes & Shopping\t0\n420009\tWeather & Seasons\t0\n420010\tBody Parts & Health\t0\n420011\tGreetings & Introductions\t5\n420012\tNumbers 1-20\t5\n420013\tColors & Descriptions\t5\n420014\tThe Family\t5\n420015\tFood & Drinks\t5\n420016\tDaily Routines\t5\n420017\tAnimals & Nature\t5\n420018\tClothes & Shopping\t5\n420019\tWeather & Seasons\t5\n420020\tBody Parts & Health\t5\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

@@ -1,0 +1,112 @@
+{
+  "query": "SELECT l.id as lid, l.title, l.languageCode, COUNT(e.id) as ex_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY ex_count ASC LIMIT 15; SELECT id, lessonId, question, correctAnswer, options FROM exercises WHERE lessonId IN (SELECT id FROM lessons WHERE languageCode LIKE 'en%') LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT l.id as lid, l.title, l.languageCode, COUNT(e.id) as ex_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY ex_count ASC LIMIT 15; SELECT id, lessonId, question, correctAnswer, options FROM exercises WHERE lessonId IN (SELECT id FROM lessons WHERE languageCode LIKE 'en%') LIMIT 10;",
+  "rows": [
+    {
+      "lid": "420019",
+      "title": "Weather & Seasons",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420020",
+      "title": "Body Parts & Health",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390003",
+      "title": "Colors Around Us",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390004",
+      "title": "At the Restaurant",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390009",
+      "title": "Travel Adventures",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420008",
+      "title": "Clothes & Shopping",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420011",
+      "title": "Greetings & Introductions",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390006",
+      "title": "Business Meeting",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390010",
+      "title": "Health and Fitness",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420004",
+      "title": "The Family",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420016",
+      "title": "Daily Routines",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "390001",
+      "title": "A Família",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420001",
+      "title": "Greetings & Introductions",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420006",
+      "title": "Daily Routines",
+      "languageCode": "en",
+      "ex_count": "5"
+    },
+    {
+      "lid": "420015",
+      "title": "Food & Drinks",
+      "languageCode": "en",
+      "ex_count": "5"
+    }
+  ],
+  "messages": [
+    "id\tlessonId\tquestion\tcorrectAnswer\toptions",
+    "180001\t390003\tWhat color is the sky on a clear day?\tBlue\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180002\t390003\tWhat color is the grass?\tGreen\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180003\t390003\tWhat color is the sun?\tYellow\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180004\t390003\tThe sky is _____.\tblue\t[\"blue\", \"red\", \"green\"]",
+    "180005\t390003\tThe grass is _____.\tgreen\t[\"blue\", \"red\", \"green\"]",
+    "180006\t390001\tWhat do you call your mother and father together?\tParents\t[\"Parents\", \"Siblings\", \"Cousins\", \"Grandparents\"]",
+    "180007\t390001\tWhat is the word for the female parent?\tMother\t[\"Father\", \"Mother\", \"Sister\", \"Aunt\"]",
+    "180008\t390001\tMy _____ is the son of my parents.\tbrother\t[\"brother\", \"sister\", \"cousin\"]",
+    "180009\t390001\tI love my _____. They are my mother and father.\tparents\t[\"parents\", \"friends\", \"teachers\"]",
+    "180010\t390001\tWhat do you call your father's mother?\tGrandmother\t[\"Grandmother\", \"Aunt\", \"Sister\", \"Mother\"]"
+  ],
+  "stdout": "lid\ttitle\tlanguageCode\tex_count\n420019\tWeather & Seasons\ten\t5\n420020\tBody Parts & Health\ten\t5\n390003\tColors Around Us\ten\t5\n390004\tAt the Restaurant\ten\t5\n390009\tTravel Adventures\ten\t5\n420008\tClothes & Shopping\ten\t5\n420011\tGreetings & Introductions\ten\t5\n390006\tBusiness Meeting\ten\t5\n390010\tHealth and Fitness\ten\t5\n420004\tThe Family\ten\t5\n420016\tDaily Routines\ten\t5\n390001\tA Família\ten\t5\n420001\tGreetings & Introductions\ten\t5\n420006\tDaily Routines\ten\t5\n420015\tFood & Drinks\ten\t5\nid\tlessonId\tquestion\tcorrectAnswer\toptions\n180001\t390003\tWhat color is the sky on a clear day?\tBlue\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\n180002\t390003\tWhat color is the grass?\tGreen\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\n180003\t390003\tWhat color is the sun?\tYellow\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\n180004\t390003\tThe sky is _____.\tblue\t[\"blue\", \"red\", \"green\"]\n180005\t390003\tThe grass is _____.\tgreen\t[\"blue\", \"red\", \"green\"]\n180006\t390001\tWhat do you call your mother and father together?\tParents\t[\"Parents\", \"Siblings\", \"Cousins\", \"Grandparents\"]\n180007\t390001\tWhat is the word for the female parent?\tMother\t[\"Father\", \"Mother\", \"Sister\", \"Aunt\"]\n180008\t390001\tMy _____ is the son of my parents.\tbrother\t[\"brother\", \"sister\", \"cousin\"]\n180009\t390001\tI love my _____. They are my mother and father.\tparents\t[\"parents\", \"friends\", \"teachers\"]\n180010\t390001\tWhat do you call your father's mother?\tGrandmother\t[\"Grandmother\", \"Aunt\", \"Sister\", \"Mother\"]\n",
+  "stderr": "",
+  "execution_time_ms": 103
+}

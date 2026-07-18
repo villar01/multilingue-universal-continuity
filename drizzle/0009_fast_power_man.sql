@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `selectedAvatar` varchar(50) DEFAULT 'teacher1';

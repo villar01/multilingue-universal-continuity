@@ -1,0 +1,14 @@
+{
+  "query": "SELECT id, lessonId, question, correctAnswer, options FROM exercises LIMIT 5; SELECT l.id, l.title, l.language_code, COUNT(e.id) as ex_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY ex_count ASC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, lessonId, question, correctAnswer, options FROM exercises LIMIT 5; SELECT l.id, l.title, l.language_code, COUNT(e.id) as ex_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY ex_count ASC LIMIT 10;",
+  "returncode": 1,
+  "logs": [
+    "id\tlessonId\tquestion\tcorrectAnswer\toptions",
+    "180001\t390003\tWhat color is the sky on a clear day?\tBlue\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180002\t390003\tWhat color is the grass?\tGreen\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180003\t390003\tWhat color is the sun?\tYellow\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+    "180004\t390003\tThe sky is _____.\tblue\t[\"blue\", \"red\", \"green\"]",
+    "180005\t390003\tThe grass is _____.\tgreen\t[\"blue\", \"red\", \"green\"]",
+    "ERROR 1054 (42S22) at line 1: Unknown column 'l.language_code' in 'field list'"
+  ]
+}

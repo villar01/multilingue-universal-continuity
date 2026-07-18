@@ -1,0 +1,73 @@
+{
+  "query": "SELECT id, title, courseLevel, difficultyScore, orderIndex FROM lessons WHERE orderIndex > 7 ORDER BY orderIndex;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, title, courseLevel, difficultyScore, orderIndex FROM lessons WHERE orderIndex > 7 ORDER BY orderIndex;",
+  "rows": [
+    {
+      "id": "390008",
+      "title": "Scientific Research",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "8"
+    },
+    {
+      "id": "420008",
+      "title": "Clothes & Shopping",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "8"
+    },
+    {
+      "id": "420018",
+      "title": "Clothes & Shopping",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "8"
+    },
+    {
+      "id": "390009",
+      "title": "Travel Adventures",
+      "courseLevel": "intermediario",
+      "difficultyScore": "0.5",
+      "orderIndex": "9"
+    },
+    {
+      "id": "420009",
+      "title": "Weather & Seasons",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "9"
+    },
+    {
+      "id": "420019",
+      "title": "Weather & Seasons",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "9"
+    },
+    {
+      "id": "390010",
+      "title": "Health and Fitness",
+      "courseLevel": "intermediario",
+      "difficultyScore": "0.5",
+      "orderIndex": "10"
+    },
+    {
+      "id": "420010",
+      "title": "Body Parts & Health",
+      "courseLevel": "intermediario",
+      "difficultyScore": "2",
+      "orderIndex": "10"
+    },
+    {
+      "id": "420020",
+      "title": "Body Parts & Health",
+      "courseLevel": "intermediario",
+      "difficultyScore": "2",
+      "orderIndex": "10"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tcourseLevel\tdifficultyScore\torderIndex\n390008\tScientific Research\tbasico\t0.5\t8\n420008\tClothes & Shopping\tbasico\t2\t8\n420018\tClothes & Shopping\tbasico\t2\t8\n390009\tTravel Adventures\tintermediario\t0.5\t9\n420009\tWeather & Seasons\tbasico\t2\t9\n420019\tWeather & Seasons\tbasico\t2\t9\n390010\tHealth and Fitness\tintermediario\t0.5\t10\n420010\tBody Parts & Health\tintermediario\t2\t10\n420020\tBody Parts & Health\tintermediario\t2\t10\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

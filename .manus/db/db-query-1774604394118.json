@@ -1,0 +1,122 @@
+{
+  "query": "SELECT id, name, gender, skin_tone, voice_language_code, photo_url FROM virtual_teachers WHERE photo_url IS NOT NULL AND photo_url != 'NULL' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, skin_tone, voice_language_code, photo_url FROM virtual_teachers WHERE photo_url IS NOT NULL AND photo_url != 'NULL' ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "pt-BR",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg"
+    },
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
+    },
+    {
+      "id": "60001",
+      "name": "Ingrid",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
+    },
+    {
+      "id": "90001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "pt-BR",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png"
+    },
+    {
+      "id": "90003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "fr-FR",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png"
+    },
+    {
+      "id": "90004",
+      "name": "Professor Jean",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "fr-FR",
+      "photo_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png"
+    },
+    {
+      "id": "150001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "en-US",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg"
+    },
+    {
+      "id": "150002",
+      "name": "Teacher Ingrid",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US",
+      "photo_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
+    },
+    {
+      "id": "150003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US",
+      "photo_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face"
+    },
+    {
+      "id": "150004",
+      "name": "Teacher Jeanne",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US",
+      "photo_url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "gender": "male",
+      "skin_tone": "dark",
+      "voice_language_code": "en-US",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg"
+    },
+    {
+      "id": "210001",
+      "name": "Professora Mei",
+      "gender": "female",
+      "skin_tone": "yellow",
+      "voice_language_code": "zh-CN",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp"
+    },
+    {
+      "id": "210002",
+      "name": "Professor Takeshi",
+      "gender": "male",
+      "skin_tone": "yellow",
+      "voice_language_code": "ja-JP",
+      "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgender\tskin_tone\tvoice_language_code\tphoto_url\n1\tProfessor Ricardo\tmale\tlight\tpt-BR\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\n30001\tIngrid\tfemale\tlight\tde-DE\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\n60001\tIngrid\tfemale\tlight\tde-DE\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\n90001\tProfessor Ricardo\tmale\tlight\tpt-BR\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\n90002\tProfessora Ingrid\tfemale\tlight\tde-DE\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png\n90003\tProfessor Carlos\tmale\tmedium\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png\n90004\tProfessor Jean\tmale\tlight\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png\n150001\tProfessor Ricardo\tmale\tlight\ten-US\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\n150002\tTeacher Ingrid\tfemale\tmedium\ten-US\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\n150003\tProfessor Carlos\tmale\tmedium\ten-US\thttps://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face\n150004\tTeacher Jeanne\tfemale\tmedium\ten-US\thttps://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face\n180001\tProfessor Kwame Asante\tmale\tdark\ten-US\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg\n210001\tProfessora Mei\tfemale\tyellow\tzh-CN\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp\n210002\tProfessor Takeshi\tmale\tyellow\tja-JP\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

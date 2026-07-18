@@ -1,0 +1,32 @@
+{
+  "query": "SELECT * FROM virtual_teachers LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT * FROM virtual_teachers LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "language_id": "6",
+      "name": "Professor Ricardo",
+      "title": "Professor de Português",
+      "gender": "female",
+      "avatar_style": "professional",
+      "skin_tone": "medium",
+      "hair_color": "castanho",
+      "hair_style": "ondulado médio",
+      "personality": "Professor experiente e paciente, especializado em ensinar Português.",
+      "teaching_style": "Abordagem comunicativa com foco em conversação prática e imersão cultural. Utiliza exemplos do dia a dia e situações reais para facilitar o aprendizado.",
+      "specialties": "[\"Conversação\", \"Pronúncia\", \"Gramática Aplicada\", \"Cultura\"]",
+      "voice_gender": "FEMALE",
+      "voice_language_code": "pt",
+      "greetings": "[\"Olá! Sou Professora Ana, seu professor de Portuguese!\", \"Bem-vindo à aula de Portuguese! Vamos aprender juntos?\", \"Oi! Pronto para praticar Portuguese hoje?\"]",
+      "encouragements": "[\"Muito bem! Você está progredindo!\", \"Excelente pronúncia!\", \"Continue assim, você está indo muito bem!\", \"Ótimo trabalho! Vamos para o próximo?\"]",
+      "corrections": "[\"Quase lá! Vamos tentar novamente?\", \"Boa tentativa! Preste atenção nesta parte...\", \"Você está no caminho certo, apenas ajuste...\", \"Não se preocupe, vamos praticar mais esta parte.\"]",
+      "is_active": "1",
+      "created_at": "2025-12-14 09:02:31",
+      "updated_at": "2026-02-17 03:26:25"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlanguage_id\tname\ttitle\tgender\tavatar_style\tskin_tone\thair_color\thair_style\tpersonality\tteaching_style\tspecialties\tvoice_gender\tvoice_language_code\tgreetings\tencouragements\tcorrections\tis_active\tcreated_at\tupdated_at\n1\t6\tProfessor Ricardo\tProfessor de Português\tfemale\tprofessional\tmedium\tcastanho\tondulado médio\tProfessor experiente e paciente, especializado em ensinar Português.\tAbordagem comunicativa com foco em conversação prática e imersão cultural. Utiliza exemplos do dia a dia e situações reais para facilitar o aprendizado.\t[\"Conversação\", \"Pronúncia\", \"Gramática Aplicada\", \"Cultura\"]\tFEMALE\tpt\t[\"Olá! Sou Professora Ana, seu professor de Portuguese!\", \"Bem-vindo à aula de Portuguese! Vamos aprender juntos?\", \"Oi! Pronto para praticar Portuguese hoje?\"]\t[\"Muito bem! Você está progredindo!\", \"Excelente pronúncia!\", \"Continue assim, você está indo muito bem!\", \"Ótimo trabalho! Vamos para o próximo?\"]\t[\"Quase lá! Vamos tentar novamente?\", \"Boa tentativa! Preste atenção nesta parte...\", \"Você está no caminho certo, apenas ajuste...\", \"Não se preocupe, vamos praticar mais esta parte.\"]\t1\t2025-12-14 09:02:31\t2026-02-17 03:26:25\n",
+  "stderr": "",
+  "execution_time_ms": 353
+}

@@ -1,0 +1,62 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'exercises' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'exercises' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "lessonId",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "type",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "question",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "correctAnswer",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "options",
+      "DATA_TYPE": "json"
+    },
+    {
+      "COLUMN_NAME": "orderIndex",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "difficultyScore",
+      "DATA_TYPE": "float"
+    },
+    {
+      "COLUMN_NAME": "points",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "audioUrl",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "audioText",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "createdAt",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "updatedAt",
+      "DATA_TYPE": "timestamp"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\nid\tint\nlessonId\tint\ntype\tenum\nquestion\ttext\ncorrectAnswer\ttext\noptions\tjson\norderIndex\tint\ndifficultyScore\tfloat\npoints\tint\naudioUrl\ttext\naudioText\ttext\ncreatedAt\ttimestamp\nupdatedAt\ttimestamp\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

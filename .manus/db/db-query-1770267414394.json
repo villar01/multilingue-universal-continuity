@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, title, difficulty, quality_score FROM video_clips;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, title, difficulty, quality_score FROM video_clips;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Basic Greetings",
+      "difficulty": "A1",
+      "quality_score": "95"
+    },
+    {
+      "id": "2",
+      "title": "Ordering Food",
+      "difficulty": "A2",
+      "quality_score": "92"
+    },
+    {
+      "id": "3",
+      "title": "Business Presentation",
+      "difficulty": "B2",
+      "quality_score": "94"
+    },
+    {
+      "id": "4",
+      "title": "At the Store",
+      "difficulty": "A2",
+      "quality_score": "91"
+    },
+    {
+      "id": "5",
+      "title": "At the Airport",
+      "difficulty": "B1",
+      "quality_score": "93"
+    },
+    {
+      "id": "6",
+      "title": "University Lecture",
+      "difficulty": "C1",
+      "quality_score": "96"
+    },
+    {
+      "id": "7",
+      "title": "Making Friends",
+      "difficulty": "A2",
+      "quality_score": "90"
+    },
+    {
+      "id": "8",
+      "title": "At the Doctor",
+      "difficulty": "B1",
+      "quality_score": "92"
+    },
+    {
+      "id": "9",
+      "title": "Tech Talk",
+      "difficulty": "B2",
+      "quality_score": "94"
+    },
+    {
+      "id": "10",
+      "title": "Movie Night",
+      "difficulty": "A2",
+      "quality_score": "91"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tdifficulty\tquality_score\n1\tBasic Greetings\tA1\t95\n2\tOrdering Food\tA2\t92\n3\tBusiness Presentation\tB2\t94\n4\tAt the Store\tA2\t91\n5\tAt the Airport\tB1\t93\n6\tUniversity Lecture\tC1\t96\n7\tMaking Friends\tA2\t90\n8\tAt the Doctor\tB1\t92\n9\tTech Talk\tB2\t94\n10\tMovie Night\tA2\t91\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

@@ -1,0 +1,220 @@
+{
+  "query": "SELECT id, title, courseLevel, difficultyScore, orderIndex FROM lessons ORDER BY orderIndex;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, title, courseLevel, difficultyScore, orderIndex FROM lessons ORDER BY orderIndex;",
+  "rows": [
+    {
+      "id": "420011",
+      "title": "Greetings & Introductions",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "1"
+    },
+    {
+      "id": "390001",
+      "title": "A Família",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "1"
+    },
+    {
+      "id": "420001",
+      "title": "Greetings & Introductions",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "1"
+    },
+    {
+      "id": "390002",
+      "title": "My Family",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "2"
+    },
+    {
+      "id": "420012",
+      "title": "Numbers 1-20",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "2"
+    },
+    {
+      "id": "420002",
+      "title": "Numbers 1-20",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "2"
+    },
+    {
+      "id": "420003",
+      "title": "Colors & Descriptions",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "3"
+    },
+    {
+      "id": "390003",
+      "title": "Colors Around Us",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "3"
+    },
+    {
+      "id": "420013",
+      "title": "Colors & Descriptions",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "3"
+    },
+    {
+      "id": "390004",
+      "title": "At the Restaurant",
+      "courseLevel": "intermediario",
+      "difficultyScore": "0.5",
+      "orderIndex": "4"
+    },
+    {
+      "id": "420014",
+      "title": "The Family",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "4"
+    },
+    {
+      "id": "420004",
+      "title": "The Family",
+      "courseLevel": "basico",
+      "difficultyScore": "1",
+      "orderIndex": "4"
+    },
+    {
+      "id": "420005",
+      "title": "Food & Drinks",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "5"
+    },
+    {
+      "id": "420015",
+      "title": "Food & Drinks",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "5"
+    },
+    {
+      "id": "390005",
+      "title": "School Life",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "5"
+    },
+    {
+      "id": "390006",
+      "title": "Business Meeting",
+      "courseLevel": "negocios_tecnologia",
+      "difficultyScore": "0.5",
+      "orderIndex": "6"
+    },
+    {
+      "id": "420016",
+      "title": "Daily Routines",
+      "courseLevel": "negocios_tecnologia",
+      "difficultyScore": "2",
+      "orderIndex": "6"
+    },
+    {
+      "id": "420006",
+      "title": "Daily Routines",
+      "courseLevel": "negocios_tecnologia",
+      "difficultyScore": "2",
+      "orderIndex": "6"
+    },
+    {
+      "id": "390007",
+      "title": "Stock Market Basics",
+      "courseLevel": "negocios_tecnologia",
+      "difficultyScore": "0.5",
+      "orderIndex": "7"
+    },
+    {
+      "id": "420007",
+      "title": "Animals & Nature",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "7"
+    },
+    {
+      "id": "420017",
+      "title": "Animals & Nature",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "7"
+    },
+    {
+      "id": "390008",
+      "title": "Scientific Research",
+      "courseLevel": "basico",
+      "difficultyScore": "0.5",
+      "orderIndex": "8"
+    },
+    {
+      "id": "420008",
+      "title": "Clothes & Shopping",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "8"
+    },
+    {
+      "id": "420018",
+      "title": "Clothes & Shopping",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "8"
+    },
+    {
+      "id": "420009",
+      "title": "Weather & Seasons",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "9"
+    },
+    {
+      "id": "390009",
+      "title": "Travel Adventures",
+      "courseLevel": "intermediario",
+      "difficultyScore": "0.5",
+      "orderIndex": "9"
+    },
+    {
+      "id": "420019",
+      "title": "Weather & Seasons",
+      "courseLevel": "basico",
+      "difficultyScore": "2",
+      "orderIndex": "9"
+    },
+    {
+      "id": "420010",
+      "title": "Body Parts & Health",
+      "courseLevel": "intermediario",
+      "difficultyScore": "2",
+      "orderIndex": "10"
+    },
+    {
+      "id": "390010",
+      "title": "Health and Fitness",
+      "courseLevel": "intermediario",
+      "difficultyScore": "0.5",
+      "orderIndex": "10"
+    },
+    {
+      "id": "420020",
+      "title": "Body Parts & Health",
+      "courseLevel": "intermediario",
+      "difficultyScore": "2",
+      "orderIndex": "10"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tcourseLevel\tdifficultyScore\torderIndex\n420011\tGreetings & Introductions\tbasico\t1\t1\n390001\tA Família\tbasico\t0.5\t1\n420001\tGreetings & Introductions\tbasico\t1\t1\n390002\tMy Family\tbasico\t0.5\t2\n420012\tNumbers 1-20\tbasico\t1\t2\n420002\tNumbers 1-20\tbasico\t1\t2\n420003\tColors & Descriptions\tbasico\t1\t3\n390003\tColors Around Us\tbasico\t0.5\t3\n420013\tColors & Descriptions\tbasico\t1\t3\n390004\tAt the Restaurant\tintermediario\t0.5\t4\n420014\tThe Family\tbasico\t1\t4\n420004\tThe Family\tbasico\t1\t4\n420005\tFood & Drinks\tbasico\t2\t5\n420015\tFood & Drinks\tbasico\t2\t5\n390005\tSchool Life\tbasico\t0.5\t5\n390006\tBusiness Meeting\tnegocios_tecnologia\t0.5\t6\n420016\tDaily Routines\tnegocios_tecnologia\t2\t6\n420006\tDaily Routines\tnegocios_tecnologia\t2\t6\n390007\tStock Market Basics\tnegocios_tecnologia\t0.5\t7\n420007\tAnimals & Nature\tbasico\t2\t7\n420017\tAnimals & Nature\tbasico\t2\t7\n390008\tScientific Research\tbasico\t0.5\t8\n420008\tClothes & Shopping\tbasico\t2\t8\n420018\tClothes & Shopping\tbasico\t2\t8\n420009\tWeather & Seasons\tbasico\t2\t9\n390009\tTravel Adventures\tintermediario\t0.5\t9\n420019\tWeather & Seasons\tbasico\t2\t9\n420010\tBody Parts & Health\tintermediario\t2\t10\n390010\tHealth and Fitness\tintermediario\t0.5\t10\n420020\tBody Parts & Health\tintermediario\t2\t10\n",
+  "stderr": "",
+  "execution_time_ms": 127
+}

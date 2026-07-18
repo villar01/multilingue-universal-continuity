@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, code, name FROM languages WHERE code IN ('ar','ja','it','ru','ko','es','es-MX','pt-BR','fr','de','zh','hi') LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, code, name FROM languages WHERE code IN ('ar','ja','it','ru','ko','es','es-MX','pt-BR','fr','de','zh','hi') LIMIT 20;",
+  "rows": [
+    {
+      "id": "11",
+      "code": "ar",
+      "name": "Arabic"
+    },
+    {
+      "id": "4",
+      "code": "de",
+      "name": "German"
+    },
+    {
+      "id": "2",
+      "code": "es",
+      "name": "Spanish"
+    },
+    {
+      "id": "60047",
+      "code": "es-MX",
+      "name": "Mexican Spanish"
+    },
+    {
+      "id": "3",
+      "code": "fr",
+      "name": "French"
+    },
+    {
+      "id": "12",
+      "code": "hi",
+      "name": "Hindi"
+    },
+    {
+      "id": "5",
+      "code": "it",
+      "name": "Italian"
+    },
+    {
+      "id": "9",
+      "code": "ja",
+      "name": "Japanese"
+    },
+    {
+      "id": "10",
+      "code": "ko",
+      "name": "Korean"
+    },
+    {
+      "id": "60046",
+      "code": "pt-BR",
+      "name": "Brazilian Portuguese"
+    },
+    {
+      "id": "7",
+      "code": "ru",
+      "name": "Russian"
+    },
+    {
+      "id": "8",
+      "code": "zh",
+      "name": "Chinese (Mandarin)"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tname\n11\tar\tArabic\n4\tde\tGerman\n2\tes\tSpanish\n60047\tes-MX\tMexican Spanish\n3\tfr\tFrench\n12\thi\tHindi\n5\tit\tItalian\n9\tja\tJapanese\n10\tko\tKorean\n60046\tpt-BR\tBrazilian Portuguese\n7\tru\tRussian\n8\tzh\tChinese (Mandarin)\n",
+  "stderr": "",
+  "execution_time_ms": 278
+}

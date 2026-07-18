@@ -1,0 +1,28 @@
+{
+  "query": "SHOW CREATE TABLE courses;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SHOW CREATE TABLE courses;",
+  "rows": [
+    {
+      "Table": "courses",
+      "Create Table": "CREATE TABLE `courses` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `languageId` int(11) NOT NULL,",
+    "  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `level` enum('beginner','intermediate','advanced','native') COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `estimatedHours` int(11) DEFAULT NULL,",
+    "  `lessonCount` int(11) DEFAULT '0',",
+    "  `isPublished` tinyint(1) DEFAULT '0',",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  `language_id` int(11) NOT NULL,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=180001"
+  ],
+  "stdout": "Table\tCreate Table\ncourses\tCREATE TABLE `courses` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `languageId` int(11) NOT NULL,\n  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `level` enum('beginner','intermediate','advanced','native') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `estimatedHours` int(11) DEFAULT NULL,\n  `lessonCount` int(11) DEFAULT '0',\n  `isPublished` tinyint(1) DEFAULT '0',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `language_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=180001\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

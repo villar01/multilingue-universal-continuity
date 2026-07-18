@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE lessons ADD COLUMN IF NOT EXISTS courseLevel ENUM('basico','intermediario','avancado','negocios_tecnologia') DEFAULT 'basico';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute ALTER TABLE lessons ADD COLUMN IF NOT EXISTS courseLevel ENUM('basico','intermediario','avancado','negocios_tecnologia') DEFAULT 'basico';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 223
+}

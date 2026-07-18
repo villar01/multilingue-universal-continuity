@@ -1,0 +1,10 @@
+{
+  "query": "\nSELECT id, title, languageCode FROM lessons WHERE id = 420011;\n\nSELECT id, name, voiceId, voice_language_code FROM virtual_teachers LIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \nSELECT id, title, languageCode FROM lessons WHERE id = 420011;\n\nSELECT id, name, voiceId, voice_language_code FROM virtual_teachers LIMIT 20;\n",
+  "returncode": 1,
+  "logs": [
+    "id\ttitle\tlanguageCode",
+    "420011\tGreetings & Introductions\ten",
+    "ERROR 1054 (42S22) at line 4: Unknown column 'voiceid' in 'field list'"
+  ]
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `courses` MODIFY COLUMN `level` enum('beginner','intermediate','advanced','native','slang') NOT NULL;

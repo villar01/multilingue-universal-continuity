@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS video_clips (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(255) NOT NULL,\n  description TEXT,\n  language VARCHAR(10) NOT NULL,\n  target_language VARCHAR(10) NOT NULL,\n  difficulty_level ENUM('beginner', 'intermediate', 'advanced') NOT NULL,\n  category ENUM('daily', 'travel', 'business', 'academic', 'social') NOT NULL,\n  duration_seconds INT NOT NULL,\n  video_url TEXT NOT NULL,\n  thumbnail_url TEXT,\n  subtitle_data JSON,\n  quality_score INT,\n  accent_variation VARCHAR(50),\n  verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute CREATE TABLE IF NOT EXISTS video_clips (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(255) NOT NULL,\n  description TEXT,\n  language VARCHAR(10) NOT NULL,\n  target_language VARCHAR(10) NOT NULL,\n  difficulty_level ENUM('beginner', 'intermediate', 'advanced') NOT NULL,\n  category ENUM('daily', 'travel', 'business', 'academic', 'social') NOT NULL,\n  duration_seconds INT NOT NULL,\n  video_url TEXT NOT NULL,\n  thumbnail_url TEXT,\n  subtitle_data JSON,\n  quality_score INT,\n  accent_variation VARCHAR(50),\n  verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 191
+}

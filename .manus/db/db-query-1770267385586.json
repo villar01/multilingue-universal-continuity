@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE video_clips (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(255) NOT NULL,\n  description TEXT,\n  target_language VARCHAR(10) NOT NULL,\n  native_language VARCHAR(10) NOT NULL,\n  difficulty ENUM('A1', 'A2', 'B1', 'B2', 'C1', 'C2') NOT NULL,\n  duration INT NOT NULL,\n  script_data TEXT,\n  subtitles_data TEXT,\n  vocabulary_data TEXT,\n  grammar_data TEXT,\n  cultural_notes TEXT,\n  quality_score INT DEFAULT 0,\n  verification_status ENUM('pending', 'verified', 'approved') DEFAULT 'pending',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute CREATE TABLE video_clips (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(255) NOT NULL,\n  description TEXT,\n  target_language VARCHAR(10) NOT NULL,\n  native_language VARCHAR(10) NOT NULL,\n  difficulty ENUM('A1', 'A2', 'B1', 'B2', 'C1', 'C2') NOT NULL,\n  duration INT NOT NULL,\n  script_data TEXT,\n  subtitles_data TEXT,\n  vocabulary_data TEXT,\n  grammar_data TEXT,\n  cultural_notes TEXT,\n  quality_score INT DEFAULT 0,\n  verification_status ENUM('pending', 'verified', 'approved') DEFAULT 'pending',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 181
+}

@@ -1,0 +1,432 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  BookOpen, 
+  Trophy, 
+  Flame, 
+  TrendingUp,
+  Globe,
+  Play,
+  Lock,
+  Star,
+  Calendar,
+  Target,
+  Award,
+  Clock,
+  Sparkles,
+  MessageCircle,
+  CreditCard
+} from "lucide-react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import NotificationBell from "@/components/NotificationBell";
+import Leaderboard from "@/components/Leaderboard";
+import WeeklyChallenges from "@/components/WeeklyChallenges";
+import ReferralWidget from "@/components/ReferralWidget";
+import { SocialShare } from "@/components/SocialShare";
+import NotificationCenter from "@/components/NotificationCenter";
+
+export default function Dashboard() {
+  const { user, logout } = useAuth();
+  
+  // Buscar estatísticas reais do usuário
+  const { data: userStats, isLoading: loadingStats } = trpc.progress.getStats.useQuery(undefined, {
+    enabled: !!user,
+  });
+  
+  // Buscar conquistas do usuário
+  const { data: userAchievements, isLoading: loadingAchievements } = trpc.achievements.getUserAchievements.useQuery(undefined, {
+    enabled: !!user,
+  });
+  
+  // Buscar idiomas disponíveis
+  const { data: languages } = trpc.languages.list.useQuery();
+  
+  // Buscar lições do primeiro idioma (Inglês)
+  const { data: courses } = trpc.courses.getByLanguage.useQuery(
+    { languageId: 1 },
+    { enabled: !!languages && languages.length > 0 }
+  );
+  
+  const { data: lessons } = trpc.lessons.getByCourse.useQuery(
+    { courseId: courses?.[0]?.id || 1 },
+    { enabled: !!courses && courses.length > 0 }
+  );
+  
+  // Verificar se usuário tem plano premium
+  const isPremium = user?.subscriptionType !== "free";
+  const freeLessonsLimit = 10;
+  const premiumLessonsTotal = 200;
+  
+  // Usar dados reais ou fallback
+  const currentStreak = userStats?.currentStreak || 0;
+  const totalXP = userStats?.totalXp || 0;
+  const level = userStats?.level || 1;
+  const lessonsCompleted = userStats?.totalLessonsCompleted || 0;
+  const totalLessons = isPremium ? premiumLessonsTotal : freeLessonsLimit;
+  
+  // Próximas lições (primeiras não completadas)
+  const nextLessons = (lessons as any)?.lessons?.slice(0, 5).map((lesson: any, index: number) => ({
+    id: lesson.id,
+    title: lesson.title,
+    language: "Inglês",
+    duration: "15 min",
+    locked: !isPremium && index >= freeLessonsLimit
+  })) || [];
+  
+  // Conquistas recentes (últimas 3)
+  const recentAchievements = userAchievements?.slice(0, 3).map(ua => ({
+    id: ua.achievement.id,
+    name: ua.achievement.name,
+    icon: ua.achievement.icon || "🏆",
+    date: new Date(ua.unlockedAt).toLocaleDateString('pt-BR')
+  })) || [];
+  
+  if (loadingStats) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando seu progresso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/">
+              <div className="flex items-center gap-2 cursor-pointer">
+                <Globe className="h-8 w-8 text-blue-600" />
+                <span className="text-xl font-bold">MultiLingue Universal</span>
+              </div>
+            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/chat">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Chat IA
+                </Button>
+              </Link>
+              <Link href="/pricing">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  Assinar
+                </Button>
+              </Link>
+              <div className="flex items-center gap-2 text-orange-600">
+                <Flame className="h-5 w-5" />
+                <span className="font-bold">{currentStreak} dias</span>
+              </div>
+              <div className="flex items-center gap-2 text-yellow-600">
+                <Trophy className="h-5 w-5" />
+                <span className="font-bold">{totalXP} XP</span>
+              </div>
+              <NotificationBell />
+              <Button variant="ghost" onClick={logout}>Sair</Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            Olá, {user?.name}! 👋
+          </h1>
+          <p className="text-gray-600">
+            Continue sua jornada de aprendizado hoje
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Premium Upgrade Banner - Only for free users */}
+            {!isPremium && (
+              <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita - 10 Lições</h3>
+                      <p className="text-gray-700 mb-4">
+                        Você está usando a versão gratuita com <strong>10 lições de demonstração</strong>. 
+                        Desbloqueie <strong>200 lições completas</strong>, <strong>todos os 69 idiomas</strong> e 
+                        recursos premium com o plano pago. Novas lições são adicionadas regularmente!
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <Badge variant="secondary" className="bg-white">✅ 200 lições por idioma</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ 69 idiomas desbloqueados</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Conteúdo infinito futuro</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Modo offline</Badge>
+                      </div>
+              <Link href="/checkout">
+                <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
+                  ⭐ Upgrade para Premium - R$ 59,00/mês
+                </Button>
+              </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Current Languages */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  Seus Idiomas
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🇺🇸</span>
+                      <div>
+                        <div className="font-semibold">Inglês</div>
+                        <div className="text-sm text-gray-500">Nível {level}</div>
+                      </div>
+                    </div>
+                    <Badge variant="secondary">
+                      {lessonsCompleted} de {totalLessons} lições
+                    </Badge>
+                  </div>
+                  <Progress 
+                    value={(lessonsCompleted / totalLessons) * 100} 
+                    className="h-2" 
+                  />
+                  {!isPremium && lessonsCompleted >= 8 && (
+                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        🎉 <strong>Parabéns!</strong> Você completou {lessonsCompleted} de 10 lições gratuitas. 
+                        Faça upgrade para continuar aprendendo!
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
+                <Button variant="outline" className="w-full mt-4" disabled={!isPremium}>
+                  <Globe className="mr-2 h-4 w-4" />
+                  {isPremium ? 'Adicionar Novo Idioma' : '🔒 Desbloqueie 56 idiomas com Premium'}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Next Lessons */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Play className="h-5 w-5" />
+                  Próximas Lições
+                </CardTitle>
+                <CardDescription>
+                  Continue de onde parou
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {nextLessons.map((lesson: any) => (
+                  <div 
+                    key={lesson.id}
+                    className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
+                      lesson.locked 
+                        ? 'bg-gray-50 border-gray-200' 
+                        : 'bg-blue-50 border-blue-200 hover:border-blue-400 cursor-pointer'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      {lesson.locked ? (
+                        <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                          <Lock className="h-6 w-6 text-gray-400" />
+                        </div>
+                      ) : (
+                        <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
+                          <Play className="h-6 w-6 text-white" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-semibold">{lesson.title}</div>
+                        <div className="text-sm text-gray-500">
+                          {lesson.language} • {lesson.duration}
+                        </div>
+                      </div>
+                    </div>
+                    {lesson.locked ? (
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
+                        🔒 Premium
+                      </Badge>
+                    ) : (
+                      <Link href={`/complete-lesson/${lesson.id}`}>
+                        <Button>Começar</Button>
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Recent Achievements */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="h-5 w-5" />
+                  Conquistas Recentes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-4">
+                  {recentAchievements.length > 0 ? recentAchievements.map((achievement) => (
+                    <div key={achievement.id} className="text-center">
+                      <div className="text-4xl mb-2">{achievement.icon}</div>
+                      <div className="font-semibold text-sm">{achievement.name}</div>
+                      <div className="text-xs text-gray-500">{achievement.date}</div>
+                    </div>
+                  )) : (
+                    <div className="col-span-3 text-center text-gray-500 py-8">
+                      <Trophy className="h-12 w-12 mx-auto mb-2 opacity-30" />
+                      <p>Complete lições para desbloquear conquistas!</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Streak Card */}
+            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Flame className="h-6 w-6" />
+                  Sequência Atual
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-5xl font-bold mb-2">
+                  {currentStreak}
+                </div>
+                <div className="text-white/90">
+                  dias consecutivos
+                </div>
+                <div className="mt-4 pt-4 border-t border-white/20">
+                  <div className="text-sm text-white/90 mb-2">
+                    Continue assim! 🔥
+                  </div>
+                  <div className="text-xs text-white/80">
+                    Estude hoje para manter sua sequência
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Weekly Goal */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Meta Semanal
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold">
+                      {lessonsCompleted}/7
+                    </span>
+                    <Badge variant="secondary">
+                      lições
+                    </Badge>
+                  </div>
+                  <Progress 
+                    value={(lessonsCompleted / 7) * 100} 
+                    className="h-3"
+                  />
+                  <p className="text-sm text-gray-600">
+                    Faltam {Math.max(0, 7 - lessonsCompleted)} lições para completar sua meta!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Stats Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Estatísticas
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <BookOpen className="h-4 w-4" />
+                    <span className="text-sm">Lições Completas</span>
+                  </div>
+                  <span className="font-bold">{lessonsCompleted}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Trophy className="h-4 w-4" />
+                    <span className="text-sm">Total XP</span>
+                  </div>
+                  <span className="font-bold">{totalXP}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Star className="h-4 w-4" />
+                    <span className="text-sm">Nível Atual</span>
+                  </div>
+                  <span className="font-bold">{level}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-sm">Dias Estudando</span>
+                  </div>
+                  <span className="font-bold">14</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Study Time Card */}
+            <Card className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Tempo de Estudo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-bold mb-1">2h 15m</div>
+                <div className="text-white/90 text-sm">esta semana</div>
+                <div className="mt-4 pt-4 border-t border-white/20">
+                  <div className="text-sm text-white/90">
+                    +30% que semana passada 📈
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Compartilhar nas Redes Sociais */}
+        <div className="mt-8">
+          <SocialShare />
+        </div>
+      </div>
+    </div>
+  );
+}

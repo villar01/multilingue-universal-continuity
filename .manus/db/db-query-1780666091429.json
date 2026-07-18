@@ -1,0 +1,9 @@
+{
+  "query": "\nALTER TABLE system_knowledge ADD COLUMN batch_number INT NOT NULL DEFAULT 1;\nALTER TABLE system_knowledge ADD COLUMN batch_position INT NOT NULL DEFAULT 1;\nALTER TABLE system_knowledge ADD COLUMN status_new ENUM('pending','active','completed','archived') DEFAULT 'active';\nALTER TABLE system_knowledge ADD COLUMN applied_count INT DEFAULT 0;\nALTER TABLE system_knowledge ADD COLUMN last_applied_at BIGINT;\nALTER TABLE system_knowledge ADD COLUMN completed_at BIGINT;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute \nALTER TABLE system_knowledge ADD COLUMN batch_number INT NOT NULL DEFAULT 1;\nALTER TABLE system_knowledge ADD COLUMN batch_position INT NOT NULL DEFAULT 1;\nALTER TABLE system_knowledge ADD COLUMN status_new ENUM('pending','active','completed','archived') DEFAULT 'active';\nALTER TABLE system_knowledge ADD COLUMN applied_count INT DEFAULT 0;\nALTER TABLE system_knowledge ADD COLUMN last_applied_at BIGINT;\nALTER TABLE system_knowledge ADD COLUMN completed_at BIGINT;\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1679
+}

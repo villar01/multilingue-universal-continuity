@@ -1,0 +1,306 @@
+{
+  "query": "SELECT COUNT(*) as total, languageCode FROM lessons GROUP BY languageCode;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COUNT(*) as total, languageCode FROM lessons GROUP BY languageCode;",
+  "rows": [
+    {
+      "total": "35",
+      "languageCode": "gl"
+    },
+    {
+      "total": "35",
+      "languageCode": "es-MX"
+    },
+    {
+      "total": "35",
+      "languageCode": "gn"
+    },
+    {
+      "total": "35",
+      "languageCode": "ms"
+    },
+    {
+      "total": "35",
+      "languageCode": "he"
+    },
+    {
+      "total": "35",
+      "languageCode": "pt"
+    },
+    {
+      "total": "35",
+      "languageCode": "ko"
+    },
+    {
+      "total": "35",
+      "languageCode": "eu"
+    },
+    {
+      "total": "70",
+      "languageCode": "cs"
+    },
+    {
+      "total": "35",
+      "languageCode": "hi"
+    },
+    {
+      "total": "35",
+      "languageCode": "id"
+    },
+    {
+      "total": "35",
+      "languageCode": "is"
+    },
+    {
+      "total": "35",
+      "languageCode": "hu"
+    },
+    {
+      "total": "35",
+      "languageCode": "sw"
+    },
+    {
+      "total": "35",
+      "languageCode": "sq"
+    },
+    {
+      "total": "35",
+      "languageCode": "hy"
+    },
+    {
+      "total": "35",
+      "languageCode": "fi"
+    },
+    {
+      "total": "35",
+      "languageCode": "lt"
+    },
+    {
+      "total": "35",
+      "languageCode": "sr"
+    },
+    {
+      "total": "35",
+      "languageCode": "gu"
+    },
+    {
+      "total": "35",
+      "languageCode": "it"
+    },
+    {
+      "total": "55",
+      "languageCode": "fr"
+    },
+    {
+      "total": "35",
+      "languageCode": "xh"
+    },
+    {
+      "total": "55",
+      "languageCode": "en"
+    },
+    {
+      "total": "35",
+      "languageCode": "mk"
+    },
+    {
+      "total": "70",
+      "languageCode": "bg"
+    },
+    {
+      "total": "35",
+      "languageCode": "tr"
+    },
+    {
+      "total": "35",
+      "languageCode": "no"
+    },
+    {
+      "total": "35",
+      "languageCode": "pa"
+    },
+    {
+      "total": "35",
+      "languageCode": "fa"
+    },
+    {
+      "total": "35",
+      "languageCode": "ro"
+    },
+    {
+      "total": "35",
+      "languageCode": "pt-BR"
+    },
+    {
+      "total": "35",
+      "languageCode": "ta"
+    },
+    {
+      "total": "55",
+      "languageCode": "es"
+    },
+    {
+      "total": "100",
+      "languageCode": "NULL"
+    },
+    {
+      "total": "35",
+      "languageCode": "fr-CA"
+    },
+    {
+      "total": "35",
+      "languageCode": "pl"
+    },
+    {
+      "total": "35",
+      "languageCode": "qu"
+    },
+    {
+      "total": "10",
+      "languageCode": "en-US"
+    },
+    {
+      "total": "35",
+      "languageCode": "mr"
+    },
+    {
+      "total": "70",
+      "languageCode": "az"
+    },
+    {
+      "total": "70",
+      "languageCode": "de"
+    },
+    {
+      "total": "35",
+      "languageCode": "sv"
+    },
+    {
+      "total": "35",
+      "languageCode": "el"
+    },
+    {
+      "total": "70",
+      "languageCode": "af"
+    },
+    {
+      "total": "35",
+      "languageCode": "ru"
+    },
+    {
+      "total": "35",
+      "languageCode": "ig"
+    },
+    {
+      "total": "35",
+      "languageCode": "ur"
+    },
+    {
+      "total": "35",
+      "languageCode": "te"
+    },
+    {
+      "total": "35",
+      "languageCode": "zu"
+    },
+    {
+      "total": "35",
+      "languageCode": "yo"
+    },
+    {
+      "total": "70",
+      "languageCode": "am"
+    },
+    {
+      "total": "35",
+      "languageCode": "sl"
+    },
+    {
+      "total": "35",
+      "languageCode": "sk"
+    },
+    {
+      "total": "70",
+      "languageCode": "ar"
+    },
+    {
+      "total": "35",
+      "languageCode": "vi"
+    },
+    {
+      "total": "35",
+      "languageCode": "zh"
+    },
+    {
+      "total": "35",
+      "languageCode": "et"
+    },
+    {
+      "total": "70",
+      "languageCode": "da"
+    },
+    {
+      "total": "35",
+      "languageCode": "uk"
+    },
+    {
+      "total": "35",
+      "languageCode": "th"
+    },
+    {
+      "total": "35",
+      "languageCode": "ml"
+    },
+    {
+      "total": "35",
+      "languageCode": "ka"
+    },
+    {
+      "total": "35",
+      "languageCode": "ha"
+    },
+    {
+      "total": "35",
+      "languageCode": "ne"
+    },
+    {
+      "total": "35",
+      "languageCode": "hr"
+    },
+    {
+      "total": "35",
+      "languageCode": "si"
+    },
+    {
+      "total": "35",
+      "languageCode": "tl"
+    },
+    {
+      "total": "35",
+      "languageCode": "kn"
+    },
+    {
+      "total": "35",
+      "languageCode": "lv"
+    },
+    {
+      "total": "70",
+      "languageCode": "bn"
+    },
+    {
+      "total": "35",
+      "languageCode": "ja"
+    },
+    {
+      "total": "70",
+      "languageCode": "ca"
+    },
+    {
+      "total": "35",
+      "languageCode": "nl"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tlanguageCode\n35\tgl\n35\tes-MX\n35\tgn\n35\tms\n35\the\n35\tpt\n35\tko\n35\teu\n70\tcs\n35\thi\n35\tid\n35\tis\n35\thu\n35\tsw\n35\tsq\n35\thy\n35\tfi\n35\tlt\n35\tsr\n35\tgu\n35\tit\n55\tfr\n35\txh\n55\ten\n35\tmk\n70\tbg\n35\ttr\n35\tno\n35\tpa\n35\tfa\n35\tro\n35\tpt-BR\n35\tta\n55\tes\n100\tNULL\n35\tfr-CA\n35\tpl\n35\tqu\n10\ten-US\n35\tmr\n70\taz\n70\tde\n35\tsv\n35\tel\n70\taf\n35\tru\n35\tig\n35\tur\n35\tte\n35\tzu\n35\tyo\n70\tam\n35\tsl\n35\tsk\n70\tar\n35\tvi\n35\tzh\n35\tet\n70\tda\n35\tuk\n35\tth\n35\tml\n35\tka\n35\tha\n35\tne\n35\thr\n35\tsi\n35\ttl\n35\tkn\n35\tlv\n70\tbn\n35\tja\n70\tca\n35\tnl\n",
+  "stderr": "",
+  "execution_time_ms": 775
+}

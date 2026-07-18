@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, name, gender, skin_tone, voice_language_code FROM virtual_teachers ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, skin_tone, voice_language_code FROM virtual_teachers ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "pt-BR"
+    },
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "gender": "female",
+      "skin_tone": "light",
+      "voice_language_code": "de-DE"
+    },
+    {
+      "id": "90003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "fr-FR"
+    },
+    {
+      "id": "90004",
+      "name": "Professor Jean",
+      "gender": "male",
+      "skin_tone": "light",
+      "voice_language_code": "fr-FR"
+    },
+    {
+      "id": "150003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US"
+    },
+    {
+      "id": "150004",
+      "name": "Teacher Jeanne",
+      "gender": "female",
+      "skin_tone": "medium",
+      "voice_language_code": "en-US"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "gender": "male",
+      "skin_tone": "dark",
+      "voice_language_code": "en-US"
+    },
+    {
+      "id": "210001",
+      "name": "Professora Mei",
+      "gender": "female",
+      "skin_tone": "yellow",
+      "voice_language_code": "zh-CN"
+    },
+    {
+      "id": "210002",
+      "name": "Professor Takeshi",
+      "gender": "male",
+      "skin_tone": "yellow",
+      "voice_language_code": "ja-JP"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgender\tskin_tone\tvoice_language_code\n1\tProfessor Ricardo\tmale\tlight\tpt-BR\n30001\tIngrid\tfemale\tlight\tde-DE\n90002\tProfessora Ingrid\tfemale\tlight\tde-DE\n90003\tProfessor Carlos\tmale\tmedium\tfr-FR\n90004\tProfessor Jean\tmale\tlight\tfr-FR\n150003\tProfessor Carlos\tmale\tmedium\ten-US\n150004\tTeacher Jeanne\tfemale\tmedium\ten-US\n180001\tProfessor Kwame Asante\tmale\tdark\ten-US\n210001\tProfessora Mei\tfemale\tyellow\tzh-CN\n210002\tProfessor Takeshi\tmale\tyellow\tja-JP\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

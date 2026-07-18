@@ -1,0 +1,52 @@
+{
+  "query": "SELECT c.id as courseId, c.title as courseTitle, c.level, COUNT(l.id) as lessonCount \nFROM courses c \nLEFT JOIN lessons l ON l.courseId = c.id \nWHERE c.languageId = 1 \nGROUP BY c.id, c.title, c.level;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT c.id as courseId, c.title as courseTitle, c.level, COUNT(l.id) as lessonCount \nFROM courses c \nLEFT JOIN lessons l ON l.courseId = c.id \nWHERE c.languageId = 1 \nGROUP BY c.id, c.title, c.level;",
+  "rows": [
+    {
+      "courseId": "150001",
+      "courseTitle": "English Basics",
+      "level": "beginner",
+      "lessonCount": "5"
+    },
+    {
+      "courseId": "150007",
+      "courseTitle": "English Basics",
+      "level": "beginner",
+      "lessonCount": "5"
+    },
+    {
+      "courseId": "120065",
+      "courseTitle": "English - Intermediate",
+      "level": "intermediate",
+      "lessonCount": "10"
+    },
+    {
+      "courseId": "120064",
+      "courseTitle": "English - Beginner",
+      "level": "beginner",
+      "lessonCount": "15"
+    },
+    {
+      "courseId": "120066",
+      "courseTitle": "English - Advanced",
+      "level": "advanced",
+      "lessonCount": "10"
+    },
+    {
+      "courseId": "150010",
+      "courseTitle": "English Basics",
+      "level": "beginner",
+      "lessonCount": "5"
+    },
+    {
+      "courseId": "150004",
+      "courseTitle": "English Basics",
+      "level": "beginner",
+      "lessonCount": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "courseId\tcourseTitle\tlevel\tlessonCount\n150001\tEnglish Basics\tbeginner\t5\n150007\tEnglish Basics\tbeginner\t5\n120065\tEnglish - Intermediate\tintermediate\t10\n120064\tEnglish - Beginner\tbeginner\t15\n120066\tEnglish - Advanced\tadvanced\t10\n150010\tEnglish Basics\tbeginner\t5\n150004\tEnglish Basics\tbeginner\t5\n",
+  "stderr": "",
+  "execution_time_ms": 48
+}

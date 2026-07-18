@@ -1,0 +1,41 @@
+{
+  "query": "SHOW CREATE TABLE lessons;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SHOW CREATE TABLE lessons;",
+  "rows": [
+    {
+      "Table": "lessons",
+      "Create Table": "CREATE TABLE `lessons` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `courseId` int(11) NOT NULL,",
+    "  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `orderIndex` int(11) NOT NULL,",
+    "  `content` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `vocabulary` json DEFAULT NULL,",
+    "  `grammar` json DEFAULT NULL,",
+    "  `estimatedMinutes` int(11) DEFAULT '10',",
+    "  `difficultyScore` float DEFAULT '0.5',",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  `audioUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `languageCode` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `illustrationUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `storyText` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `vocabularyDetailed` json DEFAULT NULL,",
+    "  `grammarDetailed` json DEFAULT NULL,",
+    "  `phonetics` json DEFAULT NULL,",
+    "  `conversationPrompts` json DEFAULT NULL,",
+    "  `ageLevel` enum('infantil','adolescente','adulto') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'adulto',",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,",
+    "  KEY `idx_lessons_courseId` (`courseId`),",
+    "  KEY `idx_lessons_languageCode` (`languageCode`),",
+    "  KEY `` (`courseId`)",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=390001"
+  ],
+  "stdout": "Table\tCreate Table\nlessons\tCREATE TABLE `lessons` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `courseId` int(11) NOT NULL,\n  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `orderIndex` int(11) NOT NULL,\n  `content` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `vocabulary` json DEFAULT NULL,\n  `grammar` json DEFAULT NULL,\n  `estimatedMinutes` int(11) DEFAULT '10',\n  `difficultyScore` float DEFAULT '0.5',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `audioUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `languageCode` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `illustrationUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `storyText` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `vocabularyDetailed` json DEFAULT NULL,\n  `grammarDetailed` json DEFAULT NULL,\n  `phonetics` json DEFAULT NULL,\n  `conversationPrompts` json DEFAULT NULL,\n  `ageLevel` enum('infantil','adolescente','adulto') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'adulto',\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,\n  KEY `idx_lessons_courseId` (`courseId`),\n  KEY `idx_lessons_languageCode` (`languageCode`),\n  KEY `` (`courseId`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=390001\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

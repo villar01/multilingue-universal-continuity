@@ -1,0 +1,114 @@
+{
+  "query": "SELECT id, name, gender, voice_id, skin_tone, SUBSTRING(photo_url, 1, 80) as photo FROM virtual_teachers WHERE id >= 30000 ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT id, name, gender, voice_id, skin_tone, SUBSTRING(photo_url, 1, 80) as photo FROM virtual_teachers WHERE id >= 30000 ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Ingrid",
+      "gender": "female",
+      "voice_id": "es-ES-Wavenet-C",
+      "skin_tone": "light",
+      "photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro"
+    },
+    {
+      "id": "60001",
+      "name": "Ingrid",
+      "gender": "female",
+      "voice_id": "es-ES-Wavenet-C",
+      "skin_tone": "light",
+      "photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro"
+    },
+    {
+      "id": "60002",
+      "name": "Carlos",
+      "gender": "male",
+      "voice_id": "fr-FR-Wavenet-B",
+      "skin_tone": "medium",
+      "photo": "NULL"
+    },
+    {
+      "id": "60003",
+      "name": "Jean",
+      "gender": "male",
+      "voice_id": "de-DE-Wavenet-B",
+      "skin_tone": "light",
+      "photo": "NULL"
+    },
+    {
+      "id": "90001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "voice_id": "pt-BR-Wavenet-B",
+      "skin_tone": "light",
+      "photo": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/"
+    },
+    {
+      "id": "90002",
+      "name": "Professora Ingrid",
+      "gender": "female",
+      "voice_id": "es-ES-Wavenet-C",
+      "skin_tone": "light",
+      "photo": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627"
+    },
+    {
+      "id": "90003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "voice_id": "fr-FR-Wavenet-B",
+      "skin_tone": "medium",
+      "photo": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627"
+    },
+    {
+      "id": "90004",
+      "name": "Professor Jean",
+      "gender": "male",
+      "voice_id": "es-PE-Standard-A",
+      "skin_tone": "light",
+      "photo": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627"
+    },
+    {
+      "id": "150001",
+      "name": "Professor Ricardo",
+      "gender": "male",
+      "voice_id": "en-US-Wavenet-D",
+      "skin_tone": "light",
+      "photo": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/"
+    },
+    {
+      "id": "150002",
+      "name": "Teacher Ingrid",
+      "gender": "female",
+      "voice_id": "en-US-Wavenet-F",
+      "skin_tone": "medium",
+      "photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro"
+    },
+    {
+      "id": "150003",
+      "name": "Professor Carlos",
+      "gender": "male",
+      "voice_id": "en-US-Wavenet-F",
+      "skin_tone": "medium",
+      "photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=cro"
+    },
+    {
+      "id": "150004",
+      "name": "Teacher Jeanne",
+      "gender": "female",
+      "voice_id": "en-US-Wavenet-F",
+      "skin_tone": "medium",
+      "photo": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=cro"
+    },
+    {
+      "id": "180001",
+      "name": "Professor Kwame Asante",
+      "gender": "male",
+      "voice_id": "en-US-Wavenet-D",
+      "skin_tone": "dark",
+      "photo": "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgender\tvoice_id\tskin_tone\tphoto\n30001\tIngrid\tfemale\tes-ES-Wavenet-C\tlight\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro\n60001\tIngrid\tfemale\tes-ES-Wavenet-C\tlight\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro\n60002\tCarlos\tmale\tfr-FR-Wavenet-B\tmedium\tNULL\n60003\tJean\tmale\tde-DE-Wavenet-B\tlight\tNULL\n90001\tProfessor Ricardo\tmale\tpt-BR-Wavenet-B\tlight\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/\n90002\tProfessora Ingrid\tfemale\tes-ES-Wavenet-C\tlight\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627\n90003\tProfessor Carlos\tmale\tfr-FR-Wavenet-B\tmedium\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627\n90004\tProfessor Jean\tmale\tes-PE-Standard-A\tlight\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627\n150001\tProfessor Ricardo\tmale\ten-US-Wavenet-D\tlight\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/\n150002\tTeacher Ingrid\tfemale\ten-US-Wavenet-F\tmedium\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=cro\n150003\tProfessor Carlos\tmale\ten-US-Wavenet-F\tmedium\thttps://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=cro\n150004\tTeacher Jeanne\tfemale\ten-US-Wavenet-F\tmedium\thttps://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=cro\n180001\tProfessor Kwame Asante\tmale\ten-US-Wavenet-D\tdark\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/\n",
+  "stderr": "",
+  "execution_time_ms": 48
+}

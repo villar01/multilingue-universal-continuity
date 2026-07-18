@@ -1,0 +1,1030 @@
+{
+  "query": "SELECT e.id, e.lessonId, l.title as lesson_title, e.type, e.question, e.correctAnswer, e.options, e.orderIndex FROM exercises e JOIN lessons l ON l.id = e.lessonId ORDER BY e.lessonId, e.orderIndex;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT e.id, e.lessonId, l.title as lesson_title, e.type, e.question, e.correctAnswer, e.options, e.orderIndex FROM exercises e JOIN lessons l ON l.id = e.lessonId ORDER BY e.lessonId, e.orderIndex;",
+  "rows": [
+    {
+      "id": "180006",
+      "lessonId": "390001",
+      "lesson_title": "A Família",
+      "type": "multiple_choice",
+      "question": "What is the first word you learn in English?",
+      "correctAnswer": "Hello",
+      "options": "[\"Hello\", \"Goodbye\", \"Thanks\", \"Sorry\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180007",
+      "lessonId": "390001",
+      "lesson_title": "A Família",
+      "type": "multiple_choice",
+      "question": "How do you greet someone in the morning?",
+      "correctAnswer": "Good morning",
+      "options": "[\"Good night\", \"Good morning\", \"Good evening\", \"Good afternoon\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180008",
+      "lessonId": "390001",
+      "lesson_title": "A Família",
+      "type": "fill_blank",
+      "question": "Hello! My name _____ John.",
+      "correctAnswer": "is",
+      "options": "[\"is\", \"are\", \"am\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180009",
+      "lessonId": "390001",
+      "lesson_title": "A Família",
+      "type": "fill_blank",
+      "question": "Nice to _____ you!",
+      "correctAnswer": "meet",
+      "options": "[\"meet\", \"met\", \"meeting\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180010",
+      "lessonId": "390001",
+      "lesson_title": "A Família",
+      "type": "multiple_choice",
+      "question": "What do you say when leaving?",
+      "correctAnswer": "Goodbye",
+      "options": "[\"Hello\", \"Goodbye\", \"Please\", \"Thanks\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180011",
+      "lessonId": "390002",
+      "lesson_title": "My Family",
+      "type": "multiple_choice",
+      "question": "Who is your mother's husband?",
+      "correctAnswer": "Father",
+      "options": "[\"Brother\", \"Father\", \"Uncle\", \"Grandfather\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180012",
+      "lessonId": "390002",
+      "lesson_title": "My Family",
+      "type": "multiple_choice",
+      "question": "What do you call your father's daughter?",
+      "correctAnswer": "Sister",
+      "options": "[\"Sister\", \"Cousin\", \"Aunt\", \"Mother\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180013",
+      "lessonId": "390002",
+      "lesson_title": "My Family",
+      "type": "fill_blank",
+      "question": "I have one _____ and two sisters.",
+      "correctAnswer": "brother",
+      "options": "[\"brother\", \"father\", \"mother\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180014",
+      "lessonId": "390002",
+      "lesson_title": "My Family",
+      "type": "fill_blank",
+      "question": "My _____ loves me very much.",
+      "correctAnswer": "family",
+      "options": "[\"family\", \"school\", \"book\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180015",
+      "lessonId": "390002",
+      "lesson_title": "My Family",
+      "type": "multiple_choice",
+      "question": "Who are your parents?",
+      "correctAnswer": "Mother and father",
+      "options": "[\"Mother and father\", \"Brother and sister\", \"Uncle and aunt\", \"Grandfather and grandmother\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180001",
+      "lessonId": "390003",
+      "lesson_title": "Colors Around Us",
+      "type": "multiple_choice",
+      "question": "What color is the sky in the story?",
+      "correctAnswer": "Blue",
+      "options": "[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180002",
+      "lessonId": "390003",
+      "lesson_title": "Colors Around Us",
+      "type": "multiple_choice",
+      "question": "What color is the grass?",
+      "correctAnswer": "Green",
+      "options": "[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180003",
+      "lessonId": "390003",
+      "lesson_title": "Colors Around Us",
+      "type": "multiple_choice",
+      "question": "What color is the sun?",
+      "correctAnswer": "Yellow",
+      "options": "[\"Blue\", \"Red\", \"Green\", \"Yellow\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180004",
+      "lessonId": "390003",
+      "lesson_title": "Colors Around Us",
+      "type": "fill_blank",
+      "question": "The sky is _____.",
+      "correctAnswer": "blue",
+      "options": "[\"blue\", \"red\", \"green\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180005",
+      "lessonId": "390003",
+      "lesson_title": "Colors Around Us",
+      "type": "fill_blank",
+      "question": "The grass is _____.",
+      "correctAnswer": "green",
+      "options": "[\"blue\", \"red\", \"green\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180016",
+      "lessonId": "390004",
+      "lesson_title": "At the Restaurant",
+      "type": "multiple_choice",
+      "question": "What do you read to choose food?",
+      "correctAnswer": "Menu",
+      "options": "[\"Book\", \"Menu\", \"Newspaper\", \"Magazine\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180017",
+      "lessonId": "390004",
+      "lesson_title": "At the Restaurant",
+      "type": "multiple_choice",
+      "question": "Who brings your food in a restaurant?",
+      "correctAnswer": "Waiter",
+      "options": "[\"Chef\", \"Waiter\", \"Customer\", \"Manager\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180018",
+      "lessonId": "390004",
+      "lesson_title": "At the Restaurant",
+      "type": "fill_blank",
+      "question": "Can I see the _____, please?",
+      "correctAnswer": "menu",
+      "options": "[\"menu\", \"bill\", \"table\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180019",
+      "lessonId": "390004",
+      "lesson_title": "At the Restaurant",
+      "type": "fill_blank",
+      "question": "The food is very _____.",
+      "correctAnswer": "delicious",
+      "options": "[\"delicious\", \"expensive\", \"cold\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180020",
+      "lessonId": "390004",
+      "lesson_title": "At the Restaurant",
+      "type": "multiple_choice",
+      "question": "What do you ask for after eating?",
+      "correctAnswer": "Bill",
+      "options": "[\"Menu\", \"Bill\", \"Chair\", \"Fork\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180021",
+      "lessonId": "390005",
+      "lesson_title": "School Life",
+      "type": "multiple_choice",
+      "question": "Where do students learn?",
+      "correctAnswer": "School",
+      "options": "[\"Hospital\", \"School\", \"Restaurant\", \"Bank\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180022",
+      "lessonId": "390005",
+      "lesson_title": "School Life",
+      "type": "multiple_choice",
+      "question": "Who teaches students?",
+      "correctAnswer": "Teacher",
+      "options": "[\"Doctor\", \"Chef\", \"Teacher\", \"Waiter\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180023",
+      "lessonId": "390005",
+      "lesson_title": "School Life",
+      "type": "fill_blank",
+      "question": "I study at _____ every day.",
+      "correctAnswer": "school",
+      "options": "[\"school\", \"home\", \"park\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180024",
+      "lessonId": "390005",
+      "lesson_title": "School Life",
+      "type": "fill_blank",
+      "question": "My favorite _____ is English.",
+      "correctAnswer": "subject",
+      "options": "[\"subject\", \"food\", \"color\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180025",
+      "lessonId": "390005",
+      "lesson_title": "School Life",
+      "type": "multiple_choice",
+      "question": "What do you write with?",
+      "correctAnswer": "Pen",
+      "options": "[\"Pen\", \"Plate\", \"Cup\", \"Chair\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180026",
+      "lessonId": "390006",
+      "lesson_title": "Business Meeting",
+      "type": "multiple_choice",
+      "question": "What do you do at the start of a meeting?",
+      "correctAnswer": "Introduce yourself",
+      "options": "[\"Leave\", \"Introduce yourself\", \"Sleep\", \"Eat\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180027",
+      "lessonId": "390006",
+      "lesson_title": "Business Meeting",
+      "type": "multiple_choice",
+      "question": "What document shows meeting topics?",
+      "correctAnswer": "Agenda",
+      "options": "[\"Menu\", \"Agenda\", \"Recipe\", \"Map\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180028",
+      "lessonId": "390006",
+      "lesson_title": "Business Meeting",
+      "type": "fill_blank",
+      "question": "Let's _____ the meeting.",
+      "correctAnswer": "start",
+      "options": "[\"start\", \"finish\", \"cancel\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180029",
+      "lessonId": "390006",
+      "lesson_title": "Business Meeting",
+      "type": "fill_blank",
+      "question": "I _____ with your proposal.",
+      "correctAnswer": "agree",
+      "options": "[\"agree\", \"disagree\", \"ignore\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180030",
+      "lessonId": "390006",
+      "lesson_title": "Business Meeting",
+      "type": "multiple_choice",
+      "question": "What do you say to end a meeting?",
+      "correctAnswer": "Thank you for your time",
+      "options": "[\"Hello\", \"Thank you for your time\", \"Good morning\", \"Nice to meet you\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180031",
+      "lessonId": "390007",
+      "lesson_title": "Stock Market Basics",
+      "type": "multiple_choice",
+      "question": "What do you buy in the stock market?",
+      "correctAnswer": "Shares",
+      "options": "[\"Food\", \"Shares\", \"Clothes\", \"Books\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180032",
+      "lessonId": "390007",
+      "lesson_title": "Stock Market Basics",
+      "type": "multiple_choice",
+      "question": "When stock prices go up, it's called?",
+      "correctAnswer": "Bull market",
+      "options": "[\"Bull market\", \"Bear market\", \"Flat market\", \"Closed market\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180033",
+      "lessonId": "390007",
+      "lesson_title": "Stock Market Basics",
+      "type": "fill_blank",
+      "question": "I want to _____ in Apple stock.",
+      "correctAnswer": "invest",
+      "options": "[\"invest\", \"sell\", \"ignore\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180034",
+      "lessonId": "390007",
+      "lesson_title": "Stock Market Basics",
+      "type": "fill_blank",
+      "question": "The stock price is _____.",
+      "correctAnswer": "rising",
+      "options": "[\"rising\", \"falling\", \"stable\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180035",
+      "lessonId": "390007",
+      "lesson_title": "Stock Market Basics",
+      "type": "multiple_choice",
+      "question": "Who analyzes stock trends?",
+      "correctAnswer": "Analyst",
+      "options": "[\"Chef\", \"Analyst\", \"Teacher\", \"Doctor\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180036",
+      "lessonId": "390008",
+      "lesson_title": "Scientific Research",
+      "type": "multiple_choice",
+      "question": "What do scientists do?",
+      "correctAnswer": "Research",
+      "options": "[\"Cook\", \"Research\", \"Sing\", \"Dance\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180037",
+      "lessonId": "390008",
+      "lesson_title": "Scientific Research",
+      "type": "multiple_choice",
+      "question": "Where do scientists work?",
+      "correctAnswer": "Laboratory",
+      "options": "[\"Kitchen\", \"Laboratory\", \"Restaurant\", \"Shop\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180038",
+      "lessonId": "390008",
+      "lesson_title": "Scientific Research",
+      "type": "fill_blank",
+      "question": "We need to _____ the experiment.",
+      "correctAnswer": "conduct",
+      "options": "[\"conduct\", \"cancel\", \"ignore\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180039",
+      "lessonId": "390008",
+      "lesson_title": "Scientific Research",
+      "type": "fill_blank",
+      "question": "The _____ shows interesting results.",
+      "correctAnswer": "data",
+      "options": "[\"data\", \"menu\", \"book\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180040",
+      "lessonId": "390008",
+      "lesson_title": "Scientific Research",
+      "type": "multiple_choice",
+      "question": "What do you write after research?",
+      "correctAnswer": "Paper",
+      "options": "[\"Recipe\", \"Paper\", \"Menu\", \"Letter\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180041",
+      "lessonId": "390009",
+      "lesson_title": "Travel Adventures",
+      "type": "multiple_choice",
+      "question": "What do you need to travel abroad?",
+      "correctAnswer": "Passport",
+      "options": "[\"Menu\", \"Passport\", \"Recipe\", \"Pen\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180042",
+      "lessonId": "390009",
+      "lesson_title": "Travel Adventures",
+      "type": "multiple_choice",
+      "question": "Where do planes take off?",
+      "correctAnswer": "Airport",
+      "options": "[\"Restaurant\", \"Airport\", \"School\", \"Hospital\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180043",
+      "lessonId": "390009",
+      "lesson_title": "Travel Adventures",
+      "type": "fill_blank",
+      "question": "I want to _____ to Paris.",
+      "correctAnswer": "travel",
+      "options": "[\"travel\", \"stay\", \"work\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180044",
+      "lessonId": "390009",
+      "lesson_title": "Travel Adventures",
+      "type": "fill_blank",
+      "question": "The _____ is beautiful.",
+      "correctAnswer": "view",
+      "options": "[\"view\", \"food\", \"book\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180045",
+      "lessonId": "390009",
+      "lesson_title": "Travel Adventures",
+      "type": "multiple_choice",
+      "question": "Where do you sleep when traveling?",
+      "correctAnswer": "Hotel",
+      "options": "[\"Restaurant\", \"Hotel\", \"Airport\", \"Museum\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "180046",
+      "lessonId": "390010",
+      "lesson_title": "Health and Fitness",
+      "type": "multiple_choice",
+      "question": "What is good for your health?",
+      "correctAnswer": "Exercise",
+      "options": "[\"Smoking\", \"Exercise\", \"Junk food\", \"Sleeping all day\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "180047",
+      "lessonId": "390010",
+      "lesson_title": "Health and Fitness",
+      "type": "multiple_choice",
+      "question": "Where do you go to exercise?",
+      "correctAnswer": "Gym",
+      "options": "[\"Restaurant\", \"Gym\", \"Library\", \"Cinema\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "180048",
+      "lessonId": "390010",
+      "lesson_title": "Health and Fitness",
+      "type": "fill_blank",
+      "question": "I _____ every morning.",
+      "correctAnswer": "run",
+      "options": "[\"run\", \"sleep\", \"eat\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "180049",
+      "lessonId": "390010",
+      "lesson_title": "Health and Fitness",
+      "type": "fill_blank",
+      "question": "Eating _____ is important.",
+      "correctAnswer": "healthy",
+      "options": "[\"healthy\", \"junk\", \"nothing\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "180050",
+      "lessonId": "390010",
+      "lesson_title": "Health and Fitness",
+      "type": "multiple_choice",
+      "question": "How many hours should you sleep?",
+      "correctAnswer": "8 hours",
+      "options": "[\"2 hours\", \"8 hours\", \"15 hours\", \"20 hours\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210001",
+      "lessonId": "420001",
+      "lesson_title": "Greetings & Introductions",
+      "type": "multiple_choice",
+      "question": "What does \"hello\" mean in Portuguese?",
+      "correctAnswer": "hello",
+      "options": "[\"hello\", \"goodbye\", \"good morning\", \"good afternoon\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210002",
+      "lessonId": "420001",
+      "lesson_title": "Greetings & Introductions",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: hello)",
+      "correctAnswer": "hello",
+      "options": "[\"hello\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210003",
+      "lessonId": "420011",
+      "lesson_title": "Greetings & Introductions",
+      "type": "multiple_choice",
+      "question": "What does \"hello\" mean in Portuguese?",
+      "correctAnswer": "hello",
+      "options": "[\"hello\", \"goodbye\", \"good morning\", \"good afternoon\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210004",
+      "lessonId": "420011",
+      "lesson_title": "Greetings & Introductions",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: hello)",
+      "correctAnswer": "hello",
+      "options": "[\"hello\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210005",
+      "lessonId": "420011",
+      "lesson_title": "Greetings & Introductions",
+      "type": "speaking",
+      "question": "Say this word correctly: \"goodbye\"",
+      "correctAnswer": "goodbye",
+      "options": "[\"goodbye\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210006",
+      "lessonId": "420011",
+      "lesson_title": "Greetings & Introductions",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210007",
+      "lessonId": "420011",
+      "lesson_title": "Greetings & Introductions",
+      "type": "translation",
+      "question": "Translate to English: \"good morning\"",
+      "correctAnswer": "good morning",
+      "options": "[\"good morning\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210008",
+      "lessonId": "420012",
+      "lesson_title": "Numbers 1-20",
+      "type": "multiple_choice",
+      "question": "What does \"one\" mean in Portuguese?",
+      "correctAnswer": "one",
+      "options": "[\"one\", \"two\", \"three\", \"four\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210009",
+      "lessonId": "420012",
+      "lesson_title": "Numbers 1-20",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: one)",
+      "correctAnswer": "one",
+      "options": "[\"one\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210010",
+      "lessonId": "420012",
+      "lesson_title": "Numbers 1-20",
+      "type": "speaking",
+      "question": "Say this word correctly: \"two\"",
+      "correctAnswer": "two",
+      "options": "[\"two\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210011",
+      "lessonId": "420012",
+      "lesson_title": "Numbers 1-20",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210012",
+      "lessonId": "420012",
+      "lesson_title": "Numbers 1-20",
+      "type": "translation",
+      "question": "Translate to English: \"three\"",
+      "correctAnswer": "three",
+      "options": "[\"three\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210013",
+      "lessonId": "420013",
+      "lesson_title": "Colors & Descriptions",
+      "type": "multiple_choice",
+      "question": "What does \"red\" mean in Portuguese?",
+      "correctAnswer": "red",
+      "options": "[\"red\", \"blue\", \"green\", \"yellow\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210014",
+      "lessonId": "420013",
+      "lesson_title": "Colors & Descriptions",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: red)",
+      "correctAnswer": "red",
+      "options": "[\"red\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210015",
+      "lessonId": "420013",
+      "lesson_title": "Colors & Descriptions",
+      "type": "speaking",
+      "question": "Say this word correctly: \"blue\"",
+      "correctAnswer": "blue",
+      "options": "[\"blue\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210016",
+      "lessonId": "420013",
+      "lesson_title": "Colors & Descriptions",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210017",
+      "lessonId": "420013",
+      "lesson_title": "Colors & Descriptions",
+      "type": "translation",
+      "question": "Translate to English: \"green\"",
+      "correctAnswer": "green",
+      "options": "[\"green\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210018",
+      "lessonId": "420014",
+      "lesson_title": "The Family",
+      "type": "multiple_choice",
+      "question": "What does \"mother\" mean in Portuguese?",
+      "correctAnswer": "mother",
+      "options": "[\"mother\", \"father\", \"brother\", \"sister\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210019",
+      "lessonId": "420014",
+      "lesson_title": "The Family",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: mother)",
+      "correctAnswer": "mother",
+      "options": "[\"mother\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210020",
+      "lessonId": "420014",
+      "lesson_title": "The Family",
+      "type": "speaking",
+      "question": "Say this word correctly: \"father\"",
+      "correctAnswer": "father",
+      "options": "[\"father\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210021",
+      "lessonId": "420014",
+      "lesson_title": "The Family",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210022",
+      "lessonId": "420014",
+      "lesson_title": "The Family",
+      "type": "translation",
+      "question": "Translate to English: \"brother\"",
+      "correctAnswer": "brother",
+      "options": "[\"brother\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210023",
+      "lessonId": "420015",
+      "lesson_title": "Food & Drinks",
+      "type": "multiple_choice",
+      "question": "What does \"breakfast\" mean in Portuguese?",
+      "correctAnswer": "breakfast",
+      "options": "[\"breakfast\", \"lunch\", \"dinner\", \"snack\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210024",
+      "lessonId": "420015",
+      "lesson_title": "Food & Drinks",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: breakfast)",
+      "correctAnswer": "breakfast",
+      "options": "[\"breakfast\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210025",
+      "lessonId": "420015",
+      "lesson_title": "Food & Drinks",
+      "type": "speaking",
+      "question": "Say this word correctly: \"lunch\"",
+      "correctAnswer": "lunch",
+      "options": "[\"lunch\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210026",
+      "lessonId": "420015",
+      "lesson_title": "Food & Drinks",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210027",
+      "lessonId": "420015",
+      "lesson_title": "Food & Drinks",
+      "type": "translation",
+      "question": "Translate to English: \"dinner\"",
+      "correctAnswer": "dinner",
+      "options": "[\"dinner\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210028",
+      "lessonId": "420016",
+      "lesson_title": "Daily Routines",
+      "type": "multiple_choice",
+      "question": "What does \"wake up\" mean in Portuguese?",
+      "correctAnswer": "wake up",
+      "options": "[\"wake up\", \"get up\", \"brush teeth\", \"take a shower\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210029",
+      "lessonId": "420016",
+      "lesson_title": "Daily Routines",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: wake up)",
+      "correctAnswer": "wake up",
+      "options": "[\"wake up\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210030",
+      "lessonId": "420016",
+      "lesson_title": "Daily Routines",
+      "type": "speaking",
+      "question": "Say this word correctly: \"get up\"",
+      "correctAnswer": "get up",
+      "options": "[\"get up\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210031",
+      "lessonId": "420016",
+      "lesson_title": "Daily Routines",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210032",
+      "lessonId": "420016",
+      "lesson_title": "Daily Routines",
+      "type": "translation",
+      "question": "Translate to English: \"brush teeth\"",
+      "correctAnswer": "brush teeth",
+      "options": "[\"brush teeth\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210033",
+      "lessonId": "420017",
+      "lesson_title": "Animals & Nature",
+      "type": "multiple_choice",
+      "question": "What does \"lion\" mean in Portuguese?",
+      "correctAnswer": "lion",
+      "options": "[\"lion\", \"elephant\", \"giraffe\", \"tiger\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210034",
+      "lessonId": "420017",
+      "lesson_title": "Animals & Nature",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: lion)",
+      "correctAnswer": "lion",
+      "options": "[\"lion\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210035",
+      "lessonId": "420017",
+      "lesson_title": "Animals & Nature",
+      "type": "speaking",
+      "question": "Say this word correctly: \"elephant\"",
+      "correctAnswer": "elephant",
+      "options": "[\"elephant\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210036",
+      "lessonId": "420017",
+      "lesson_title": "Animals & Nature",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210037",
+      "lessonId": "420017",
+      "lesson_title": "Animals & Nature",
+      "type": "translation",
+      "question": "Translate to English: \"giraffe\"",
+      "correctAnswer": "giraffe",
+      "options": "[\"giraffe\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210038",
+      "lessonId": "420018",
+      "lesson_title": "Clothes & Shopping",
+      "type": "multiple_choice",
+      "question": "What does \"shirt\" mean in Portuguese?",
+      "correctAnswer": "shirt",
+      "options": "[\"shirt\", \"pants\", \"dress\", \"shoes\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210039",
+      "lessonId": "420018",
+      "lesson_title": "Clothes & Shopping",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: shirt)",
+      "correctAnswer": "shirt",
+      "options": "[\"shirt\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210040",
+      "lessonId": "420018",
+      "lesson_title": "Clothes & Shopping",
+      "type": "speaking",
+      "question": "Say this word correctly: \"pants\"",
+      "correctAnswer": "pants",
+      "options": "[\"pants\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210041",
+      "lessonId": "420018",
+      "lesson_title": "Clothes & Shopping",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210042",
+      "lessonId": "420018",
+      "lesson_title": "Clothes & Shopping",
+      "type": "translation",
+      "question": "Translate to English: \"dress\"",
+      "correctAnswer": "dress",
+      "options": "[\"dress\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210043",
+      "lessonId": "420019",
+      "lesson_title": "Weather & Seasons",
+      "type": "multiple_choice",
+      "question": "What does \"sunny\" mean in Portuguese?",
+      "correctAnswer": "sunny",
+      "options": "[\"sunny\", \"cloudy\", \"rainy\", \"windy\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210044",
+      "lessonId": "420019",
+      "lesson_title": "Weather & Seasons",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: sunny)",
+      "correctAnswer": "sunny",
+      "options": "[\"sunny\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210045",
+      "lessonId": "420019",
+      "lesson_title": "Weather & Seasons",
+      "type": "speaking",
+      "question": "Say this word correctly: \"cloudy\"",
+      "correctAnswer": "cloudy",
+      "options": "[\"cloudy\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210046",
+      "lessonId": "420019",
+      "lesson_title": "Weather & Seasons",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210047",
+      "lessonId": "420019",
+      "lesson_title": "Weather & Seasons",
+      "type": "translation",
+      "question": "Translate to English: \"rainy\"",
+      "correctAnswer": "rainy",
+      "options": "[\"rainy\"]",
+      "orderIndex": "5"
+    },
+    {
+      "id": "210048",
+      "lessonId": "420020",
+      "lesson_title": "Body Parts & Health",
+      "type": "multiple_choice",
+      "question": "What does \"head\" mean in Portuguese?",
+      "correctAnswer": "head",
+      "options": "[\"head\", \"neck\", \"shoulder\", \"arm\"]",
+      "orderIndex": "1"
+    },
+    {
+      "id": "210049",
+      "lessonId": "420020",
+      "lesson_title": "Body Parts & Health",
+      "type": "fill_blank",
+      "question": "Complete the sentence: \"I have a ___.\" (use: head)",
+      "correctAnswer": "head",
+      "options": "[\"head\"]",
+      "orderIndex": "2"
+    },
+    {
+      "id": "210050",
+      "lessonId": "420020",
+      "lesson_title": "Body Parts & Health",
+      "type": "speaking",
+      "question": "Say this word correctly: \"neck\"",
+      "correctAnswer": "neck",
+      "options": "[\"neck\"]",
+      "orderIndex": "3"
+    },
+    {
+      "id": "210051",
+      "lessonId": "420020",
+      "lesson_title": "Body Parts & Health",
+      "type": "multiple_choice",
+      "question": "Choose the correct form: \"She ___ to school every day.\"",
+      "correctAnswer": "goes",
+      "options": "[\"go\", \"goes\", \"going\", \"gone\"]",
+      "orderIndex": "4"
+    },
+    {
+      "id": "210052",
+      "lessonId": "420020",
+      "lesson_title": "Body Parts & Health",
+      "type": "translation",
+      "question": "Translate to English: \"shoulder\"",
+      "correctAnswer": "shoulder",
+      "options": "[\"shoulder\"]",
+      "orderIndex": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlessonId\tlesson_title\ttype\tquestion\tcorrectAnswer\toptions\torderIndex\n180006\t390001\tA Família\tmultiple_choice\tWhat is the first word you learn in English?\tHello\t[\"Hello\", \"Goodbye\", \"Thanks\", \"Sorry\"]\t1\n180007\t390001\tA Família\tmultiple_choice\tHow do you greet someone in the morning?\tGood morning\t[\"Good night\", \"Good morning\", \"Good evening\", \"Good afternoon\"]\t2\n180008\t390001\tA Família\tfill_blank\tHello! My name _____ John.\tis\t[\"is\", \"are\", \"am\"]\t3\n180009\t390001\tA Família\tfill_blank\tNice to _____ you!\tmeet\t[\"meet\", \"met\", \"meeting\"]\t4\n180010\t390001\tA Família\tmultiple_choice\tWhat do you say when leaving?\tGoodbye\t[\"Hello\", \"Goodbye\", \"Please\", \"Thanks\"]\t5\n180011\t390002\tMy Family\tmultiple_choice\tWho is your mother's husband?\tFather\t[\"Brother\", \"Father\", \"Uncle\", \"Grandfather\"]\t1\n180012\t390002\tMy Family\tmultiple_choice\tWhat do you call your father's daughter?\tSister\t[\"Sister\", \"Cousin\", \"Aunt\", \"Mother\"]\t2\n180013\t390002\tMy Family\tfill_blank\tI have one _____ and two sisters.\tbrother\t[\"brother\", \"father\", \"mother\"]\t3\n180014\t390002\tMy Family\tfill_blank\tMy _____ loves me very much.\tfamily\t[\"family\", \"school\", \"book\"]\t4\n180015\t390002\tMy Family\tmultiple_choice\tWho are your parents?\tMother and father\t[\"Mother and father\", \"Brother and sister\", \"Uncle and aunt\", \"Grandfather and grandmother\"]\t5\n180001\t390003\tColors Around Us\tmultiple_choice\tWhat color is the sky in the story?\tBlue\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\t1\n180002\t390003\tColors Around Us\tmultiple_choice\tWhat color is the grass?\tGreen\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\t2\n180003\t390003\tColors Around Us\tmultiple_choice\tWhat color is the sun?\tYellow\t[\"Blue\", \"Red\", \"Green\", \"Yellow\"]\t3\n180004\t390003\tColors Around Us\tfill_blank\tThe sky is _____.\tblue\t[\"blue\", \"red\", \"green\"]\t4\n180005\t390003\tColors Around Us\tfill_blank\tThe grass is _____.\tgreen\t[\"blue\", \"red\", \"green\"]\t5\n180016\t390004\tAt the Restaurant\tmultiple_choice\tWhat do you read to choose food?\tMenu\t[\"Book\", \"Menu\", \"Newspaper\", \"Magazine\"]\t1\n180017\t390004\tAt the Restaurant\tmultiple_choice\tWho brings your food in a restaurant?\tWaiter\t[\"Chef\", \"Waiter\", \"Customer\", \"Manager\"]\t2\n180018\t390004\tAt the Restaurant\tfill_blank\tCan I see the _____, please?\tmenu\t[\"menu\", \"bill\", \"table\"]\t3\n180019\t390004\tAt the Restaurant\tfill_blank\tThe food is very _____.\tdelicious\t[\"delicious\", \"expensive\", \"cold\"]\t4\n180020\t390004\tAt the Restaurant\tmultiple_choice\tWhat do you ask for after eating?\tBill\t[\"Menu\", \"Bill\", \"Chair\", \"Fork\"]\t5\n180021\t390005\tSchool Life\tmultiple_choice\tWhere do students learn?\tSchool\t[\"Hospital\", \"School\", \"Restaurant\", \"Bank\"]\t1\n180022\t390005\tSchool Life\tmultiple_choice\tWho teaches students?\tTeacher\t[\"Doctor\", \"Chef\", \"Teacher\", \"Waiter\"]\t2\n180023\t390005\tSchool Life\tfill_blank\tI study at _____ every day.\tschool\t[\"school\", \"home\", \"park\"]\t3\n180024\t390005\tSchool Life\tfill_blank\tMy favorite _____ is English.\tsubject\t[\"subject\", \"food\", \"color\"]\t4\n180025\t390005\tSchool Life\tmultiple_choice\tWhat do you write with?\tPen\t[\"Pen\", \"Plate\", \"Cup\", \"Chair\"]\t5\n180026\t390006\tBusiness Meeting\tmultiple_choice\tWhat do you do at the start of a meeting?\tIntroduce yourself\t[\"Leave\", \"Introduce yourself\", \"Sleep\", \"Eat\"]\t1\n180027\t390006\tBusiness Meeting\tmultiple_choice\tWhat document shows meeting topics?\tAgenda\t[\"Menu\", \"Agenda\", \"Recipe\", \"Map\"]\t2\n180028\t390006\tBusiness Meeting\tfill_blank\tLet's _____ the meeting.\tstart\t[\"start\", \"finish\", \"cancel\"]\t3\n180029\t390006\tBusiness Meeting\tfill_blank\tI _____ with your proposal.\tagree\t[\"agree\", \"disagree\", \"ignore\"]\t4\n180030\t390006\tBusiness Meeting\tmultiple_choice\tWhat do you say to end a meeting?\tThank you for your time\t[\"Hello\", \"Thank you for your time\", \"Good morning\", \"Nice to meet you\"]\t5\n180031\t390007\tStock Market Basics\tmultiple_choice\tWhat do you buy in the stock market?\tShares\t[\"Food\", \"Shares\", \"Clothes\", \"Books\"]\t1\n180032\t390007\tStock Market Basics\tmultiple_choice\tWhen stock prices go up, it's called?\tBull market\t[\"Bull market\", \"Bear market\", \"Flat market\", \"Closed market\"]\t2\n180033\t390007\tStock Market Basics\tfill_blank\tI want to _____ in Apple stock.\tinvest\t[\"invest\", \"sell\", \"ignore\"]\t3\n180034\t390007\tStock Market Basics\tfill_blank\tThe stock price is _____.\trising\t[\"rising\", \"falling\", \"stable\"]\t4\n180035\t390007\tStock Market Basics\tmultiple_choice\tWho analyzes stock trends?\tAnalyst\t[\"Chef\", \"Analyst\", \"Teacher\", \"Doctor\"]\t5\n180036\t390008\tScientific Research\tmultiple_choice\tWhat do scientists do?\tResearch\t[\"Cook\", \"Research\", \"Sing\", \"Dance\"]\t1\n180037\t390008\tScientific Research\tmultiple_choice\tWhere do scientists work?\tLaboratory\t[\"Kitchen\", \"Laboratory\", \"Restaurant\", \"Shop\"]\t2\n180038\t390008\tScientific Research\tfill_blank\tWe need to _____ the experiment.\tconduct\t[\"conduct\", \"cancel\", \"ignore\"]\t3\n180039\t390008\tScientific Research\tfill_blank\tThe _____ shows interesting results.\tdata\t[\"data\", \"menu\", \"book\"]\t4\n180040\t390008\tScientific Research\tmultiple_choice\tWhat do you write after research?\tPaper\t[\"Recipe\", \"Paper\", \"Menu\", \"Letter\"]\t5\n180041\t390009\tTravel Adventures\tmultiple_choice\tWhat do you need to travel abroad?\tPassport\t[\"Menu\", \"Passport\", \"Recipe\", \"Pen\"]\t1\n180042\t390009\tTravel Adventures\tmultiple_choice\tWhere do planes take off?\tAirport\t[\"Restaurant\", \"Airport\", \"School\", \"Hospital\"]\t2\n180043\t390009\tTravel Adventures\tfill_blank\tI want to _____ to Paris.\ttravel\t[\"travel\", \"stay\", \"work\"]\t3\n180044\t390009\tTravel Adventures\tfill_blank\tThe _____ is beautiful.\tview\t[\"view\", \"food\", \"book\"]\t4\n180045\t390009\tTravel Adventures\tmultiple_choice\tWhere do you sleep when traveling?\tHotel\t[\"Restaurant\", \"Hotel\", \"Airport\", \"Museum\"]\t5\n180046\t390010\tHealth and Fitness\tmultiple_choice\tWhat is good for your health?\tExercise\t[\"Smoking\", \"Exercise\", \"Junk food\", \"Sleeping all day\"]\t1\n180047\t390010\tHealth and Fitness\tmultiple_choice\tWhere do you go to exercise?\tGym\t[\"Restaurant\", \"Gym\", \"Library\", \"Cinema\"]\t2\n180048\t390010\tHealth and Fitness\tfill_blank\tI _____ every morning.\trun\t[\"run\", \"sleep\", \"eat\"]\t3\n180049\t390010\tHealth and Fitness\tfill_blank\tEating _____ is important.\thealthy\t[\"healthy\", \"junk\", \"nothing\"]\t4\n180050\t390010\tHealth and Fitness\tmultiple_choice\tHow many hours should you sleep?\t8 hours\t[\"2 hours\", \"8 hours\", \"15 hours\", \"20 hours\"]\t5\n210001\t420001\tGreetings & Introductions\tmultiple_choice\tWhat does \"hello\" mean in Portuguese?\thello\t[\"hello\", \"goodbye\", \"good morning\", \"good afternoon\"]\t1\n210002\t420001\tGreetings & Introductions\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: hello)\thello\t[\"hello\"]\t2\n210003\t420011\tGreetings & Introductions\tmultiple_choice\tWhat does \"hello\" mean in Portuguese?\thello\t[\"hello\", \"goodbye\", \"good morning\", \"good afternoon\"]\t1\n210004\t420011\tGreetings & Introductions\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: hello)\thello\t[\"hello\"]\t2\n210005\t420011\tGreetings & Introductions\tspeaking\tSay this word correctly: \"goodbye\"\tgoodbye\t[\"goodbye\"]\t3\n210006\t420011\tGreetings & Introductions\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210007\t420011\tGreetings & Introductions\ttranslation\tTranslate to English: \"good morning\"\tgood morning\t[\"good morning\"]\t5\n210008\t420012\tNumbers 1-20\tmultiple_choice\tWhat does \"one\" mean in Portuguese?\tone\t[\"one\", \"two\", \"three\", \"four\"]\t1\n210009\t420012\tNumbers 1-20\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: one)\tone\t[\"one\"]\t2\n210010\t420012\tNumbers 1-20\tspeaking\tSay this word correctly: \"two\"\ttwo\t[\"two\"]\t3\n210011\t420012\tNumbers 1-20\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210012\t420012\tNumbers 1-20\ttranslation\tTranslate to English: \"three\"\tthree\t[\"three\"]\t5\n210013\t420013\tColors & Descriptions\tmultiple_choice\tWhat does \"red\" mean in Portuguese?\tred\t[\"red\", \"blue\", \"green\", \"yellow\"]\t1\n210014\t420013\tColors & Descriptions\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: red)\tred\t[\"red\"]\t2\n210015\t420013\tColors & Descriptions\tspeaking\tSay this word correctly: \"blue\"\tblue\t[\"blue\"]\t3\n210016\t420013\tColors & Descriptions\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210017\t420013\tColors & Descriptions\ttranslation\tTranslate to English: \"green\"\tgreen\t[\"green\"]\t5\n210018\t420014\tThe Family\tmultiple_choice\tWhat does \"mother\" mean in Portuguese?\tmother\t[\"mother\", \"father\", \"brother\", \"sister\"]\t1\n210019\t420014\tThe Family\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: mother)\tmother\t[\"mother\"]\t2\n210020\t420014\tThe Family\tspeaking\tSay this word correctly: \"father\"\tfather\t[\"father\"]\t3\n210021\t420014\tThe Family\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210022\t420014\tThe Family\ttranslation\tTranslate to English: \"brother\"\tbrother\t[\"brother\"]\t5\n210023\t420015\tFood & Drinks\tmultiple_choice\tWhat does \"breakfast\" mean in Portuguese?\tbreakfast\t[\"breakfast\", \"lunch\", \"dinner\", \"snack\"]\t1\n210024\t420015\tFood & Drinks\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: breakfast)\tbreakfast\t[\"breakfast\"]\t2\n210025\t420015\tFood & Drinks\tspeaking\tSay this word correctly: \"lunch\"\tlunch\t[\"lunch\"]\t3\n210026\t420015\tFood & Drinks\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210027\t420015\tFood & Drinks\ttranslation\tTranslate to English: \"dinner\"\tdinner\t[\"dinner\"]\t5\n210028\t420016\tDaily Routines\tmultiple_choice\tWhat does \"wake up\" mean in Portuguese?\twake up\t[\"wake up\", \"get up\", \"brush teeth\", \"take a shower\"]\t1\n210029\t420016\tDaily Routines\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: wake up)\twake up\t[\"wake up\"]\t2\n210030\t420016\tDaily Routines\tspeaking\tSay this word correctly: \"get up\"\tget up\t[\"get up\"]\t3\n210031\t420016\tDaily Routines\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210032\t420016\tDaily Routines\ttranslation\tTranslate to English: \"brush teeth\"\tbrush teeth\t[\"brush teeth\"]\t5\n210033\t420017\tAnimals & Nature\tmultiple_choice\tWhat does \"lion\" mean in Portuguese?\tlion\t[\"lion\", \"elephant\", \"giraffe\", \"tiger\"]\t1\n210034\t420017\tAnimals & Nature\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: lion)\tlion\t[\"lion\"]\t2\n210035\t420017\tAnimals & Nature\tspeaking\tSay this word correctly: \"elephant\"\telephant\t[\"elephant\"]\t3\n210036\t420017\tAnimals & Nature\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210037\t420017\tAnimals & Nature\ttranslation\tTranslate to English: \"giraffe\"\tgiraffe\t[\"giraffe\"]\t5\n210038\t420018\tClothes & Shopping\tmultiple_choice\tWhat does \"shirt\" mean in Portuguese?\tshirt\t[\"shirt\", \"pants\", \"dress\", \"shoes\"]\t1\n210039\t420018\tClothes & Shopping\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: shirt)\tshirt\t[\"shirt\"]\t2\n210040\t420018\tClothes & Shopping\tspeaking\tSay this word correctly: \"pants\"\tpants\t[\"pants\"]\t3\n210041\t420018\tClothes & Shopping\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210042\t420018\tClothes & Shopping\ttranslation\tTranslate to English: \"dress\"\tdress\t[\"dress\"]\t5\n210043\t420019\tWeather & Seasons\tmultiple_choice\tWhat does \"sunny\" mean in Portuguese?\tsunny\t[\"sunny\", \"cloudy\", \"rainy\", \"windy\"]\t1\n210044\t420019\tWeather & Seasons\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: sunny)\tsunny\t[\"sunny\"]\t2\n210045\t420019\tWeather & Seasons\tspeaking\tSay this word correctly: \"cloudy\"\tcloudy\t[\"cloudy\"]\t3\n210046\t420019\tWeather & Seasons\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210047\t420019\tWeather & Seasons\ttranslation\tTranslate to English: \"rainy\"\trainy\t[\"rainy\"]\t5\n210048\t420020\tBody Parts & Health\tmultiple_choice\tWhat does \"head\" mean in Portuguese?\thead\t[\"head\", \"neck\", \"shoulder\", \"arm\"]\t1\n210049\t420020\tBody Parts & Health\tfill_blank\tComplete the sentence: \"I have a ___.\" (use: head)\thead\t[\"head\"]\t2\n210050\t420020\tBody Parts & Health\tspeaking\tSay this word correctly: \"neck\"\tneck\t[\"neck\"]\t3\n210051\t420020\tBody Parts & Health\tmultiple_choice\tChoose the correct form: \"She ___ to school every day.\"\tgoes\t[\"go\", \"goes\", \"going\", \"gone\"]\t4\n210052\t420020\tBody Parts & Health\ttranslation\tTranslate to English: \"shoulder\"\tshoulder\t[\"shoulder\"]\t5\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

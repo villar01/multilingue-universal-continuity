@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, SUM(CASE WHEN photo_url IS NOT NULL THEN 1 ELSE 0 END) as with_photo FROM virtual_teachers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COUNT(*) as total, SUM(CASE WHEN photo_url IS NOT NULL THEN 1 ELSE 0 END) as with_photo FROM virtual_teachers;",
+  "rows": [
+    {
+      "total": "70",
+      "with_photo": "70"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\twith_photo\n70\t70\n",
+  "stderr": "",
+  "execution_time_ms": 261
+}

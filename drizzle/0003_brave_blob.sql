@@ -1,0 +1,1 @@
+ALTER TABLE `virtual_teachers` DROP COLUMN `specialty`;

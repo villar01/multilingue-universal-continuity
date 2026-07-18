@@ -1,0 +1,46 @@
+{
+  "query": "SELECT COUNT(*) as total, SUM(CASE WHEN photo_url IS NOT NULL THEN 1 ELSE 0 END) as with_photo FROM virtual_teachers;\nSELECT id, name, voice_language_code, photo_url FROM virtual_teachers ORDER BY id LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT COUNT(*) as total, SUM(CASE WHEN photo_url IS NOT NULL THEN 1 ELSE 0 END) as with_photo FROM virtual_teachers;\nSELECT id, name, voice_language_code, photo_url FROM virtual_teachers ORDER BY id LIMIT 30;",
+  "rows": [
+    {
+      "total": "64",
+      "with_photo": "26"
+    }
+  ],
+  "messages": [
+    "id\tname\tvoice_language_code\tphoto_url",
+    "1\tProfessor Ricardo\tpt-BR\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg",
+    "30001\tIngrid\tde-DE\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face",
+    "90002\tProfessora Ingrid\tde-DE\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png",
+    "90003\tProfessor Carlos\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png",
+    "90004\tProfessor Jean\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png",
+    "150003\tProfessor Carlos\ten-US\thttps://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
+    "150004\tTeacher Jeanne\ten-US\thttps://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face",
+    "180001\tProfessor Kwame Asante\ten-US\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg",
+    "210001\tProfessora Mei\tzh-CN\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp",
+    "210002\tProfessor Takeshi\tja-JP\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp",
+    "240001\tJean Dubois\tfr\t/manus-storage/teacher_240001_fr_e9fa7182.png",
+    "240002\tHans Müller\tde\t/manus-storage/teacher_240002_de_c68887ac.png",
+    "240003\tSofia Rossi\tit\t/manus-storage/teacher_240003_it_d8f1b806.png",
+    "240004\tDmitri Ivanov\tru\t/manus-storage/teacher_240004_ru_9d9662e5.png",
+    "240005\tAhmed Al-Rashid\tar\t/manus-storage/teacher_240005_ar_360c7cdf.png",
+    "240006\tMin-ji Park\tko\t/manus-storage/teacher_240006_ko_d7bd7484.png",
+    "240007\tPriya Sharma\thi\t/manus-storage/teacher_240007_hi_549422ec.png",
+    "240008\tMehmet Yılmaz\ttr\t/manus-storage/teacher_240008_tr_d0ac69cd.png",
+    "240009\tEmma van der Berg\tnl\t/manus-storage/teacher_240009_nl_f204e8bd.png",
+    "240010\tErik Andersson\tsv\t/manus-storage/teacher_240010_sv_cfc171cf.png",
+    "240011\tAnna Kowalski\tpl\t/manus-storage/teacher_240011_pl_a6fe627d.png",
+    "240012\tNikos Papadopoulos\tel\t/manus-storage/teacher_240012_el_84cdb250.png",
+    "240013\tSarah Cohen\the\tNULL",
+    "240014\tSomchai Patel\tth\t/manus-storage/teacher_240014_th_5e2017cf.png",
+    "240015\tLinh Nguyen\tvi\t/manus-storage/teacher_240015_vi_ce083eed.png",
+    "240016\tBudi Santoso\tid\t/manus-storage/teacher_240016_id_6483ba2a.png",
+    "240017\tFatimah Rahman\tms\tNULL",
+    "240018\tMaria Santos\ttl\tNULL",
+    "240019\tReza Hosseini\tfa\tNULL",
+    "240020\tAyesha Khan\tur\t/manus-storage/teacher_240020_ur_44591dfe.png"
+  ],
+  "stdout": "total\twith_photo\n64\t26\nid\tname\tvoice_language_code\tphoto_url\n1\tProfessor Ricardo\tpt-BR\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-ricardo-caucasian.jpg\n30001\tIngrid\tde-DE\thttps://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face\n90002\tProfessora Ingrid\tde-DE\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/rrmsymmrZgBkVcIu.png\n90003\tProfessor Carlos\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/qrODIrIvLLXeCLLN.png\n90004\tProfessor Jean\tfr-FR\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663082627627/CXDuUmSKtpexfEZX.png\n150003\tProfessor Carlos\ten-US\thttps://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face\n150004\tTeacher Jeanne\ten-US\thttps://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face\n180001\tProfessor Kwame Asante\ten-US\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-kwame-black.jpg\n210001\tProfessora Mei\tzh-CN\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-female-N4gga97PJa39n9BPC2LiSb.webp\n210002\tProfessor Takeshi\tja-JP\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/Z3XkMfhwb3dv99M6Rf8thh/teacher-asian-male-XF9dkjzzbuwY5UiGxtgRaf.webp\n240001\tJean Dubois\tfr\t/manus-storage/teacher_240001_fr_e9fa7182.png\n240002\tHans Müller\tde\t/manus-storage/teacher_240002_de_c68887ac.png\n240003\tSofia Rossi\tit\t/manus-storage/teacher_240003_it_d8f1b806.png\n240004\tDmitri Ivanov\tru\t/manus-storage/teacher_240004_ru_9d9662e5.png\n240005\tAhmed Al-Rashid\tar\t/manus-storage/teacher_240005_ar_360c7cdf.png\n240006\tMin-ji Park\tko\t/manus-storage/teacher_240006_ko_d7bd7484.png\n240007\tPriya Sharma\thi\t/manus-storage/teacher_240007_hi_549422ec.png\n240008\tMehmet Yılmaz\ttr\t/manus-storage/teacher_240008_tr_d0ac69cd.png\n240009\tEmma van der Berg\tnl\t/manus-storage/teacher_240009_nl_f204e8bd.png\n240010\tErik Andersson\tsv\t/manus-storage/teacher_240010_sv_cfc171cf.png\n240011\tAnna Kowalski\tpl\t/manus-storage/teacher_240011_pl_a6fe627d.png\n240012\tNikos Papadopoulos\tel\t/manus-storage/teacher_240012_el_84cdb250.png\n240013\tSarah Cohen\the\tNULL\n240014\tSomchai Patel\tth\t/manus-storage/teacher_240014_th_5e2017cf.png\n240015\tLinh Nguyen\tvi\t/manus-storage/teacher_240015_vi_ce083eed.png\n240016\tBudi Santoso\tid\t/manus-storage/teacher_240016_id_6483ba2a.png\n240017\tFatimah Rahman\tms\tNULL\n240018\tMaria Santos\ttl\tNULL\n240019\tReza Hosseini\tfa\tNULL\n240020\tAyesha Khan\tur\t/manus-storage/teacher_240020_ur_44591dfe.png\n",
+  "stderr": "",
+  "execution_time_ms": 1635
+}

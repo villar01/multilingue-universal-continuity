@@ -1,0 +1,8 @@
+{
+  "query": "SELECT l.id, l.title, l.languageId, COUNT(e.id) as exercise_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY l.id LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT l.id, l.title, l.languageId, COUNT(e.id) as exercise_count FROM lessons l LEFT JOIN exercises e ON e.lessonId = l.id GROUP BY l.id ORDER BY l.id LIMIT 50;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'l.languageid' in 'field list'"
+  ]
+}

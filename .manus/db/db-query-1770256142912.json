@@ -1,0 +1,50 @@
+{
+  "query": "SELECT lessonId, COUNT(*) as exercise_count FROM exercises WHERE lessonId BETWEEN 390001 AND 390010 GROUP BY lessonId ORDER BY lessonId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT lessonId, COUNT(*) as exercise_count FROM exercises WHERE lessonId BETWEEN 390001 AND 390010 GROUP BY lessonId ORDER BY lessonId;",
+  "rows": [
+    {
+      "lessonId": "390001",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390002",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390003",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390004",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390005",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390006",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390007",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390008",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390009",
+      "exercise_count": "5"
+    },
+    {
+      "lessonId": "390010",
+      "exercise_count": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "lessonId\texercise_count\n390001\t5\n390002\t5\n390003\t5\n390004\t5\n390005\t5\n390006\t5\n390007\t5\n390008\t5\n390009\t5\n390010\t5\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

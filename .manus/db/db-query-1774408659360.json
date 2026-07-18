@@ -1,0 +1,16 @@
+{
+  "query": "SELECT l.id, l.title, l.languageCode, COUNT(vt.id) as teacher_count FROM lessons l LEFT JOIN virtual_teachers vt ON vt.voice_language_code = l.languageCode WHERE l.id = 420011 GROUP BY l.id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user omUaWDXYjWboTF2.9ecc91ec34db --database Z3XkMfhwb3dv99M6Rf8thh --execute SELECT l.id, l.title, l.languageCode, COUNT(vt.id) as teacher_count FROM lessons l LEFT JOIN virtual_teachers vt ON vt.voice_language_code = l.languageCode WHERE l.id = 420011 GROUP BY l.id",
+  "rows": [
+    {
+      "id": "420011",
+      "title": "Greetings & Introductions",
+      "languageCode": "en",
+      "teacher_count": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tlanguageCode\tteacher_count\n420011\tGreetings & Introductions\ten\t0\n",
+  "stderr": "",
+  "execution_time_ms": 69
+}
