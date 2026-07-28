@@ -11,6 +11,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
 import { ArrowLeft, Volume2, CheckCircle, XCircle, ChevronRight, BookOpen, Sparkles, RotateCcw, Trophy, Star, Zap, Heart, MessageCircle, Mic, MicOff } from "lucide-react";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 interface VocabWord {
@@ -310,34 +311,12 @@ export default function StructuredLesson() {
   const tinyLessonMut = trpc.tinyLesson.generateByScenario.useMutation();
   const ttsMut        = trpc.tts.speak.useMutation();
 
-  // ── TTS com animação de fala ──────────────────────────────────────────────
-  const speak = useCallback(async (text: string, lang: string) => {
+  // ── TTS com animação de fala (Edge TTS Neural via useNaturalVoice) ─────────
+  const speak = useCallback((text: string, lang: string) => {
     if (!text?.trim()) return;
     setSpeaking(true);
-    const stopSpeaking = () => setSpeaking(false);
-    const fallback = () => {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang; u.rate = 0.85;
-        u.onend = stopSpeaking;
-        window.speechSynthesis.speak(u);
-      } else stopSpeaking();
-    };
-    try {
-      const r = await ttsMut.mutateAsync({ text: text.slice(0, 300), voiceLang: lang });
-      if (r.success && r.audioBase64) {
-        const bytes = Uint8Array.from(atob(r.audioBase64), c => c.charCodeAt(0));
-        const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
-        if (audioRef.current) { audioRef.current.pause(); }
-        const a = new Audio(url);
-        audioRef.current = a;
-        a.onended = () => { URL.revokeObjectURL(url); stopSpeaking(); };
-        a.onerror = stopSpeaking;
-        a.play().catch(fallback);
-      } else fallback();
-    } catch { fallback(); }
-  }, [ttsMut]);
+    speakNaturalVoice(text, lang, { rate: 0.85, onEnd: () => setSpeaking(false) });
+  }, []);
 
   // ── Mensagem animada do professor ─────────────────────────────────────────
   const showMsg = useCallback((msg: string, lang?: string) => {

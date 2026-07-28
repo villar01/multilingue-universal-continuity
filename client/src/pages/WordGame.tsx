@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import LanguageSelector from "@/components/LanguageSelector";
 import { LANGUAGES_57, type Language } from "@/lib/languages";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 type GameMode = "flashcard" | "match" | "typing" | "hangman" | "quiz" | "wordsearch";
 
@@ -62,11 +63,7 @@ export default function WordGame() {
   const completeDaily = trpc.dailyChallenge.complete.useMutation();
 
   const speak = useCallback((text: string, code: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = code; u.rate = 0.85;
-    window.speechSynthesis.speak(u);
+    speakNaturalVoice(text, code, { rate: 0.85 });
   }, []);
 
   const loadWords = async () => {

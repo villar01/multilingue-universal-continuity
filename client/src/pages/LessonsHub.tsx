@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Level = "beginner" | "intermediate" | "advanced";
@@ -1237,13 +1238,7 @@ function SceneLesson({ scene, onComplete }: { scene: VisualScene; onComplete: (x
   }
 
   function speakWord(text: string) {
-    if ('speechSynthesis' in window) {
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'en-US';
-      utt.rate = 0.85;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utt);
-    }
+    speakNaturalVoice(text, 'en-US', { rate: 0.85 });
   }
 
   const done = revealed.length >= scene.words.length;

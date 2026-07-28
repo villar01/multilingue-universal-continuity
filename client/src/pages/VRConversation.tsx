@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import LanguageSelector from "@/components/LanguageSelector";
 import { LANGUAGES_57, type Language } from "@/lib/languages";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 const SCENARIOS = [
   { id: "restaurante", label: "🍽️ Restaurante", desc: "Pedidos, cardápio, conta", bg: "from-orange-900 to-red-900", avatar: "👨‍🍳", difficulty: 1,
@@ -79,14 +80,8 @@ export default function VRConversation() {
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const speak = useCallback((text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang.code; u.rate = 0.85; u.pitch = 1.1;
     setTalking(true);
-    u.onend = () => setTalking(false);
-    u.onerror = () => setTalking(false);
-    window.speechSynthesis.speak(u);
+    speakNaturalVoice(text, lang.code, { rate: 0.85, onEnd: () => setTalking(false) });
   }, [lang.code]);
 
   const startChat = async () => {

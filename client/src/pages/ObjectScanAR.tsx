@@ -30,6 +30,7 @@ import {
 import { LANGUAGES_57 } from "@/lib/languages";
 import LanguageSelector from "@/components/LanguageSelector";
 import type { Language } from "@/lib/languages";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 interface DetectedObject {
@@ -171,12 +172,9 @@ export default function ObjectScanAR() {
     }
   }, [language, scanMutation]);
 
-  // ── Falar palavra ─────────────────────────────────────────────────────────
+  // ── Falar palavra (Edge TTS Neural) ───────────────────────────────────────
   const speak = useCallback((text: string) => {
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = language.code;
-    utter.rate = 0.85;
-    speechSynthesis.speak(utter);
+    speakNaturalVoice(text, language.code, { rate: 0.85 });
   }, [language]);
 
   // ── Salvar palavra ────────────────────────────────────────────────────────
