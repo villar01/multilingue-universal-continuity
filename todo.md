@@ -169,9 +169,9 @@
 
 ## 🐛 CORREÇÃO URGENTE — VOZ NATURAL E PRONÚNCIA
 - [x] MasterLesson: áudio TTS é gerado mas nunca reproduzido (tts.mutateAsync sem tocar audioBase64)
-- [ ] Eliminar voz robótica (window.speechSynthesis) em 31 arquivos, substituindo por Edge TTS Neural
-- [ ] Garantir gênero correto da voz em todas as chamadas TTS do MasterLesson
-- [ ] Unificar todas as chamadas de voz através de speakText/useNaturalVoice
+- [x] Eliminar voz robótica (window.speechSynthesis) em 26 arquivos, substituindo por Edge TTS Neural
+- [x] Garantir gênero correto da voz em todas as chamadas TTS do MasterLesson
+- [x] Unificar todas as chamadas de voz através de speakText/useNaturalVoice
 
 ## 🚀 MULTIPLICAR VELOCIDADE DA IA POR 10X
 - [x] Reduzir cache de 2s para 0.2s (10x mais rápido)

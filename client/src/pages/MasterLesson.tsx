@@ -55,6 +55,7 @@ interface MasterLessonData {
   oralPhrases: OralPhrase[];
   flashCards: FlashCard[];
   dialoguePrompt: string;
+  teacherGender?: 'male' | 'female';
 }
 type Stage = "scroll" | "oral" | "game" | "dialogue" | "complete";
 
@@ -104,6 +105,7 @@ export const MASTER_LESSONS: MasterLessonData[] = [
       { word: "Morning", translation: "Manhã", emoji: "☀️", example: "Good morning!", xp: 10 },
     ],
     dialoguePrompt: "Diga 'Hi' para o professor. Responda só com as palavras desta aula: Hi, Yes, No, Good.",
+    teacherGender: 'female',
   },
   // ─── INGLÊS — Aula 2: Números e cores (Premium) ──────────────────────────────
   {
@@ -143,6 +145,7 @@ export const MASTER_LESSONS: MasterLessonData[] = [
       { word: "Green", translation: "Verde", emoji: "🟢", example: "Green!", xp: 10 },
     ],
     dialoguePrompt: "Diga um número e uma cor em inglês. Use só o que aprendeu: One, Two, Red, Blue.",
+    teacherGender: 'male',
   },
   // ─── ESPANHOL — Aula 1 ───────────────────────────────────────────────────────
   {
@@ -183,6 +186,7 @@ export const MASTER_LESSONS: MasterLessonData[] = [
       { word: "Días", translation: "Dias", emoji: "☀️", example: "Buenos días!", xp: 10 },
     ],
     dialoguePrompt: "Diga '¡Hola!' para o professor. Responda só com: Hola, Sí, No, Bien.",
+    teacherGender: 'male',
   },
   // ─── FRANCÊS — Aula 1 ────────────────────────────────────────────────────────
   {
@@ -223,13 +227,15 @@ export const MASTER_LESSONS: MasterLessonData[] = [
       { word: "Ça va", translation: "Tudo bem", emoji: "😊", example: "Ça va?", xp: 10 },
     ],
     dialoguePrompt: "Diga 'Bonjour!' para o professor. Responda só com: Bonjour, Oui, Non, Bien.",
+    teacherGender: 'female',
   },
 ];
 
 // ── Componente ScrollChat ──────────────────────────────────────────────────────
-function ScrollStage({ messages, langCode, onComplete }: {
+function ScrollStage({ messages, langCode, teacherGender, onComplete }: {
   messages: ScrollMessage[];
   langCode: string;
+  teacherGender?: 'male' | 'female';
   onComplete: () => void;
 }) {
   const [visible, setVisible] = useState<number[]>([]);
@@ -245,7 +251,7 @@ function ScrollStage({ messages, langCode, onComplete }: {
         setVisible(v => [...v, i]);
         // speak teacher lines — usa Edge TTS Neural (voz natural)
         if (messages[i].from === "teacher") {
-          speakText(messages[i].text, langCode, { gender: 'female' });
+          speakText(messages[i].text, langCode, { gender: teacherGender });
         }
       }
       if (!cancelled) {
@@ -295,9 +301,10 @@ function ScrollStage({ messages, langCode, onComplete }: {
 }
 
 // ── Componente Oral ────────────────────────────────────────────────────────────
-function OralStage({ phrases, langCode, onComplete }: {
+function OralStage({ phrases, langCode, teacherGender, onComplete }: {
   phrases: OralPhrase[];
   langCode: string;
+  teacherGender?: 'male' | 'female';
   onComplete: (xp: number) => void;
 }) {
   const [idx, setIdx] = useState(0);
@@ -306,7 +313,7 @@ function OralStage({ phrases, langCode, onComplete }: {
   const phrase = phrases[idx];
 
   const speak = () => {
-    speakText(phrase.text, langCode, { gender: 'female' });
+    speakText(phrase.text, langCode, { gender: teacherGender });
   };
 
   const handleAnswer = (correct: boolean) => {
@@ -349,9 +356,10 @@ function OralStage({ phrases, langCode, onComplete }: {
 }
 
 // ── Componente Flashcard ───────────────────────────────────────────────────────
-function GameStage({ cards, langCode, onComplete }: {
+function GameStage({ cards, langCode, teacherGender, onComplete }: {
   cards: FlashCard[];
   langCode: string;
+  teacherGender?: 'male' | 'female';
   onComplete: (xp: number) => void;
 }) {
   const [idx, setIdx] = useState(0);
@@ -361,7 +369,7 @@ function GameStage({ cards, langCode, onComplete }: {
   const card = cards[idx];
 
   const speak = () => {
-    speakText(card.word, langCode, { gender: 'female' });
+    speakText(card.word, langCode, { gender: teacherGender });
   };
 
   const handleAnswer = (correct: boolean) => {
@@ -661,6 +669,7 @@ export default function MasterLesson() {
           <ScrollStage
             messages={selectedLesson.scrollMessages}
             langCode={selectedLesson.langCode}
+            teacherGender={selectedLesson.teacherGender}
             onComplete={() => setStage("oral")}
           />
         )}
@@ -668,6 +677,7 @@ export default function MasterLesson() {
           <OralStage
             phrases={selectedLesson.oralPhrases}
             langCode={selectedLesson.langCode}
+            teacherGender={selectedLesson.teacherGender}
             onComplete={(xp) => { setTotalXp(t => t + xp); setStage("game"); }}
           />
         )}
@@ -675,6 +685,7 @@ export default function MasterLesson() {
           <GameStage
             cards={selectedLesson.flashCards}
             langCode={selectedLesson.langCode}
+            teacherGender={selectedLesson.teacherGender}
             onComplete={(xp) => { setTotalXp(t => t + xp); setStage("dialogue"); }}
           />
         )}
