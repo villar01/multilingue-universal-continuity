@@ -6,6 +6,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 // Fotos fotorrealistas por professor (Unsplash - domínio público)
 const TEACHER_PHOTOS: Record<string, string> = {
@@ -97,17 +99,16 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
 
   // Fallback: TTS nativo do browser
   const speakWithBrowserTTS = useCallback((speechText: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(speechText);
-    utterance.lang = teacher.voiceLang || "en-US";
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
+    stopEdgeTTS();
     setIsSpeaking(true);
     setState("speaking");
+    speakNaturalVoice(speechText, teacher.voiceLang || "en-US", {
+      rate: 0.9,
+      onEnd: () => {
+        setIsSpeaking(false);
+        setState("idle");
+      },
+    });
   }, [teacher.voiceLang]);
 
   // Auto-play quando text muda
@@ -134,7 +135,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   };
 
   const handleStop = () => {
-    window.speechSynthesis?.cancel();
+    stopEdgeTTS();
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;

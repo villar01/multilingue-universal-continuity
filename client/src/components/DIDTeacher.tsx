@@ -8,6 +8,8 @@ import { trpc } from "@/lib/trpc";
 import { Volume2, Loader2, RefreshCw, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 interface DIDTeacherProps {
   teacherId?: number;
@@ -103,102 +105,25 @@ export function DIDTeacher({
     setMouthOpen(0);
   }, []);
 
-  // Web Speech API fallback — seleção premium de voz por idioma
+  // Edge TTS Neural fallback — voz natural via servidor
   const speakFallback = useCallback(
     (textToSpeak: string) => {
-      if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-
-      // Aguardar vozes carregarem se ainda não estiverem prontas
-      const doSpeak = (voices: SpeechSynthesisVoice[]) => {
-        const utter = new SpeechSynthesisUtterance(textToSpeak);
-        utter.lang = languageCode;
-        // Ajuste de velocidade/tom por idioma para naturalidade máxima
-        const isEn = languageCode.startsWith('en');
-        const isJa = languageCode.startsWith('ja');
-        const isZh = languageCode.startsWith('zh');
-        utter.rate = isEn ? 0.92 : isJa || isZh ? 0.85 : 0.88;
-        utter.pitch = isEn ? 1.05 : 1.0;
-        utter.volume = 1.0;
-
-        // Pool de vozes para o idioma selecionado
-        const langExact = voices.filter(v => v.lang === languageCode);
-        const langPrefix = voices.filter(v => v.lang.startsWith(languageCode.split('-')[0]));
-        const pool = langExact.length > 0 ? langExact : langPrefix;
-
-        // Prioridade: Neural Aria/Jenny (en-US) > Neural > Google nativo > Microsoft nativo > qualquer nativo
-        const preferred =
-          pool.find(v => v.name === 'Microsoft Aria Online (Natural) - English (United States)') ||
-          pool.find(v => v.name === 'Microsoft Jenny Online (Natural) - English (United States)') ||
-          pool.find(v => v.name.includes('Aria') && v.name.includes('Natural')) ||
-          pool.find(v => v.name.includes('Jenny') && v.name.includes('Natural')) ||
-          pool.find(v => v.name.includes('Neural') && v.lang === languageCode) ||
-          pool.find(v => v.name.includes('Neural')) ||
-          pool.find(v => v.name.includes('Google') && v.lang === languageCode) ||
-          pool.find(v => v.name.includes('Google')) ||
-          pool.find(v => v.name.includes('Microsoft') && v.lang === languageCode) ||
-          pool.find(v => v.name.includes('Microsoft')) ||
-          pool.find(v => v.lang === languageCode) ||
-          pool[0] ||
-          voices.find(v => v.lang.startsWith('en')) ||
-          voices[0];
-
-        if (preferred) utter.voice = preferred;
-
-        utter.onstart = () => { setIsSpeaking(true); animateMouth(); };
-        utter.onend = () => { setIsSpeaking(false); stopMouthAnimation(); onSpeakEnd?.(); };
-        utter.onerror = () => { setIsSpeaking(false); stopMouthAnimation(); };
-        speechRef.current = utter;
-        window.speechSynthesis.speak(utter);
-      };
-
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        doSpeak(voices);
-      } else {
-        // Vozes ainda não carregadas — aguardar evento
-        window.speechSynthesis.onvoiceschanged = () => {
-          doSpeak(window.speechSynthesis.getVoices());
-          window.speechSynthesis.onvoiceschanged = null;
-        };
-      }
-      return; // early return pois o restante foi movido para doSpeak
+      stopEdgeTTS();
+      setIsSpeaking(true);
+      animateMouth();
+      speakNaturalVoice(textToSpeak, languageCode, {
+        rate: 0.9,
+        onEnd: () => {
+          setIsSpeaking(false);
+          stopMouthAnimation();
+          onSpeakEnd?.();
+        },
+      });
     },
     [languageCode, animateMouth, stopMouthAnimation, onSpeakEnd]
   );
 
-  // Stub para compatibilidade com o bloco original que vem logo abaixo
-  const _speakFallbackLegacy = useCallback(
-    (textToSpeak: string) => {
-      if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(textToSpeak);
-      utter.lang = languageCode;
-      utter.rate = 0.9;
-      utter.pitch = 1.0;
-      const voices = window.speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.lang.startsWith(languageCode.split('-')[0]));
-      if (preferred) utter.voice = preferred;
-
-      utter.onstart = () => {
-        setIsSpeaking(true);
-        animateMouth();
-      };
-      utter.onend = () => {
-        setIsSpeaking(false);
-        stopMouthAnimation();
-        onSpeakEnd?.();
-      };
-      utter.onerror = () => {
-        setIsSpeaking(false);
-        stopMouthAnimation();
-      };
-
-      speechRef.current = utter;
-      window.speechSynthesis.speak(utter);
-    },
-    [languageCode, animateMouth, stopMouthAnimation, onSpeakEnd]
-  );
+  // Legacy stub removido — Edge TTS substitui Web Speech API
 
   // Gerar vídeo D-ID
   const generateDIDVideo = useCallback(
@@ -266,7 +191,7 @@ export function DIDTeacher({
   useEffect(() => {
     return () => {
       stopMouthAnimation();
-      window.speechSynthesis?.cancel();
+      stopEdgeTTS();
     };
   }, []);
 
@@ -396,7 +321,7 @@ export function DIDTeacher({
               size="sm"
               variant="ghost"
               onClick={() => {
-                window.speechSynthesis?.cancel();
+                stopEdgeTTS();
                 videoRef.current?.pause();
                 setIsPlaying(false);
                 setIsSpeaking(false);

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Check, Volume2, Loader2, Star } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 interface TeacherSelectorProps {
   languageCode: string;
@@ -256,55 +258,11 @@ function playVoiceSample(
     "ru": "ru-RU", "ar": "ar-SA",
   };
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = langCode.includes('-') ? langCode : (langMap[langCode] || 'en-US');
-  utterance.rate = 0.88;
-  utterance.volume = 1.0;
-  utterance.pitch = gender === 'female' ? 1.15 : 0.88;
-  
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = () => onEnd?.();
-
-  const speak = () => {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      const langPrefix = utterance.lang.split('-')[0];
-      const langVoices = voices.filter(v => v.lang.startsWith(langPrefix));
-      if (langVoices.length > 0) {
-        // Prefer high quality voices
-        const premium = langVoices.find(v =>
-          v.name.includes('Google') || v.name.includes('Microsoft') ||
-          v.name.includes('Neural') || v.name.includes('Enhanced') ||
-          v.name.includes('Premium')
-        );
-        if (gender === 'female') {
-          const femaleVoice = langVoices.find(v =>
-            v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('samantha') ||
-            v.name.toLowerCase().includes('victoria') || v.name.toLowerCase().includes('karen') ||
-            v.name.toLowerCase().includes('jenny') || v.name.toLowerCase().includes('aria') ||
-            v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('ava') ||
-            (v as any).gender === 'female'
-          );
-          utterance.voice = femaleVoice || premium || langVoices[0];
-        } else {
-          const maleVoice = langVoices.find(v =>
-            v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('guy') ||
-            v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('mark') ||
-            v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('alex') ||
-            (v as any).gender === 'male'
-          );
-          utterance.voice = maleVoice || premium || langVoices[0];
-        }
-      }
-    }
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  };
-
-  if (window.speechSynthesis.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = speak;
-    window.speechSynthesis.getVoices();
-  } else {
-    speak();
-  }
+  const voiceLang = langCode.includes('-') ? langCode : (langMap[langCode] || 'en-US');
+  stopEdgeTTS();
+  speakNaturalVoice(text, voiceLang, {
+    rate: 0.88,
+    gender: (gender as 'male' | 'female') || undefined,
+    onEnd: () => onEnd?.(),
+  });
 }

@@ -13,6 +13,8 @@
 import { useRef, useEffect, useState, useCallback, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, ContactShadows, Html } from "@react-three/drei";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import * as THREE from "three";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -543,13 +545,11 @@ export function TeacherAvatar3D({
     setCurrentVisemeKey("neutral");
   }, []);
 
-  // ── Falar com Web Speech API ──
+  // ── Falar com Edge TTS Neural ──
   useEffect(() => {
     if (!isTeaching || !text) {
       stopVisemeSync();
-      if (utteranceRef.current) {
-        window.speechSynthesis?.cancel();
-      }
+      stopEdgeTTS();
       return;
     }
 
@@ -570,13 +570,7 @@ export function TeacherAvatar3D({
       };
     }
 
-    // Fallback: Web Speech API (TTS nativo do browser)
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utteranceRef.current = utterance;
-
+    // Edge TTS Neural (voz natural via servidor)
     const lang = profile.language || "pt";
     const langCode = lang === "pt" ? "pt-BR"
       : lang === "en" ? "en-US"
@@ -586,51 +580,19 @@ export function TeacherAvatar3D({
       : lang === "it" ? "it-IT"
       : "pt-BR";
 
-    utterance.lang = langCode;
-    utterance.rate = 0.95;
-    utterance.pitch = profile.gender === "female" ? 1.15 : 0.9;
-    utterance.volume = 1.0;
-
-    // Aguardar vozes carregarem
-    const setVoice = () => {
-      const voice = getBestVoice(langCode);
-      if (voice) utterance.voice = voice;
-    };
-
-    if (window.speechSynthesis.getVoices().length > 0) {
-      setVoice();
-    } else {
-      window.speechSynthesis.addEventListener("voiceschanged", setVoice, { once: true });
-    }
-
-    utterance.onstart = () => {
-      startVisemeSync(text, langCode);
-    };
-
-    utterance.onend = () => {
-      stopVisemeSync();
-      onSpeechEnd?.();
-    };
-
-    utterance.onerror = () => {
-      stopVisemeSync();
-    };
-
-    // Evento de boundary para sincronização mais precisa
-    utterance.onboundary = (event) => {
-      if (event.name === "word") {
-        const word = text.substring(event.charIndex, event.charIndex + event.charLength);
-        const frames = textToPhonemeFrames(word, langCode);
-        if (frames.length > 0) {
-          setCurrentVisemeKey(frames[0]!.viseme);
-        }
-      }
-    };
-
-    window.speechSynthesis.speak(utterance);
+    stopEdgeTTS();
+    startVisemeSync(text, langCode);
+    speakNaturalVoice(text, langCode, {
+      rate: 0.95,
+      gender: profile.gender as 'male' | 'female' | undefined,
+      onEnd: () => {
+        stopVisemeSync();
+        onSpeechEnd?.();
+      },
+    });
 
     return () => {
-      window.speechSynthesis?.cancel();
+      stopEdgeTTS();
       stopVisemeSync();
     };
   }, [isTeaching, text, audioUrl, profile, startVisemeSync, stopVisemeSync, onSpeechEnd]);
