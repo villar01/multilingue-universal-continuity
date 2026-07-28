@@ -55,7 +55,7 @@ export function DIDTeacher({
   const [didAvailable, setDidAvailable] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const animFrameRef = useRef<number>(0);
-  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+  // speechRef removido — Edge TTS Neural não usa SpeechSynthesisUtterance
 
   const sizes = SIZES[size];
 

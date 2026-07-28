@@ -456,33 +456,8 @@ function AvatarFallback2D({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// WEB SPEECH API - TTS nativo do browser (melhor qualidade, zero custo)
+// WEB SPEECH API removida — Edge TTS Neural substitui completamente
 // ─────────────────────────────────────────────────────────────────────────────
-
-function getBestVoice(lang: string): SpeechSynthesisVoice | null {
-  if (!window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-
-  // Prioridade: Neural > Premium > Enhanced > Standard
-  const priority = ["Neural", "Premium", "Enhanced", "Google", "Microsoft"];
-
-  const langCode = lang.toLowerCase().startsWith("pt") ? "pt-BR"
-    : lang.toLowerCase().startsWith("en") ? "en-US"
-    : lang.toLowerCase().startsWith("es") ? "es-ES"
-    : lang.toLowerCase().startsWith("fr") ? "fr-FR"
-    : lang.toLowerCase().startsWith("de") ? "de-DE"
-    : lang.toLowerCase().startsWith("it") ? "it-IT"
-    : "en-US";
-
-  const matching = voices.filter(v => v.lang.startsWith(langCode.split("-")[0]!));
-
-  for (const keyword of priority) {
-    const found = matching.find(v => v.name.includes(keyword));
-    if (found) return found;
-  }
-
-  return matching[0] || voices[0] || null;
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENTE PRINCIPAL
@@ -513,7 +488,7 @@ export function TeacherAvatar3D({
   const phonemeFramesRef = useRef<PhonemeFrame[]>([]);
   const speechStartRef = useRef<number>(0);
   const animFrameRef = useRef<number | undefined>(undefined);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  // utteranceRef removido — Edge TTS Neural não usa SpeechSynthesisUtterance
 
   // ── Sincronização de visemas com o texto ──
   const startVisemeSync = useCallback((spokenText: string, lang: string) => {

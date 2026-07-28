@@ -1594,7 +1594,7 @@ export default function ImmersiveScene() {
           style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)" }}
         >
           <button
-            onClick={() => { window.speechSynthesis?.cancel(); setLocation("/"); }}
+            onClick={() => { stopEdgeTTS(); setLocation("/"); }}
             className="flex items-center gap-2 text-white font-semibold px-3 py-1.5 rounded-full"
             style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)" }}
           >
@@ -1957,7 +1957,7 @@ export default function ImmersiveScene() {
       >
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => { window.speechSynthesis?.cancel(); setLocation("/"); }}
+            onClick={() => { stopEdgeTTS(); setLocation("/"); }}
             className="flex items-center gap-2 text-gray-400 hover:text-white px-3 py-1.5 rounded-full text-sm transition-colors"
             style={{ background: "rgba(255,255,255,0.08)" }}
           >
