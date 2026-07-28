@@ -18,6 +18,7 @@ import {
   MessageSquare, BookOpen, Headphones, Globe
 } from "lucide-react";
 import { Link } from "wouter";
+import { speakText, stopEdgeTTS } from "@/hooks/useNaturalVoice";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 interface ScrollMessage {
@@ -234,8 +235,6 @@ function ScrollStage({ messages, langCode, onComplete }: {
   const [visible, setVisible] = useState<number[]>([]);
   const [done, setDone] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const tts = trpc.tts.speak.useMutation();
-
   useEffect(() => {
     let cancelled = false;
     const show = async () => {
@@ -244,9 +243,9 @@ function ScrollStage({ messages, langCode, onComplete }: {
         await new Promise(r => setTimeout(r, i === 0 ? messages[i].delay : messages[i].delay - messages[i - 1].delay));
         if (cancelled) break;
         setVisible(v => [...v, i]);
-        // speak teacher lines
+        // speak teacher lines — usa Edge TTS Neural (voz natural)
         if (messages[i].from === "teacher") {
-          tts.mutateAsync({ text: messages[i].text, voiceLang: langCode }).catch(() => {});
+          speakText(messages[i].text, langCode, { gender: 'female' });
         }
       }
       if (!cancelled) {
@@ -304,11 +303,10 @@ function OralStage({ phrases, langCode, onComplete }: {
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState<"correct" | "wrong" | null>(null);
   const [totalXp, setTotalXp] = useState(0);
-  const tts = trpc.tts.speak.useMutation();
   const phrase = phrases[idx];
 
   const speak = () => {
-    tts.mutateAsync({ text: phrase.text, voiceLang: langCode }).catch(() => {});
+    speakText(phrase.text, langCode, { gender: 'female' });
   };
 
   const handleAnswer = (correct: boolean) => {
@@ -360,11 +358,10 @@ function GameStage({ cards, langCode, onComplete }: {
   const [flipped, setFlipped] = useState(false);
   const [totalXp, setTotalXp] = useState(0);
   const [hearts, setHearts] = useState(3);
-  const tts = trpc.tts.speak.useMutation();
   const card = cards[idx];
 
   const speak = () => {
-    tts.mutateAsync({ text: card.word, voiceLang: langCode }).catch(() => {});
+    speakText(card.word, langCode, { gender: 'female' });
   };
 
   const handleAnswer = (correct: boolean) => {
