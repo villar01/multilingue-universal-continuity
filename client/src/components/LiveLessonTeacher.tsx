@@ -16,6 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import {
   MessageSquare, X, Minimize2, Maximize2, Volume2, VolumeX,
   Send, Mic, MicOff, AlertTriangle, ChevronRight, Sparkles,
@@ -267,15 +269,11 @@ export default function LiveLessonTeacher({
         setIsSpeaking(false);
       }
     } catch {
-      // Fallback to browser TTS
-      if ("speechSynthesis" in window) {
-        const utt = new SpeechSynthesisUtterance(text.substring(0, 200));
-        utt.lang = targetLang.toLowerCase().startsWith("pt") ? "pt-BR" : "en-US";
-        utt.onend = () => setIsSpeaking(false);
-        window.speechSynthesis.speak(utt);
-      } else {
-        setIsSpeaking(false);
-      }
+      // Fallback: Edge TTS Neural
+      stopEdgeTTS();
+      speakNaturalVoice(text.substring(0, 200), targetLang.toLowerCase().startsWith("pt") ? "pt-BR" : "en-US", {
+        onEnd: () => setIsSpeaking(false),
+      });
     }
   }, [isMuted, targetLang, ttsMutation, onSpeakText]);
 

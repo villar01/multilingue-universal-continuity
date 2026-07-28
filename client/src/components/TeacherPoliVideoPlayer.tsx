@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, Maximize } from "lucide-react";
 import EnhancedTeacherAvatar from "./EnhancedTeacherAvatar";
 import { toast } from "sonner";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 interface SubtitleSegment {
   start: number;
@@ -160,11 +161,8 @@ export default function TeacherPoliVideoPlayer({
     if (vocabEntry) {
       setSelectedWord(vocabEntry);
 
-      // Pronunciar palavra
-      const utterance = new SpeechSynthesisUtterance(vocabEntry.word);
-      utterance.lang = "en-US";
-      utterance.rate = 0.8;
-      speechSynthesis.speak(utterance);
+      // Pronunciar palavra (Edge TTS Neural)
+      speakNaturalVoice(vocabEntry.word, "en-US", { rate: 0.8 });
     } else {
       toast.error("Palavra não encontrada no vocabulário");
     }
@@ -406,10 +404,7 @@ export default function TeacherPoliVideoPlayer({
             <div className="mt-6 flex gap-3">
               <Button
                 onClick={() => {
-                  const utterance = new SpeechSynthesisUtterance(selectedWord.word);
-                  utterance.lang = "en-US";
-                  utterance.rate = 0.8;
-                  speechSynthesis.speak(utterance);
+                  speakNaturalVoice(selectedWord.word, "en-US", { rate: 0.8 });
                 }}
                 className="flex-1 bg-purple-600 hover:bg-purple-700"
                 size="lg"

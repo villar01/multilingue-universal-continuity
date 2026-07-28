@@ -21,6 +21,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Camera, X, Volume2, Mic, Star, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -176,16 +177,11 @@ export function ARLearningScene({
   // ── TTS: usar sistema existente do app ────────────────────────────────────
   const speakWord = (text: string) => {
     setIsSpeaking(true);
-    // Integra com o sistema TTS existente (ElevenLabs / Google TTS do app)
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = languageCode;
-      utterance.rate = 0.85;
-      utterance.onend = () => setIsSpeaking(false);
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setTimeout(() => setIsSpeaking(false), 1000);
-    }
+    // Edge TTS Neural para pronúncia natural
+    speakNaturalVoice(text, languageCode, {
+      rate: 0.85,
+      onEnd: () => setIsSpeaking(false),
+    });
   };
 
   // ─── RENDER ───────────────────────────────────────────────────────────────

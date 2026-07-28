@@ -3,6 +3,7 @@ import { X, BookOpen, Volume2, Search, Star, ChevronLeft, ChevronRight, BookMark
 import { PARETO_VOCAB, searchWords, getWordsByScene, type ParetoWord } from "@/lib/vocab-pareto";
 import { HOTSPOT_TRANSLATIONS } from "@/lib/hotspot-translations";
 import { trpc } from "@/lib/trpc";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 // Get translated word for a given BCP-47 target language
 function getTranslatedWord(word: ParetoWord, targetLang: string): string {
@@ -285,13 +286,8 @@ function WordCard({
         return;
       }
     } catch {}
-    // Fallback: browser speech
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang; u.rate = 0.85;
-      window.speechSynthesis.speak(u);
-    }
+    // Fallback: Edge TTS Neural
+    speakNaturalVoice(text, lang, { rate: 0.85 });
   }, [ttsMut]);
 
   // Determine display word based on target language

@@ -6,6 +6,7 @@ import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../compon
 import ParetoPanel from "../components/ParetoPanel";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
@@ -1211,7 +1212,7 @@ export default function ImmersiveScene() {
     if (!text?.trim()) return;
     // Stop any currently playing audio
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-    window.speechSynthesis?.cancel();
+    stopEdgeTTS();
     try {
       const r = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang });
       if (r.success && r.audioBase64) {

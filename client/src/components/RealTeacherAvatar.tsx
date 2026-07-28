@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Volume2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 interface RealTeacherAvatarProps {
   teacherId?: number;
@@ -243,13 +245,11 @@ export function useTeacherSpeech(teacherRef: React.RefObject<HTMLDivElement>) {
     // Extrair phonemes do texto
     const phonemes = extractPhonemes(text);
 
-    // Simular fala com Web Speech API
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = languageCode;
-    utterance.rate = 0.9;
+    // Edge TTS Neural para voz natural
+    stopEdgeTTS();
 
     // Sincronizar phonemes com fala
-    const phonemeDuration = (utterance.text.length * 50) / phonemes.length; // ms por phoneme
+    const phonemeDuration = (text.length * 50) / phonemes.length; // ms por phoneme
 
     let phonemeIndex = 0;
     const phonemeInterval = setInterval(() => {
@@ -263,17 +263,18 @@ export function useTeacherSpeech(teacherRef: React.RefObject<HTMLDivElement>) {
       }
     }, phonemeDuration);
 
-    utterance.onend = () => {
-      clearInterval(phonemeInterval);
-      setCurrentPhoneme("NEUTRAL");
-      setIsTeaching(false);
-    };
-
-    speechSynthesis.speak(utterance);
+    speakNaturalVoice(text, languageCode, {
+      rate: 0.9,
+      onEnd: () => {
+        clearInterval(phonemeInterval);
+        setCurrentPhoneme("NEUTRAL");
+        setIsTeaching(false);
+      },
+    });
   };
 
   const stop = () => {
-    speechSynthesis.cancel();
+    stopEdgeTTS();
     setIsTeaching(false);
     setCurrentPhoneme("NEUTRAL");
   };

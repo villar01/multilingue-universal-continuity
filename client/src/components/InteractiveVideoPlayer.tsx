@@ -4,6 +4,7 @@ import { Play, Pause, Volume2, VolumeX, MessageCircle } from "lucide-react";
 import { trpc } from "../lib/trpc";
 import { toast } from "sonner";
 import VideoCharacterChat from "./VideoCharacterChat";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 interface Subtitle {
   start: number;
@@ -103,11 +104,8 @@ export default function InteractiveVideoPlayer({
       example: undefined,
     });
 
-    // Pronunciar palavra
-    const utterance = new SpeechSynthesisUtterance(wordObj.word);
-    utterance.lang = "en-US";
-    utterance.rate = 0.8;
-    speechSynthesis.speak(utterance);
+    // Pronunciar palavra (Edge TTS Neural)
+    speakNaturalVoice(wordObj.word, "en-US", { rate: 0.8 });
   };
 
   const closeGlossary = () => {
@@ -243,10 +241,7 @@ export default function InteractiveVideoPlayer({
             <div className="mt-6 flex gap-3">
               <Button
                 onClick={() => {
-                  const utterance = new SpeechSynthesisUtterance(selectedWord.word);
-                  utterance.lang = 'en-US';
-                  utterance.rate = 0.8;
-                  speechSynthesis.speak(utterance);
+                  speakNaturalVoice(selectedWord.word, 'en-US', { rate: 0.8 });
                 }}
                 className="flex-1"
                 variant="outline"

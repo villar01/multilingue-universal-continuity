@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { selectBestVoice, normalizeLang } from "@/hooks/useNaturalVoice";
+import { selectBestVoice, normalizeLang, speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -127,47 +128,21 @@ function useMultiVoice(langCode: string) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const variants = getVoiceVariants(langCode);
 
-  useEffect(() => {
-    const load = () => setVoices(window.speechSynthesis.getVoices());
-    load();
-    window.speechSynthesis.onvoiceschanged = load;
-    return () => { window.speechSynthesis.onvoiceschanged = null; };
-  }, []);
-
+  // Edge TTS Neural para pronúncia natural
   const speak = useCallback(
     (text: string, slow = false) => {
-      if (!("speechSynthesis" in window) || !text?.trim()) return;
-      window.speechSynthesis.cancel();
+      if (!text?.trim()) return;
+      stopEdgeTTS();
       const variant = variants[activeVariantIdx];
       const bcp47 = normalizeLang(variant.lang);
       const rate = slow ? (variant.rate ?? 0.85) * 0.65 : (variant.rate ?? 0.85);
-      const doSpeak = () => {
-        const allVoices = window.speechSynthesis.getVoices();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = bcp47;
-        utter.rate = rate;
-        utter.pitch = variant.pitch ?? 1.0;
-        if (variant.voiceName) {
-          const named = allVoices.find(
-            (v) => v.lang.startsWith(bcp47.split("-")[0]) &&
-              v.name.toLowerCase().includes(variant.voiceName!.toLowerCase())
-          );
-          utter.voice = named || selectBestVoice(allVoices, bcp47);
-        } else {
-          utter.voice = selectBestVoice(allVoices, bcp47);
-        }
-        utter.onstart = () => setIsSpeaking(true);
-        utter.onend = () => setIsSpeaking(false);
-        utter.onerror = () => setIsSpeaking(false);
-        window.speechSynthesis.speak(utter);
-      };
-      if (window.speechSynthesis.getVoices().length > 0) doSpeak();
-      else {
-        window.speechSynthesis.onvoiceschanged = () => { doSpeak(); window.speechSynthesis.onvoiceschanged = null; };
-        setTimeout(() => { if (window.speechSynthesis.getVoices().length > 0) doSpeak(); }, 300);
-      }
+      setIsSpeaking(true);
+      speakNaturalVoice(text, bcp47, {
+        rate,
+        onEnd: () => setIsSpeaking(false),
+      });
     },
-    [voices, variants, activeVariantIdx]
+    [variants, activeVariantIdx]
   );
 
   return { variants, activeVariantIdx, setActiveVariantIdx, speak, isSpeaking };

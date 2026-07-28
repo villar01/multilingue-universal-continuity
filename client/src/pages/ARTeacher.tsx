@@ -8,6 +8,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { flushSync } from "react-dom";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
@@ -130,22 +132,10 @@ export default function ARTeacher() {
   // ── TTS com Edge Neural (fallback: melhor voz do browser) ──────────────────
   const speakText = useCallback(async (text: string, lang: string) => {
     if (!text?.trim()) return;
-    // Fallback: usa melhor voz disponível no browser (Google/Microsoft Neural)
+    // Fallback: Edge TTS Neural
     const fallback = () => {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang; u.rate = 0.88; u.pitch = 0.9;
-        const voices = window.speechSynthesis.getVoices();
-        const lp = lang.split('-')[0];
-        const lv = voices.filter(v => v.lang.startsWith(lp));
-        const best = lv.find(v =>
-          v.name.includes('Google') || v.name.includes('Microsoft') ||
-          v.name.includes('Neural') || v.name.includes('Enhanced')
-        ) || lv[0];
-        if (best) u.voice = best;
-        window.speechSynthesis.speak(u);
-      }
+      stopEdgeTTS();
+      speakNaturalVoice(text, lang, { rate: 0.88 });
     };
     // Set emotion to "speaking" for lip-sync animation
     setEmotion("thinking");
