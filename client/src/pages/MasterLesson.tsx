@@ -18,7 +18,7 @@ import {
   MessageSquare, BookOpen, Headphones, Globe
 } from "lucide-react";
 import { Link } from "wouter";
-import { speakText, stopEdgeTTS } from "@/hooks/useNaturalVoice";
+import { speakText } from "@/hooks/useNaturalVoice";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 interface ScrollMessage {
