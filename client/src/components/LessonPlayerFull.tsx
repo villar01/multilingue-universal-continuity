@@ -760,7 +760,7 @@ export default function LessonPlayerFull({
   const [isGenerating, setIsGenerating] = useState(false);
   const [dialogueIdx, setDialogueIdx] = useState(0);
   const [introTextDone, setIntroTextDone] = useState(false);
-  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+  // speechRef removido — Edge TTS já gerencia áudio internamente
 
   const lessonQuery = trpc.lessons.getById.useQuery(
     { lessonId: Number(lessonId) },

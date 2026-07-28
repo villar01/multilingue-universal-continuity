@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
+import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 
 // ── Scene definitions ──────────────────────────────────────────────────────
 export const SCENES = [
@@ -76,10 +77,7 @@ export default function SceneLesson({
 
   // Speak word using TTS
   const speakWord = (word: string) => {
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = languageCode;
-    utterance.rate = 0.85;
-    window.speechSynthesis.speak(utterance);
+    speakNaturalVoice(word, languageCode, { rate: 0.85 });
   };
 
   const handleSelectScene = (sceneId: string) => {

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Mic, Volume2, Bot, User, Loader2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -93,10 +94,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
   };
 
   const playAudio = (text: string) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = languageCode;
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+    speakNaturalVoice(text, languageCode, { rate: 0.9 });
   };
 
   const startRecording = () => {

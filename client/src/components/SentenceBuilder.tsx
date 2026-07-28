@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
+import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface SentencePattern {
@@ -153,10 +154,7 @@ export default function SentenceBuilder({
   }, []);
 
   const speakText = (text: string) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = languageCode;
-    u.rate = 0.85;
-    window.speechSynthesis.speak(u);
+    speakNaturalVoice(text, languageCode, { rate: 0.85 });
   };
 
   // Build current sentence from slots

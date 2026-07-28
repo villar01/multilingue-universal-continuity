@@ -1,5 +1,6 @@
 import { Volume2, BookOpen, Repeat, Brain, Languages } from 'lucide-react';
 import { useState } from 'react';
+import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 
 interface VocabularyWord {
   word: string;
@@ -34,11 +35,8 @@ export default function VocabularySection({
   const [repeatMode, setRepeatMode] = useState(false);
 
   const playAudio = (text: string, lang: string) => {
-    // Usar Web Speech API para pronúncia
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.8; // Mais devagar para aprendizado
-    window.speechSynthesis.speak(utterance);
+    // Edge TTS Neural para pronúncia natural
+    speakNaturalVoice(text, lang, { rate: 0.8 });
   };
 
   const getLanguageComparison = (word: VocabularyWord) => {

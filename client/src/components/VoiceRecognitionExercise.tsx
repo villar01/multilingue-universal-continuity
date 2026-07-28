@@ -5,6 +5,7 @@ import { trpc } from "../lib/trpc";
 import { toast } from "sonner";
 import { Progress } from "./ui/progress";
 import { Card } from "./ui/card";
+import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 interface VoiceRecognitionExerciseProps {
   targetPhrase: string;
@@ -210,10 +211,7 @@ export default function VoiceRecognitionExercise({
   };
 
   const playTargetAudio = () => {
-    const utterance = new SpeechSynthesisUtterance(targetPhrase);
-    utterance.lang = targetLanguage;
-    utterance.rate = 0.9;
-    speechSynthesis.speak(utterance);
+    speakNaturalVoice(targetPhrase, targetLanguage, { rate: 0.9 });
   };
 
   const reset = () => {
