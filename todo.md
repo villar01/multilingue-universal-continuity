@@ -805,3 +805,12 @@
 - [x] Garantir que a IA respeite a moral de cada país e mantenha conversa educativa
 - [x] Bloquear tentativas de desvio de assunto educacional para conteúdo inadequado
 - [x] Mapear normas culturais por país (20 países mapeados: BR, US, GB, FR, DE, ES, IT, JP, CN, KR, SA, AE, RU, IN, MX, PT, NL, TR, AR, GR)
+
+## 📋 TERMO DE RESPONSABILIDADE - PAIS DE MENORES
+
+- [x] Criar componente TermoResponsabilidade com lei principal e normas do app (já existe em TermsOfUse.tsx)
+- [x] Exibir termo na primeira inicialização do app (já existe em TermsOfUse.tsx com submitParentalConsent)
+- [x] Pais devem assinar digitalmente (já implementado em TermsOfUse.tsx)
+- [x] Salvar assinatura no banco (tabela parental_consents já existe no schema)
+- [x] Bloquear acesso ao app até assinatura concluída (já implementado)
+- [x] Incluir normas (já implementado em TermsOfUse.tsx com LGPD/GDPR)
