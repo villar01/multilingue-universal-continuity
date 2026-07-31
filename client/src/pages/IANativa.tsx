@@ -156,6 +156,10 @@ export default function IANativa() {
                 <strong>Importante:</strong> Com IA nativa ativa, o app reduz drasticamente o uso de recursos de terceiros.
                 Isso significa menos custo de servidores, menos carga de processamento remoto, e uma experiência muito mais fluida para você.
                 O app detecta automaticamente sua IA local e a utiliza como prioridade.
+                <br/><br/>
+                <strong>Voz natural e animação:</strong> Com IA local, a geração de voz natural e animação dos professores virtuais
+                acontece no seu próprio computador, sem depender de servidores externos. Isso resulta em voz de altíssima qualidade,
+                animação lip-sync perfeita e respostas instantâneas — tudo sem custo adicional.
               </p>
             </div>
           </CardContent>
@@ -195,14 +199,15 @@ export default function IANativa() {
                 Baixar o modelo de IA
               </h3>
               <p className="text-sm text-slate-600 mb-2">
-                Abra o terminal e execute o comando abaixo para baixar o modelo Mistral 7B (recomendado):
+                Abra o terminal e execute o comando abaixo para baixar o modelo Qwen2.5 3B (melhor IA gratuita multilingual):
               </p>
               <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center gap-2">
                 <Terminal className="h-4 w-4 text-green-400" />
-                ollama pull mistral
+                ollama pull qwen2.5:3b
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                O modelo tem aproximadamente 4.1 GB. O download pode levar alguns minutos dependendo da sua conexão.
+                O modelo tem aproximadamente 1.9 GB. O download pode levar alguns minutos dependendo da sua conexão.
+                Qwen2.5 é o melhor modelo gratuito multilingual, com excelente suporte para português, inglês, espanhol, francês e mais.
               </p>
             </div>
 
@@ -219,7 +224,7 @@ export default function IANativa() {
                 ollama list
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                Se aparecer "mistral" na lista, está tudo pronto! O app detectará automaticamente.
+                Se aparecer "qwen2.5:3b" na lista, está tudo pronto! O app detectará automaticamente.
               </p>
             </div>
           </CardContent>
@@ -259,8 +264,8 @@ export default function IANativa() {
                 Baixar um modelo
               </h3>
               <p className="text-sm text-slate-600 mb-2">
-                Dentro do LM Studio, pesquise por "Mistral" ou "Llama 3" e baixe o modelo de sua preferência.
-                Recomendamos Mistral 7B Instruct para melhor compatibilidade.
+                Dentro do LM Studio, pesquise por "Qwen2.5" e baixe o modelo de sua preferência.
+                Recomendamos Qwen2.5 3B Instruct para melhor compatibilidade multilingual.
               </p>
             </div>
 

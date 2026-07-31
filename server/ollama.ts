@@ -34,7 +34,7 @@ export interface OllamaResponse {
 export async function isOllamaAvailable(): Promise<boolean> {
   try {
     const response = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, {
-      timeout: 0.05, // 0.00005 second - ULTRA MEGA TURBO MODE (20,000X FASTER)
+        timeout: 5000, // 5 seconds - tempo razoável para verificar disponibilidade
     });
     return response.status === 200;
   } catch (error) {
@@ -65,7 +65,7 @@ export async function generateWithOllama(
   const startTime = Date.now();
   
   try {
-    const model = options.model || "mistral:latest";
+    const model = options.model || "qwen2.5:3b";
     
     const response = await axios.post<OllamaResponse>(
       `${OLLAMA_BASE_URL}/api/chat`,
@@ -79,7 +79,7 @@ export async function generateWithOllama(
         },
       },
       {
-        timeout: 1.5, // 0.0015 seconds timeout - ULTRA MEGA TURBO MODE (20,000X FASTER)
+        timeout: 60000, // 60 seconds - tempo para geração de resposta
       }
     );
 

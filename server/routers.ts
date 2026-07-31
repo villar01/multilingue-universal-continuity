@@ -3769,6 +3769,193 @@ Máximo 2 frases por resposta.`,
         } catch { return { emotion: "focused", tip: "Relaxe e tente novamente!", encouragement: "Você está indo bem!" }; }
       }),
   }),
+  // ── Adaptive Learning Path ─────────────────────────────────────────────
+  adaptive: router({
+    getPath: protectedProcedure
+      .input(z.object({ targetLanguage: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) return { level: 'beginner', recommendedLesson: null, weakAreas: [], strengths: [] };
+        const { userProgress, pronunciationHistory, srsProgress, completedLessons } = await import("../drizzle/schema");
+        const { eq, and, desc, avg, count } = await import("drizzle-orm");
+        const pronRows = await dbInstance.select({ avgScore: avg(pronunciationHistory.score), total: count() })
+          .from(pronunciationHistory)
+          .where(and(eq(pronunciationHistory.userId, ctx.user.id), eq(pronunciationHistory.targetLanguage, input.targetLanguage)));
+        const pronScore = pronRows[0]?.avgScore || 0;
+        const srsRows = await dbInstance.select().from(srsProgress)
+          .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.targetLanguage, input.targetLanguage)));
+        const totalWords = srsRows.length;
+        const weakWords = srsRows.filter(w => (w.totalWrong || 0) > (w.totalCorrect || 0)).map(w => w.word);
+        const completedRows = await dbInstance.select().from(completedLessons)
+          .where(eq(completedLessons.userId, ctx.user.id));
+        const completedCount = completedRows.length;
+        let level = 'beginner';
+        if (completedCount > 10 && pronScore > 70) level = 'intermediate';
+        if (completedCount > 25 && pronScore > 85) level = 'advanced';
+        const weakAreas: string[] = [];
+        if (pronScore < 60) weakAreas.push('pronunciation');
+        if (totalWords < 20) weakAreas.push('vocabulary');
+        if (weakWords.length > 5) weakAreas.push('spelling');
+        const strengths: string[] = [];
+        if (pronScore > 80) strengths.push('pronunciation');
+        if (totalWords > 50) strengths.push('vocabulary');
+        if (completedCount > 15) strengths.push('consistency');
+        return { level, completedCount, pronScore, totalWords, weakWords: weakWords.slice(0, 10), weakAreas, strengths };
+      }),
+    getRecommendation: protectedProcedure
+      .input(z.object({ targetLanguage: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) return { type: 'lesson', reason: 'Comece com a primeira lição' };
+        const { srsProgress, pronunciationHistory } = await import("../drizzle/schema");
+        const { eq, and, lte, avg } = await import("drizzle-orm");
+        const dueReviews = await dbInstance.select().from(srsProgress)
+          .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.targetLanguage, input.targetLanguage), lte(srsProgress.nextReview, new Date()))).limit(1);
+        if (dueReviews.length > 0) {
+          return { type: 'review', reason: 'Você tem palavras para revisar! Use o SRS para fixar o vocabulário.' };
+        }
+        const pronRows = await dbInstance.select({ avgScore: avg(pronunciationHistory.score) })
+          .from(pronunciationHistory)
+          .where(and(eq(pronunciationHistory.userId, ctx.user.id), eq(pronunciationHistory.targetLanguage, input.targetLanguage)));
+        if (pronRows[0]?.avgScore && pronRows[0].avgScore < 70) {
+          return { type: 'pronunciation', reason: 'Sua pronúncia precisa de atenção. Pratique com o Coach de Pronúncia!' };
+        }
+        return { type: 'lesson', reason: 'Continue aprendendo novas lições para expandir seu vocabulário.' };
+      }),
+  }),
+
+  // ── Free Talk com IA Local ──────────────────────────────────────────────
+  freeTalk: router({
+    chat: publicProcedure
+      .input(z.object({
+        message: z.string(),
+        targetLanguage: z.string(),
+        nativeLanguage: z.string(),
+        scenario: z.string().optional(),
+        history: z.array(z.object({ role: z.string(), content: z.string() })).default([]),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const { isOllamaAvailable, generateWithOllama } = await import('./ollama');
+          const available = await isOllamaAvailable();
+          if (available) {
+            const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
+            const messages = [
+              { role: 'system', content: systemPrompt },
+              ...input.history.map(h => ({ role: h.role, content: h.content })),
+              { role: 'user', content: input.message },
+            ];
+            const reply = await generateWithOllama(messages, 500);
+            if (reply) return { reply, source: 'local' as const };
+          }
+        } catch (e) { /* fall through */ }
+        try {
+          const { invokeLLM } = await import('./_core/llm');
+          const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
+          const reply = await invokeLLM(systemPrompt + '\n\nStudent: ' + input.message, { maxTokens: 200 });
+          return { reply: reply || 'Desculpe, não consegui responder agora.', source: 'remote' as const };
+        } catch (e) {
+          return { reply: 'IA não disponível no momento. Tente novamente.', source: 'none' as const };
+        }
+      }),
+  }),
+
+  // ── Cloze Test Dinâmico ─────────────────────────────────────────────────
+  cloze: router({
+    generate: publicProcedure
+      .input(z.object({
+        text: z.string(),
+        targetLanguage: z.string(),
+        difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
+      }))
+      .mutation(async ({ input }) => {
+        const words = input.text.split(/\s+/);
+        const ratio = input.difficulty === 'easy' ? 0.1 : input.difficulty === 'medium' ? 0.2 : 0.3;
+        const numBlanks = Math.max(1, Math.floor(words.length * ratio));
+        const candidates = words
+          .map((w, i) => ({ word: w, index: i, len: w.replace(/[^a-zA-Zà-ÿ]/g, '').length }))
+          .filter(c => c.len >= 4);
+        const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+        const blanks = shuffled.slice(0, numBlanks).sort((a, b) => a.index - b.index);
+        const blankedText = [...words];
+        const answers: { index: number; answer: string; options: string[] }[] = [];
+        for (const blank of blanks) {
+          const answer = blank.word.replace(/[^a-zA-Zà-ÿ]/g, '');
+          const distractors = candidates
+            .filter(c => c.index !== blank.index && c.word.replace(/[^a-zA-Zà-ÿ]/g, '') !== answer)
+            .map(c => c.word.replace(/[^a-zA-Zà-ÿ]/g, ''))
+            .filter((v, i, arr) => arr.indexOf(v) === i)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+          const options = [answer, ...distractors].sort(() => Math.random() - 0.5);
+          blankedText[blank.index] = '_____';
+          answers.push({ index: blank.index, answer, options });
+        }
+        return { clozeText: blankedText.join(' '), answers, originalText: input.text };
+      }),
+  }),
+
+  // ── Smart Review: IA gera exercícios dinâmicos ──────────────────────────
+  smartReview: router({
+    generate: protectedProcedure
+      .input(z.object({
+        targetLanguage: z.string(),
+        exerciseType: z.enum(['multiple_choice', 'fill_blank', 'translation', 'matching']).default('multiple_choice'),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) return { exercises: [] };
+        const { srsProgress } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        const userVocab = await dbInstance.select().from(srsProgress)
+          .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.targetLanguage, input.targetLanguage)))
+          .limit(20);
+        if (userVocab.length === 0) {
+          return { exercises: [], message: 'Ainda não há vocabulário para revisar. Complete algumas lições primeiro!' };
+        }
+        const exercises: any[] = [];
+        for (const item of userVocab.slice(0, 5)) {
+          if (input.exerciseType === 'multiple_choice') {
+            const distractors = userVocab.filter(v => v.word !== item.word)
+              .sort(() => Math.random() - 0.5).slice(0, 3).map(v => v.translation);
+            const options = [item.translation, ...distractors].sort(() => Math.random() - 0.5);
+            exercises.push({ type: 'multiple_choice', question: `O que significa "${item.word}"?`, options, correctAnswer: item.translation, word: item.word });
+          } else if (input.exerciseType === 'fill_blank') {
+            exercises.push({ type: 'fill_blank', question: `Traduza para ${input.targetLanguage}: "${item.translation}"`, correctAnswer: item.word, hint: item.category || '' });
+          } else if (input.exerciseType === 'translation') {
+            exercises.push({ type: 'translation', question: item.word, correctAnswer: item.translation, direction: 'to_native' });
+          } else if (input.exerciseType === 'matching') {
+            exercises.push({ type: 'matching', word: item.word, translation: item.translation });
+          }
+        }
+        return { exercises, source: 'local' };
+      }),
+    submitAnswer: protectedProcedure
+      .input(z.object({ word: z.string(), translation: z.string(), targetLanguage: z.string(), quality: z.number().min(0).max(5) }))
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) return { ok: false };
+        const { srsProgress } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        const existing = await dbInstance.select().from(srsProgress)
+          .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.word, input.word), eq(srsProgress.targetLanguage, input.targetLanguage))).limit(1);
+        const q = input.quality;
+        if (existing.length === 0) {
+          const ef = Math.max(1.3, 2.5 + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
+          const interval = 1;
+          const nextReview = new Date(Date.now() + interval * 86400000);
+          await dbInstance.insert(srsProgress).values({ userId: ctx.user.id, word: input.word, translation: input.translation, targetLanguage: input.targetLanguage, easeFactor: ef, interval, repetitions: q >= 3 ? 1 : 0, nextReview, totalCorrect: q >= 3 ? 1 : 0, totalWrong: q < 3 ? 1 : 0 });
+        } else {
+          const cur = existing[0];
+          const ef = Math.max(1.3, (cur.easeFactor || 2.5) + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
+          const reps = q >= 3 ? (cur.repetitions || 0) + 1 : 0;
+          const interval = reps === 0 ? 1 : reps === 1 ? 6 : Math.round((cur.interval || 1) * ef);
+          const nextReview = new Date(Date.now() + interval * 86400000);
+          await dbInstance.update(srsProgress).set({ easeFactor: ef, interval, repetitions: reps, nextReview, totalCorrect: (cur.totalCorrect || 0) + (q >= 3 ? 1 : 0), totalWrong: (cur.totalWrong || 0) + (q < 3 ? 1 : 0), lastSeen: new Date() }).where(eq(srsProgress.id, cur.id));
+        }
+        return { ok: true };
+      }),
+  }),
 });
 // Função auxiliar para calcular similaridade entre stringsgs
 function calculateSimilarity(str1: string, str2: string): number {

@@ -40,7 +40,7 @@ export interface LMStudioResponse {
 export async function isLMStudioAvailable(): Promise<boolean> {
   try {
     const response = await axios.get(`${LMSTUDIO_BASE_URL}/v1/models`, {
-      timeout: 0.05, // 0.00005 second - ULTRA MEGA TURBO MODE (20,000X FASTER)
+        timeout: 5000, // 5 seconds - tempo razoável para verificar disponibilidade
     });
     return response.status === 200;
   } catch (error) {
@@ -80,7 +80,7 @@ export async function generateWithLMStudio(
         max_tokens: options.max_tokens || 2000,
       },
       {
-        timeout: 1.5, // 0.0015 seconds timeout - ULTRA MEGA TURBO MODE (20,000X FASTER)
+        timeout: 60000, // 60 seconds - tempo para geração de resposta
         headers: {
           "Content-Type": "application/json",
         },

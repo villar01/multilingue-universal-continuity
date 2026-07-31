@@ -748,10 +748,44 @@
 - [x] 0 erros TypeScript em todo o projeto
 
 ## 🤖 INFORMAR CLIENTE SOBRE IA NATIVA LOCAL (URGENTE)
-- [ ] Criar seção/banner informativo na Home explicando benefícios de ter IA nativa (Ollama/LM Studio)
-- [ ] Adicionar página dedicada /ia-nativa com instruções de instalação do Ollama e LM Studio
-- [ ] Adicionar card no Dashboard explicando que IA local melhora desempenho e reduz dependência de terceiros
-- [ ] Adicionar indicador de status de IA local no Dashboard (detecta se Ollama/LM Studio está rodando)
-- [ ] Adicionar instruções de configuração acessíveis do app (link para guia)
-- [ ] Adicionar mensagem quando IA local detectada: "IA nativa ativa - desempenho otimizado"
-- [ ] Adicionar mensagem quando IA local não detectada: "Instale IA nativa para melhor desempenho"
+- [x] Criar seção/banner informativo na Home explicando benefícios de ter IA nativa (Ollama/LM Studio)
+- [x] Adicionar página dedicada /ia-nativa com instruções de instalação do Ollama e LM Studio
+- [x] Adicionar card no Dashboard explicando que IA local melhora desempenho e reduz dependência de terceiros
+- [x] Adicionar indicador de status de IA local no Dashboard (detecta se Ollama/LM Studio está rodando)
+- [x] Adicionar instruções de configuração acessíveis do app (link para guia)
+- [x] Adicionar mensagem quando IA local detectada: "IA nativa ativa - desempenho otimizado"
+- [x] Adicionar mensagem quando IA local não detectada: "Instale IA nativa para melhor desempenho"
+
+## 🚀 IA NATIVA COMO PRIORIDADE EM TODAS AS FUNÇÕES (INOVAÇÃO)
+- [ ] Auditar router offlineAI existente e entender o que já está implementado
+- [ ] Criar roteamento inteligente: IA local (Ollama/LM Studio) primeiro, remota como fallback
+- [ ] Integrar geração de lições via IA local quando disponível
+- [ ] Integrar geração de exercícios via IA local quando disponível
+- [ ] Integrar conversação FreeTalk via IA local quando disponível
+- [ ] Integrar tradução via IA local quando disponível
+- [ ] Adicionar comparação visual na página /ia-nativa: MultiLingue vs Mondly vs Teacher Poli
+- [ ] Otimizar animação lip-sync para usar GPU local quando IA nativa ativa
+- [ ] Reduzir chamadas a APIs externas quando IA local está disponível
+
+## 🌟 BLOCOS DE RECURSOS IMERSIVOS SUPERIORES (PRIORIDADE ALTA)
+- [ ] Criar ambientes imersivos clicáveis (café, aeroporto, mercado, escola, praia, escritório)
+- [ ] Professor animado aparece ao clicar em objetos do ambiente e fala com voz natural
+- [ ] Objetos clicáveis falam em dois idiomas (nativo + aprendizado) com vocabulário
+- [ ] Animação lip-sync sincronizada com voz natural usando IA local
+- [ ] Voz natural de altíssima qualidade via IA local (sem recursos externos pagos)
+- [ ] IA local (Qwen2.5) gera respostas em tempo real para conversação com professor
+- [ ] Página de ambientes imersivos acessível do Dashboard
+- [ ] Não mencionar apps concorrentes no app (apenas superar em qualidade)
+
+## 🧠 RECURSOS INTELIGENTES DE APPS DE IDIOMAS ATUAIS
+
+- [ ] SRS (Spaced Repetition System) adaptativo - revisão de vocabulário baseada em curva de esquecimento
+- [ ] Coach de Pronúncia com Web Speech API + scoring de similaridade por IA local
+- [ ] Conversa Livre com IA nas cenas imersivas - professor responde dinamicamente via Qwen2.5
+- [ ] Trilha de Aprendizagem Adaptativa - próximo exercício baseado em desempenho do aluno
+- [ ] Modo Story/Review - IA local gera exercícios dinâmicos baseados no vocabulário aprendido
+- [ ] Detecção de palavras difíceis e revisão automática
+- [ ] Sistema de metas diárias adaptativas
+- [ ] Feedback de IA em tempo real sobre progresso
+- [ ] Cloze test dinâmico gerado por IA local
+- [ ] Tradução contextual inteligente (não palavra-por-palavra, mas frase completa)

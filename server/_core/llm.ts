@@ -266,8 +266,6 @@ const normalizeResponseFormat = ({
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  assertApiKey();
-
   const {
     messages,
     tools,
@@ -278,6 +276,46 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     responseFormat,
     response_format,
   } = params;
+
+  // ── PRIORIDADE 1: IA LOCAL (Ollama Qwen2.5:3b — gratuito, offline, privado) ──
+  // Se Ollama estiver disponível, usa IA local primeiro (sem custo de API remota)
+  if (!tools && !outputSchema && !output_schema && !responseFormat && !response_format) {
+    try {
+      const localResp = await fetch("http://localhost:11434/api/tags", {
+        method: "GET",
+        signal: AbortSignal.timeout(3000),
+      });
+      if (localResp.ok) {
+        console.log("[LLM] Usando IA local (Ollama Qwen2.5:3b) — gratuito e offline");
+        const ollamaResp = await fetch("http://localhost:11434/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "qwen2.5:3b",
+            messages: messages.map(normalizeMessage),
+            stream: false,
+            options: { temperature: 0.7, num_predict: 2000 },
+          }),
+          signal: AbortSignal.timeout(60000),
+        });
+        if (ollamaResp.ok) {
+          const data = await ollamaResp.json();
+          return {
+            choices: [{
+              index: 0,
+              message: { role: "assistant", content: data.message?.content || "" },
+              finish_reason: "stop",
+            }],
+          } as InvokeResult;
+        }
+      }
+    } catch (e) {
+      console.warn("[LLM] IA local não disponível, usando API remota:", e instanceof Error ? e.message : e);
+    }
+  }
+
+  // ── PRIORIDADE 2: API REMOTA (Forge/Manus — fallback) ──
+  assertApiKey();
 
   const payload: Record<string, unknown> = {
     model: "gemini-2.5-flash",

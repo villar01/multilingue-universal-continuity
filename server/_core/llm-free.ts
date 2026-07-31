@@ -1,11 +1,12 @@
 /**
- * LLM Free - Sistema de IA independente sem dependência Manus
+ * LLM Free - Sistema de IA com prioridade LOCAL (gratuito, offline)
  * 
- * Usa Blackbox AI (gratuito, sem limites para uso educacional)
- * Modelo: blackbox (rápido e gratuito)
+ * Prioridade 1: Ollama local (Qwen2.5:3b — melhor IA gratuita multilingual)
+ * Prioridade 2: LM Studio local (se disponível)
+ * Prioridade 3: Blackbox AI (gratuito online, fallback)
  * 
- * Após deploy, funciona sem necessidade de API key própria.
- * Blackbox AI é completamente gratuito e sem restrições.
+ * O aluno deve instalar Ollama + Qwen2.5 para melhor desempenho.
+ * Ver página /ia-nativa no app para instruções.
  */
 
 interface Message {
@@ -22,18 +23,74 @@ interface LLMResponse {
 }
 
 /**
- * Invoca Blackbox AI (gratuito, sem limites)
+ * Invoca Ollama local (Qwen2.5:3b — 100% gratuito e offline)
  * 
- * @param messages - Array de mensagens do chat
- * @returns Resposta do LLM
+ * Requer Ollama instalado: https://ollama.ai
+ * Comando: ollama pull qwen2.5:3b
+ */
+export async function invokeLLMLocal(params: {
+  messages: Message[];
+  temperature?: number;
+  max_tokens?: number;
+}): Promise<LLMResponse> {
+  const response = await fetch("http://localhost:11434/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "qwen2.5:3b",
+      messages: params.messages,
+      stream: false,
+      options: {
+        temperature: params.temperature ?? 0.7,
+        num_predict: params.max_tokens ?? 2000,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      "Ollama local não disponível. " +
+      "Instale Ollama em https://ollama.ai e execute: ollama pull qwen2.5:3b"
+    );
+  }
+
+  const data = await response.json();
+  
+  // Converte formato Ollama para formato OpenAI
+  return {
+    choices: [{
+      message: {
+        content: data.message.content,
+      },
+    }],
+  };
+}
+
+/**
+ * Verifica se Ollama local está disponível
+ */
+export async function isLocalAvailable(): Promise<boolean> {
+  try {
+    const response = await fetch("http://localhost:11434/api/tags", {
+      method: "GET",
+      signal: AbortSignal.timeout(5000),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Invoca Blackbox AI (gratuito online, fallback quando IA local não disponível)
  */
 export async function invokeLLMFree(params: {
   messages: Message[];
   temperature?: number;
   max_tokens?: number;
 }): Promise<LLMResponse> {
-  
-  // Blackbox AI não requer API key
   const response = await fetch("https://api.blackbox.ai/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -57,57 +114,26 @@ export async function invokeLLMFree(params: {
 }
 
 /**
- * Fallback: se Blackbox falhar, tenta Ollama local (100% offline)
- * 
- * Requer Ollama instalado localmente: https://ollama.ai
- * Comando: ollama run llama3.2
- */
-export async function invokeLLMLocal(params: {
-  messages: Message[];
-}): Promise<LLMResponse> {
-  const response = await fetch("http://localhost:11434/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama3.2",
-      messages: params.messages,
-      stream: false,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      "Ollama local não disponível. " +
-      "Instale Ollama em https://ollama.ai e execute: ollama run llama3.2"
-    );
-  }
-
-  const data = await response.json();
-  
-  // Converte formato Ollama para formato OpenAI
-  return {
-    choices: [{
-      message: {
-        content: data.message.content,
-      },
-    }],
-  };
-}
-
-/**
- * Sistema inteligente: tenta Blackbox (gratuito), se falhar usa Ollama (local/offline)
+ * Sistema inteligente: IA LOCAL primeiro (gratuito, offline, privado),
+ * se falhar usa Blackbox AI (gratuito online) como fallback
  */
 export async function invokeLLMSmart(params: {
   messages: Message[];
   temperature?: number;
   max_tokens?: number;
 }): Promise<LLMResponse> {
+  // Prioridade 1: Ollama local (Qwen2.5:3b)
   try {
-    return await invokeLLMFree(params);
+    const localAvailable = await isLocalAvailable();
+    if (localAvailable) {
+      console.log("[IA] Usando Ollama local (Qwen2.5:3b) — gratuito e offline");
+      return await invokeLLMLocal(params);
+    }
   } catch (error) {
-    console.warn("Blackbox AI falhou, tentando Ollama local:", error);
-    return await invokeLLMLocal(params);
+    console.warn("[IA] Ollama local falhou, tentando fallback online:", error);
   }
+
+  // Prioridade 2: Blackbox AI (gratuito online)
+  console.log("[IA] Usando Blackbox AI (gratuito online) — fallback");
+  return await invokeLLMFree(params);
 }
