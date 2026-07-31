@@ -18,6 +18,10 @@ import {
   Sparkles,
   Gauge,
   Server,
+  Monitor,
+  Apple,
+  Copy,
+  AlertCircle,
 } from "lucide-react";
 
 export default function IANativa() {
@@ -25,9 +29,16 @@ export default function IANativa() {
     refetchInterval: 10000,
   });
 
+  const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const ollamaOnline = (status as any)?.ollama ?? false;
   const lmstudioOnline = (status as any)?.lmstudio ?? false;
   const anyLocal = ollamaOnline || lmstudioOnline;
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCmd(id);
+    setTimeout(() => setCopiedCmd(null), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
@@ -165,66 +176,163 @@ export default function IANativa() {
           </CardContent>
         </Card>
 
-        {/* Instalação do Ollama */}
+        {/* Aviso importante ao aluno */}
+        <Card className="mb-8 border-2 border-blue-300 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg text-blue-900">
+              <AlertCircle className="h-5 w-5 text-blue-600" />
+              Aviso Importante para o Aluno
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-blue-800">
+              Para aproveitar ao máximo esta plataforma — com voz natural de altíssima qualidade, animação dos professores virtuais,
+              respostas instantâneas e funcionamento offline — é necessário instalar a IA Qwen2.5 no seu computador.
+              A instalação é <strong>gratuita</strong>, leva menos de 5 minutos, e reduz drasticamente o uso de recursos externos.
+              O app detecta automaticamente quando a IA está ativa e passa a usá-la como prioridade.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Instalação automática por sistema operacional */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <Download className="h-5 w-5 text-green-600" />
-              Como instalar o Ollama (Recomendado)
+              Instalação Automática do Qwen2.5
             </CardTitle>
             <CardDescription>
-              Ollama é gratuito, leve e roda modelos de IA diretamente no seu computador.
+              Escolha seu sistema operacional e siga os comandos. Tudo é gratuito e automático.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="outline">Passo 1</Badge>
-                Baixar e instalar
+          <CardContent className="space-y-6">
+            {/* Windows */}
+            <div className="p-4 rounded-lg border border-slate-200 bg-white">
+              <h3 className="font-semibold mb-3 flex items-center gap-2 text-blue-700">
+                <Monitor className="h-5 w-5" />
+                Windows
               </h3>
-              <p className="text-sm text-slate-600 mb-2">
-                Acesse o site oficial e baixe o instalador para seu sistema operacional:
-              </p>
-              <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Baixar Ollama
-                </Button>
-              </a>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 1: Baixar e instalar o Ollama</p>
+                  <a href="https://ollama.com/download/OllamaSetup.exe" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="mb-2">
+                      <Download className="h-4 w-4 mr-2" />
+                      Baixar OllamaSetup.exe
+                    </Button>
+                  </a>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 2: Abrir o PowerShell e instalar o Qwen2.5</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      ollama pull qwen2.5:3b
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("ollama pull qwen2.5:3b", "win-pull")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "win-pull" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 3: Verificar</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      ollama list
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("ollama list", "win-list")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "win-list" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="outline">Passo 2</Badge>
-                Baixar o modelo de IA
+            {/* macOS */}
+            <div className="p-4 rounded-lg border border-slate-200 bg-white">
+              <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-700">
+                <Apple className="h-5 w-5" />
+                macOS
               </h3>
-              <p className="text-sm text-slate-600 mb-2">
-                Abra o terminal e execute o comando abaixo para baixar o modelo Qwen2.5 3B (melhor IA gratuita multilingual):
-              </p>
-              <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-green-400" />
-                ollama pull qwen2.5:3b
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 1: Instalar via Homebrew (recomendado)</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      brew install ollama
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("brew install ollama", "mac-brew")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "mac-brew" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 2: Iniciar o serviço e instalar o Qwen2.5</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      ollama serve &
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("ollama serve &", "mac-serve")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "mac-serve" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      ollama pull qwen2.5:3b
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("ollama pull qwen2.5:3b", "mac-pull")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "mac-pull" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                O modelo tem aproximadamente 1.9 GB. O download pode levar alguns minutos dependendo da sua conexão.
-                Qwen2.5 é o melhor modelo gratuito multilingual, com excelente suporte para português, inglês, espanhol, francês e mais.
-              </p>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="outline">Passo 3</Badge>
-                Verificar instalação
+            {/* Linux */}
+            <div className="p-4 rounded-lg border border-slate-200 bg-white">
+              <h3 className="font-semibold mb-3 flex items-center gap-2 text-orange-700">
+                <Monitor className="h-5 w-5" />
+                Linux
               </h3>
-              <p className="text-sm text-slate-600 mb-2">
-                O Ollama inicia automaticamente. Verifique se está rodando:
-              </p>
-              <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-green-400" />
-                ollama list
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 1: Instalar Ollama com um comando</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <Terminal className="h-4 w-4 text-green-400 flex-shrink-0" />
+                      <span className="truncate">curl -fsSL https://ollama.com/install.sh | sh</span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("curl -fsSL https://ollama.com/install.sh | sh", "linux-install")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "linux-install" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 2: Instalar o Qwen2.5</p>
+                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4 text-green-400" />
+                      ollama pull qwen2.5:3b
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("ollama pull qwen2.5:3b", "linux-pull")}>
+                      <Copy className="h-3 w-3" /> {copiedCmd === "linux-pull" ? "Copiado!" : "Copiar"}
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                Se aparecer "qwen2.5:3b" na lista, está tudo pronto! O app detectará automaticamente.
+            </div>
+
+            {/* Info sobre o modelo */}
+            <div className="p-4 rounded-lg bg-purple-50 border border-purple-100">
+              <p className="text-sm text-purple-800">
+                <strong>Sobre o Qwen2.5 3B:</strong> Modelo de 1.9 GB, gratuito e open-source.
+                Melhor IA gratuita multilingual com suporte para português, inglês, espanhol, francês, alemão, italiano,
+                japonês, chinês, coreano e mais. Roda em computadores com 4GB+ de RAM.
+                Para computadores com 8GB+ de RAM, você pode usar <code className="bg-purple-100 px-1 rounded">qwen2.5:7b</code> para qualidade ainda superior.
               </p>
             </div>
           </CardContent>

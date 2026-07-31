@@ -3781,7 +3781,7 @@ Máximo 2 frases por resposta.`,
         const pronRows = await dbInstance.select({ avgScore: avg(pronunciationHistory.score), total: count() })
           .from(pronunciationHistory)
           .where(and(eq(pronunciationHistory.userId, ctx.user.id), eq(pronunciationHistory.targetLanguage, input.targetLanguage)));
-        const pronScore = pronRows[0]?.avgScore || 0;
+        const pronScore = Number(pronRows[0]?.avgScore) || 0;
         const srsRows = await dbInstance.select().from(srsProgress)
           .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.targetLanguage, input.targetLanguage)));
         const totalWords = srsRows.length;
@@ -3790,14 +3790,14 @@ Máximo 2 frases por resposta.`,
           .where(eq(completedLessons.userId, ctx.user.id));
         const completedCount = completedRows.length;
         let level = 'beginner';
-        if (completedCount > 10 && pronScore > 70) level = 'intermediate';
-        if (completedCount > 25 && pronScore > 85) level = 'advanced';
+        if (completedCount > 10 && Number(pronScore) > 70) level = 'intermediate';
+        if (completedCount > 25 && Number(pronScore) > 85) level = 'advanced';
         const weakAreas: string[] = [];
-        if (pronScore < 60) weakAreas.push('pronunciation');
+        if (Number(pronScore) < 60) weakAreas.push('pronunciation');
         if (totalWords < 20) weakAreas.push('vocabulary');
         if (weakWords.length > 5) weakAreas.push('spelling');
         const strengths: string[] = [];
-        if (pronScore > 80) strengths.push('pronunciation');
+        if (Number(pronScore) > 80) strengths.push('pronunciation');
         if (totalWords > 50) strengths.push('vocabulary');
         if (completedCount > 15) strengths.push('consistency');
         return { level, completedCount, pronScore, totalWords, weakWords: weakWords.slice(0, 10), weakAreas, strengths };
@@ -3817,7 +3817,7 @@ Máximo 2 frases por resposta.`,
         const pronRows = await dbInstance.select({ avgScore: avg(pronunciationHistory.score) })
           .from(pronunciationHistory)
           .where(and(eq(pronunciationHistory.userId, ctx.user.id), eq(pronunciationHistory.targetLanguage, input.targetLanguage)));
-        if (pronRows[0]?.avgScore && pronRows[0].avgScore < 70) {
+        if (pronRows[0]?.avgScore && Number(pronRows[0].avgScore) < 70) {
           return { type: 'pronunciation', reason: 'Sua pronúncia precisa de atenção. Pratique com o Coach de Pronúncia!' };
         }
         return { type: 'lesson', reason: 'Continue aprendendo novas lições para expandir seu vocabulário.' };
@@ -3841,19 +3841,20 @@ Máximo 2 frases por resposta.`,
           if (available) {
             const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
             const messages = [
-              { role: 'system', content: systemPrompt },
-              ...input.history.map(h => ({ role: h.role, content: h.content })),
-              { role: 'user', content: input.message },
+              { role: 'system' as const, content: systemPrompt },
+              ...input.history.map(h => ({ role: h.role as 'system' | 'user' | 'assistant', content: h.content })),
+              { role: 'user' as const, content: input.message },
             ];
-            const reply = await generateWithOllama(messages, 500);
-            if (reply) return { reply, source: 'local' as const };
+            const result = await generateWithOllama({ messages, max_tokens: 500 });
+            if (result.content) return { reply: result.content, source: 'local' as const };
           }
         } catch (e) { /* fall through */ }
         try {
           const { invokeLLM } = await import('./_core/llm');
           const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
-          const reply = await invokeLLM(systemPrompt + '\n\nStudent: ' + input.message, { maxTokens: 200 });
-          return { reply: reply || 'Desculpe, não consegui responder agora.', source: 'remote' as const };
+          const result = await invokeLLM({ messages: [{ role: 'user', content: systemPrompt + '\n\nStudent: ' + input.message }], maxTokens: 200 });
+          const replyText = result.choices[0]?.message?.content || '';
+          return { reply: replyText || 'Desculpe, não consegui responder agora.', source: 'remote' as const };
         } catch (e) {
           return { reply: 'IA não disponível no momento. Tente novamente.', source: 'none' as const };
         }
