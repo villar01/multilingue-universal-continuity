@@ -88,7 +88,7 @@
 - [x] Professora Ingrid criada com foto profissional
 
 ## 📋 PRÓXIMAS FEATURES
-- [ ] Sistema de revisão espaçada (Anki-style)
+- [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
 - [ ] Modo competitivo multiplayer
 - [ ] Certificados de conclusão
 - [ ] Integração com calendário para lembretes
@@ -123,7 +123,7 @@
 - [x] Criar dashboard de métricas (MetricsDashboard component com economia, cache hit rate, provider usage)
 - [x] Ativar fallback automático: Online → Ollama → LM Studio (já implementado em aiProvider.ts)
 - [x] Ollama instalado e modelos Qwen2.5:3b e 1.5b disponíveis no sandbox
-- [ ] Fazer teste real de geração offline com Qwen2.5 (sandbox tem 3.8GB RAM, insuficiente para inferência em tempo real)
+- [x] Teste real de geração offline com Qwen2.5:1.5b concluido com sucesso (resposta: "Hello! How can I assist you today?")
 
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)

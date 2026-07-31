@@ -277,26 +277,42 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     response_format,
   } = params;
 
-  // ── PRIORIDADE 1: IA LOCAL (Ollama Qwen2.5:3b — gratuito, offline, privado) ──
+  // ── PRIORIDADE 1: IA LOCAL (Ollama Qwen2.5 — gratuito, offline, privado) ──
   // Se Ollama estiver disponível, usa IA local primeiro (sem custo de API remota)
+  // Modelo 1.5b para respostas rápidas (< 500 tokens), 3b para tarefas complexas
   if (!tools && !outputSchema && !output_schema && !responseFormat && !response_format) {
     try {
       const localResp = await fetch("http://localhost:11434/api/tags", {
         method: "GET",
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(1000),
       });
       if (localResp.ok) {
-        console.log("[LLM] Usando IA local (Ollama Qwen2.5:3b) — gratuito e offline");
+        // Determinar se é uma tarefa rápida ou complexa baseado no tamanho das mensagens
+        const totalContent = messages.reduce((sum, m) => {
+          const c = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+          return sum + c.length;
+        }, 0);
+        const isFast = totalContent < 2000;
+        const model = isFast ? "qwen2.5:1.5b" : "qwen2.5:3b";
+        const maxTokens = isFast ? 500 : 2000;
+        const timeout = isFast ? 15000 : 30000;
+        console.log(`[LLM] Usando IA local (${model}) — gratuito e offline`);
         const ollamaResp = await fetch("http://localhost:11434/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "qwen2.5:3b",
+            model,
             messages: messages.map(normalizeMessage),
             stream: false,
-            options: { temperature: 0.7, num_predict: 2000 },
+            options: {
+              temperature: 0.7,
+              num_predict: maxTokens,
+              num_ctx: isFast ? 2048 : 4096,
+              top_k: 20,
+              top_p: 0.8,
+            },
           }),
-          signal: AbortSignal.timeout(60000),
+          signal: AbortSignal.timeout(timeout),
         });
         if (ollamaResp.ok) {
           const data = await ollamaResp.json();
@@ -309,8 +325,8 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
           } as InvokeResult;
         }
       }
-    } catch (e) {
-      console.warn("[LLM] IA local não disponível, usando API remota:", e instanceof Error ? e.message : e);
+    } catch {
+      // IA local não disponível, usar API remota
     }
   }
 
