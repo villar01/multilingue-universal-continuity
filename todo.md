@@ -76,11 +76,11 @@
 - [ ] Ajuste dinâmico de parâmetros
 
 ## 🐛 BUGS CRÍTICOS
-- [ ] Confirmar com console e rede a origem de cada indicação de erro exibida no preview do Dashboard
+- [x] Confirmar com console e rede a origem de cada indicação de erro exibida no preview do Dashboard
 - [x] Corrigir a rota 404 do health check de conexão, substituindo `/api/trpc/health` por `system.health`
-- [ ] Determinar se o contador de "2 errors" representava duas requisições da mesma falha ou uma segunda falha independente
-- [ ] Validar o Dashboard após recarregamento limpo, com console e requisições sem erros
-- [ ] Isolar formalmente os testes de regressão pré-existentes que falham por dados relacionais de banco
+- [x] Determinar a origem do contador "2 errors": health check 404 disparado duas vezes no mount (timestamps idênticos confirmados via performance.getEntriesByType). Causa exata da duplicação não isolada (possivelmente React 19 dev mode ou re-render do OfflineStatusBar), mas o erro raiz foi corrigido e o badge desapareceu
+- [x] Validar o Dashboard após recarregamento limpo, com console e requisições sem erros
+- [x] Isolar formalmente os testes de regressão pré-existentes que falham por dados relacionais de banco
 - [x] Conversação com Professor Ricardo (audioData corrigido)
 - [x] Título "Hello World" → "A Família"
 - [x] "Michael Johnson" → "Professor Ricardo"
