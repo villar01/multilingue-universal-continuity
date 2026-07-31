@@ -17,7 +17,9 @@ import {
   TrendingUp,
   Briefcase,
   Cpu,
-  ChevronRight
+  ChevronRight,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -190,6 +192,12 @@ export default function DashboardReal() {
   const isPremium = (user as any)?.subscriptionTier === 'premium' || (user as any)?.subscriptionTier === 'vip' || (user as any)?.subscriptionType === 'monthly' || (user as any)?.subscriptionType === 'annual' || (user as any)?.subscriptionType === 'lifetime';
   const freeLessonsLimit = 5; // Lições 1-5 grátis, 6+ requer Premium
   const premiumLessonsTotal = 200;
+
+  // Status de IA nativa local (Ollama / LM Studio)
+  const { data: iaNativaStatus } = trpc.offlineAI.getStatus.useQuery(undefined, { refetchInterval: 15000, retry: false });
+  const ollamaOnline = (iaNativaStatus as any)?.ollama ?? false;
+  const lmstudioOnline = (iaNativaStatus as any)?.lmstudio ?? false;
+  const iaNativaAtiva = ollamaOnline || lmstudioOnline;
 
   const { data: gamificationStats } = trpc.gamification.getStats.useQuery(undefined, { enabled: !!user, retry: false });
   const userProgress = {
@@ -532,6 +540,46 @@ export default function DashboardReal() {
                     </button>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* IA Nativa Status */}
+            <Card className={`border-2 ${iaNativaAtiva ? "border-green-300 bg-green-50" : "border-amber-300 bg-amber-50"}`}>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Cpu className={`h-5 w-5 ${iaNativaAtiva ? "text-green-600" : "text-amber-600"}`} />
+                  IA Nativa Local
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {iaNativaAtiva ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-green-700">
+                      <CheckCircle2 className="h-4 w-4" />
+                      IA local ativa — desempenho otimizado
+                    </div>
+                    <div className="text-xs text-green-600">
+                      {ollamaOnline && "Ollama: Online"}
+                      {ollamaOnline && lmstudioOnline && " · "}
+                      {lmstudioOnline && "LM Studio: Online"}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-amber-700">
+                      <AlertCircle className="h-4 w-4" />
+                      IA local não detectada
+                    </div>
+                    <p className="text-xs text-amber-600">
+                      Instale Ollama ou LM Studio para respostas instantâneas, privacidade total e funcionamento offline.
+                    </p>
+                    <Link href="/ia-nativa">
+                      <Button size="sm" variant="outline" className="w-full mt-2 border-amber-400 text-amber-700 hover:bg-amber-100">
+                        Saber como instalar →
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

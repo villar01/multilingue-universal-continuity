@@ -22,6 +22,7 @@ import {
   Video,
   Award,
   ArrowRight,
+  Cpu,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import UserGuide from "@/components/UserGuide";
@@ -335,6 +336,23 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* ── IA NATIVA BANNER ── */}
+      <section className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <Cpu className="h-5 w-5 flex-shrink-0" />
+            <p className="text-sm font-medium">
+              <strong>IA Nativa:</strong> Instale Ollama ou LM Studio no seu computador para respostas instantâneas, privacidade total e funcionamento offline.
+            </p>
+          </div>
+          <Link href="/ia-nativa">
+            <button className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-all whitespace-nowrap">
+              Saber como →
+            </button>
+          </Link>
+        </div>
+      </section>
 
       {/* ── HERO SECTION ── */}
       <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white">

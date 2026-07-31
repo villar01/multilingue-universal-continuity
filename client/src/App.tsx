@@ -72,6 +72,7 @@ const ImmersiveDialogue = lazy(() => import("./pages/ImmersiveDialogue"));
 const NaturalLearning = lazy(() => import("./pages/NaturalLearning"));
 const NaturalLesson = lazy(() => import("./pages/NaturalLesson"));
 const MasterLesson = lazy(() => import("./pages/MasterLesson"));
+const IANativa = lazy(() => import("./pages/IANativa"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -146,6 +147,7 @@ function Router() {
         <Route path="/natural-learning" component={NaturalLearning} />
         <Route path="/natural-lesson" component={NaturalLesson} />
         <Route path="/master-lesson" component={MasterLesson} />
+        <Route path="/ia-nativa" component={IANativa} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

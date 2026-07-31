@@ -746,3 +746,12 @@
 - [x] Adicionar NaturalLearning ao Dashboard como recurso em destaque com badge NOVO
 - [x] Adicionar NaturalLearning à nav Plataforma e features da Home
 - [x] 0 erros TypeScript em todo o projeto
+
+## 🤖 INFORMAR CLIENTE SOBRE IA NATIVA LOCAL (URGENTE)
+- [ ] Criar seção/banner informativo na Home explicando benefícios de ter IA nativa (Ollama/LM Studio)
+- [ ] Adicionar página dedicada /ia-nativa com instruções de instalação do Ollama e LM Studio
+- [ ] Adicionar card no Dashboard explicando que IA local melhora desempenho e reduz dependência de terceiros
+- [ ] Adicionar indicador de status de IA local no Dashboard (detecta se Ollama/LM Studio está rodando)
+- [ ] Adicionar instruções de configuração acessíveis do app (link para guia)
+- [ ] Adicionar mensagem quando IA local detectada: "IA nativa ativa - desempenho otimizado"
+- [ ] Adicionar mensagem quando IA local não detectada: "Instale IA nativa para melhor desempenho"
