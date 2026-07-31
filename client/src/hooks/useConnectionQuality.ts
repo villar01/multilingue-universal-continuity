@@ -8,6 +8,13 @@ export interface ConnectionQuality {
   lastMeasured: Date | null;
 }
 
+export function getConnectionHealthUrl(timestamp: number): string {
+  const healthInput = encodeURIComponent(
+    JSON.stringify({ json: { timestamp } })
+  );
+  return `/api/trpc/system.health?input=${healthInput}`;
+}
+
 export function useConnectionQuality() {
   const [quality, setQuality] = useState<ConnectionQuality>({
     speed: 0,
@@ -32,7 +39,7 @@ export function useConnectionQuality() {
 
       // Medir latência
       const latencyStart = performance.now();
-      await fetch('/api/trpc/health', { method: 'HEAD' }).catch(() => {});
+      await fetch(getConnectionHealthUrl(Date.now())).catch(() => {});
       const latencyEnd = performance.now();
       const latency = latencyEnd - latencyStart;
 
