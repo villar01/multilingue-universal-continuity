@@ -2007,20 +2007,29 @@ export async function insertExercise(exerciseData: {
   type: string;
   question: string;
   correctAnswer: string;
-  options?: string;
+  options?: string[] | string;
   orderIndex?: number;
   xpReward?: number;
 }) {
   const db = await getDb();
   if (!db) return null;
+  // Schema tem "points" (int, default 10), não "xpReward". options é json (string[]), não string.
+  let parsedOptions: string[] | null = null;
+  if (exerciseData.options) {
+    if (Array.isArray(exerciseData.options)) {
+      parsedOptions = exerciseData.options;
+    } else {
+      try { parsedOptions = JSON.parse(exerciseData.options); } catch { parsedOptions = null; }
+    }
+  }
   const [result] = await db.insert(exercises).values({
     lessonId: exerciseData.lessonId,
     type: exerciseData.type as any,
     question: exerciseData.question,
     correctAnswer: exerciseData.correctAnswer,
-    options: exerciseData.options ? JSON.parse(exerciseData.options) : null,
+    options: parsedOptions,
     orderIndex: exerciseData.orderIndex || 1,
-    xpReward: exerciseData.xpReward || 5,
+    points: exerciseData.xpReward || 10,
   } as any);
   return (result as any)?.insertId || null;
 }

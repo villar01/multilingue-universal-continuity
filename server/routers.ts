@@ -1393,7 +1393,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
                 type: mapType(ex.type || 'multiple_choice'),
                 question: ex.question || '',
                 correctAnswer: ex.correctAnswer || '',
-                options: ex.options ? JSON.stringify(ex.options) : undefined,
+                options: ex.options || undefined,
                 orderIndex: i + 1,
                 xpReward: 10,
               });
@@ -1968,12 +1968,12 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
                   type: 'multiple_choice',
                   question: `Practice question ${j + 1} about ${topic} in ${language.name}`,
                   correctAnswer: `Correct answer for question ${j + 1}`,
-                  options: JSON.stringify([
+                  options: [
                     `Correct answer for question ${j + 1}`,
                     `Wrong option A`,
                     `Wrong option B`,
                     `Wrong option C`
-                  ]),
+                  ],
                   orderIndex: j + 1,
                   xpReward: 10
                 });
