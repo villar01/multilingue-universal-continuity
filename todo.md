@@ -25,8 +25,8 @@
 ## 🚨 URGENTE - BLUEPRINT REQUIREMENTS
 
 ### 1. DUAL OFFLINE AI (Ollama + LM Studio)
-- [ ] Instalar e configurar Ollama no servidor
-- [ ] Baixar modelo Mistral 7B para Ollama
+- [x] Instalar e configurar Ollama no servidor
+- [x] Baixar modelo Qwen2.5 3B para Ollama (melhor que Mistral para multilingual)
 - [ ] Integrar LM Studio como fallback secundário
 - [ ] Sistema de balanceamento de carga entre IAs
 - [ ] Cache multinível (memória + banco) para traduções
@@ -122,7 +122,8 @@
 - [x] Implementar sistema de cache inteligente (ai_cache table já criada, aiProvider.ts com checkCache/saveToCache)
 - [x] Criar dashboard de métricas (MetricsDashboard component com economia, cache hit rate, provider usage)
 - [x] Ativar fallback automático: Online → Ollama → LM Studio (já implementado em aiProvider.ts)
-- [ ] Testar geração offline de respostas AI (aguarda instalação Ollama/LM Studio)
+- [x] Ollama instalado e modelos Qwen2.5:3b e 1.5b disponíveis no sandbox
+- [ ] Fazer teste real de geração offline com Qwen2.5 (sandbox tem 3.8GB RAM, insuficiente para inferência em tempo real)
 
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)

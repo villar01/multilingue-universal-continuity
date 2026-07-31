@@ -137,7 +137,7 @@ export function OfflineAISettings() {
           <div className="space-y-1">
             <p><strong>Ollama:</strong></p>
             <code className="block bg-background p-2 rounded">
-              curl -fsSL https://ollama.com/install.sh | sh && ollama pull mistral
+              curl -fsSL https://ollama.com/install.sh | sh && ollama pull qwen2.5:3b
             </code>
           </div>
           <div className="space-y-1">
