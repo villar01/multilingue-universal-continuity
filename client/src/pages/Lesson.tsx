@@ -1038,6 +1038,7 @@ export default function Lesson() {
                 <VoiceConversation
                   lessonId={parseInt(lessonId || '1')}
                   vocabularyContext={lesson.vocabularyDetailed.map((v: any) => v.word)}
+                  languageCode={lesson.languageCode || 'en-US'}
                 />
               </div>
             )}

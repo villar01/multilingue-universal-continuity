@@ -15,11 +15,13 @@ interface Message {
 interface VoiceConversationProps {
   lessonId: number;
   vocabularyContext?: string[];
+  languageCode?: string;
 }
 
 export default function VoiceConversation({
   lessonId,
   vocabularyContext = [],
+  languageCode = "en-US",
 }: VoiceConversationProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -134,6 +136,7 @@ export default function VoiceConversation({
         stream.getTracks().forEach(track => track.stop());
       };
 
+      mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
       setTeacherEmotion("encouraging");
@@ -144,7 +147,7 @@ export default function VoiceConversation({
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
-        recognitionRef.current.lang = 'en-US';
+        recognitionRef.current.lang = languageCode;
 
         recognitionRef.current.onresult = (event: any) => {
           let interim = '';
@@ -199,10 +202,10 @@ export default function VoiceConversation({
         reader.readAsDataURL(audioBlob);
       });
 
-      // Transcribe with Whisper (includes upload)
+      // Transcribe with Whisper (includes upload) - use lesson language
       const transcription = await transcribeAudio.mutateAsync({
         audioData: audioBase64,
-        language: "pt",
+        language: languageCode.split('-')[0],
       });
 
       const userText = transcription.text;
@@ -223,8 +226,8 @@ export default function VoiceConversation({
       }));
 
       const aiResponse = await continueConversation.mutateAsync({
-        history,
-        targetLanguage: "pt-BR",
+        history: conversationHistory,
+        targetLanguage: languageCode,
         nativeLanguage: "pt-BR",
         vocabularyContext,
       } as any);
@@ -243,8 +246,7 @@ export default function VoiceConversation({
       // Generate TTS audio
       const ttsResult = await generateTTS.mutateAsync({
         text: portuguese,
-        languageCode: "pt-BR",
-        // voiceName: "pt-BR-Wavenet-B", // Masculine voice
+        languageCode: languageCode,
       });
 
       // HYBRID AVATAR LOGIC

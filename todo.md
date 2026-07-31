@@ -344,10 +344,16 @@
 
 ## 🐛 BUG: GRAVAÇÃO NÃO PARA
 - [x] Corrigir botão "Parar Gravação" que não para a gravação (verificar estado do mediaRecorder + force stop tracks)
+- [x] Corrigir mediaRecorderRef.current nunca atribuído no startRecording (VoiceConversation.tsx)
+- [x] Corrigir variável `history` inexistente substituída por `conversationHistory` (VoiceConversation.tsx)
+- [x] Corrigir lang hardcoded 'en-US' no SpeechRecognition → agora usa prop languageCode
+- [x] Corrigir transcription language hardcoded "pt" → agora usa languageCode.split('-')[0]
+- [x] Corrigir targetLanguage/nativeLanguage hardcoded "pt-BR" → agora usa prop languageCode
+- [x] Adicionar prop languageCode ao VoiceConversation e passar de Lesson.tsx
 
 ## 🔊 FEEDBACK DE VOZ DO PROFESSOR
-- [ ] Professor fala "Correct!" / "Very good!" quando aluno acerta questão
-- [ ] Professor fala "Try again!" / "Almost!" quando aluno erra
+- [x] Professor fala "Correct!" / "Very good!" quando aluno acerta questão
+- [x] Professor fala "Try again!" / "Almost!" quando aluno erra
 
 ## 🚀 SESSÃO ATUAL - REMODELAÇÃO COMPLETA
 
