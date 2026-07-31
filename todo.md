@@ -814,3 +814,22 @@
 - [x] Salvar assinatura no banco (tabela parental_consents já existe no schema)
 - [x] Bloquear acesso ao app até assinatura concluída (já implementado)
 - [x] Incluir normas (já implementado em TermsOfUse.tsx com LGPD/GDPR)
+
+## 🎯 LIÇÕES IMERSIVAS COM TELAS FOTOGRÁFICAS E PROFESSORES
+
+- [ ] Integrar cenas imersivas (ImmersiveScene) dentro das lições — professor emerge na tela fotográfica
+- [ ] Professor interage com aluno em tempo real dentro de cada cena (clica nos objetos, professor fala com voz natural e animação)
+- [ ] Substituir método antigo de texto por telas fotográficas interativas com hotspots clicáveis
+- [ ] Cada lição carrega a cena fotográfica correspondente ao tema (família, casa, escola, etc.)
+- [ ] Professor emerge na tela com animação e fala ao clicar nos elementos da cena
+- [ ] Interações totais: aluno clica, professor fala, aluno repete, professor corrige
+
+## 📝 EXERCÍCIOS DE MEMORIZAÇÃO + TESTES + PRONÚNCIA NAS CENAS IMERSIVAS
+- [ ] Reescrever SceneLesson: usar cenas fotográficas do ImmersiveScene (25+ cenas com bgImage, teacherImage, hotspots)
+- [ ] Adicionar exercícios de memorização escritos (cloze, fill-in-the-blank, matching) gerados por IA local
+- [ ] Adicionar testes reais de perguntas (multiple choice, true/false, short answer) com correção automática
+- [ ] Adicionar repetição de palavras (spaced repetition) integrada com hotspots da cena
+- [ ] Adicionar exercícios de pronúncia com Web Speech API + scoring por IA local
+- [ ] Professor emergindo na cena fotográfica com voz natural falando os objetos clicados
+- [ ] Avaliação automática: score de acertos, XP, progresso por cena
+- [ ] IA local Qwen2.5 gera exercícios dinâmicos baseados nos objetos da cena

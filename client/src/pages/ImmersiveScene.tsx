@@ -32,7 +32,7 @@ function getTeacherForLang(targetLang: string, fallback: { name: string; image: 
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface Hotspot {
+export interface Hotspot {
   id: string; x: number; y: number;
   label: string; translation: string; pronunciation: string;
   example: string; examplePt: string; icon: string; color: string;
@@ -42,7 +42,7 @@ interface DialogLine {
   text: string; textPt: string;
   options?: string[]; correctIndex?: number;
 }
-interface Scene {
+export interface Scene {
   id: string; name: string; nameEn: string;
   bgImage: string; teacherImage: string; teacherName: string;
   teacherLang: string; langCode: string; flag: string;
@@ -54,7 +54,7 @@ interface Scene {
 }
 
 // ─── Scene Data (25 scenes with CDN images) ───────────────────────────────────
-const SCENES: Scene[] = [
+export const IMMERSIVE_SCENES: Scene[] = [
   // ══════════════════════════════════════════════════════════════
   // CENAS COMPLETAS (5+ diálogos) — aparecem primeiro
   // ══════════════════════════════════════════════════════════════
@@ -1133,7 +1133,7 @@ export default function ImmersiveScene() {
       if (!targetCode) targetCode = localStorage.getItem("ml_target_lang") || "";
       if (targetCode) {
         const base = targetCode.split("-")[0].toLowerCase();
-        const match = SCENES.find(s => s.langCode === base || s.teacherLang.startsWith(base));
+        const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.startsWith(base));
         if (match) return match;
       }
     } catch {}
@@ -1159,7 +1159,7 @@ export default function ImmersiveScene() {
       // Also auto-switch to matching scene if currently in scene picker
       if (!selectedScene) {
         const base = newCode.split("-")[0].toLowerCase();
-        const match = SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
+        const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
         if (match) setSelectedScene(match);
       }
     }
@@ -1172,7 +1172,7 @@ export default function ImmersiveScene() {
     if (sceneInitialized.current) return; // Already initialized — don't override user navigation
     if (!targetLang) return;
     const base = targetLang.split("-")[0].toLowerCase();
-    const match = SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
+    const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
     if (match) {
       setSelectedScene(match);
       sceneInitialized.current = true;
@@ -1195,7 +1195,7 @@ export default function ImmersiveScene() {
     setProfile({ ...profile, targetCode: code, targetName: info.name, targetFlag: info.flag });
     // Auto-switch to a scene matching the new language
     const base = code.split("-")[0].toLowerCase();
-    const match = SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
+    const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.toLowerCase().startsWith(base));
     if (match) setSelectedScene(match);
     setShowLangPicker(false);
   };
@@ -1360,7 +1360,7 @@ export default function ImmersiveScene() {
     });
   }, []);
 
-  const filteredScenes = SCENES.filter(s => {
+  const filteredScenes = IMMERSIVE_SCENES.filter(s => {
     if (filter !== "all" && s.difficulty !== filter) return false;
     if (search && !s.name.toLowerCase().includes(search.toLowerCase()) &&
         !s.nameEn.toLowerCase().includes(search.toLowerCase())) return false;
@@ -1911,8 +1911,8 @@ export default function ImmersiveScene() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const idx = SCENES.findIndex(s => s.id === selectedScene.id);
-              const next = SCENES[(idx + 1) % SCENES.length];
+              const idx = IMMERSIVE_SCENES.findIndex(s => s.id === selectedScene.id);
+              const next = IMMERSIVE_SCENES[(idx + 1) % IMMERSIVE_SCENES.length];
               console.log('[Próxima] clicked. current:', selectedScene.id, 'idx:', idx, 'next:', next.id);
               setSelectedScene(next);
               setActiveHotspot(null);
@@ -1967,7 +1967,7 @@ export default function ImmersiveScene() {
             <h1 className="text-white font-bold" style={{ fontSize: "clamp(16px, 2.5vw, 24px)" }}>
               🌍 Immersive Scenes
             </h1>
-            <p className="text-gray-400 text-xs">{SCENES.length} environments • Native teacher • Contextual vocabulary</p>
+            <p className="text-gray-400 text-xs">{IMMERSIVE_SCENES.length} environments • Native teacher • Contextual vocabulary</p>
           </div>
           <div
             className="text-yellow-400 font-bold px-3 py-1.5 rounded-full text-sm"
