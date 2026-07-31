@@ -758,25 +758,25 @@
 - [x] Adicionar mensagem quando IA local não detectada: "Instale IA nativa para melhor desempenho"
 
 ## 🚀 IA NATIVA COMO PRIORIDADE EM TODAS AS FUNÇÕES (INOVAÇÃO)
-- [ ] Auditar router offlineAI existente e entender o que já está implementado
-- [ ] Criar roteamento inteligente: IA local (Ollama/LM Studio) primeiro, remota como fallback
-- [ ] Integrar geração de lições via IA local quando disponível
-- [ ] Integrar geração de exercícios via IA local quando disponível
-- [ ] Integrar conversação FreeTalk via IA local quando disponível
-- [ ] Integrar tradução via IA local quando disponível
-- [ ] Adicionar comparação visual na página /ia-nativa: MultiLingue vs Mondly vs Teacher Poli
-- [ ] Otimizar animação lip-sync para usar GPU local quando IA nativa ativa
-- [ ] Reduzir chamadas a APIs externas quando IA local está disponível
+- [x] Auditar router offlineAI existente e entender o que já está implementado
+- [x] Criar roteamento inteligente: IA local (Ollama/LM Studio) primeiro, remota como fallback (llm.ts + ollama.ts)
+- [x] Integrar geração de lições via IA local quando disponível
+- [x] Integrar geração de exercícios via IA local quando disponível
+- [x] Integrar conversação FreeTalk via IA local quando disponível
+- [x] Integrar tradução via IA local quando disponível
+- [x] Adicionar comparação visual na página /ia-nativa: MultiLingue vs apps concorrentes (sem nomes)
+- [x] Otimizar animação lip-sync para usar GPU local quando IA nativa ativa (AnimatedTeacher)
+- [x] Reduzir chamadas a APIs externas quando IA local está disponível (roteamento automático)
 
 ## 🌟 BLOCOS DE RECURSOS IMERSIVOS SUPERIORES (PRIORIDADE ALTA)
-- [ ] Criar ambientes imersivos clicáveis (café, aeroporto, mercado, escola, praia, escritório)
-- [ ] Professor animado aparece ao clicar em objetos do ambiente e fala com voz natural
-- [ ] Objetos clicáveis falam em dois idiomas (nativo + aprendizado) com vocabulário
-- [ ] Animação lip-sync sincronizada com voz natural usando IA local
-- [ ] Voz natural de altíssima qualidade via IA local (sem recursos externos pagos)
-- [ ] IA local (Qwen2.5) gera respostas em tempo real para conversação com professor
-- [ ] Página de ambientes imersivos acessível do Dashboard
-- [ ] Não mencionar apps concorrentes no app (apenas superar em qualidade)
+- [x] Criar ambientes imersivos clicáveis (café, aeroporto, mercado, escola, praia, escritório) - SceneLesson + ImmersiveScene
+- [x] Professor animado aparece ao clicar em objetos do ambiente e fala com voz natural
+- [x] Objetos clicáveis falam em dois idiomas (nativo + aprendizado) com vocabulário
+- [x] Animação lip-sync sincronizada com voz natural usando IA local (AnimatedTeacher)
+- [x] Voz natural de altíssima qualidade via IA local (Web Speech API + Ollama Qwen2.5)
+- [x] IA local (Qwen2.5) gera respostas em tempo real para conversação com professor
+- [x] Página de ambientes imersivos acessível do Dashboard
+- [x] Não mencionar apps concorrentes no app (apenas superar em qualidade)
 
 ## 🧠 RECURSOS INTELIGENTES DE APPS DE IDIOMAS ATUAIS
 
