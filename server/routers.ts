@@ -3832,14 +3832,40 @@ Máximo 2 frases por resposta.`,
         targetLanguage: z.string(),
         nativeLanguage: z.string(),
         scenario: z.string().optional(),
+        countryCode: z.string().optional(),
         history: z.array(z.object({ role: z.string(), content: z.string() })).default([]),
       }))
       .mutation(async ({ input }) => {
+        // ── Censura e moderação por país ──
+        const countryNorms: Record<string, string> = {
+          'BR': 'Respeite a moral brasileira. Sem palavrões, conteúdo sexual, drogas ou violência.',
+          'US': 'Keep it family-friendly. No profanity, sexual content, drugs or violence.',
+          'GB': 'Keep it polite and family-friendly. No profanity or inappropriate content.',
+          'FR': 'Respectez les valeurs françaises. Pas de gros mots, contenu sexuel, drogue ou violence.',
+          'DE': 'Halten Sie es familienfreundlich. Keine Schimpfwörter oder unangemessene Inhalte.',
+          'ES': 'Respete los valores españoles. Sin palabrotas, contenido sexual, drogas o violencia.',
+          'IT': 'Rispetta i valori italiani. Niente parolacce, contenuti sessuali, droghe o violenza.',
+          'JP': '日本の道徳を尊重してください。不適切な言葉、性的コンテンツ、薬物、暴力は禁止です。',
+          'CN': '尊重中国道德。禁止不当言辞、色情内容、毒品和暴力。',
+          'KR': '한국의 도덕을 존중하세요. 욕설, 성적 콘텐츠, 마약, 폭력은 금지입니다.',
+          'SA': 'احترم القيم الإسلامية. ممنوع تماماً: الكحول، المحتوى الجنسي، المخدرات، العنف.',
+          'AE': 'احترم القيم الإسلامية. ممنوع تماماً: الكحول، المحتوى الجنسي، المخدرات، العنف.',
+          'RU': 'Соблюдайте российские ценности. Без ругательств, сексуального контента, наркотиков или насилия.',
+          'IN': 'Respect Indian cultural values. No profanity, sexual content, drugs or violence.',
+          'MX': 'Respete los valores mexicanos. Sin palabrotas, contenido sexual, drogas o violencia.',
+          'PT': 'Respeite a moral portuguesa. Sem palavrões, conteúdo sexual, drogas ou violência.',
+          'NL': 'Houd het gezinsvriendelijk. Geen scheldwoorden of ongepaste inhoud.',
+          'TR': 'Türk değerlerine saygı gösterin. Küfür, cinsel içerik, uyuşturucu veya şiddet yasaktır.',
+          'AR': 'Respete los valores argentinos. Sin palabrotas, contenido sexual, drogas o violencia.',
+          'GR': 'Σεβαστείτε τις ελληνικές αξίες. Χωρίς βρισιές, σεξουαλικό περιεχόμενο, ναρκωτικά ή βία.',
+        };
+        const countryNorm = countryNorms[input.countryCode || 'BR'] || countryNorms['BR'];
+        const censorshipPrompt = `\n\nCRITICAL CONTENT RULES:\n- You are a TEACHER. NEVER use profanity, sexual content, drug references, violence, or anything inappropriate for children.\n- Respect the moral and cultural norms of the student's country: ${countryNorm}\n- If the student tries to talk about inappropriate topics, gently redirect to the lesson: \"Let's focus on learning! Try saying...\"\n- NEVER generate words, audio descriptions, or 3D image descriptions that violate these rules.\n- Keep ALL conversation educational, moral, and respectful of every country's culture.\n- If the student insists on inappropriate topics, respond: \"I can only help with language learning. Let's practice!\"`;
         try {
           const { isOllamaAvailable, generateWithOllama } = await import('./ollama');
           const available = await isOllamaAvailable();
           if (available) {
-            const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
+            const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.${censorshipPrompt}`;
             const messages = [
               { role: 'system' as const, content: systemPrompt },
               ...input.history.map(h => ({ role: h.role as 'system' | 'user' | 'assistant', content: h.content })),
@@ -3851,7 +3877,7 @@ Máximo 2 frases por resposta.`,
         } catch (e) { /* fall through */ }
         try {
           const { invokeLLM } = await import('./_core/llm');
-          const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.`;
+          const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.${censorshipPrompt}`;
           const result = await invokeLLM({ messages: [{ role: 'user', content: systemPrompt + '\n\nStudent: ' + input.message }], maxTokens: 200 });
           const replyText = result.choices[0]?.message?.content || '';
           return { reply: replyText || 'Desculpe, não consegui responder agora.', source: 'remote' as const };

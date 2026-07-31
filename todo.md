@@ -780,7 +780,7 @@
 
 ## 🧠 RECURSOS INTELIGENTES DE APPS DE IDIOMAS ATUAIS
 
-- [ ] SRS (Spaced Repetition System) adaptativo - revisão de vocabulário baseada em curva de esquecimento
+- [x] SRS (Spaced Repetition System) adaptativo - página /smart-review com SM-2 implementado
 - [ ] Coach de Pronúncia com Web Speech API + scoring de similaridade por IA local
 - [ ] Conversa Livre com IA nas cenas imersivas - professor responde dinamicamente via Qwen2.5
 - [ ] Trilha de Aprendizagem Adaptativa - próximo exercício baseado em desempenho do aluno
@@ -790,3 +790,18 @@
 - [ ] Feedback de IA em tempo real sobre progresso
 - [ ] Cloze test dinâmico gerado por IA local
 - [ ] Tradução contextual inteligente (não palavra-por-palavra, mas frase completa)
+
+## 🛡️ CENSURA E MODERAÇÃO NA CONVERSA LIVRE
+
+- [x] Implementar filtro de conteúdo inadequado na conversa livre (professor virtual recusa palavrões, conteúdo imoral, etc.)
+- [x] Adicionar prompt de sistema que impede o professor virtual de usar palavras/áudio/imagens 3D inapropriadas
+- [x] Garantir que a IA respeite a moral de cada país e mantenha conversa educativa
+- [x] Bloquear tentativas de desvio de assunto educacional para conteúdo inadequado
+
+## 🛡️ CENSURA E MODERAÇÃO NA CONVERSA LIVRE (MORAL DE CADA PAÍS)
+
+- [x] Implementar filtro de conteúdo inadequado na conversa livre (professor virtual recusa palavrões, conteúdo imoral, etc.)
+- [x] Adicionar prompt de sistema que impede o professor virtual de usar palavras/áudio/imagens 3D inapropriadas
+- [x] Garantir que a IA respeite a moral de cada país e mantenha conversa educativa
+- [x] Bloquear tentativas de desvio de assunto educacional para conteúdo inadequado
+- [x] Mapear normas culturais por país (20 países mapeados: BR, US, GB, FR, DE, ES, IT, JP, CN, KR, SA, AE, RU, IN, MX, PT, NL, TR, AR, GR)
