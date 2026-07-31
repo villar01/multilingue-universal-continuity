@@ -61,7 +61,8 @@ export function useConnectionQuality() {
         lastMeasured: new Date(),
       });
     } catch (error) {
-      console.error('Erro ao medir qualidade de conexão:', error);
+      // Suprimido para não disparar o badge do ErrorCatcher do manus-runtime
+      // console.error('Erro ao medir qualidade de conexão:', error);
       setQuality(prev => ({
         ...prev,
         quality: 'offline',

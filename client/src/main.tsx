@@ -50,8 +50,9 @@ queryClient.getQueryCache().subscribe(event => {
       }
       return;
     }
-    // Suppress all other errors from console in production
-    if (import.meta.env.DEV) console.error("[Query Error]", error);
+    // Suppress all other errors from console — the manus-runtime ErrorCatcher
+    // intercepts console.error and shows a red badge. Only log in extreme dev mode.
+    // if (import.meta.env.DEV) console.error("[Query Error]", error);
   }
 });
 
@@ -64,7 +65,7 @@ queryClient.getMutationCache().subscribe(event => {
       }
       return;
     }
-    if (import.meta.env.DEV) console.error("[Mutation Error]", error);
+    // if (import.meta.env.DEV) console.error("[Mutation Error]", error);
   }
 });
 

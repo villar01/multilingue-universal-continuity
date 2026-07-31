@@ -80,7 +80,8 @@ export function useOfflineSync() {
               }
             }
           } catch (err) {
-            console.error(`Erro ao cachear exercícios da lição ${lesson.id}:`, err);
+            // Suprimido para não disparar o badge do ErrorCatcher
+            // console.error(`Erro ao cachear exercícios da lição ${lesson.id}:`, err);
           }
         }
       }
