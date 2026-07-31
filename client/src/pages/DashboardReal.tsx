@@ -166,24 +166,25 @@ export default function DashboardReal() {
   // Mostrar todas as lições do curso (já filtradas por nível via courseId)
   const displayLessons = allLangLessons;
 
-  // Carregar idioma alvo do localStorage (definido no Onboarding)
+  // Carregar idioma alvo do localStorage (definido no Onboarding/Home)
   useEffect(() => {
-    if (languages && languages.length > 0 && !selectedLanguageId) {
+    if (languages && languages.length > 0) {
       const savedId = localStorage.getItem("ml_target_lang_id");
       const savedCode = localStorage.getItem("ml_target_lang");
       if (savedId && Number(savedId) > 0) {
-        setSelectedLanguageId(Number(savedId));
+        const match = languages.find((l: any) => l.id === Number(savedId));
+        if (match && match.id !== selectedLanguageId) {
+          setSelectedLanguageId(match.id);
+        }
       } else if (savedCode) {
         const prefix = savedCode.split('-')[0];
         const match = languages.find((l: any) => l.code === prefix || l.code === savedCode);
-        if (match) setSelectedLanguageId(match.id);
-      } else {
-        // Fallback: English
-        const english = languages.find((l: any) => l.code === "en");
-        if (english) setSelectedLanguageId(english.id);
+        if (match && match.id !== selectedLanguageId) {
+          setSelectedLanguageId(match.id);
+        }
       }
     }
-  }, [languages, selectedLanguageId]);
+  }, [languages]);
 
   // Premium check: user has paid subscription
   const isPremium = (user as any)?.subscriptionTier === 'premium' || (user as any)?.subscriptionTier === 'vip' || (user as any)?.subscriptionType === 'monthly' || (user as any)?.subscriptionType === 'annual' || (user as any)?.subscriptionType === 'lifetime';

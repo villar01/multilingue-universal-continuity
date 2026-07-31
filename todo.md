@@ -484,7 +484,7 @@
 
 ### M4: DashboardReal
 - [ ] Paywall lição 6+ (5 grátis)
-- [ ] Query getByCourse funciona com targetLanguageId
+- [x] Query getByCourse funciona com targetLanguageId
 - [ ] Texto "5 lições gratuitas" correto
 
 ### M5: ARMode/CameraTranslator
