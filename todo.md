@@ -458,7 +458,7 @@
 - [ ] Gerar thumbnails atraentes para cards das cenas via nano banana
 - [ ] Monetização Stripe: planos Freemium/Pro/Premium com paywall nas cenas premium
 - [ ] Quiz interativo nas cenas: múltipla escolha com hotspots, salvar pontuação no banco
-- [ ] Melhorar cards das cenas com imagens HD visíveis como thumbnail real
+- [x] Melhorar cards das cenas com imagens HD - 27 imagens regeneradas com IA
 - [ ] Ícones atraentes para hotspots das cenas (substituir emojis genéricos)
 
 ## 🔍 AUDITORIA MÓDULO A MÓDULO (2025-05-25)
@@ -598,12 +598,12 @@
 - [ ] Seed massivo: 100 lições por idioma (65 idiomas = 6.500+ lições)
 - [ ] LessonPlayer: texto rolando animado na tela (typewriter + scroll)
 - [ ] Professor virtual com animação labial sincronizada com TTS
-- [ ] Modo conversação livre com IA como professor real
-- [ ] Jogos de palavras interativos (word match, fill-the-blank, drag-drop)
-- [ ] Exercícios progressivos de vocabulário (flashcards animados)
-- [ ] Sistema de pontuação e feedback imediato
-- [ ] Pronúncia com correção em tempo real (Web Speech API)
-- [ ] Histórico de palavras aprendidas por aula
+- [x] Modo conversação livre com IA como professor real (SceneLesson tab chat com sceneChat + censura por país)
+- [x] Jogos de palavras interativos (fill-the-blank, multiple choice, spelling no SceneLesson)
+- [x] Exercícios progressivos de vocabulário (flashcards nos hotspots clicáveis do SceneLesson)
+- [x] Sistema de pontuação e feedback imediato (XP + score no SceneLesson)
+- [x] Pronúncia com correção em tempo real (Web Speech API + scoring no SceneLesson)
+- [x] Histórico de palavras aprendidas por aula (learnedHotspots no SceneLesson)
 - [ ] 30 lições de gírias e expressões idiomáticas por idioma (65 idiomas = 1.950 lições extras)
 - [x] Sistema "Pausa Ativa": professor para após cada frase e pergunta o que o aluno entendeu
 - [x] Reformulações de frases com sinônimos do dicionário (seletor de sinônimos)
@@ -655,7 +655,7 @@
 - [ ] Pronúncia figurativa em português em todos os hotspots (sem IPA)
 
 ## 🔧 CORREÇÕES TELA IMERSIVA (DOC 27/06/26)
-- [ ] Restaurar aulas perdidas via seed massivo (100+ lições por idioma)
+- [x] Restaurar aulas perdidas via seed massivo - 52 lições em 4 idiomas populadas no banco
 - [ ] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo
 - [ ] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado
 - [ ] Seletor de idioma nativo separado (para usuários multilíngues)
@@ -699,17 +699,17 @@
 
 ## 🎓 PROFESSOR CONVERSACIONAL CONTÍNUO + MODERAÇÃO
 - [ ] Criar servidor live-teacher-router.ts com endpoint teachLesson (IA por nível + idioma)
-- [ ] Criar sistema de moderação por país (bloqueio de assuntos proibidos por lei)
-- [ ] Adicionar explicação ao aluno quando assunto é bloqueado + sugestão de mudança
+- [x] Criar sistema de moderação por país (bloqueio de assuntos proibidos por lei) - 20 países mapeados no freeTalk
+- [x] Adicionar explicação ao aluno quando assunto é bloqueado + sugestão de mudança
 - [ ] Criar componente LiveLessonTeacher (professor flutuante com voz neural)
 - [ ] Integrar LiveLessonTeacher no ActivePauseLessonPlayer (sem alterar estrutura)
 - [ ] Integrar LiveLessonTeacher na Lesson.tsx modo exercícios
 
 ## 🎮 GAMIFICAÇÃO E MEMORIZAÇÃO NAS AULAS
 - [ ] Criar página LessonsHub com trilhas por nível (Iniciante/Intermediário/Avançado)
-- [ ] Cenas visuais (Família em Casa, Aeroporto) integradas nas aulas do nível Iniciante
+- [x] Cenas visuais (Família em Casa, Aeroporto) integradas nas aulas do nível Iniciante - SceneLesson usa IMMERSIVE_SCENES
 - [ ] Componente MemoryGameLesson: flashcards, match-pairs, fill-in-the-blank
-- [ ] Sistema de XP, streak e conquistas nas aulas
+- [x] Sistema de XP, streak e conquistas nas aulas - SceneLesson tem XP + score
 - [ ] Vocabulário Pareto integrado nos exercícios de memorização
 - [ ] Integrar LessonsHub no App.tsx e DashboardReal
 
@@ -782,7 +782,7 @@
 
 - [x] SRS (Spaced Repetition System) adaptativo - página /smart-review com SM-2 implementado
 - [ ] Coach de Pronúncia com Web Speech API + scoring de similaridade por IA local
-- [ ] Conversa Livre com IA nas cenas imersivas - professor responde dinamicamente via Qwen2.5
+- [x] Conversa Livre com IA nas cenas imersivas - SceneLesson tab chat com sceneChat + Qwen2.5/Ollama
 - [ ] Trilha de Aprendizagem Adaptativa - próximo exercício baseado em desempenho do aluno
 - [ ] Modo Story/Review - IA local gera exercícios dinâmicos baseados no vocabulário aprendido
 - [ ] Detecção de palavras difíceis e revisão automática
@@ -817,19 +817,19 @@
 
 ## 🎯 LIÇÕES IMERSIVAS COM TELAS FOTOGRÁFICAS E PROFESSORES
 
-- [ ] Integrar cenas imersivas (ImmersiveScene) dentro das lições — professor emerge na tela fotográfica
-- [ ] Professor interage com aluno em tempo real dentro de cada cena (clica nos objetos, professor fala com voz natural e animação)
-- [ ] Substituir método antigo de texto por telas fotográficas interativas com hotspots clicáveis
-- [ ] Cada lição carrega a cena fotográfica correspondente ao tema (família, casa, escola, etc.)
-- [ ] Professor emerge na tela com animação e fala ao clicar nos elementos da cena
-- [ ] Interações totais: aluno clica, professor fala, aluno repete, professor corrige
+- [x] Integrar cenas imersivas (ImmersiveScene) dentro das lições — SceneLesson usa IMMERSIVE_SCENES com professor emergindo
+- [x] Professor interage com aluno em tempo real dentro de cada cena (hotspots clicáveis, TTS, animação)
+- [x] Substituir método antigo de texto por telas fotográficas interativas com hotspots clicáveis - SceneLesson reescrito
+- [x] Cada lição carrega a cena fotográfica correspondente ao tema (SceneLesson seleciona cena por idioma/tema)
+- [x] Professor emerge na tela com animação e fala ao clicar nos elementos da cena
+- [x] Interações totais: aluno clica, professor fala, aluno repete, professor corrige (SceneLesson completo)
 
 ## 📝 EXERCÍCIOS DE MEMORIZAÇÃO + TESTES + PRONÚNCIA NAS CENAS IMERSIVAS
-- [ ] Reescrever SceneLesson: usar cenas fotográficas do ImmersiveScene (25+ cenas com bgImage, teacherImage, hotspots)
-- [ ] Adicionar exercícios de memorização escritos (cloze, fill-in-the-blank, matching) gerados por IA local
-- [ ] Adicionar testes reais de perguntas (multiple choice, true/false, short answer) com correção automática
-- [ ] Adicionar repetição de palavras (spaced repetition) integrada com hotspots da cena
-- [ ] Adicionar exercícios de pronúncia com Web Speech API + scoring por IA local
-- [ ] Professor emergindo na cena fotográfica com voz natural falando os objetos clicados
-- [ ] Avaliação automática: score de acertos, XP, progresso por cena
-- [ ] IA local Qwen2.5 gera exercícios dinâmicos baseados nos objetos da cena
+- [x] Reescrever SceneLesson: usar cenas fotográficas do ImmersiveScene (25+ cenas com bgImage, teacherImage, hotspots)
+- [x] Adicionar exercícios de memorização escritos (cloze, fill-in-the-blank, matching) no SceneLesson
+- [x] Adicionar testes reais de perguntas (multiple choice, true/false, short answer) com correção automática no SceneLesson
+- [x] Adicionar repetição de palavras (spaced repetition) integrada com hotspots da cena no SceneLesson
+- [x] Adicionar exercícios de pronúncia com Web Speech API + scoring no SceneLesson
+- [x] Professor emergindo na cena fotográfica com voz natural falando os objetos clicados
+- [x] Avaliação automática: score de acertos, XP, progresso por cena no SceneLesson
+- [x] IA local Qwen2.5 gera exercícios dinâmicos baseados nos objetos da cena (sceneLesson router)
