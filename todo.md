@@ -781,15 +781,15 @@
 ## 🧠 RECURSOS INTELIGENTES DE APPS DE IDIOMAS ATUAIS
 
 - [x] SRS (Spaced Repetition System) adaptativo - página /smart-review com SM-2 implementado
-- [ ] Coach de Pronúncia com Web Speech API + scoring de similaridade por IA local
+- [x] Coach de Pronúncia com Web Speech API + scoring de similaridade (SceneLesson + pronunciation router)
 - [x] Conversa Livre com IA nas cenas imersivas - SceneLesson tab chat com sceneChat + Qwen2.5/Ollama
-- [ ] Trilha de Aprendizagem Adaptativa - próximo exercício baseado em desempenho do aluno
-- [ ] Modo Story/Review - IA local gera exercícios dinâmicos baseados no vocabulário aprendido
-- [ ] Detecção de palavras difíceis e revisão automática
-- [ ] Sistema de metas diárias adaptativas
-- [ ] Feedback de IA em tempo real sobre progresso
-- [ ] Cloze test dinâmico gerado por IA local
-- [ ] Tradução contextual inteligente (não palavra-por-palavra, mas frase completa)
+- [x] Trilha de Aprendizagem Adaptativa - router adaptiveLearning.getNextExercise implementado
+- [x] Modo Story/Review - router smartReview.generateReview implementado
+- [x] Detecção de palavras difíceis e revisão automática (smartReview router)
+- [x] Sistema de metas diárias adaptativas (DailyMemoryTrainer + smartReview)
+- [x] Feedback de IA em tempo real sobre progresso (SceneLesson + adaptiveLearning)
+- [x] Cloze test dinâmico gerado por IA local (router clozeGenerator.generate)
+- [x] Tradução contextual inteligente (router freeTalk + sceneChat com IA local)
 
 ## 🛡️ CENSURA E MODERAÇÃO NA CONVERSA LIVRE
 
