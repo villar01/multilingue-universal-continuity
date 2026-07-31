@@ -134,18 +134,27 @@ export default function DashboardReal() {
   // Buscar idiomas disponíveis
   const { data: languages, isLoading: loadingLanguages } = trpc.languages.list.useQuery();
 
-  // Mapeamento direto: languageId -> courseId (Básico)
-  // Cada idioma tem 3 cursos: Básico, Intermediário, Avançado
-  // courseId = (languageId - 1) * 3 + 1 para Básico
-  //           = (languageId - 1) * 3 + 2 para Intermediário
-  //           = (languageId - 1) * 3 + 3 para Avançado
-  const levelToCourseOffset: Record<CourseLevel, number> = {
-    basico: 0,
-    intermediario: 1,
-    avancado: 2,
-    negocios_tecnologia: 0,
+  // Buscar cursos do idioma selecionado (do banco, sem fórmula hardcoded)
+  const { data: languageCourses } = trpc.courses.getByLanguage.useQuery(
+    { languageId: selectedLanguageId },
+    { enabled: selectedLanguageId > 0 }
+  );
+
+  // Mapear nível do curso para o level do banco
+  const levelToDbLevel: Record<CourseLevel, string> = {
+    basico: 'beginner',
+    intermediario: 'intermediate',
+    avancado: 'advanced',
+    negocios_tecnologia: 'beginner',
   };
-  const courseId = (selectedLanguageId - 1) * 3 + 1 + levelToCourseOffset[selectedLevel];
+
+  // Encontrar o courseId correto buscando no banco pelo level
+  const dbLevel = levelToDbLevel[selectedLevel];
+  const matchedCourse = (languageCourses as any[])?.find(
+    (c: any) => c.level === dbLevel
+  );
+  // Fallback: se não encontrar o level exato, usar o primeiro curso do idioma
+  const courseId = matchedCourse?.id ?? (languageCourses as any[])?.[0]?.id ?? 0;
 
   // Buscar lições do curso correspondente ao idioma + nível
   const { data: courseData, isLoading: loadingLessons } = trpc.lessons.getByCourse.useQuery(
