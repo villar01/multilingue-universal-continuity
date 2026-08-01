@@ -127,7 +127,7 @@
 
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
-- [ ] Adicionar skeleton loaders durante carregamento
+- [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
 - [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra)
 - [ ] Cachear avatares e vídeos no localStorage/IndexedDB
 - [ ] Reduzir bundle size com code splitting
@@ -263,10 +263,10 @@
 ## 🚀🚀🚀🚀🚀 AUMENTAR VELOCIDADE DA IA PARA 300.000X COM OTIMIZAÇÕES REAIS
 - [x] Implementar cache em memória com 100k itens e 0.1ms TTL (otimização REAL)
 - [x] Reduzir CACHE_DURATION para 0.00001s (300.000x speed)
-- [ ] Implementar connection pooling para banco de dados (otimização REAL)
-- [ ] Ativar compressão gzip para respostas HTTP (otimização REAL)
+- [x] Implementar connection pooling para banco de dados (otimização REAL) — pool config com 10 conexões, keepAlive
+- [x] Ativar compressão gzip para respostas HTTP (otimização REAL) — já implementado (compression middleware level 6)
 - [ ] Implementar lazy loading e code splitting no frontend (otimização REAL)
-- [ ] Otimizar queries SQL com índices e prepared statements (otimização REAL)
+- [x] Otimizar queries SQL com índices e prepared statements (otimização REAL) — 5 índices criados: lessons.courseId, lessons.languageCode, exercises.lessonId, virtual_teachers.voice_language_code, courses.language_id
 - [ ] Implementar CDN para assets estáticos (otimização REAL)
 - [ ] Ativar HTTP/2 e keep-alive connections (otimização REAL)
 
@@ -320,8 +320,8 @@
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
-- [ ] Diagnosticar por que Teacher Ingrid (id=150002) não fala
-- [ ] Corrigir voz da Professora Ingrid
+- [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice
+- [x] Corrigir voz da Professora Ingrid — gender agora passado do teacher ao TTS
 
 ## 🔄 REMOVER SISTEMA DE PROFESSORES (NOVA FASE)
 - [ ] Remover EnhancedTeacherAvatar component

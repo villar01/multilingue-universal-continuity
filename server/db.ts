@@ -35,10 +35,26 @@ import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+// Connection pool configuration for better performance
+const POOL_CONFIG = {
+  connectionLimit: 10,      // Max connections in pool
+  waitForConnections: true,  // Queue if all connections busy
+  queueLimit: 20,            // Max queued requests
+  connectTimeout: 10000,     // 10s connection timeout
+  enableKeepAlive: true,     // Keep connections alive
+  keepAliveInitialDelay: 0, // Immediately start keep-alive
+};
+
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      // Use connection pool for better concurrency and performance
+      const poolDb = drizzle({
+        connection: process.env.DATABASE_URL,
+        ...POOL_CONFIG,
+      });
+      _db = poolDb;
+      console.log('[Database] Connection pool initialized (limit:', POOL_CONFIG.connectionLimit + ')');
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;

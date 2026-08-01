@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   BookOpen, 
   Trophy, 
@@ -371,8 +372,13 @@ export default function DashboardReal() {
               </CardHeader>
               <CardContent>
                 {loadingLanguages ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="p-4 rounded-lg border-2 border-gray-200">
+                        <Skeleton className="h-8 w-8 rounded-full mb-2" />
+                        <Skeleton className="h-4 w-20" />
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -445,8 +451,19 @@ export default function DashboardReal() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {loadingLessons ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  <div className="space-y-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="flex items-center justify-between p-4 rounded-lg border-2 border-gray-200">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-10 w-10 rounded-lg" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-3 w-32" />
+                          </div>
+                        </div>
+                        <Skeleton className="h-8 w-20 rounded-lg" />
+                      </div>
+                    ))}
                   </div>
                 ) : displayLessons.length > 0 ? (
                   displayLessons.map((lesson: any, index: number) => {
