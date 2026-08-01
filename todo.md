@@ -358,9 +358,13 @@
 ## 🚀 SESSÃO ATUAL - REMODELAÇÃO COMPLETA
 
 ### Fase 2: Corrigir Professores
-- [ ] Corrigir EnhancedTeacherAvatar: passar imageUrl/gender/skinTone direto ao invés de só teacherId
-- [ ] Corrigir Lesson.tsx: passar props diretas do professor ao avatar
-- [ ] Garantir 10 professores no banco com fotos corretas
+- [x] Corrigir EnhancedTeacherAvatar: passar imageUrl/gender/skinTone direto ao invés de só teacherId
+- [x] Corrigir Lesson.tsx: passar props diretas do professor ao avatar — teacher enriquecido com TEACHERS_57 (photo, gender, specialty, flag, origin)
+- [x] Garantir 13 professores no banco com fotos corretas — 13 professores com idioma, gênero e foto corretos
+- [x] Corrigir Ahmed Al-Rashid aparecendo como professor de inglês (era árabe) — banco corrigido
+- [x] Corrigir voz masculina para professora feminina de inglês — gender agora sincronizado do banco ao TTS
+- [x] Adicionar fotos reais para todos os 13 professores do banco (sem avatares de desenho)
+- [x] TeacherSelector agora filtra SÓ professores do idioma da lição (não mostra 94 professores misturados)
 - [x] TeacherSelector mostra todos os professores do idioma — corrigido: fallback para TEACHERS_57 quando banco vazio + enrich com fotos
 - [x] TeacherSelector FILTRA professores pelo idioma da lição (ex: lição de francês mostra só professores de francês)
 - [x] TeacherSelector mostra flag, idioma, especialidade e badge "Recomendado" para professor nativo

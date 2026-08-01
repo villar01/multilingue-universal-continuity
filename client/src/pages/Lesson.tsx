@@ -144,10 +144,27 @@ export default function Lesson() {
       setShowTeacherSelector(false);
     }
   }, [preferredTeacher]);
-  // Buscar professor pelo ID selecionado
-  const teacher = allTeachers
-    ? (allTeachers.find((t) => t.id === selectedTeacherId) ?? (preferredTeacher as typeof allTeachers[0] | undefined) ?? allTeachers[0])
-    : undefined;
+  // Buscar professor pelo ID selecionado e enriquecer com dados do TEACHERS_57
+  const teacher = useMemo(() => {
+    if (!allTeachers) return undefined;
+    const dbTeacher = allTeachers.find((t) => t.id === selectedTeacherId)
+      ?? (preferredTeacher as typeof allTeachers[0] | undefined)
+      ?? allTeachers[0];
+    if (!dbTeacher) return undefined;
+    // Enrich with TEACHERS_57 data: photo, gender, specialty, flag, origin
+    const langShort = ((dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || '').split('-')[0].toLowerCase();
+    const t57 = TEACHERS_57.find(t => t.langCode.toLowerCase() === langShort)
+      || TEACHERS_57.find(t => t.voiceLang.toLowerCase() === ((dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || '').toLowerCase());
+    return {
+      ...dbTeacher,
+      photoUrl: (dbTeacher as any).photoUrl || (dbTeacher as any).photo_url || t57?.photo || null,
+      gender: (dbTeacher as any).gender || t57?.gender || 'female',
+      specialty: (dbTeacher as any).specialty || t57?.specialty || 'Conversação e Gramática',
+      origin: t57?.origin || '',
+      flag: t57?.flag || '',
+      voiceLanguageCode: (dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || t57?.voiceLang || 'en-US',
+    };
+  }, [allTeachers, selectedTeacherId, preferredTeacher]);
   // Manter compatibilidade com teacherList
   const teacherList = allTeachers;
 

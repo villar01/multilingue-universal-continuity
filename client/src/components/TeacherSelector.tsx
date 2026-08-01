@@ -90,19 +90,12 @@ export default function TeacherSelector({
       });
     }
 
-    // 2. Add TEACHERS_57 teachers that match a language already in the DB
+    // 2. Add TEACHERS_57 teachers that match the LESSON language
     //    This fills in missing teachers (e.g., female English teachers if DB only has male)
     TEACHERS_57.forEach((t57, idx) => {
       const langShort = t57.langCode.toLowerCase().split('-')[0];
-      // Only add if this language exists in DB (so we don't add ALL 94 teachers)
-      // AND only for languages that the DB already has
-      if (dbTeachers && dbTeachers.length > 0) {
-        const dbHasLang = dbTeachers.some((dbT: any) => {
-          const dbCode = (dbT.voiceLanguageCode || dbT.voice_language_code || '').split('-')[0].toLowerCase();
-          return dbCode === langShort;
-        });
-        if (!dbHasLang) return;
-      }
+      // Only add teachers for the LESSON's language (lessonLangShort)
+      if (langShort !== lessonLangShort) return;
       // Avoid duplicates: skip if a DB teacher already has the same name
       const isDuplicate = merged.some(m => m.name === t57.name);
       if (isDuplicate) return;
