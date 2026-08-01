@@ -60,15 +60,20 @@ export default function TeacherSelector({
     return code.split('-')[0];
   }, [languageCode]);
 
-  // Build merged teacher list: DB teachers enriched with TEACHERS_57 data
+  // Build merged teacher list: combine DB teachers WITH TEACHERS_57 teachers
+  // This ensures all language teachers are shown, even if DB only has a few
   const allTeachers = useMemo(() => {
+    const merged: any[] = [];
+    const usedLangs = new Set<string>();
+
+    // 1. Add DB teachers first (enriched with TEACHERS_57 data)
     if (dbTeachers && dbTeachers.length > 0) {
-      return dbTeachers.map((t: any) => {
+      dbTeachers.forEach((t: any) => {
         const t57 = TEACHERS_57.find(t57 => {
           const tCode = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0].toLowerCase();
           return t57.langCode.toLowerCase() === tCode || t57.voiceLang.toLowerCase() === (t.voiceLanguageCode || t.voice_language_code || '').toLowerCase();
         });
-        return {
+        merged.push({
           ...t,
           photoUrl: t.photoUrl || t.photo_url || t57?.photo || null,
           voiceLanguageCode: t.voiceLanguageCode || t.voice_language_code || t57?.voiceLang || languageCode,
@@ -79,22 +84,44 @@ export default function TeacherSelector({
           origin: t57?.origin || '',
           flag: t57?.flag || '',
           langName: getLangName(t.voiceLanguageCode || t.voice_language_code || languageCode),
-        };
+        });
+        const langShort = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0].toLowerCase();
+        usedLangs.add(langShort);
       });
     }
-    // Fallback: use TEACHERS_57 directly
-    return TEACHERS_57.map((t, idx) => ({
-      id: idx + 1,
-      name: t.name,
-      gender: t.gender || 'female',
-      voiceLanguageCode: t.voiceLang,
-      photoUrl: t.photo || null,
-      personality: t.personality,
-      specialty: t.specialty,
-      origin: t.origin,
-      flag: t.flag,
-      langName: t.language,
-    }));
+
+    // 2. Add TEACHERS_57 teachers that match a language already in the DB
+    //    This fills in missing teachers (e.g., female English teachers if DB only has male)
+    TEACHERS_57.forEach((t57, idx) => {
+      const langShort = t57.langCode.toLowerCase().split('-')[0];
+      // Only add if this language exists in DB (so we don't add ALL 94 teachers)
+      // AND only for languages that the DB already has
+      if (dbTeachers && dbTeachers.length > 0) {
+        const dbHasLang = dbTeachers.some((dbT: any) => {
+          const dbCode = (dbT.voiceLanguageCode || dbT.voice_language_code || '').split('-')[0].toLowerCase();
+          return dbCode === langShort;
+        });
+        if (!dbHasLang) return;
+      }
+      // Avoid duplicates: skip if a DB teacher already has the same name
+      const isDuplicate = merged.some(m => m.name === t57.name);
+      if (isDuplicate) return;
+
+      merged.push({
+        id: 10000 + idx, // Use high IDs to avoid collision with DB IDs
+        name: t57.name,
+        gender: t57.gender || 'female',
+        voiceLanguageCode: t57.voiceLang,
+        photoUrl: t57.photo || null,
+        personality: t57.personality,
+        specialty: t57.specialty,
+        origin: t57.origin,
+        flag: t57.flag,
+        langName: t57.language,
+      });
+    });
+
+    return merged;
   }, [dbTeachers, languageCode]);
 
   // FILTER teachers by the lesson's language
