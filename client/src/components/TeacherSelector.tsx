@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Volume2, Loader2, Star } from "lucide-react";
+import { Check, Volume2, Loader2, Star, BadgeCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
@@ -13,22 +13,30 @@ interface TeacherSelectorProps {
   selectedTeacherId?: number;
 }
 
-// Personality tags shown on card (not language)
-const TEACHER_TAGS: Record<number, string[]> = {
-  1: ["Clássico", "Motivador"],
-  30001: ["Elegante", "Precisa"],
-  90002: ["Calorosa", "Paciente"],
-  90003: ["Dinâmico", "Cultural"],
-  90004: ["Criativo", "Enérgico"],
-  150003: ["Experiente", "Direto"],
-  150004: ["Moderna", "Amigável"],
-  180001: ["Carismático", "Inspirador"],
-  210001: ["Detalhista", "Gentil"],
-  210002: ["Sério", "Eficiente"],
+// Language display names
+const LANG_NAMES: Record<string, string> = {
+  pt: "Português", en: "English", es: "Español", fr: "Français",
+  de: "Deutsch", it: "Italiano", ja: "日本語", zh: "中文",
+  ko: "한국어", ru: "Русский", ar: "العربية", hi: "हिन्दी",
+  nl: "Nederlands", sv: "Svenska", tr: "Türkçe", pl: "Polski",
+  fa: "فارسی", ur: "اردو", sw: "Kiswahili", tl: "Filipino",
+  th: "ไทย", vi: "Tiếng Việt", id: "Bahasa Indonesia", ms: "Bahasa Melayu",
+  uk: "Українська", cs: "Čeština", el: "Ελληνικά", he: "עברית",
+  fi: "Suomi", da: "Dansk", no: "Norsk", hu: "Magyar",
+  ro: "Română", bg: "Български", hr: "Hrvatski", sk: "Slovenčina",
+  sl: "Slovenščina", lt: "Lietuvių", lv: "Latviešu", et: "Eesti",
+  is: "Íslenska", ca: "Català", gl: "Galego", eu: "Euskara",
+  af: "Afrikaans", zu: "isiZulu", xh: "isiXhosa", am: "አማርኛ",
+  ha: "Hausa", yo: "Yorùbá", ig: "Igbo", so: "Soomaali",
+  qu: "Runa Simi", gn: "Avañe'ẽ", ay: "Aymar",
 };
 
-function getTagsForTeacher(id: number, personality?: string): string[] {
-  if (TEACHER_TAGS[id]) return TEACHER_TAGS[id];
+function getLangName(code: string): string {
+  const short = code.split('-')[0].toLowerCase();
+  return LANG_NAMES[short] || code;
+}
+
+function getTagsForTeacher(personality?: string): string[] {
   if (personality) {
     const words = personality.split(/[,\s]+/).filter((w: string) => w.length > 3).slice(0, 2);
     if (words.length > 0) return words;
@@ -46,15 +54,19 @@ export default function TeacherSelector({
 
   const { data: dbTeachers, isLoading } = trpc.teachers.list.useQuery();
 
-  // Merge database teachers with TEACHERS_57 fallback
-  // If database has teachers, use them; otherwise fall back to TEACHERS_57
-  const teachers = useMemo(() => {
+  // Extract short language code (e.g., "fr" from "fr-FR" or "fr")
+  const lessonLangShort = useMemo(() => {
+    const code = (languageCode || 'en').toLowerCase();
+    return code.split('-')[0];
+  }, [languageCode]);
+
+  // Build merged teacher list: DB teachers enriched with TEACHERS_57 data
+  const allTeachers = useMemo(() => {
     if (dbTeachers && dbTeachers.length > 0) {
-      // Enrich database teachers with photos from TEACHERS_57
       return dbTeachers.map((t: any) => {
         const t57 = TEACHERS_57.find(t57 => {
-          const tCode = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0];
-          return t57.langCode === tCode || t57.voiceLang === (t.voiceLanguageCode || t.voice_language_code);
+          const tCode = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0].toLowerCase();
+          return t57.langCode.toLowerCase() === tCode || t57.voiceLang.toLowerCase() === (t.voiceLanguageCode || t.voice_language_code || '').toLowerCase();
         });
         return {
           ...t,
@@ -63,10 +75,14 @@ export default function TeacherSelector({
           gender: t.gender || t57?.gender || 'female',
           name: t.name || t57?.name || 'Professor',
           personality: t.personality || t57?.personality,
+          specialty: t.specialty || t57?.specialty || t.teaching_style || 'Conversação e Gramática',
+          origin: t57?.origin || '',
+          flag: t57?.flag || '',
+          langName: getLangName(t.voiceLanguageCode || t.voice_language_code || languageCode),
         };
       });
     }
-    // Fallback: use TEACHERS_57 directly (convert to DB-like format)
+    // Fallback: use TEACHERS_57 directly
     return TEACHERS_57.map((t, idx) => ({
       id: idx + 1,
       name: t.name,
@@ -74,14 +90,29 @@ export default function TeacherSelector({
       voiceLanguageCode: t.voiceLang,
       photoUrl: t.photo || null,
       personality: t.personality,
-      title: t.name,
+      specialty: t.specialty,
+      origin: t.origin,
+      flag: t.flag,
+      langName: t.language,
     }));
-  }, [dbTeachers]);
+  }, [dbTeachers, languageCode]);
+
+  // FILTER teachers by the lesson's language
+  const teachersForLanguage = useMemo(() => {
+    const matched = allTeachers.filter((t: any) => {
+      const teacherLangShort = (t.voiceLanguageCode || '').split('-')[0].toLowerCase();
+      return teacherLangShort === lessonLangShort;
+    });
+    return matched;
+  }, [allTeachers, lessonLangShort]);
+
+  // If no teachers match the lesson language, show all (fallback)
+  const teachers = teachersForLanguage.length > 0 ? teachersForLanguage : allTeachers;
 
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-2">
-        {Array.from({ length: 10 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="animate-pulse bg-gray-200 rounded-2xl h-52" />
         ))}
       </div>
@@ -91,62 +122,67 @@ export default function TeacherSelector({
   if (!teachers || teachers.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Nenhum professor disponível.</p>
+        <p className="text-gray-500">Nenhum professor disponível para este idioma.</p>
       </div>
     );
   }
 
-  // Shuffle once on mount for visual variety — not alphabetical order
-  // useMemo with stable dep so it doesn't re-shuffle on every render
-  const teacherList = useMemo(() => {
-    const list = Array.isArray(teachers) ? [...teachers] : [teachers];
-    return list.sort(() => 0.5 - Math.random());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teachers?.length]);
   const filtered = filter === "all"
-    ? teacherList
-    : teacherList.filter((t: any) => t.gender === filter);
+    ? teachers
+    : teachers.filter((t: any) => t.gender === filter);
+
+  // Sort: native teachers (flag matches) first, then by name
+  const sortedTeachers = [...filtered].sort((a: any, b: any) => {
+    // Recommended (native) teachers come first
+    const aNative = a.voiceLanguageCode?.toLowerCase().startsWith(lessonLangShort) ? 0 : 1;
+    const bNative = b.voiceLanguageCode?.toLowerCase().startsWith(lessonLangShort) ? 0 : 1;
+    if (aNative !== bNative) return aNative - bNative;
+    return 0; // keep original order within same group
+  });
 
   return (
     <div className="space-y-4">
-      {/* Header */}
+      {/* Header with language info */}
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-gray-900">Escolha seu Professor</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Escolha seu Professor de {getLangName(languageCode)}
+        </h2>
         <p className="text-gray-500 text-sm">
-          {teacherList.length} professores disponíveis — escolha quem irá guiá-lo
+          {sortedTeachers.length} professor{sortedTeachers.length !== 1 ? 'es' : ''} nativo{sortedTeachers.length !== 1 ? 's' : ''} de {getLangName(languageCode)} disponíve{sortedTeachers.length !== 1 ? 'is' : 'l'} — escolha quem irá guiá-lo
         </p>
       </div>
 
       {/* Filter tabs */}
       <div className="flex justify-center gap-2">
-        {(["all", "male", "female"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              filter === f
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            {f === "all" ? `Todos (${teacherList.length})` : f === "male" ? "👨 Masculino" : "👩 Feminino"}
-          </button>
-        ))}
+        {(["all", "male", "female"] as const).map((f) => {
+          const count = f === "all" ? sortedTeachers.length : sortedTeachers.filter((t: any) => t.gender === f).length;
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                filter === f
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {f === "all" ? `Todos (${count})` : f === "male" ? `👨 Masculino (${count})` : `👩 Feminino (${count})`}
+            </button>
+          );
+        })}
       </div>
 
       {/* Teacher grid — full-bleed photo cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-        {filtered.map((teacher: any) => {
+        {sortedTeachers.map((teacher: any, idx: number) => {
           const isSelected = selectedTeacherId === teacher.id;
           const isPlaying = playingTeacher === teacher.id;
-          // Use DB name directly — getTeacherDisplayName falls back to "Professor" for unknown IDs
-          // OLD: const { name: displayName } = getTeacherDisplayName(teacher.id, languageCode);
           const displayName = teacher.name || getTeacherDisplayName(teacher.id, languageCode).name;
-          const tags = getTagsForTeacher(teacher.id, teacher.personality);
-          const teacherLang = teacher.voiceLanguageCode || teacher.voice_language_code || languageCode;
-          // Support both camelCase (Drizzle) and snake_case (raw SQL) field names
+          const tags = getTagsForTeacher(teacher.personality);
+          const teacherLang = teacher.voiceLanguageCode || languageCode;
           const rawPhoto = teacher.photoUrl || teacher.photo_url || null;
           const photoUrl = rawPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&size=200&background=4f46e5&color=fff&bold=true`;
+          const isRecommended = idx === 0 && teachersForLanguage.length > 0; // first native teacher
 
           return (
             <div
@@ -170,7 +206,7 @@ export default function TeacherSelector({
               />
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
               {/* Selected checkmark */}
               {isSelected && (
@@ -179,16 +215,26 @@ export default function TeacherSelector({
                 </div>
               )}
 
-              {/* Star for featured teachers */}
-              {teacher.id <= 210002 && (
-                <div className="absolute top-2 left-2 bg-yellow-400 rounded-full p-1 shadow z-10">
-                  <Star className="w-3 h-3 text-yellow-900 fill-yellow-900" />
+              {/* Recommended badge */}
+              {isRecommended && !isSelected && (
+                <div className="absolute top-2 right-2 bg-yellow-400 rounded-full p-1 shadow z-10 flex items-center gap-0.5">
+                  <BadgeCheck className="w-3 h-3 text-yellow-900" />
                 </div>
               )}
+
+              {/* Language flag + name badge */}
+              <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5 z-10">
+                <span className="text-white text-[10px] font-medium">
+                  {teacher.flag || ''} {teacher.langName || getLangName(teacherLang)}
+                </span>
+              </div>
 
               {/* Bottom info */}
               <div className="absolute bottom-0 left-0 right-0 p-2.5 z-10">
                 <p className="text-white font-bold text-sm leading-tight truncate">{displayName}</p>
+                {teacher.specialty && (
+                  <p className="text-white/70 text-[10px] leading-tight truncate mt-0.5">{teacher.specialty}</p>
+                )}
                 <div className="flex flex-wrap gap-1 mt-1">
                   {tags.slice(0, 2).map((tag: string, i: number) => (
                     <span
@@ -241,7 +287,7 @@ export default function TeacherSelector({
             className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-10 py-4 text-lg shadow-xl rounded-2xl"
             onClick={() => onSelect(selectedTeacherId)}
           >
-            ✅ Começar com {teacherList.find((t: any) => t.id === selectedTeacherId)?.name || "Professor"}
+            ✅ Começar com {sortedTeachers.find((t: any) => t.id === selectedTeacherId)?.name || "Professor"}
           </Button>
         </div>
       )}

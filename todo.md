@@ -362,6 +362,9 @@
 - [ ] Corrigir Lesson.tsx: passar props diretas do professor ao avatar
 - [ ] Garantir 10 professores no banco com fotos corretas
 - [x] TeacherSelector mostra todos os professores do idioma — corrigido: fallback para TEACHERS_57 quando banco vazio + enrich com fotos
+- [x] TeacherSelector FILTRA professores pelo idioma da lição (ex: lição de francês mostra só professores de francês)
+- [x] TeacherSelector mostra flag, idioma, especialidade e badge "Recomendado" para professor nativo
+- [x] TeacherSelector não mostra mais 94 professores misturados sem filtrar
 
 ### Fase 3: Corrigir Lip-Sync
 - [ ] Calibrar posições da boca para todos os 10 professores
