@@ -139,7 +139,7 @@
 - [ ] Implementar sistema de adaptação ao nível do usuário
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
-- [ ] Integrar offlineAI.generate em VoiceConversation
+- [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
 - [ ] Adicionar correção automática de gramática durante conversação
 - [ ] Implementar feedback personalizado baseado em erros do usuário
 - [ ] Criar histórico de conversas com análise de progresso
@@ -361,7 +361,7 @@
 - [ ] Corrigir EnhancedTeacherAvatar: passar imageUrl/gender/skinTone direto ao invés de só teacherId
 - [ ] Corrigir Lesson.tsx: passar props diretas do professor ao avatar
 - [ ] Garantir 10 professores no banco com fotos corretas
-- [ ] TeacherSelector mostra todos os professores do idioma
+- [x] TeacherSelector mostra todos os professores do idioma — corrigido: fallback para TEACHERS_57 quando banco vazio + enrich com fotos
 
 ### Fase 3: Corrigir Lip-Sync
 - [ ] Calibrar posições da boca para todos os 10 professores

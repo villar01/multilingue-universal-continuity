@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
+import { TEACHERS_57 } from "@/data/teachers57";
 
 interface TeacherSelectorProps {
   languageCode: string;
@@ -43,7 +44,39 @@ export default function TeacherSelector({
   const [playingTeacher, setPlayingTeacher] = useState<number | null>(null);
   const [filter, setFilter] = useState<"all" | "male" | "female">("all");
 
-  const { data: teachers, isLoading } = trpc.teachers.list.useQuery();
+  const { data: dbTeachers, isLoading } = trpc.teachers.list.useQuery();
+
+  // Merge database teachers with TEACHERS_57 fallback
+  // If database has teachers, use them; otherwise fall back to TEACHERS_57
+  const teachers = useMemo(() => {
+    if (dbTeachers && dbTeachers.length > 0) {
+      // Enrich database teachers with photos from TEACHERS_57
+      return dbTeachers.map((t: any) => {
+        const t57 = TEACHERS_57.find(t57 => {
+          const tCode = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0];
+          return t57.langCode === tCode || t57.voiceLang === (t.voiceLanguageCode || t.voice_language_code);
+        });
+        return {
+          ...t,
+          photoUrl: t.photoUrl || t.photo_url || t57?.photo || null,
+          voiceLanguageCode: t.voiceLanguageCode || t.voice_language_code || t57?.voiceLang || languageCode,
+          gender: t.gender || t57?.gender || 'female',
+          name: t.name || t57?.name || 'Professor',
+          personality: t.personality || t57?.personality,
+        };
+      });
+    }
+    // Fallback: use TEACHERS_57 directly (convert to DB-like format)
+    return TEACHERS_57.map((t, idx) => ({
+      id: idx + 1,
+      name: t.name,
+      gender: t.gender || 'female',
+      voiceLanguageCode: t.voiceLang,
+      photoUrl: t.photo || null,
+      personality: t.personality,
+      title: t.name,
+    }));
+  }, [dbTeachers]);
 
   if (isLoading) {
     return (

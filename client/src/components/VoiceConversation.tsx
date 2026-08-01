@@ -48,6 +48,7 @@ export default function VoiceConversation({
   const continueConversation = trpc.bilingualConversation.continue.useMutation();
   const generateTTS = trpc.tts.generate.useMutation();
   const animateLivePortrait = trpc.livePortrait.animate.useMutation();
+  const offlineAI = trpc.offlineAI.generate.useMutation();
 
   // Monitor connection status
   useEffect(() => {
@@ -225,12 +226,29 @@ export default function VoiceConversation({
         content: msg.content,
       }));
 
-      const aiResponse = await continueConversation.mutateAsync({
-        history: conversationHistory,
-        targetLanguage: languageCode,
-        nativeLanguage: "pt-BR",
-        vocabularyContext,
-      } as any);
+      let aiResponse: { response: string; suggestions: string[] };
+      try {
+        aiResponse = await continueConversation.mutateAsync({
+          lessonId,
+          history: conversationHistory,
+          targetLanguage: languageCode,
+          nativeLanguage: "pt-BR",
+          userLevel: "beginner",
+        });
+      } catch (err) {
+        // Fallback: use offlineAI for local response
+        console.log("[VoiceConversation] Falling back to offlineAI");
+        const offlineResult = await offlineAI.mutateAsync({
+          messages: [
+            { role: "system", content: `You are a language teacher. Respond in BOTH Portuguese and ${languageCode}. Format: [PT] Portuguese text\n[${languageCode.substring(0,2).toUpperCase()}] Target language text` },
+            ...conversationHistory.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
+          ],
+        });
+        aiResponse = {
+          response: offlineResult.content || "[PT] Desculpe, não entendi. Pode repetir?\n[EN] Sorry, I didn't understand. Can you repeat?",
+          suggestions: ["Yes", "No", "Tell me more"],
+        };
+      }
 
       // Parse bilingual response
       const { portuguese, english } = parseBilingualResponse(aiResponse.response);
