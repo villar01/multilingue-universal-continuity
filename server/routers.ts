@@ -40,6 +40,7 @@ import { updatesRouter } from './updates-router';
 import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
+import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 
 
 export const appRouter = router({
@@ -618,7 +619,9 @@ export const appRouter = router({
             ]
           });
           
-          const translation = (response.choices[0]?.message?.content as string)?.trim() || input.word;
+          let translation = (response.choices[0]?.message?.content as string)?.trim() || input.word;
+          // Content filter: sanitize translation
+          translation = await sanitizeContent(translation, input.fromLanguage) || translation;
           return { translation };
         } catch (error) {
           console.error('Translation error:', error);
@@ -736,7 +739,9 @@ Rules:
             ],
             response_format: { type: 'json_object' }
           });
-          const rawContent = response.choices[0]?.message?.content as string || '{}';
+          let rawContent = response.choices[0]?.message?.content as string || '{}';
+          // Content filter: sanitize raw LLM output before processing
+          rawContent = await sanitizeContent(rawContent, input.languageCode) || rawContent;
           // Robust JSON cleaning: strip markdown code blocks, extract JSON object
           let cleanedContent = rawContent
             .replace(/^```(?:json)?\s*/i, '')
@@ -845,7 +850,9 @@ Rules:
         const { invokeLLM } = await import("./_core/llm");
         try {
           const response = await invokeLLM({ messages: input.messages as any[] });
-          const content = response.choices[0]?.message?.content as string || 'Desculpe, não consegui processar sua mensagem.';
+          let content = response.choices[0]?.message?.content as string || 'Desculpe, não consegui processar sua mensagem.';
+          // Content filter: sanitize chat response
+          content = await sanitizeContent(content, 'all') || content;
           return { content };
         } catch (err) {
           console.error('freeChat error:', err);
@@ -954,7 +961,9 @@ IMPORTANT: For ALL "phonetic" fields, write how the word SOUNDS in Portuguese le
             response_format: { type: 'json_object' } as any,
           });
 
-          const content = response.choices[0]?.message?.content as string || '{}';
+          let content = response.choices[0]?.message?.content as string || '{}';
+          // Content filter: sanitize before parsing
+          content = await sanitizeContent(content, input.languageCode) || content;
           const bookData = JSON.parse(content);
           return { success: true, book: bookData };
         } catch (err) {
@@ -1060,7 +1069,9 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
             response_format: { type: 'json_object' } as any,
           });
 
-          const content = response.choices[0]?.message?.content as string || '{"words":[]}';
+          let content = response.choices[0]?.message?.content as string || '{"words":[]}';
+          // Content filter: sanitize before parsing
+          content = await sanitizeContent(content, input.languageCode) || content;
           const data = JSON.parse(content);
           return { success: true, words: data.words || [] };
         } catch (err) {
@@ -2242,7 +2253,11 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           ],
           response_format: { type: 'json_schema', json_schema: { name: 'translation', strict: true, schema: { type: 'object', properties: { translation: { type: 'string' }, wordByWord: { type: 'array', items: { type: 'object', properties: { word: { type: 'string' }, translation: { type: 'string' } }, required: ['word', 'translation'], additionalProperties: false } } }, required: ['translation', 'wordByWord'], additionalProperties: false } } },
         });
-        try { return JSON.parse((result.choices[0].message.content as string) ?? "{}"); }
+        try {
+          let rawResult = (result.choices[0].message.content as string) ?? "{}";
+          rawResult = await sanitizeContent(rawResult, input.fromLanguage) || rawResult;
+          return JSON.parse(rawResult);
+        }
         catch { return { translation: input.text, wordByWord: [] }; }
       }),
     // Editar frase com IA
@@ -2262,7 +2277,10 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
             { role: 'user', content: `Phrase: "${input.originalPhrase}". Action: ${input.editType}${input.wordToModify ? ` (word: ${input.wordToModify})` : ''}. Give 3 suggestions.` },
           ],
         });
-        return { suggestions: result.choices[0].message.content as string };
+        let suggestions = result.choices[0].message.content as string;
+        // Content filter: sanitize suggestions
+        suggestions = await sanitizeContent(suggestions, input.targetLanguage) || suggestions;
+        return { suggestions };
       }),
     // Adicionar palavra ao vocabulário
     addToVocabulary: protectedProcedure

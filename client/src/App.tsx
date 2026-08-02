@@ -75,6 +75,7 @@ const MasterLesson = lazy(() => import("./pages/MasterLesson"));
 const IANativa = lazy(() => import("./pages/IANativa"));
 const SmartReview = lazy(() => import("./pages/SmartReview"));
 const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
+import LocalAINotification from "./components/LocalAINotification";
 
 // Loading fallback component
 const PageLoader = () => (
@@ -183,6 +184,7 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <Router />
           </Suspense>
+          <LocalAINotification />
           <TourButton />
         </TooltipProvider>
       </ThemeProvider>

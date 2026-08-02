@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
+import { sanitizeContent, logInteraction } from "./contentFilter";
 
 export const bilingualConversationRouter = router({
   /**
@@ -131,7 +132,21 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
 
       let aiResponse = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "I understand. Please continue.";
       
+      // Content filter: sanitize AI response
+      aiResponse = await sanitizeContent(aiResponse, input.targetLanguage) || aiResponse;
+      
       const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "(empty history)";
+      
+      // Log teacher-student interaction for parental monitoring
+      logInteraction({
+        userId: ctx.user.id,
+        childProfileId: null,
+        teacherId: null,
+        interactionType: 'bilingual_conversation',
+        content: lastUserMessage,
+        teacherResponse: aiResponse,
+        languageCode: input.targetLanguage,
+      }).catch(() => {}); // Non-blocking
       console.log("[Bilingual Conversation] User message:", lastUserMessage);
       console.log("[Bilingual Conversation] AI response (raw):", aiResponse);
 
@@ -187,6 +202,12 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
         }
       }
 
+      // Content filter: sanitize suggestions
+      const sanitizedSuggestions = await Promise.all(
+        suggestions.map(s => sanitizeContent(s, input.targetLanguage).then(r => r || s))
+      );
+      suggestions = sanitizedSuggestions;
+      
       return {
         response: aiResponse,
         suggestions,

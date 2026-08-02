@@ -870,3 +870,83 @@
 - [ ] Adicionar seção de texto de leitura com vocabulário em contexto
 - [ ] Adicionar seção de memorização antes dos exercícios
 - [ ] Melhorar natural voice e animação dos professores
+
+## 🛡️ PROTEÇÃO E CONFORMIDADE LEGAL
+
+### Filtro de Conteúdo
+- [ ] Criar filtro de conteúdo multilíngue (PT/EN/ES/FR + 57 idiomas)
+- [ ] Lista de palavras bloqueadas (pornografia, violência, drogas, conteúdo adulto)
+- [ ] Filtro aplicado em todas as respostas do LLM
+- [ ] Filtro aplicado em todas as interações professor-aluno
+- [ ] Filtro aplicado no chat de voz e texto
+
+### Log de Interações
+- [ ] Criar tabela interaction_logs (todas interações professor-aluno)
+- [ ] Registrar: timestamp, tipo de interação, conteúdo, professor, aluno
+- [ ] Painel parental mostra histórico de interações
+- [ ] Alertas automáticos para conteúdo suspeito
+
+### Setup Parental Obrigatório
+- [ ] PIN obrigatório no primeiro acesso (não pode pular)
+- [ ] Configuração inicial: idade da criança, limite de tempo, dias permitidos
+- [ ] Bloqueio de acesso se PIN não configurado
+
+### Conformidade Legal
+- [ ] GDPR (Europa): consentimento parental para menores de 16 anos
+- [ ] COPPA (EUA): consentimento parental para menores de 13 anos
+- [ ] Lei 13.859 (Brasil): classificação etária, consentimento parental
+- [ ] Termos de uso e política de privacidade adaptados por país
+- [ ] Bloqueio automático de conteúdo por legislação do país
+
+## ✅ FILTRO DE CONTEÚDO + LOG DE INTERAÇÕES + NOTIFICAÇÃO IA LOCAL (Ago 2026)
+
+### Filtro de Conteúdo (contentFilter.ts)
+- [x] Criar contentFilter.ts com sanitizeContent (remove palavras bloqueadas por idioma)
+- [x] Criar logInteraction (registra interações professor-aluno no banco)
+- [x] Tabela content_filter_rules criada no banco (palavras bloqueadas por idioma e categoria)
+- [x] Tabela interaction_logs criada no banco (log de interações com userId, conteúdo, resposta)
+- [x] Filtro integrado em routers.ts: translateWord, generateLessonContent, freeChat, generateLessonBook, getDailyWords, translateRealtime, editPhrase
+- [x] Filtro integrado em bilingual-conversation-router.ts: continue (resposta IA + sugestões)
+- [x] Log de interações integrado em bilingual-conversation-router.ts: continue
+
+### Palavras Bloqueadas (25+ idiomas)
+- [x] PT-BR: pornografia, violência, drogas, ódio (12 palavras)
+- [x] EN: pornography, violence, drugs, hate (12 palavras)
+- [x] ES: pornografía, violencia, drogas, odio (12 palavras)
+- [x] FR: pornographie, violence, drogues, haine (12 palavras)
+- [x] DE: Pornografie, Gewalt, Drogen, Hass (12 palavras)
+- [x] IT: pornografia, violenza, droga, odio (12 palavras)
+- [x] JA: ポルノ, 暴力, 麻薬, 憎しみ (11 palavras)
+- [x] ZH: 色情, 暴力, 毒品, 仇恨 (11 palavras)
+- [x] RU: порнография, насилие, наркотики, ненависть (11 palavras)
+- [x] AR: إباحي, عنف, مخدرات, كراهية (11 palavras)
+- [x] KO: 포르노, 폭력, 마약, 증오 (11 palavras)
+- [x] HI: अश्लील, हिंसा, नशीली, नफरत (8 palavras)
+- [x] NL: pornografie, geweld, drugs, haat (10 palavras)
+- [x] TR: pornografi, şiddet, uyuşturucu, nefret (9 palavras)
+- [x] SV: pornografi, våld, droger, hat (8 palavras)
+- [x] PL: pornografia, przemoc, narkotyki, nienawiść (8 palavras)
+- [x] EL: πορνογραφία, βία, ναρκωτικά, μίσος (7 palavras)
+- [x] TH: โป๊, ความรุนแรง, ยาเสพติด, เกลียด (6 palavras)
+- [x] VI: khiêu dâm, bạo lực, ma túy, thù ghét (6 palavras)
+- [x] ID: pornografi, kekerasan, narkoba, kebencian (7 palavras)
+- [x] HE: פורנוגרפיה, אלימות, סמים, שנאה (6 palavras)
+- [x] CS: pornografie, násilí, drogy, nenávist (6 palavras)
+- [x] RO: pornografie, violență, droguri, ură (6 palavras)
+- [x] HU: pornográfia, erőszak, kábítószer, gyűlölet (6 palavras)
+- [x] FI: pornografia, väkivalta, huumeet, viha (6 palavras)
+- [x] DA: pornografi, vold, stoffer, had (6 palavras)
+- [x] NO: pornografi, vold, narkotika, hat (6 palavras)
+- [x] Universal: pornography, cocaine, heroin, methamphetamine, racial slur (10 palavras)
+
+### Notificação de IA Local (LocalAINotification.tsx)
+- [x] Criar componente LocalAINotification: notifica usuário sobre IA local gratuita (Qwen 2.5)
+- [x] Notificação aparece 3s após primeira visita (dismissível com localStorage)
+- [x] Lista benefícios: voz natural máxima, animação extrema, offline, sem custos
+- [x] Instruções de instalação: Ollama + Qwen 2.5 (4 passos simples)
+- [x] Integrado no App.tsx (renderizado em todas as páginas)
+- [x] TypeScript sem erros após integração
+
+### Próximos Passos (live-teacher-router.ts)
+- [ ] Integrar sanitizeContent no live-teacher-router.ts (chat, introduce, feedback, commentObject)
+- [ ] Integrar logInteraction no live-teacher-router.ts
