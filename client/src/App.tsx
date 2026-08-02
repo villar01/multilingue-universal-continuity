@@ -74,6 +74,7 @@ const NaturalLesson = lazy(() => import("./pages/NaturalLesson"));
 const MasterLesson = lazy(() => import("./pages/MasterLesson"));
 const IANativa = lazy(() => import("./pages/IANativa"));
 const SmartReview = lazy(() => import("./pages/SmartReview"));
+const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -150,6 +151,7 @@ function Router() {
         <Route path="/master-lesson" component={MasterLesson} />
         <Route path="/ia-nativa" component={IANativa} />
         <Route path="/smart-review" component={SmartReview} />
+        <Route path="/parental-control" component={ParentalControlPanel} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

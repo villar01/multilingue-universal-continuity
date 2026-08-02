@@ -49,6 +49,9 @@ interface LessonData {
   exercises?: Exercise[];
   realLifeContext?: string;
   culturalNote?: string;
+  readingText?: string;
+  readingTextTranslation?: string;
+  grammarNote?: string;
 }
 
 interface Props {
@@ -79,7 +82,7 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
   const vocab = lesson.vocabulary || [];
   const exercises = lesson.exercises || [];
 
-  const [stage, setStage] = useState<'vocab' | 'dialogue' | 'exercises' | 'complete'>('vocab');
+  const [stage, setStage] = useState<'vocab' | 'reading' | 'dialogue' | 'memorize' | 'exercises' | 'complete'>('vocab');
   const [vocabIndex, setVocabIndex] = useState(0);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -89,6 +92,10 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const [wordOrderAnswer, setWordOrderAnswer] = useState<string[]>([]);
   const [shuffledWords, setShuffledWords] = useState<string[]>([]);
+  const [memorizedWords, setMemorizedWords] = useState<Set<number>>(new Set());
+  const [memorizeRound, setMemorizeRound] = useState(0);
+  const [memorizeMatched, setMemorizeMatched] = useState<Set<string>>(new Set());
+  const [memorizeSelected, setMemorizeSelected] = useState<{word: string; translation: string} | null>(null);
 
   const currentVocab = vocab[vocabIndex];
   const currentExercise = exercises[exerciseIndex];
@@ -102,7 +109,8 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
     if (vocabIndex < vocab.length - 1) {
       setVocabIndex(v => v + 1);
     } else {
-      setStage(lesson.dialogue && lesson.dialogue.length > 0 ? 'dialogue' : 'exercises');
+      // After vocab, go to reading text (if available), then dialogue, then memorize
+      setStage(lesson.readingText ? 'reading' : (lesson.dialogue && lesson.dialogue.length > 0 ? 'dialogue' : 'memorize'));
     }
   };
 
@@ -132,11 +140,15 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
   };
 
   const progress = stage === 'vocab'
-    ? (vocabIndex / Math.max(vocab.length, 1)) * 33
+    ? (vocabIndex / Math.max(vocab.length, 1)) * 20
+    : stage === 'reading'
+    ? 20
     : stage === 'dialogue'
-    ? 33
+    ? 35
+    : stage === 'memorize'
+    ? 50
     : stage === 'exercises'
-    ? 66 + (exerciseIndex / Math.max(exercises.length, 1)) * 34
+    ? 50 + (exerciseIndex / Math.max(exercises.length, 1)) * 50
     : 100;
 
   // ── VOCAB STAGE ──────────────────────────────────────────────────────────────
@@ -279,6 +291,77 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
     );
   }
 
+  // ── READING STAGE (text using vocabulary in context) ──────────────────────────
+  if (stage === 'reading' && lesson.readingText) {
+    return (
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <Badge style={{ background: phaseColor, color: '#fff', fontSize: 12 }}>
+            {PHASE_LABELS[phase]} · 📖 Leitura
+          </Badge>
+        </div>
+        <Progress value={progress} style={{ marginBottom: 16, height: 6 }} />
+
+        <div style={{
+          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+          borderRadius: 20,
+          padding: '24px 20px',
+          marginBottom: 16,
+          border: `2px solid ${phaseColor}40`,
+        }}>
+          <div style={{ fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+            📝 Texto da Lição
+          </div>
+          <div style={{ fontSize: 17, color: '#fff', lineHeight: 1.8, marginBottom: 16 }}>
+            {lesson.readingText}
+          </div>
+          <button
+            onClick={() => speakWord(lesson.readingText!)}
+            style={{
+              background: phaseColor, border: 'none', borderRadius: 50,
+              width: 48, height: 48, fontSize: 20, cursor: 'pointer', marginBottom: 16,
+            }}
+          >
+            🔊
+          </button>
+          {lesson.readingTextTranslation && (
+            <div style={{
+              padding: '14px 16px',
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: 12,
+              fontSize: 14,
+              color: '#aaa',
+              lineHeight: 1.7,
+              fontStyle: 'italic',
+              borderLeft: `3px solid ${phaseColor}`,
+            }}>
+              {lesson.readingTextTranslation}
+            </div>
+          )}
+          {lesson.grammarNote && (
+            <div style={{
+              marginTop: 12, padding: '12px 14px',
+              background: 'rgba(255,215,0,0.08)',
+              borderRadius: 10,
+              fontSize: 13,
+              color: '#FFD700',
+              lineHeight: 1.6,
+            }}>
+              ⚡ <strong>Gramática:</strong> {lesson.grammarNote}
+            </div>
+          )}
+        </div>
+
+        <Button
+          onClick={() => setStage(lesson.dialogue && lesson.dialogue.length > 0 ? 'dialogue' : 'memorize')}
+          style={{ width: '100%', background: phaseColor, color: '#fff', fontWeight: 700, fontSize: 16, height: 48 }}
+        >
+          Continuar para Diálogo →
+        </Button>
+      </div>
+    );
+  }
+
   // ── DIALOGUE STAGE ────────────────────────────────────────────────────────────
   if (stage === 'dialogue' && lesson.dialogue && lesson.dialogue.length > 0) {
     return (
@@ -332,11 +415,139 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
         </div>
 
         <Button
-          onClick={() => setStage('exercises')}
+          onClick={() => setStage('memorize')}
           style={{ width: '100%', background: phaseColor, color: '#fff', fontWeight: 700, fontSize: 16, height: 48 }}
         >
-          Praticar Exercícios →
+          Memorizar Vocabulário →
         </Button>
+      </div>
+    );
+  }
+
+  // ── MEMORIZE STAGE (flashcard matching game) ──────────────────────────────────
+  if (stage === 'memorize') {
+    const vocabPairs = vocab.map((v, i) => ({ word: v.word, translation: v.translation, index: i }));
+    const allMatched = memorizedWords.size === vocab.length;
+
+    return (
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <Badge style={{ background: phaseColor, color: '#fff', fontSize: 12 }}>
+            {PHASE_LABELS[phase]} · 🧠 Memorização
+          </Badge>
+          <span style={{ fontSize: 12, color: '#888' }}>{memorizedWords.size}/{vocab.length} memorizadas</span>
+        </div>
+        <Progress value={progress} style={{ marginBottom: 16, height: 6 }} />
+
+        {allMatched ? (
+          <div style={{ textAlign: 'center', padding: '32px 16px' }}>
+            <div style={{ fontSize: 64, marginBottom: 12 }}>🎉</div>
+            <div style={{ fontSize: 20, color: '#fff', fontWeight: 800, marginBottom: 8 }}>Todas as palavras memorizadas!</div>
+            <div style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>Agora você está pronto para os exercícios!</div>
+            <Button
+              onClick={() => setStage('exercises')}
+              style={{ width: '100%', background: phaseColor, color: '#fff', fontWeight: 700, fontSize: 16, height: 48 }}
+            >
+              Fazer Exercícios →
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <div style={{ fontSize: 13, color: '#aaa', marginBottom: 16, textAlign: 'center' }}>
+              🎯 Toque em uma palavra e depois na sua tradução para memorizar
+            </div>
+            {/* Word cards grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+              {vocabPairs.map((pair) => {
+                const isMemorized = memorizedWords.has(pair.index);
+                const isSelected = memorizeSelected?.word === pair.word;
+                return (
+                  <button
+                    key={`w-${pair.index}`}
+                    onClick={() => !isMemorized && setMemorizeSelected({ word: pair.word, translation: pair.translation })}
+                    disabled={isMemorized}
+                    style={{
+                      padding: '14px 10px',
+                      borderRadius: 12,
+                      border: `2px solid ${isMemorized ? '#00b894' : isSelected ? phaseColor : 'rgba(255,255,255,0.15)'}`,
+                      background: isMemorized ? '#00b89420' : isSelected ? `${phaseColor}20` : 'rgba(255,255,255,0.05)',
+                      color: isMemorized ? '#00b894' : '#fff',
+                      fontSize: 15,
+                      fontWeight: 600,
+                      cursor: isMemorized ? 'default' : 'pointer',
+                      transition: 'all 0.2s',
+                      opacity: isMemorized ? 0.6 : 1,
+                    }}
+                  >
+                    {isMemorized ? '✅ ' : ''}{pair.word}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Translation options */}
+            {memorizeSelected && (
+              <div>
+                <div style={{ fontSize: 12, color: '#888', marginBottom: 8, textAlign: 'center' }}>
+                  Selecione a tradução de <strong style={{ color: '#fff' }}>{memorizeSelected.word}</strong>:
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {vocabPairs.sort(() => Math.random() - 0.5).map((pair) => {
+                    const isMatched = memorizeMatched.has(`${pair.word}-${pair.translation}`);
+                    return (
+                      <button
+                        key={`t-${pair.index}`}
+                        onClick={() => {
+                          if (pair.word === memorizeSelected.word && pair.translation === memorizeSelected.translation) {
+                            // Correct match!
+                            setMemorizedWords(prev => new Set([...prev, pair.index]));
+                            setMemorizeMatched(prev => new Set([...prev, `${pair.word}-${pair.translation}`]));
+                            speakWord(pair.word);
+                            setMemorizeSelected(null);
+                          } else {
+                            // Wrong match - shake and reset
+                            setMemorizeSelected(null);
+                          }
+                        }}
+                        disabled={isMatched}
+                        style={{
+                          padding: '12px 10px',
+                          borderRadius: 12,
+                          border: `2px solid ${isMatched ? '#00b894' : 'rgba(255,255,255,0.15)'}`,
+                          background: isMatched ? '#00b89420' : 'rgba(255,255,255,0.05)',
+                          color: isMatched ? '#00b894' : '#ddd',
+                          fontSize: 13,
+                          fontWeight: 500,
+                          cursor: isMatched ? 'default' : 'pointer',
+                          transition: 'all 0.2s',
+                          opacity: isMatched ? 0.6 : 1,
+                        }}
+                      >
+                        {pair.translation}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {/* Skip button */}
+            <div style={{ marginTop: 20, textAlign: 'center' }}>
+              <button
+                onClick={() => setStage('exercises')}
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 8,
+                  padding: '8px 20px',
+                  color: '#888',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                }}
+              >
+                Pular memorização →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

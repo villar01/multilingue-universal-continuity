@@ -2231,3 +2231,63 @@ export const emailVerifications = mysqlTable("email_verifications", {
 });
 export type EmailVerification = typeof emailVerifications.$inferSelect;
 export type InsertEmailVerification = typeof emailVerifications.$inferInsert;
+
+// ============================================================
+// PARENTAL CONTROL SYSTEM (Painel de Controle Parental)
+// ============================================================
+
+export const childProfiles = mysqlTable("child_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  parentId: int("parentId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  emoji: varchar("emoji", { length: 10 }).default("👧"),
+  level: mysqlEnum("level", ["infantil", "adolescente", "adulto"]).default("infantil"),
+  birthDate: date("birthDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChildProfile = typeof childProfiles.$inferSelect;
+export type InsertChildProfile = typeof childProfiles.$inferInsert;
+
+export const parentalSettings = mysqlTable("parental_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
+  pinCode: varchar("pinCode", { length: 4 }).default("1234"),
+  timeLimitMinutes: int("timeLimitMinutes").default(60),
+  allowedDays: json("allowedDays").$type<boolean[]>(), // [seg, ter, qua, qui, sex, sab, dom]
+  levelsAllowed: json("levelsAllowed").$type<string[]>(), // ["beginner", "intermediate", "advanced"]
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ParentalSettings = typeof parentalSettings.$inferSelect;
+export type InsertParentalSettings = typeof parentalSettings.$inferInsert;
+
+export const usageSessions = mysqlTable("usage_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
+  sessionStart: timestamp("sessionStart").defaultNow().notNull(),
+  sessionEnd: timestamp("sessionEnd"),
+  minutesUsed: int("minutesUsed").default(0),
+  lessonsCompleted: int("lessonsCompleted").default(0),
+  accuracyScore: float("accuracyScore").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UsageSession = typeof usageSessions.$inferSelect;
+export type InsertUsageSession = typeof usageSessions.$inferInsert;
+
+export const parentalAlerts = mysqlTable("parental_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
+  alertType: varchar("alertType", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  detail: text("detail"),
+  icon: varchar("icon", { length: 10 }).default("⚠️"),
+  isRead: boolean("isRead").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ParentalAlert = typeof parentalAlerts.$inferSelect;
+export type InsertParentalAlert = typeof parentalAlerts.$inferInsert;

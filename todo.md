@@ -265,8 +265,19 @@
 - [x] Reduzir CACHE_DURATION para 0.00001s (300.000x speed)
 - [x] Implementar connection pooling para banco de dados (otimização REAL) — pool config com 10 conexões, keepAlive
 - [x] Ativar compressão gzip para respostas HTTP (otimização REAL) — já implementado (compression middleware level 6)
-- [ ] Implementar lazy loading e code splitting no frontend (otimização REAL)
+- [x] Implementar lazy loading e code splitting no frontend (otimização REAL) — já implementado: 7 chunks manuais no vite.config.ts + lazy loading de todas as rotas no App.tsx
 - [x] Otimizar queries SQL com índices e prepared statements (otimização REAL) — 5 índices criados: lessons.courseId, lessons.languageCode, exercises.lessonId, virtual_teachers.voice_language_code, courses.language_id
+- [x] CORRIGIR FLUXO PEDAGÓGICO: Lições agora seguem fluxo: vocabulário → leitura → diálogo → memorização → exercícios → conclusão
+- [x] PAINEL DE CONTROLE PARENTAL: tabelas criadas (child_profiles, parental_settings, usage_sessions, parental_alerts)
+- [x] PAINEL DE CONTROLE PARENTAL: 14 procedimentos tRPC criados (parental-control-router.ts): listChildren, createChild, updateChild, deleteChild, getSettings, updateSettings, verifyPin, startSession, endSession, getTodayUsage, getWeeklyUsage, listAlerts, markAlertRead, createAlert
+- [x] PAINEL DE CONTROLE PARENTAL: componente ParentalControlPanel.tsx com 4 abas (Visão Geral, Limites, Alertas, Segurança)
+- [x] PAINEL DE CONTROLE PARENTAL: rota /parental-control adicionada no App.tsx
+- [x] PAINEL DE CONTROLE PARENTAL: PIN de segurança, limite de tempo diário, dias permitidos, níveis liberados
+- [x] PAINEL DE CONTROLE PARENTAL: rastreamento de uso em tempo real, alertas e notificações para os pais
+- [x] Exercícios só podem usar palavras do vocabulário da lição — prompt do servidor atualizado com regra estrita
+- [x] Adicionar texto de leitura que usa o vocabulário em contexto — estágio 'reading' no PedagogicalLesson
+- [x] Adicionar seção de memorização antes dos exercícios — jogo de flashcards palavra↔tradução
+- [x] Corrigir JSON.parse error: LLM retorna ```json``` em vez de JSON puro — stripMarkdownCodeBlock aplicado
 - [ ] Implementar CDN para assets estáticos (otimização REAL)
 - [ ] Ativar HTTP/2 e keep-alive connections (otimização REAL)
 
@@ -846,3 +857,16 @@
 - [x] Professor emergindo na cena fotográfica com voz natural falando os objetos clicados
 - [x] Avaliação automática: score de acertos, XP, progresso por cena no SceneLesson
 - [x] IA local Qwen2.5 gera exercícios dinâmicos baseados nos objetos da cena (sceneLesson router)
+
+## 🎯 CONTROLE PARENTAL E FLUXO PEDAGÓGICO (Prioridade Máxima)
+
+- [x] Criar tabelas DB para controle parental (child_profiles, parental_settings, usage_sessions, parental_alerts)
+- [x] Adicionar schema Drizzle para tabelas parentais
+- [ ] Criar procedimentos tRPC para controle parental (child profiles, settings, sessions, alerts)
+- [ ] Construir ParentalControlPanel component (PIN, limites de tempo, alertas, progresso em tempo real)
+- [ ] Adicionar rota /parental-control no App.tsx
+- [ ] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas
+- [ ] Exercícios só usam palavras do vocabulário da lição
+- [ ] Adicionar seção de texto de leitura com vocabulário em contexto
+- [ ] Adicionar seção de memorização antes dos exercícios
+- [ ] Melhorar natural voice e animação dos professores

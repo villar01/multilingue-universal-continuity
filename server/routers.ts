@@ -39,6 +39,7 @@ import { complianceRouter } from './compliance-router';
 import { updatesRouter } from './updates-router';
 import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
+import { parentalControlRouter } from './parental-control-router';
 
 
 export const appRouter = router({
@@ -68,6 +69,7 @@ export const appRouter = router({
   updates: updatesRouter,
   controlCenter: controlCenterRouter,
   liveTeacher: liveTeacherRouter,
+  parentalControl: parentalControlRouter,
   offlineAI: router({
     generate: protectedProcedure
       .input(z.object({
@@ -708,6 +710,9 @@ Return this exact JSON structure:
       "emoji": "relevant emoji"
     }
   ],
+  "readingText": "A complete reading passage (3-5 sentences) in ${lang} that uses ALL the vocabulary words in context. This text MUST use every vocabulary word at least once. Natural, grammatically correct, appropriate for ${phaseConfig.label} level.",
+  "readingTextTranslation": "Full translation of the reading text in ${native}",
+  "grammarNote": "Brief grammar tip in ${native} about the main structure used in the reading text",
   "realLifeContext": "1-2 sentences explaining when this is used in real life, in ${native}",
   "culturalNote": "interesting cultural fact about this topic in the target language, in ${native}"
 }
@@ -722,6 +727,8 @@ Rules:
 - examplePhonetic: write how the FULL example sentence sounds in ${native} (e.g., "Di ent is smol.")
 - dialogue: ${phase === 'infancia' || phase === 'crianca' ? '2-3' : '4-6'} exchanges
 - exercises: 4-6 exercises using types: ${phaseConfig.exerciseTypes.join(', ')}
+- CRITICAL: exercises MUST ONLY use words from the vocabulary list above. NEVER ask about words not taught in this lesson. If the lesson teaches 'apple, cat, house', exercises can only ask about 'apple', 'cat', or 'house'.
+- CRITICAL: Each exercise must test a word that was taught in the vocabulary section. The answer and all options must come from the vocabulary list.
 - Complexity MUST match phase: ${phaseConfig.sentenceComplexity}
 - Every vocabulary word MUST have emoji and imageKeyword
 - Translations MUST be in ${native}`
@@ -729,7 +736,66 @@ Rules:
             ],
             response_format: { type: 'json_object' }
           });
-          const content = JSON.parse(response.choices[0]?.message?.content as string || '{}');
+          const rawContent = response.choices[0]?.message?.content as string || '{}';
+          // Robust JSON cleaning: strip markdown code blocks, extract JSON object
+          let cleanedContent = rawContent
+            .replace(/^```(?:json)?\s*/i, '')
+            .replace(/\s*```$/i, '')
+            .trim();
+          // If still not valid, try to extract JSON object from the text
+          if (!cleanedContent.startsWith('{')) {
+            const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+            if (jsonMatch) cleanedContent = jsonMatch[0];
+          }
+          if (!cleanedContent || cleanedContent === '{}') {
+            throw new Error('LLM returned empty content');
+          }
+          const content = JSON.parse(cleanedContent);
+          // Ensure exercises only use vocabulary from the lesson
+          const vocabWords = (content.vocabulary || []).map((v: any) => v.word?.toLowerCase()).filter(Boolean);
+          if (content.exercises && Array.isArray(content.exercises) && vocabWords.length > 0) {
+            content.exercises = content.exercises.map((ex: any) => {
+              if (ex.options && Array.isArray(ex.options)) {
+                // Ensure the correct answer is from the vocabulary
+                const answerInVocab = vocabWords.includes(ex.answer?.toLowerCase());
+                if (!answerInVocab) {
+                  // Replace with a vocabulary word
+                  ex.answer = vocabWords[Math.floor(Math.random() * vocabWords.length)];
+                  if (!ex.options.includes(ex.answer)) {
+                    ex.options[0] = ex.answer;
+                  }
+                }
+              }
+              return ex;
+            });
+          }
+          // Ensure readingText exists — if LLM didn't generate it, build from dialogue
+          if (!content.readingText && content.vocabulary && content.vocabulary.length > 0) {
+            content.readingText = content.dialogue?.map((d: any) => d.text).join(' ') || '';
+            content.readingTextTranslation = content.dialogue?.map((d: any) => d.translation).join(' ') || '';
+          }
+          // Validate exercises use only vocabulary words
+          if (content.exercises && Array.isArray(content.exercises) && vocabWords.length > 0) {
+            content.exercises = content.exercises.filter((ex: any) => {
+              const exWords = (ex.question + ' ' + (ex.options?.join(' ') || '')).toLowerCase();
+              // Keep exercise if its answer is in vocabulary
+              return vocabWords.includes(ex.answer?.toLowerCase());
+            });
+            // If all exercises were filtered out, create new ones from vocabulary
+            if (content.exercises.length === 0 && vocabWords.length > 0) {
+              content.exercises = vocabWords.slice(0, 4).map((w: string, i: number) => {
+                const vocabItem = content.vocabulary.find((v: any) => v.word?.toLowerCase() === w);
+                return {
+                  type: 'multiple_choice',
+                  question: `What does "${vocabItem?.word || w}" mean?`,
+                  answer: vocabItem?.translation || w,
+                  options: content.vocabulary.slice(0, 4).map((v: any) => v.translation),
+                  hint: 'Look at the vocabulary list',
+                  emoji: vocabItem?.emoji || '📝',
+                };
+              });
+            }
+          }
           return { ...content, phase, cefr: phaseConfig.cefr, phaseLabel: phaseConfig.label };
         } catch (err) {
           console.error('generateLessonContent error:', err);
@@ -753,9 +819,14 @@ Rules:
             ],
             grammar: 'Nesta aula, aprenderemos vocabulário essencial sobre "' + input.lessonTitle + '".',
             exercises: [
-              { type: 'fill_blank', question: 'Hello, how ___ you?', answer: 'are', options: ['are', 'is', 'am', 'be'], hint: 'Verbo to be' },
-              { type: 'fill_blank', question: 'Thank ___ very much!', answer: 'you', options: ['you', 'me', 'him', 'her'], hint: 'Pronome' },
+              { type: 'multiple_choice', question: 'What does "hello" mean?', answer: 'olá', options: ['olá', 'tchau', 'sim', 'não'], hint: 'Palavra do vocabulário', emoji: '👋' },
+              { type: 'multiple_choice', question: 'What does "goodbye" mean?', answer: 'tchau', options: ['tchau', 'olá', 'por favor', 'obrigado'], hint: 'Palavra do vocabulário', emoji: '👋' },
+              { type: 'multiple_choice', question: 'What does "yes" mean?', answer: 'sim', options: ['sim', 'não', 'olá', 'tchau'], hint: 'Palavra do vocabulário', emoji: '✅' },
+              { type: 'multiple_choice', question: 'What does "no" mean?', answer: 'não', options: ['não', 'sim', 'olá', 'tchau'], hint: 'Palavra do vocabulário', emoji: '❌' },
             ],
+            readingText: 'Hello! Goodbye. Yes. No. Please. Thank you.',
+            readingTextTranslation: 'Olá! Tchau. Sim. Não. Por favor. Obrigado.',
+            grammarNote: 'Estas são palavras básicas de cumprimento e resposta.',
           };
         }
       }),
@@ -3277,7 +3348,9 @@ Retorne JSON com:
           response_format: { type: 'json_object' },
         });
         try {
-          const data = JSON.parse(response.choices[0]?.message?.content as string || '{}');
+          const rawContent2 = response.choices[0]?.message?.content as string || '{}';
+          const cleanedContent2 = rawContent2.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+          const data = JSON.parse(cleanedContent2);
           return data;
         } catch {
           return {
