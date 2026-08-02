@@ -947,6 +947,6 @@
 - [x] Integrado no App.tsx (renderizado em todas as páginas)
 - [x] TypeScript sem erros após integração
 
-### Próximos Passos (live-teacher-router.ts)
-- [ ] Integrar sanitizeContent no live-teacher-router.ts (chat, introduce, feedback, commentObject)
-- [ ] Integrar logInteraction no live-teacher-router.ts
+### live-teacher-router.ts
+- [x] Integrar sanitizeContent no live-teacher-router.ts (chat, introduce, feedback, commentObject)
+- [ ] Integrar logInteraction no live-teacher-router.ts (requer protectedProcedure para ctx.user)

@@ -9,6 +9,7 @@
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
+import { sanitizeContent } from "./contentFilter";
 
 // ─── Moderação por País ────────────────────────────────────────────────────────
 
@@ -233,7 +234,9 @@ export const liveTeacherRouter = router({
 
       try {
         const response = await invokeLLM({ messages });
-        const content = (response.choices[0]?.message?.content as string) || "Ótima pergunta! Vamos continuar praticando.";
+        let content = (response.choices[0]?.message?.content as string) || "Ótima pergunta! Vamos continuar praticando.";
+        // Content filter: sanitize response
+        content = await sanitizeContent(content, input.targetLang) || content;
 
         // Detectar expressão do professor baseada no conteúdo
         let teacherExpression: "neutral" | "happy" | "thinking" | "question" | "encouraging" = "neutral";
@@ -295,7 +298,7 @@ Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
           messages: [{ role: "user", content: prompt }],
         });
         return {
-          content: (response.choices[0]?.message?.content as string) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`,
+          content: (await sanitizeContent((response.choices[0]?.message?.content as string) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`, input.targetLang)) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`,
           teacherExpression: "happy" as const,
         };
       } catch {
@@ -337,7 +340,9 @@ Máximo 2 frases. Seja natural, como um professor real falando com o aluno.`;
         const response = await invokeLLM({
           messages: [{ role: "user", content: prompt }],
         });
-        const content = (response.choices[0]?.message?.content as string) || "Boa tentativa! Continue praticando.";
+        let content = (response.choices[0]?.message?.content as string) || "Boa tentativa! Continue praticando.";
+        // Content filter: sanitize response
+        content = await sanitizeContent(content, input.targetLang) || content;
 
         // Determinar se está correto
         const isCorrect = input.studentAnswer.trim().toLowerCase() === input.expectedAnswer.trim().toLowerCase() ||
@@ -387,7 +392,8 @@ Máximo 2 frases. Seja natural e animado!`;
           messages: [{ role: "user", content: prompt }],
         });
         return {
-          content: (response.choices[0]?.message?.content as string) ||
+          content: (await sanitizeContent((response.choices[0]?.message?.content as string) ||
+            `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`, input.targetLang)) ||
             `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`,
           teacherExpression: "happy" as const,
         };
