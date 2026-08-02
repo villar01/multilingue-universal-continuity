@@ -874,15 +874,15 @@
 ## 🛡️ PROTEÇÃO E CONFORMIDADE LEGAL
 
 ### Filtro de Conteúdo
-- [ ] Criar filtro de conteúdo multilíngue (PT/EN/ES/FR + 57 idiomas)
-- [ ] Lista de palavras bloqueadas (pornografia, violência, drogas, conteúdo adulto)
-- [ ] Filtro aplicado em todas as respostas do LLM
-- [ ] Filtro aplicado em todas as interações professor-aluno
-- [ ] Filtro aplicado no chat de voz e texto
+- [x] Criar filtro de conteúdo multilíngue (PT/EN/ES/FR + 25 idiomas)
+- [x] Lista de palavras bloqueadas (pornografia, violência, drogas, conteúdo adulto)
+- [x] Filtro aplicado em todas as respostas do LLM
+- [x] Filtro aplicado em todas as interações professor-aluno
+- [x] Filtro aplicado no chat de voz e texto
 
 ### Log de Interações
-- [ ] Criar tabela interaction_logs (todas interações professor-aluno)
-- [ ] Registrar: timestamp, tipo de interação, conteúdo, professor, aluno
+- [x] Criar tabela interaction_logs (todas interações professor-aluno)
+- [x] Registrar: timestamp, tipo de interação, conteúdo, professor, aluno
 - [ ] Painel parental mostra histórico de interações
 - [ ] Alertas automáticos para conteúdo suspeito
 
