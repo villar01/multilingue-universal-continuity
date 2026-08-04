@@ -254,11 +254,11 @@ export const liveTeacherRouter = router({
         // Log interaction for parental monitoring
         logInteraction({
           userId: 0, // public procedure — no ctx.user available
-          sessionId: `live-teacher-${input.teacherName}`,
+          teacherId: null,
           interactionType: 'teacher_chat',
           content: input.message,
-          aiResponse: content,
-          metadata: { teacherName: input.teacherName, lessonTopic: input.lessonTopic, level: input.level },
+          teacherResponse: content,
+          languageCode: input.targetLang,
         });
 
         return {

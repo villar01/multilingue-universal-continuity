@@ -714,7 +714,7 @@
 
 ## 👨‍🏫 PROFESSOR PESSOAL + AULA IMERSIVA - Sessão 2026-07-01
 - [x] Criar página /my-teacher: galeria de todos os professores disponíveis, aluno escolhe qualquer um como professor pessoal
-- [ ] Salvar professor escolhido no banco (tabela user_preferences ou coluna preferred_teacher_id na tabela users)
+- [x] Salvar professor escolhido no banco — savePreferredTeacher e getPreferredTeacher procedures ja existem em routers.ts com coluna preferredTeacherId na tabela users
 - [x] Criar ImmersiveLesson.tsx: professor foto real ao lado + texto rolante typewriter + exercícios gamificados + XP em tempo real
 - [x] Adicionar rotas /my-teacher e /immersive-lesson no App.tsx
 - [x] Adicionar link "Meu Professor" e "Aula Imersiva" no DashboardReal Recursos Especiais
@@ -722,7 +722,7 @@
 - [ ] Adicionar seção de demonstração do professor na Home com CTA para checkout
 
 ## 🎓 PROFESSOR CONVERSACIONAL CONTÍNUO + MODERAÇÃO
-- [ ] Criar servidor live-teacher-router.ts com endpoint teachLesson (IA por nível + idioma)
+- [x] Criar servidor live-teacher-router.ts com endpoint teachLesson (IA por nivel + idioma) — chat, introduce, feedback, commentObject, checkModeration, listCountries
 - [x] Criar sistema de moderação por país (bloqueio de assuntos proibidos por lei) - 20 países mapeados no freeTalk
 - [x] Adicionar explicação ao aluno quando assunto é bloqueado + sugestão de mudança
 - [ ] Criar componente LiveLessonTeacher (professor flutuante com voz neural)
@@ -892,11 +892,11 @@
 - [x] Bloqueio de acesso se PIN não configurado — Dialog nao pode ser fechado (onOpenChange={() => {}})
 
 ### Conformidade Legal
-- [ ] GDPR (Europa): consentimento parental para menores de 16 anos
-- [ ] COPPA (EUA): consentimento parental para menores de 13 anos
-- [ ] Lei 13.859 (Brasil): classificação etária, consentimento parental
-- [ ] Termos de uso e política de privacidade adaptados por país
-- [ ] Bloqueio automático de conteúdo por legislação do país
+- [x] GDPR (Europa): consentimento parental para menores de 16 anos — TermsOfUse.tsx clausula 9 e 10
+- [x] COPPA (EUA): consentimento parental para menores de 13 anos — TermsOfUse.tsx clausula 9
+- [x] Lei 13.859 (Brasil): classificação etaria, consentimento parental — TermsOfUse + compliance-router submitParental
+- [x] Termos de uso e politica de privacidade adaptados por pais — TermsOfUse.tsx com LGPD/GDPR/COPPA/PIPEDA/PDPA/POPIA
+- [x] Bloqueio automatico de conteudo por legislacao do pais — live-teacher-router checkModeration com 7 paises + DEFAULT
 
 ## ✅ FILTRO DE CONTEÚDO + LOG DE INTERAÇÕES + NOTIFICAÇÃO IA LOCAL (Ago 2026)
 
