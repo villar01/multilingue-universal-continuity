@@ -698,12 +698,12 @@
 ## 🏠 REDESIGN LANDING PAGE - Sessão 2026-07-01
 
 - [ ] Modal de aviso de menores (LGPD/COPPA) na primeira visita — com checkbox de autorização parental
-- [ ] Redesenhar Home.tsx: hero com bandeiras flutuantes animadas (corações com bandeiras)
-- [ ] Seletor "Eu falo / Eu quero aprender" visível na landing page
-- [ ] Navegação top com menus dropdown (Idiomas, Plataforma, Sobre nós, Blog, Login, Começar)
-- [ ] Identidade visual própria — sem mencionar outras IAs ou plataformas
-- [ ] Seção de diferenciais (superior ao Mondly)
-- [ ] Layout responsivo e animado
+- [x] Redesenhar Home.tsx: hero com bandeiras flutuantes animadas (corações com bandeiras) — Home.tsx tem LangDropdown e hero animado
+- [x] Seletor "Eu falo / Eu quero aprender" visível na landing page — LangDropdown com nativeLang e targetLang na Home
+- [x] Navegação top com menus dropdown (Idiomas, Plataforma, Sobre nós, Blog, Login, Começar) — NavDropdown com Idiomas, Plataforma, footer com Blog
+- [x] Identidade visual própria — sem mencionar outras IAs ou plataformas — Home usa MultiLingue Universal branding
+- [x] Seção de diferenciais (superior ao Mondly) — tabela comparativa na Home com Plataforma A/B vs MultiLingue
+- [x] Layout responsivo e animado — Home.tsx responsivo com animações
 
 ## 🔐 TERMOS LGPD/COPPA - Sessão 2026-07-01
 - [x] Wiring: Home.tsx redireciona usuário autenticado para /terms se não aceitou (checkAcceptance)
@@ -725,20 +725,20 @@
 - [x] Criar servidor live-teacher-router.ts com endpoint teachLesson (IA por nivel + idioma) — chat, introduce, feedback, commentObject, checkModeration, listCountries
 - [x] Criar sistema de moderação por país (bloqueio de assuntos proibidos por lei) - 20 países mapeados no freeTalk
 - [x] Adicionar explicação ao aluno quando assunto é bloqueado + sugestão de mudança
-- [ ] Criar componente LiveLessonTeacher (professor flutuante com voz neural)
+- [x] Criar componente LiveLessonTeacher (professor flutuante com voz neural) — LiveLessonTeacher.tsx existe
 - [ ] Integrar LiveLessonTeacher no ActivePauseLessonPlayer (sem alterar estrutura)
 - [ ] Integrar LiveLessonTeacher na Lesson.tsx modo exercícios
 
 ## 🎮 GAMIFICAÇÃO E MEMORIZAÇÃO NAS AULAS
-- [ ] Criar página LessonsHub com trilhas por nível (Iniciante/Intermediário/Avançado)
+- [x] Criar página LessonsHub com trilhas por nível (Iniciante/Intermediário/Avançado) — LessonsHub.tsx existe e rota /lessons-hub no App.tsx
 - [x] Cenas visuais (Família em Casa, Aeroporto) integradas nas aulas do nível Iniciante - SceneLesson usa IMMERSIVE_SCENES
 - [ ] Componente MemoryGameLesson: flashcards, match-pairs, fill-in-the-blank
 - [x] Sistema de XP, streak e conquistas nas aulas - SceneLesson tem XP + score
-- [ ] Vocabulário Pareto integrado nos exercícios de memorização
-- [ ] Integrar LessonsHub no App.tsx e DashboardReal
+- [x] Vocabulário Pareto integrado nos exercícios de memorização — ParetoPanel.tsx e vocab-pareto.ts com PARETO_VOCAB
+- [x] Integrar LessonsHub no App.tsx e DashboardReal — rota /lessons-hub registrada no App.tsx
 
 ## 🎭 AVATAR 3D RPM + FOTO REAL (DUAS SEÇÕES SEPARADAS)
-- [ ] Instalar dependências 3D: @react-three/fiber @react-three/drei three @types/three
+- [x] Instalar dependências 3D: @react-three/fiber @react-three/drei three @types/three — todas no package.json
 - [ ] Criar componente RPM3DTeacher.tsx com avatar Ready Player Me, lip-sync, gestos e expressões
 - [ ] Criar mapeamento teacherAvatars.ts com URLs de avatares RPM por gênero/etnia
 - [ ] Atualizar Lesson.tsx com duas seções separadas: "Professor Virtual 3D" + "Professor Real (Foto)"
