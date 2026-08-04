@@ -40,7 +40,7 @@
 - [x] Sistema de detecção de fonemas (visemas) — tts-viseme-sync.ts com useTTSVisemeSync
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
-- [ ] Transições suaves entre expressões
+- [ ] Transições suaves entre expressões — CSS transitions existem em visemes mas transicao entre expressoes faciais (idle/smile/thinking) pendente
 - [ ] Integração com Google TTS para timing preciso
 - [ ] Cache de vídeos gerados em S3
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
@@ -165,7 +165,7 @@
 
 ## 🚀 MÁXIMA ACELERAÇÃO - IA DE AUTODESENVOLVIMENTO
 - [x] Ativar modo de máxima aceleração no aiProvider.ts (cache 2s, timeout 30s)
-- [ ] Implementar processamento paralelo de requisições AI
+- [ ] Implementar processamento paralelo de requisições AI — aiProvider.ts faz checagem paralela de providers mas geracao ainda e sequencial
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns
