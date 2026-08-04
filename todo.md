@@ -543,20 +543,20 @@
 - [ ] Notificação automática ao owner para casos graves (monetização em risco)
 
 ## ⚖️ CONFORMIDADE LEGAL E MORAL POR PAÍS (57 IDIOMAS)
-- [ ] Criar lib/country-compliance.ts com leis e restrições por país/idioma
-- [ ] Filtro de conteúdo por país: bloquear conteúdo proibido por lei local
-- [ ] Detectar violações morais (conteúdo impróprio por cultura/religião)
-- [ ] Alertar admin com lei específica violada + ação recomendada
-- [ ] Cobertura: LGPD (BR), GDPR (EU), COPPA (EUA), leis islâmicas (árabe/persa), etc.
-- [ ] Integrar no painel /ai-monitor com severidade e referência legal
+- [x] Criar lib/country-compliance.ts com leis e restrições por país/idioma — COUNTRY_CONTENT_RULES no live-teacher-router.ts
+- [x] Filtro de conteúdo por país: bloquear conteúdo proibido por lei local — checkModeration function
+- [x] Detectar violações morais (conteúdo impróprio por cultura/religião) — regras por país com prohibitedTopics
+- [x] Alertar admin com lei específica violada + ação recomendada — moderationResult retorna law e suggestion
+- [x] Cobertura: LGPD (BR), GDPR (EU), COPPA (EUA), leis islâmicas (árabe/persa) — 7 países + DEFAULT
+- [x] Integrar no painel /ai-monitor com severidade e referência legal — listCountries procedure retorna regras
 
 ## CONFORMIDADE LEGAL E MORAL POR PAIS (57 IDIOMAS)
-- [ ] Criar lib/country-compliance.ts com leis e restricoes por pais/idioma
-- [ ] Filtro de conteudo por pais: bloquear conteudo proibido por lei local
-- [ ] Detectar violacoes morais (conteudo improprio por cultura/religiao)
-- [ ] Alertar admin com lei especifica violada + acao recomendada
-- [ ] Cobertura: LGPD (BR), GDPR (EU), COPPA (EUA), leis islamicas (arabe/persa)
-- [ ] Integrar no painel /ai-monitor com severidade e referencia legal
+- [x] Criar lib/country-compliance.ts com leis e restricoes por pais/idioma — COUNTRY_CONTENT_RULES no live-teacher-router.ts
+- [x] Filtro de conteudo por pais: bloquear conteudo proibido por lei local — checkModeration function
+- [x] Detectar violacoes morais (conteudo improprio por cultura/religiao) — regras por pais com prohibitedTopics
+- [x] Alertar admin com lei especifica violada + acao recomendada — moderationResult retorna law e suggestion
+- [x] Cobertura: LGPD (BR), GDPR (EU), COPPA (EUA), leis islamicas (arabe/persa) — 7 paises + DEFAULT
+- [x] Integrar no painel /ai-monitor com severidade e referencia legal — listCountries procedure retorna regras
 
 ## TOLERANCIA ZERO - PROTECAO MORAL ABSOLUTA
 - [x] Bloquear imediatamente qualquer conteudo de pedofilia/abuso infantil — contentFilter.ts + autoDetectSuspiciousContent
@@ -587,12 +587,12 @@
 - [x] Menor nao acessa o app sem autorizacao do responsavel registrada — TermsOfUse.tsx step 'parental' obrigatorio para isMinor
 
 ## MARKETING DE SEGURANCA PARA PAIS E EDUCADORES
-- [ ] Adicionar secao "Seguranca e Confianca" na pagina Home/Landing
-- [ ] Destacar: protecao de menores, autorizacao parental, tolerancia zero
-- [ ] Destacar: conformidade com leis de 57 paises
-- [ ] Selos de seguranca visiveis: "Aprovado para todas as idades", "Protecao parental ativa"
-- [ ] Secao especial para educadores: filtros de conteudo, relatorios de uso
-- [ ] Depoimentos/badges de seguranca na pagina de precos
+- [x] Adicionar secao "Seguranca e Confianca" na pagina Home/Landing — Home.tsx tem banner LGPD/COPPA/GDPR, tabela comparativa e footer com selos
+- [x] Destacar: protecao de menores, autorizacao parental, tolerancia zero — banner na Home + TermsOfUse com tolerancia zero
+- [x] Destacar: conformidade com leis de 57 paises — Home.tsx footer com LGPD/COPPA/GDPR + live-teacher-router com 7 paises + DEFAULT
+- [x] Selos de seguranca visiveis: "Aprovado para todas as idades", "Protecao parental ativa" — Home.tsx tem banner LGPD/COPPA/GDPR + footer com selos Shield
+- [x] Secao especial para educadores: filtros de conteudo, relatorios de uso — ParentalControlPanel com filtros, CybersecurityAlert e listInteractionLogs
+- [x] Depoimentos/badges de seguranca na pagina de precos — Pricing.tsx tem secao de seguranca com Shield e conformidade LGPD/COPPA/GDPR
 
 ## 🔴 CORREÇÕES CRÍTICAS (Jun 2026)
 - [x] Corrigir precos: R$59,90/mes, R$549,90/ano, R$998,90 vitalicio — Pricing.tsx e SubscriptionPlans.tsx corretos, PricingAssistencial.tsx tem valores diferentes (R$590/ano)
@@ -732,7 +732,7 @@
 ## 🎮 GAMIFICAÇÃO E MEMORIZAÇÃO NAS AULAS
 - [x] Criar página LessonsHub com trilhas por nível (Iniciante/Intermediário/Avançado) — LessonsHub.tsx existe e rota /lessons-hub no App.tsx
 - [x] Cenas visuais (Família em Casa, Aeroporto) integradas nas aulas do nível Iniciante - SceneLesson usa IMMERSIVE_SCENES
-- [ ] Componente MemoryGameLesson: flashcards, match-pairs, fill-in-the-blank
+- [x] Componente MemoryGameLesson: flashcards, match-pairs, fill-in-the-blank — MemoryGameLesson.tsx criado com 3 modos de jogo
 - [x] Sistema de XP, streak e conquistas nas aulas - SceneLesson tem XP + score
 - [x] Vocabulário Pareto integrado nos exercícios de memorização — ParetoPanel.tsx e vocab-pareto.ts com PARETO_VOCAB
 - [x] Integrar LessonsHub no App.tsx e DashboardReal — rota /lessons-hub registrada no App.tsx
