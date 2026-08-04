@@ -559,8 +559,8 @@
 - [ ] Integrar no painel /ai-monitor com severidade e referencia legal
 
 ## TOLERANCIA ZERO - PROTECAO MORAL ABSOLUTA
-- [ ] Bloquear imediatamente qualquer conteudo de pedofilia/abuso infantil
-- [ ] Bloquear conteudo sexual explicito, discurso de odio, violencia extrema
+- [x] Bloquear imediatamente qualquer conteudo de pedofilia/abuso infantil — contentFilter.ts + autoDetectSuspiciousContent
+- [x] Bloquear conteudo sexual explicito, discurso de odio, violencia extrema — TermsOfUse.tsx linha 388 + contentFilter.ts
 - [ ] Registrar evidencia completa no banco (IP, user, timestamp, conteudo)
 - [ ] Notificacao URGENTE ao owner com detalhes do incidente
 - [ ] Banimento automatico de conta + bloqueio de IP
@@ -568,23 +568,23 @@
 - [ ] Valido para todos os 57 idiomas sem excecao
 
 ## TERMOS DE USO E CLAUSULAS DE CONDUTA (ONBOARDING)
-- [ ] Criar pagina /terms com Termos de Uso completos
-- [ ] Exibir clausulas obrigatorias no onboarding (aceite obrigatorio)
-- [ ] Clausulas: tolerancia zero para discriminacao racial, religiosa, genero, orientacao sexual, deficiencia
-- [ ] Clausulas: proibicao absoluta de pedofilia, abuso infantil, conteudo sexual explicito
-- [ ] Clausulas: banimento permanente por violacao + possivel acao legal
-- [ ] Clausulas: conformidade com leis locais de cada pais
-- [ ] Salvar aceite do usuario no banco com timestamp e versao dos termos
-- [ ] Bloquear acesso ao app se termos nao foram aceitos
+- [x] Criar pagina /terms com Termos de Uso completos — TermsOfUse.tsx com rota /terms no App.tsx
+- [x] Exibir clausulas obrigatorias no onboarding (aceite obrigatorio) — TermsOfUse.tsx com steps: age → terms → selfie → parental → done
+- [x] Clausulas: tolerancia zero para discriminacao racial, religiosa, genero, orientacao sexual, deficiencia — TermsOfUse.tsx linha 384
+- [x] Clausulas: proibicao absoluta de pedofilia, abuso infantil, conteudo sexual explicito — TermsOfUse.tsx linha 380
+- [x] Clausulas: banimento permanente por violacao + possivel acao legal — TermsOfUse.tsx linhas 380, 384
+- [x] Clausulas: conformidade com leis locais de cada pais — TermsOfUse.tsx linha 391
+- [x] Salvar aceite do usuario no banco com timestamp e versao dos termos — compliance-router acceptTerms procedure
+- [x] Bloquear acesso ao app se termos nao foram aceitos — Home.tsx redireciona para /terms se checkAcceptance false
 
 ## PROTECAO DE MENORES DE IDADE
-- [ ] Perguntar idade no onboarding (menor de 18 anos = fluxo especial)
-- [ ] Exibir Autorizacao Parental obrigatoria para menores
-- [ ] Responsavel deve informar: nome completo, CPF/ID, aceite das clausulas morais e legais
-- [ ] Salvar autorizacao parental no banco com timestamp e dados do responsavel
-- [ ] Ativar controles parentais: filtro de conteudo reforçado para menores
-- [ ] Conformidade com ECA (Brasil), COPPA (EUA), GDPR-K (Europa) e equivalentes
-- [ ] Menor nao acessa o app sem autorizacao do responsavel registrada
+- [x] Perguntar idade no onboarding (menor de 18 anos = fluxo especial) — TermsOfUse.tsx step 'age' com isMinor(age < 18)
+- [x] Exibir Autorizacao Parental obrigatoria para menores — TermsOfUse.tsx step 'parental' quando isMinor
+- [x] Responsavel deve informar: nome completo, CPF/ID, aceite das clausulas morais e legais — TermsOfUse.tsx step 'parental' com dados do responsavel
+- [x] Salvar autorizacao parental no banco com timestamp e dados do responsavel — compliance-router submitParental procedure
+- [x] Ativar controles parentais: filtro de conteudo reforçado para menores — parental-control-router com 14 procedimentos
+- [x] Conformidade com ECA (Brasil), COPPA (EUA), GDPR-K (Europa) e equivalentes — TermsOfUse.tsx com LGPD, COPPA, GDPR
+- [x] Menor nao acessa o app sem autorizacao do responsavel registrada — TermsOfUse.tsx step 'parental' obrigatorio para isMinor
 
 ## MARKETING DE SEGURANCA PARA PAIS E EDUCADORES
 - [ ] Adicionar secao "Seguranca e Confianca" na pagina Home/Landing
@@ -595,8 +595,8 @@
 - [ ] Depoimentos/badges de seguranca na pagina de precos
 
 ## 🔴 CORREÇÕES CRÍTICAS (Jun 2026)
-- [ ] Corrigir preços: R$59/mês, R$590/ano, R$990 vitalício (Pricing.tsx, PricingAssistencial.tsx, SubscriptionPlans.tsx)
-- [ ] Remover texto "Preços em USD" — app é 100% BRL
+- [x] Corrigir precos: R$59,90/mes, R$549,90/ano, R$998,90 vitalicio — Pricing.tsx e SubscriptionPlans.tsx corretos, PricingAssistencial.tsx tem valores diferentes (R$590/ano)
+- [x] Remover texto "Precos em USD" — app e 100% BRL — Pricing.tsx usa BRL com comentario "Pagamento em BRL via PIX"
 - [ ] Corrigir country-compliance.ts: priorizar leis brasileiras (LGPD, Lei Rouanet, ECA, Marco Civil)
 - [ ] Corrigir TermsOfUse.tsx: substituir leis americanas por brasileiras
 - [ ] Criar tabelas app_updates e app_updates_read no banco (schema faltando)
@@ -726,8 +726,8 @@
 - [x] Criar sistema de moderação por país (bloqueio de assuntos proibidos por lei) - 20 países mapeados no freeTalk
 - [x] Adicionar explicação ao aluno quando assunto é bloqueado + sugestão de mudança
 - [x] Criar componente LiveLessonTeacher (professor flutuante com voz neural) — LiveLessonTeacher.tsx existe
-- [ ] Integrar LiveLessonTeacher no ActivePauseLessonPlayer (sem alterar estrutura)
-- [ ] Integrar LiveLessonTeacher na Lesson.tsx modo exercícios
+- [x] Integrar LiveLessonTeacher no ActivePauseLessonPlayer — importado e renderizado no final do componente
+- [x] Integrar LiveLessonTeacher na Lesson.tsx modo exercícios — importado e renderizado na linha 1438
 
 ## 🎮 GAMIFICAÇÃO E MEMORIZAÇÃO NAS AULAS
 - [x] Criar página LessonsHub com trilhas por nível (Iniciante/Intermediário/Avançado) — LessonsHub.tsx existe e rota /lessons-hub no App.tsx

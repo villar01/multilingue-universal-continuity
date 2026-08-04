@@ -27,6 +27,7 @@ import {
   MessageSquare, PenLine, BookMarked, Sparkles, Play, Pause,
   RefreshCw, Star, Trophy, Brain, Languages
 } from "lucide-react";
+import LiveLessonTeacher from "@/components/LiveLessonTeacher";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -1020,6 +1021,15 @@ Rules:
             ))}
           </div>
         </div>
+      )}
+      {currentSentence && (
+        <LiveLessonTeacher
+          teacherName={teacherName || "Professor"}
+          teacherPhoto={teacherPhoto || ""}
+          targetLang={languageCode}
+          nativeLang={nativeLanguage || "pt"}
+          position="bottom-right"
+        />
       )}
     </div>
   );
