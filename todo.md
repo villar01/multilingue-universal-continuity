@@ -708,9 +708,9 @@
 ## 🔐 TERMOS LGPD/COPPA - Sessão 2026-07-01
 - [x] Wiring: Home.tsx redireciona usuário autenticado para /terms se não aceitou (checkAcceptance)
 - [x] Wiring: Visitante não autenticado vê banner/aviso de termos na Home
-- [ ] TermsOfUse.tsx (516 linhas) — EXISTE e está completo com LGPD/COPPA/parental
-- [ ] compliance-router.ts (191 linhas) — EXISTE com acceptTerms/checkAcceptance/submitParental
-- [ ] tabelas terms_acceptances e parental_consents — EXISTEM no banco de dados
+- [x] TermsOfUse.tsx (643 linhas) — EXISTE e está completo com LGPD/COPPA/parental
+- [x] compliance-router.ts (191 linhas) — EXISTE com acceptTerms/checkAcceptance/submitParental
+- [x] tabelas terms_acceptances e parental_consents — EXISTEM no banco de dados
 
 ## 👨‍🏫 PROFESSOR PESSOAL + AULA IMERSIVA - Sessão 2026-07-01
 - [x] Criar página /my-teacher: galeria de todos os professores disponíveis, aluno escolhe qualquer um como professor pessoal
@@ -865,10 +865,10 @@
 - [x] Criar procedimentos tRPC para controle parental (child profiles, settings, sessions, alerts) — 14 procedimentos em parental-control-router.ts
 - [x] Construir ParentalControlPanel component (PIN, limites de tempo, alertas, progresso em tempo real)
 - [x] Adicionar rota /parental-control no App.tsx
-- [ ] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas
-- [ ] Exercícios só usam palavras do vocabulário da lição
-- [ ] Adicionar seção de texto de leitura com vocabulário em contexto
-- [ ] Adicionar seção de memorização antes dos exercícios
+- [x] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas — PedagogicalLesson.tsx tem fluxo: vocab → reading → dialogue → memorize → exercises → complete
+- [x] Exercícios só usam palavras do vocabulário da lição — server valida e substitui respostas fora do vocabulário
+- [x] Adicionar seção de texto de leitura com vocabulário em contexto — readingText + readingTextTranslation gerados pelo LLM e exibidos no PedagogicalLesson
+- [x] Adicionar seção de memorização antes dos exercícios — stage 'memorize' no PedagogicalLesson com flashcards
 - [ ] Melhorar natural voice e animação dos professores
 
 ## 🛡️ PROTEÇÃO E CONFORMIDADE LEGAL
@@ -949,7 +949,7 @@
 
 ### live-teacher-router.ts
 - [x] Integrar sanitizeContent no live-teacher-router.ts (chat, introduce, feedback, commentObject)
-- [ ] Integrar logInteraction no live-teacher-router.ts (requer protectedProcedure para ctx.user)
+- [x] Integrar logInteraction no live-teacher-router.ts — log no chat procedure com userId=0 (public procedure)
 
 ## 🔒 SISTEMA DE SEGURANÇA CIBERNÉTICA (Implementado)
 

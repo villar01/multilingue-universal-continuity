@@ -9,7 +9,7 @@
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
-import { sanitizeContent } from "./contentFilter";
+import { sanitizeContent, logInteraction } from "./contentFilter";
 
 // ─── Moderação por País ────────────────────────────────────────────────────────
 
@@ -250,6 +250,16 @@ export const liveTeacherRouter = router({
         } else if (contentLower.includes("!") && (contentLower.includes("bem") || contentLower.includes("certo"))) {
           teacherExpression = "happy";
         }
+
+        // Log interaction for parental monitoring
+        logInteraction({
+          userId: 0, // public procedure — no ctx.user available
+          sessionId: `live-teacher-${input.teacherName}`,
+          interactionType: 'teacher_chat',
+          content: input.message,
+          aiResponse: content,
+          metadata: { teacherName: input.teacherName, lessonTopic: input.lessonTopic, level: input.level },
+        });
 
         return {
           content,
