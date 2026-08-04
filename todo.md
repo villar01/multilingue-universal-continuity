@@ -91,7 +91,7 @@
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
 - [ ] Modo competitivo multiplayer
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
-- [ ] Integração com calendário para lembretes
+- [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem integracao de lembretes
 - [ ] Modo imersão total (interface no idioma alvo)
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
@@ -108,7 +108,7 @@
 - [x] Discussions Router - Fóruns de discussão entre alunos
 - [x] Clips Router - Gerenciamento de vídeos curtos educacionais
 - [x] Schema Extended - Tabelas para educationalClips, avatarVideos, lipSyncData, teacherProfiles
-- [ ] AI Auto-Improvement - Sistema de melhoria contínua baseado em feedback
+- [x] AI Auto-Improvement — auto-improvement-router.ts com fixTTSPronunciation, testPronunciationQuality, autoImproveSystem + blackbox-ai.ts
 
 ## 🎯 SUGESTÕES MANUS (PRIORIDADE ALTA)
 - [ ] Criar skill reutilizável com /skill-creator para processo de avatar híbrido
@@ -206,7 +206,7 @@
 - [ ] Reduzir timeout Ollama de 0.3s para 0.03s (mais 10x = 1000x total)
 - [ ] Reduzir timeout LM Studio de 0.3s para 0.03s (mais 10x = 1000x total)
 - [ ] Reduzir provider check de 0.01s para 0.001s (mais 10x = 1000x total)
-- [ ] Adicionar confidence scoring para aumentar precisão
+- [x] Adicionar confidence scoring para aumentar precisão — aiProvider.ts com confidenceScore + ai.ts com confidence
 - [ ] Adicionar quality validation avançada
 - [ ] Ativar modo MEGA TURBO em todos endpoints (1000X ORIGINAL)
 
