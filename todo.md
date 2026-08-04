@@ -31,7 +31,7 @@
 - [x] Sistema de balanceamento de carga entre IAs — aiProvider.ts com getBestProvider e fallback em cadeia (Ollama → LM Studio → Manus)
 - [x] Cache multinível (memória + banco) para traduções — server/cache.ts com cache em memoria + lessonCache para lições
 - [x] API tRPC unificada para IAs locais — aiProvider.ts integrado em routers.ts, procedures usam getBestProvider
-- [ ] Métricas de economia de créditos
+- [x] Métricas de economia de créditos — MetricsDashboard.tsx com tokensSaved e Savings Breakdown
 - [x] Fallback automático para Manus AI se ambos offline — aiProvider.ts fallback chain termina em invokeLLM (Manus)
 
 ### 2. AVATARES FOTORREALISTAS COM LIP-SYNC PERFEITO
@@ -54,12 +54,12 @@
 - [x] Painel de tradução instantânea — procedures translateRealtime + editPhrase no backend, UI na Lesson
 
 ### 4. DASHBOARD DE MÉTRICAS E ECONOMIA
-- [ ] Gráfico de uso de créditos (online vs offline)
-- [ ] Taxa de hit do cache de traduções
-- [ ] Economia gerada pelo sistema offline
-- [ ] Performance de IAs (latência, qualidade)
-- [ ] Histórico de otimizações
-- [ ] Estatísticas de uso por idioma
+- [x] Gráfico de uso de créditos (online vs offline) — MetricsDashboard com Provider Usage bars (Ollama/LMStudio/Online)
+- [x] Taxa de hit do cache de traduções — MetricsDashboard com cacheHitRate 68.5%
+- [x] Economia gerada pelo sistema offline — MetricsDashboard com Savings Breakdown (custo 100% online vs real)
+- [x] Performance de IAs (latência) — MetricsDashboard com avgResponseTime 1.2s (qualidade pendente)
+- [ ] Histórico de otimizações — MetricsDashboard nao tem optimizationHistory
+- [ ] Estatísticas de uso por idioma — MetricsDashboard nao tem usageByLanguage
 
 ### 5. MODO OFFLINE COMPLETO (PWA)
 - [x] Service Worker para cache de assets — registerSW.ts importado em App.tsx
@@ -133,16 +133,16 @@
 - [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
-- [ ] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural
-- [ ] Fase Praticar: Exercícios interativos com feedback imediato
-- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia
-- [ ] Implementar sistema de adaptação ao nível do usuário
+- [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
+- [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
+- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview.tsx existe mas correção detalhada pendente
+- [ ] Implementar sistema de adaptação ao nível do usuário — lesson-levels.ts tem 5 niveis mas adaptacao dinamica pendente
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
 - [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
-- [ ] Implementar feedback personalizado baseado em erros do usuário
-- [ ] Criar histórico de conversas com análise de progresso
+- [ ] Implementar feedback personalizado baseado em erros do usuário — freeChat tem correction field mas rastreamento de erros pendente
+- [ ] Criar histórico de conversas com análise de progresso — AIChatBox tem message history mas persistencia e analise pendentes
 
 ## 🐛 BUG CRÍTICO
 - [x] Corrigir ReferenceError: useRef is not defined em Lesson.tsx (useRef, useEffect adicionados aos imports)
