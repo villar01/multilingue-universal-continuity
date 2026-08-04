@@ -76,6 +76,7 @@ const IANativa = lazy(() => import("./pages/IANativa"));
 const SmartReview = lazy(() => import("./pages/SmartReview"));
 const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
 import LocalAINotification from "./components/LocalAINotification";
+import ConnectivityIndicator from "./components/ConnectivityIndicator";
 
 // Loading fallback component
 const PageLoader = () => (
@@ -185,6 +186,7 @@ function App() {
             <Router />
           </Suspense>
           <LocalAINotification />
+          <ConnectivityIndicator />
           <TourButton />
         </TooltipProvider>
       </ThemeProvider>

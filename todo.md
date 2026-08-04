@@ -63,10 +63,10 @@
 
 ### 5. MODO OFFLINE COMPLETO (PWA)
 - [x] Service Worker para cache de assets — registerSW.ts importado em App.tsx
-- [ ] Sincronização de dados offline — Service Worker registrado mas sync real nao implementado
-- [ ] Persistência local de conversas — Service Worker existe mas IndexedDB nao implementado
-- [ ] Fallback gracioso para modo offline — useOfflineSync.ts existe mas nao integrado em telas principais
-- [ ] Indicador de status de conectividade — hooks existem mas sem indicador visual renderizado no app
+- [ ] Sincronização de dados offline — useOfflineSyncDB.ts criado com IndexedDB, mas integracao nas telas pendente
+- [ ] Persistência local de conversas — useOfflineSyncDB.ts criado, mas nao integrado nas telas de conversa
+- [ ] Fallback gracioso para modo offline — ConnectivityIndicator integrado, useOfflineSyncDB criado mas nao integrado
+- [x] Indicador de status de conectividade — ConnectivityIndicator.tsx renderizado no App.tsx com banner online/offline
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
 - [ ] Análise automática de padrões de uso
@@ -128,7 +128,7 @@
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
 - [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
-- [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — nao implementado ainda
+- [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — useStreamingText hook criado, integracao na UI pendente
 - [ ] Cachear avatares e vídeos no localStorage/IndexedDB
 - [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
@@ -169,7 +169,7 @@
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns
-- [ ] Streaming de respostas LLM palavra por palavra — nao implementado ainda
+- [ ] Streaming de respostas LLM palavra por palavra — useStreamingText hook criado, integracao na UI pendente
 - [ ] Comprimir prompts para reduzir tokens
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)
 
