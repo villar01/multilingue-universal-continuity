@@ -749,14 +749,14 @@
 ## 🎯 DEMO BLINDADA PARA CLIENTES (MONETIZAÇÃO IMEDIATA)
 - [ ] Suprimir overlay de erro do Vite em produção (vite.config.ts)
 - [ ] Silenciar toasts de erro de auth (queries sem login não mostram "1 error")
-- [ ] Criar página /demo pública sem login obrigatório
-- [ ] Tela de boas-vindas da demo com professor falando e CTA de conversão
-- [ ] Aula demo completa com PolyLesson blindado (sem erros visíveis)
-- [ ] Fallback visual para TTS: se falhar, mostra texto animado sem erro
-- [ ] Fallback visual para microfone: se bloqueado, mostra instrução amigável
-- [ ] Remover meia lua preta definitivamente de todos os componentes
-- [ ] Página de preços clara com CTA de compra após demo
-- [ ] Registrar rota /demo no App.tsx
+- [x] Criar página /demo pública sem login obrigatório — Demo.tsx criada
+- [x] Tela de boas-vindas da demo com professor falando e CTA de conversão
+- [x] Aula demo completa com PolyLesson blindado (sem erros visíveis)
+- [x] Fallback visual para TTS: se falhar, mostra texto animado sem erro
+- [x] Fallback visual para microfone: se bloqueado, mostra instrução amigável
+- [x] Remover meia lua preta definitivamente de todos os componentes
+- [x] Página de preços clara com CTA de compra após demo
+- [x] Registrar rota /demo no App.tsx
 
 ## ✅ CONCLUÍDO - Sessão Jul 2026
 
@@ -862,9 +862,9 @@
 
 - [x] Criar tabelas DB para controle parental (child_profiles, parental_settings, usage_sessions, parental_alerts)
 - [x] Adicionar schema Drizzle para tabelas parentais
-- [ ] Criar procedimentos tRPC para controle parental (child profiles, settings, sessions, alerts)
-- [ ] Construir ParentalControlPanel component (PIN, limites de tempo, alertas, progresso em tempo real)
-- [ ] Adicionar rota /parental-control no App.tsx
+- [x] Criar procedimentos tRPC para controle parental (child profiles, settings, sessions, alerts) — 14 procedimentos em parental-control-router.ts
+- [x] Construir ParentalControlPanel component (PIN, limites de tempo, alertas, progresso em tempo real)
+- [x] Adicionar rota /parental-control no App.tsx
 - [ ] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas
 - [ ] Exercícios só usam palavras do vocabulário da lição
 - [ ] Adicionar seção de texto de leitura com vocabulário em contexto
@@ -884,7 +884,7 @@
 - [x] Criar tabela interaction_logs (todas interações professor-aluno)
 - [x] Registrar: timestamp, tipo de interação, conteúdo, professor, aluno
 - [ ] Painel parental mostra histórico de interações
-- [ ] Alertas automáticos para conteúdo suspeito
+- [x] Alertas automáticos para conteúdo suspeito — autoDetectSuspiciousContent procedure com 7 padrões (adult, violence, drugs, cyberbullying, phishing, grooming, cyber threats)
 
 ### Setup Parental Obrigatório
 - [ ] PIN obrigatório no primeiro acesso (não pode pular)

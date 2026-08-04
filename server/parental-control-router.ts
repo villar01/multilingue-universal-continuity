@@ -291,6 +291,61 @@ export const parentalControlRouter = router({
       return { success: true };
     }),
 
+  // Auto-detect suspicious content and create parental alert
+  autoDetectSuspiciousContent: protectedProcedure
+    .input(z.object({
+      childId: z.number(),
+      content: z.string(),
+      contentType: z.enum(['chat', 'lesson_response', 'voice_transcript', 'translation', 'free_text']),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+
+      // Suspicious patterns: adult content, violence, drugs, cyberbullying, phishing, grooming, cyber threats
+      const suspiciousPatterns = [
+        /sex|porn|erotic|nude|nsfw/i,
+        /kill|murder|suicide|self.?harm|cut.?yourself/i,
+        /drug|cocaine|weed|marijuana|heroin|lsd|ecstasy/i,
+        /stupid|idiot|ugly|fat|loser|hate.?you|kill.?yourself/i,
+        /password|credit.?card|bank.?account|ssn|social.?security|pix.?key/i,
+        /meet.?me.?alone|don.?t.?tell.?your.?parents|secret.?between.?us/i,
+        /hack|malware|virus|trojan|phishing|ransomware|keylogger/i,
+      ];
+
+      const matches: string[] = [];
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(input.content)) {
+          matches.push(pattern.source);
+        }
+      }
+
+      if (matches.length === 0) {
+        return { suspicious: false, alertId: null };
+      }
+
+      const severity = matches.length >= 3 ? 'critical' : matches.length >= 2 ? 'high' : 'medium';
+      const alertType = matches.some(m => /sex|porn|erotic|nude|nsfw/i.test(m)) ? 'adult_content'
+        : matches.some(m => /kill|murder|suicide|self.?harm/i.test(m)) ? 'violence'
+        : matches.some(m => /drug|cocaine|weed|marijuana|heroin/i.test(m)) ? 'drugs'
+        : matches.some(m => /stupid|idiot|ugly|fat|loser|hate.?you|kill.?yourself/i.test(m)) ? 'cyberbullying'
+        : matches.some(m => /password|credit.?card|bank.?account|ssn|pix.?key/i.test(m)) ? 'phishing'
+        : matches.some(m => /meet.?me.?alone|don.?t.?tell.?your.?parents|secret.?between.?us/i.test(m)) ? 'grooming'
+        : 'cyber_threat';
+
+      const now = Date.now();
+      const description = `Conteudo suspeito detectado (${alertType}): ${input.content.substring(0, 200)}...`;
+
+      await database.execute(sql`INSERT INTO parental_alerts (child_id, alert_type, severity, description, is_read, created_at) VALUES (${input.childId}, ${alertType}, ${severity}, ${description}, FALSE, ${now})`);
+
+      // Also log as cybersecurity threat if it's a cyber threat type
+      if (alertType === 'cyber_threat' || alertType === 'phishing') {
+        await database.execute(sql`INSERT INTO cybersecurity_threats (user_id, threat_type, severity, source, description, recommended_action, created_at, updated_at) VALUES (${ctx.user.id}, ${alertType}, ${severity}, ${input.contentType}, ${description}, 'Revise o conteudo e bloqueie se necessario. Se ataque cibernetico detectado, considere desligar o dispositivo.', ${now}, ${now})`);
+      }
+
+      return { suspicious: true, alertType, severity, matches };
+    }),
+
   getSecurityStats: protectedProcedure
     .query(async ({ ctx }) => {
       const database = await getDb();

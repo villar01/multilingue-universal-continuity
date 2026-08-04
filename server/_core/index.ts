@@ -10,6 +10,8 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
+import { securityMiddleware } from "../securityMiddleware";
+import { startAutoBackup } from "../backupRestore";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,6 +38,12 @@ async function startServer() {
   
   // Proteção anti-invasão: bloqueia IPs suspeitos ANTES de qualquer rota
   app.use(ipBlockMiddleware);
+
+  // Middleware de segurança cibernética: rate limiting, SQL injection, XSS, DDoS, headers
+  app.use(securityMiddleware);
+
+  // Iniciar sistema de backup automático (a cada 6 horas)
+  startAutoBackup();
 
   // Enable gzip compression for all responses (70% size reduction)
   app.use(compression({ level: 6 }));
