@@ -621,7 +621,7 @@
 ## 🎓 AULAS COMPLETAS COM TEXTO ANIMADO + PROFESSOR REAL (NOVA PRIORIDADE)
 - [ ] Seed massivo: 100 lições por idioma (65 idiomas = 6.500+ lições)
 - [ ] LessonPlayer: texto rolando animado na tela (typewriter + scroll)
-- [ ] Professor virtual com animação labial sincronizada com TTS
+- [x] Professor virtual com animação labial sincronizada com TTS — Animated3DAvatar + tts-viseme-sync.ts
 - [x] Modo conversação livre com IA como professor real (SceneLesson tab chat com sceneChat + censura por país)
 - [x] Jogos de palavras interativos (fill-the-blank, multiple choice, spelling no SceneLesson)
 - [x] Exercícios progressivos de vocabulário (flashcards nos hotspots clicáveis do SceneLesson)
@@ -672,8 +672,8 @@
 - [ ] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer
 
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
-- [ ] Endpoint TTS no servidor usando API Forge para voz natural de alta qualidade
-- [ ] Hook useTTS com fallback para Web Speech API melhorada
+- [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API
+- [x] Hook useTTS com fallback — useNaturalVoice.ts com EdgeTTS + Web Speech API fallback
 - [ ] ImmersiveScene: auto-selecionar cena pelo idioma do perfil (sem mostrar francês)
 - [ ] Todas as telas: exibir PT-BR (nativo) + idioma pretendido em paralelo
 - [ ] Pronúncia figurativa em português em todos os hotspots (sem IPA)
@@ -739,8 +739,8 @@
 
 ## 🎭 AVATAR 3D RPM + FOTO REAL (DUAS SEÇÕES SEPARADAS)
 - [x] Instalar dependências 3D: @react-three/fiber @react-three/drei three @types/three — todas no package.json
-- [ ] Criar componente RPM3DTeacher.tsx com avatar Ready Player Me, lip-sync, gestos e expressões
-- [ ] Criar mapeamento teacherAvatars.ts com URLs de avatares RPM por gênero/etnia
+- [x] Criar componente RPM3DTeacher — TeacherAvatar3D.tsx com RPM_AVATAR_URLS, useGLTF, lip-sync e expressões
+- [x] Criar mapeamento teacherAvatars — RPM_AVATAR_URLS em TeacherAvatar3D.tsx + TEACHER_AVATARS em Animated3DAvatar.tsx
 - [ ] Atualizar Lesson.tsx com duas seções separadas: "Professor Virtual 3D" + "Professor Real (Foto)"
 - [ ] Manter AnimatedTeacher.tsx e TalkingTeacher.tsx intactos (não remover)
 - [ ] Corrigir erros TypeScript após integração
