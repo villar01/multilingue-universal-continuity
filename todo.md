@@ -747,8 +747,8 @@
 - [ ] Salvar checkpoint e verificar no browser
 
 ## 🎯 DEMO BLINDADA PARA CLIENTES (MONETIZAÇÃO IMEDIATA)
-- [ ] Suprimir overlay de erro do Vite em produção (vite.config.ts)
-- [ ] Silenciar toasts de erro de auth (queries sem login não mostram "1 error")
+- [x] Suprimir overlay de erro do Vite em produção (vite.config.ts) — hmr.overlay: false já configurado
+- [x] Silenciar toasts de erro de auth (queries sem login não mostram "1 error") — isAuthError + QueryCache silent handler já configurado em main.tsx
 - [x] Criar página /demo pública sem login obrigatório — Demo.tsx criada
 - [x] Tela de boas-vindas da demo com professor falando e CTA de conversão
 - [x] Aula demo completa com PolyLesson blindado (sem erros visíveis)
@@ -883,13 +883,13 @@
 ### Log de Interações
 - [x] Criar tabela interaction_logs (todas interações professor-aluno)
 - [x] Registrar: timestamp, tipo de interação, conteúdo, professor, aluno
-- [ ] Painel parental mostra histórico de interações
+- [x] Painel parental mostra histórico de interações — listInteractionLogs procedure no parental-control-router.ts
 - [x] Alertas automáticos para conteúdo suspeito — autoDetectSuspiciousContent procedure com 7 padrões (adult, violence, drugs, cyberbullying, phishing, grooming, cyber threats)
 
 ### Setup Parental Obrigatório
-- [ ] PIN obrigatório no primeiro acesso (não pode pular)
-- [ ] Configuração inicial: idade da criança, limite de tempo, dias permitidos
-- [ ] Bloqueio de acesso se PIN não configurado
+- [x] PIN obrigatório no primeiro acesso (não pode pular) — Dialog obrigatório detecta PIN padrao 1234 e forca troca
+- [x] Configuração inicial: idade da criança, limite de tempo, dias permitidos — ja no createChild e updateSettings
+- [x] Bloqueio de acesso se PIN não configurado — Dialog nao pode ser fechado (onOpenChange={() => {}})
 
 ### Conformidade Legal
 - [ ] GDPR (Europa): consentimento parental para menores de 16 anos

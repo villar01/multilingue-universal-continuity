@@ -48,6 +48,10 @@ export default function ParentalControlPanel() {
   const [pinInput, setPinInput] = useState('');
   const [pinVerified, setPinVerified] = useState(false);
   const [pinError, setPinError] = useState('');
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [newSetupPin, setNewSetupPin] = useState('');
+  const [confirmSetupPin, setConfirmSetupPin] = useState('');
+  const [setupError, setSetupError] = useState('');
 
   // Auto-select first child
   useEffect(() => {
@@ -55,6 +59,39 @@ export default function ParentalControlPanel() {
       setSelectedChildId(children[0].id);
     }
   }, [children, selectedChildId]);
+
+  // Check if PIN needs to be set up (default is '1234' — force change on first access)
+  const { data: settings } = trpc.parentalControl.getSettings.useQuery(
+    { childId: selectedChildId || 0 },
+    { enabled: !!selectedChildId }
+  );
+  useEffect(() => {
+    if (settings && settings.pinCode === '1234') {
+      setShowPinSetup(true);
+    }
+  }, [settings]);
+
+  const handleSetupPin = useCallback(async () => {
+    if (!selectedChildId) return;
+    if (newSetupPin.length !== 4) {
+      setSetupError('PIN deve ter 4 digitos.');
+      return;
+    }
+    if (newSetupPin !== confirmSetupPin) {
+      setSetupError('Os PINs nao coincidem.');
+      return;
+    }
+    if (newSetupPin === '1234') {
+      setSetupError('Escolha um PIN diferente do padrao.');
+      return;
+    }
+    await updateSettings.mutateAsync({ childId: selectedChildId, pinCode: newSetupPin });
+    setShowPinSetup(false);
+    setNewSetupPin('');
+    setConfirmSetupPin('');
+    setSetupError('');
+    setPinVerified(true);
+  }, [selectedChildId, newSetupPin, confirmSetupPin, updateSettings]);
 
   const selectedChild = children?.find((c: any) => c.id === selectedChildId);
 
@@ -165,6 +202,58 @@ export default function ParentalControlPanel() {
           </Dialog>
         </div>
       </div>
+
+      {/* PIN Setup Dialog - Obrigatorio no primeiro acesso */}
+      <Dialog open={showPinSetup} onOpenChange={() => {}}>
+        <DialogContent className="bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-400">
+              <Lock className="w-5 h-5" /> Configuracao Obrigatoria de PIN
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Alert className="bg-amber-950/50 border-amber-800">
+              <AlertCircle className="w-4 h-4 text-amber-400" />
+              <AlertTitle>Seguranca Prioritaria</AlertTitle>
+              <AlertDescription>
+                Por segurança, e obrigatorio definir um PIN personalizado antes de acessar o painel. O PIN padrao (1234) nao e permitido.
+              </AlertDescription>
+            </Alert>
+            <div>
+              <Label htmlFor="setup-pin">Novo PIN (4 digitos)</Label>
+              <Input
+                id="setup-pin"
+                type="password"
+                maxLength={4}
+                value={newSetupPin}
+                onChange={(e) => setNewSetupPin(e.target.value.replace(/\D/g, ''))}
+                placeholder="****"
+                className="text-center text-2xl tracking-widest"
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirm-pin">Confirmar PIN</Label>
+              <Input
+                id="confirm-pin"
+                type="password"
+                maxLength={4}
+                value={confirmSetupPin}
+                onChange={(e) => setConfirmSetupPin(e.target.value.replace(/\D/g, ''))}
+                placeholder="****"
+                className="text-center text-2xl tracking-widest"
+              />
+            </div>
+            {setupError && (
+              <p className="text-sm text-red-400 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" /> {setupError}
+              </p>
+            )}
+            <Button onClick={handleSetupPin} disabled={newSetupPin.length !== 4 || confirmSetupPin.length !== 4} className="w-full bg-blue-600 hover:bg-blue-700">
+              Definir PIN e Continuar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="container mx-auto px-4 py-6">
         {childrenLoading ? (

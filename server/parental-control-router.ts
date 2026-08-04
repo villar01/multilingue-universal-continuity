@@ -346,6 +346,16 @@ export const parentalControlRouter = router({
       return { suspicious: true, alertType, severity, matches };
     }),
 
+  // List interaction logs for parental monitoring
+  listInteractionLogs: protectedProcedure
+    .input(z.object({ limit: z.number().default(50), offset: z.number().default(0) }))
+    .query(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const result = await database.execute(sql`SELECT * FROM interaction_logs WHERE user_id = ${ctx.user.id} ORDER BY created_at DESC LIMIT ${input.limit} OFFSET ${input.offset}`);
+      return { logs: result[0] || [] };
+    }),
+
   getSecurityStats: protectedProcedure
     .query(async ({ ctx }) => {
       const database = await getDb();
