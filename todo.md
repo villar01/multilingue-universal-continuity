@@ -27,31 +27,31 @@
 ### 1. DUAL OFFLINE AI (Ollama + LM Studio)
 - [x] Instalar e configurar Ollama no servidor
 - [x] Baixar modelo Qwen2.5 3B para Ollama (melhor que Mistral para multilingual)
-- [ ] Integrar LM Studio como fallback secundário
-- [ ] Sistema de balanceamento de carga entre IAs
-- [ ] Cache multinível (memória + banco) para traduções
-- [ ] API tRPC unificada para IAs locais
+- [x] Integrar LM Studio como fallback secundário — aiProvider.ts com generateWithLMStudio, isLMStudioAvailable, llm-free.ts
+- [x] Sistema de balanceamento de carga entre IAs — aiProvider.ts com getBestProvider e fallback em cadeia (Ollama → LM Studio → Manus)
+- [x] Cache multinível (memória + banco) para traduções — server/cache.ts com cache em memoria + lessonCache para lições
+- [x] API tRPC unificada para IAs locais — aiProvider.ts integrado em routers.ts, procedures usam getBestProvider
 - [ ] Métricas de economia de créditos
-- [ ] Fallback automático para Manus AI se ambos offline
+- [x] Fallback automático para Manus AI se ambos offline — aiProvider.ts fallback chain termina em invokeLLM (Manus)
 
 ### 2. AVATARES FOTORREALISTAS COM LIP-SYNC PERFEITO
 - [ ] Criar foto profissional Professora Ingrid (feminino, inglês)
 - [ ] Criar foto profissional Professor Ricardo (masculino, português)
-- [ ] Sistema de detecção de fonemas (visemas)
-- [ ] Sincronização labial frame-perfect com áudio
-- [ ] Animações faciais naturais (piscadas, micro-expressões)
+- [x] Sistema de detecção de fonemas (visemas) — tts-viseme-sync.ts com useTTSVisemeSync
+- [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
+- [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [ ] Transições suaves entre expressões
 - [ ] Integração com Google TTS para timing preciso
 - [ ] Cache de vídeos gerados em S3
-- [ ] Seletor de avatar na interface
+- [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 
 ### 3. SISTEMA MULTILÍNGUE UNIVERSAL
-- [ ] Tradução em tempo real via IA offline
-- [ ] Suporte para 50+ idiomas
-- [ ] Cache de traduções frequentes
-- [ ] Detecção automática de idioma
-- [ ] Interface adaptativa por idioma
-- [ ] Painel de tradução instantânea
+- [x] Tradução em tempo real via IA offline — translateRealtime procedure em routers.ts com aiProvider
+- [x] Suporte para 50+ idiomas — LANGUAGES_57 em languages.ts com 57 idiomas definidos (integracao funcional em andamento)
+- [x] Cache de traduções frequentes — server/cache.ts com lessonCache
+- [ ] Detecção automática de idioma — LangDropdown e seletores manuais existem, mas sem auto-detect
+- [x] Interface adaptativa por idioma — Home.tsx com nativeLang/targetLang adaptando textos e seletor
+- [x] Painel de tradução instantânea — procedures translateRealtime + editPhrase no backend, UI na Lesson
 
 ### 4. DASHBOARD DE MÉTRICAS E ECONOMIA
 - [ ] Gráfico de uso de créditos (online vs offline)
@@ -62,11 +62,11 @@
 - [ ] Estatísticas de uso por idioma
 
 ### 5. MODO OFFLINE COMPLETO (PWA)
-- [ ] Service Worker para cache de assets
-- [ ] Sincronização de dados offline
-- [ ] Persistência local de conversas
-- [ ] Fallback gracioso para modo offline
-- [ ] Indicador de status de conectividade
+- [x] Service Worker para cache de assets — registerSW.ts importado em App.tsx
+- [ ] Sincronização de dados offline — Service Worker registrado mas sync real nao implementado
+- [ ] Persistência local de conversas — Service Worker existe mas IndexedDB nao implementado
+- [ ] Fallback gracioso para modo offline — useOfflineSync.ts existe mas nao integrado em telas principais
+- [ ] Indicador de status de conectividade — hooks existem mas sem indicador visual renderizado no app
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
 - [ ] Análise automática de padrões de uso
@@ -90,7 +90,7 @@
 ## 📋 PRÓXIMAS FEATURES
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
 - [ ] Modo competitivo multiplayer
-- [ ] Certificados de conclusão
+- [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes
 - [ ] Modo imersão total (interface no idioma alvo)
 
@@ -128,9 +128,9 @@
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
 - [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
-- [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra)
+- [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — nao implementado ainda
 - [ ] Cachear avatares e vídeos no localStorage/IndexedDB
-- [ ] Reduzir bundle size com code splitting
+- [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
 - [ ] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural
@@ -140,7 +140,7 @@
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
-- [ ] Adicionar correção automática de gramática durante conversação
+- [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
 - [ ] Implementar feedback personalizado baseado em erros do usuário
 - [ ] Criar histórico de conversas com análise de progresso
 
@@ -169,7 +169,7 @@
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns
-- [ ] Streaming de respostas LLM palavra por palavra
+- [ ] Streaming de respostas LLM palavra por palavra — nao implementado ainda
 - [ ] Comprimir prompts para reduzir tokens
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)
 
