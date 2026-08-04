@@ -249,4 +249,60 @@ export const parentalControlRouter = router({
       });
       return { success: true };
     }),
+
+  // ── CYBERSECURITY THREAT PROCEDURES ─────────────────────────
+  listCyberThreats: protectedProcedure
+    .input(z.object({ onlyUnresolved: z.boolean().default(false), limit: z.number().default(50) }))
+    .query(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      let queryStr = `SELECT * FROM cybersecurity_threats WHERE user_id = ${ctx.user.id}`;
+      if (input.onlyUnresolved) { queryStr += ` AND is_resolved = FALSE`; }
+      queryStr += ` ORDER BY created_at DESC LIMIT ${input.limit}`;
+      const result = await database.execute(sql.raw(queryStr));
+      return { threats: result[0] || [] };
+    }),
+
+  reportCyberThreat: protectedProcedure
+    .input(z.object({
+      threatType: z.string().default('unknown'),
+      severity: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+      source: z.string().optional(),
+      description: z.string().optional(),
+      recommendedAction: z.string().optional(),
+      deviceInfo: z.string().optional(),
+      ipAddress: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const now = Date.now();
+      await database.execute(sql`INSERT INTO cybersecurity_threats (user_id, threat_type, severity, source, description, recommended_action, device_info, ip_address, created_at, updated_at) VALUES (${ctx.user.id}, ${input.threatType}, ${input.severity}, ${input.source || null}, ${input.description || null}, ${input.recommendedAction || null}, ${input.deviceInfo || null}, ${input.ipAddress || null}, ${now}, ${now})`);
+      return { success: true };
+    }),
+
+  resolveCyberThreat: protectedProcedure
+    .input(z.object({ threatId: z.number(), resolvedAction: z.string().default('resolved_by_user') }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const now = Date.now();
+      await database.execute(sql`UPDATE cybersecurity_threats SET is_resolved = TRUE, resolved_action = ${input.resolvedAction}, resolved_at = ${now}, updated_at = ${now} WHERE id = ${input.threatId} AND user_id = ${ctx.user.id}`);
+      return { success: true };
+    }),
+
+  getSecurityStats: protectedProcedure
+    .query(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const totalResult = await database.execute(sql`SELECT COUNT(*) as count FROM cybersecurity_threats WHERE user_id = ${ctx.user.id}`);
+      const total = (totalResult[0] as any)?.[0]?.count || 0;
+      const unresolvedResult = await database.execute(sql`SELECT COUNT(*) as count FROM cybersecurity_threats WHERE user_id = ${ctx.user.id} AND is_resolved = FALSE`);
+      const unresolved = (unresolvedResult[0] as any)?.[0]?.count || 0;
+      const criticalResult = await database.execute(sql`SELECT COUNT(*) as count FROM cybersecurity_threats WHERE user_id = ${ctx.user.id} AND severity = 'critical'`);
+      const critical = (criticalResult[0] as any)?.[0]?.count || 0;
+      const highResult = await database.execute(sql`SELECT COUNT(*) as count FROM cybersecurity_threats WHERE user_id = ${ctx.user.id} AND severity = 'high'`);
+      const high = (highResult[0] as any)?.[0]?.count || 0;
+      return { totalThreats: total, unresolvedThreats: unresolved, criticalThreats: critical, highThreats: high };
+    }),
 });

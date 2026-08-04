@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2 } from 'lucide-react';
+import CybersecurityAlert from '@/components/CybersecurityAlert';
 
 const DAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const EMOJI_OPTIONS = ['👧', '👦', '🧒', '👶', '🧑', '👨', '👩'];
@@ -640,6 +641,9 @@ function SecurityTab({
               </Button>
             </CardContent>
           </Card>
+
+          {/* Cybersecurity Alert System */}
+          <CybersecurityAlert />
         </>
       )}
     </div>

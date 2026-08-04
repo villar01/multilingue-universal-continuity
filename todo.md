@@ -950,3 +950,14 @@
 ### live-teacher-router.ts
 - [x] Integrar sanitizeContent no live-teacher-router.ts (chat, introduce, feedback, commentObject)
 - [ ] Integrar logInteraction no live-teacher-router.ts (requer protectedProcedure para ctx.user)
+
+## 🔒 SISTEMA DE SEGURANÇA CIBERNÉTICA (Implementado)
+
+- [x] Criar tabela cybersecurity_threats no banco de dados
+- [x] Criar procedimentos tRPC: listCyberThreats, reportCyberThreat, resolveCyberThreat, getSecurityStats
+- [x] Criar componente CybersecurityAlert.tsx (níveis de ameaça, aviso de desligar notebook, detecção em tempo real)
+- [x] Integrar CybersecurityAlert no Painel de Controle Parental (aba Segurança)
+- [x] Criar securityMiddleware.ts (rate limiting, SQL injection, XSS, DDoS, headers de segurança)
+- [x] Criar backupRestore.ts (snapshots de DB, backup automático a cada 6h, restauração)
+- [x] Aviso de ataque cibernético com instrução de desligar notebook
+- [x] Proteção contra infecções nativas e externas (internet)
