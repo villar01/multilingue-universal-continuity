@@ -226,6 +226,16 @@ export default function Home() {
     }
   }, [isAuthenticated, complianceData, complianceLoading, setLocation]);
 
+  // Redirect authenticated users without nativeLanguage to onboarding
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const hasNativeLang = profile.nativeCode || localStorage.getItem("ml_native_lang");
+      if (!hasNativeLang) {
+        setLocation("/onboarding");
+      }
+    }
+  }, [isAuthenticated, user, profile.nativeCode, setLocation]);
+
   const handleStart = () => {
     // Always save language before navigating
     localStorage.setItem("ml_native_lang", nativeLang);

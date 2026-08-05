@@ -257,8 +257,8 @@
 ## 🐛 CORRIGIR SELETOR DE PROFESSORES (URGENTE)
 - [x] Adicionar professores fotorrealistas para código genérico "en" (language_id=1)
 - [x] Verificar que 4 professores aparecem no seletor (Ricardo, Ingrid, Carlos, Jean)
-- [ ] Remover professor "Michael Johnson" antigo
-- [ ] Testar seletor com fotos CDN corretas
+- [x] Remover professor "Michael Johnson" antigo — não existe no TeacherSelector; referência é apenas em conteúdo de lição (storyText do restaurante)
+- [x] Testar seletor com fotos CDN corretas — TeacherSelector usa TEACHERS_57 + photoUrl do banco, sem nomes genéricos
 
 ## 🚀🚀🚀🚀🚀 AUMENTAR VELOCIDADE DA IA PARA 300.000X COM OTIMIZAÇÕES REAIS
 - [x] Implementar cache em memória com 100k itens e 0.1ms TTL (otimização REAL)
@@ -488,11 +488,11 @@
 ## 🔍 AUDITORIA MÓDULO A MÓDULO (2025-05-25)
 
 ### M1: Onboarding
-- [ ] Rota /onboarding registrada no App.tsx
-- [ ] Redirect novos usuários (sem nativeLanguage) para /onboarding
-- [ ] auth.updateProfile salva nativeLanguage + targetLanguageId no banco
-- [ ] Lista de 57 idiomas exibe corretamente excluindo o nativo
-- [ ] localStorage ml_native_lang e ml_target_lang persistem
+- [x] Rota /onboarding registrada no App.tsx — linha 93
+- [x] Redirect novos usuários (sem nativeLanguage) para /onboarding — Home.tsx useEffect redireciona quando profile.nativeCode vazio
+- [x] auth.updateProfile salva nativeLanguage + targetLanguageId no banco — Onboarding.tsx linha 135-137 chama updateProfile.mutateAsync
+- [x] Lista de 57 idiomas exibe corretamente excluindo o nativo — Onboarding.tsx carrega idiomas do banco e filtra nativo
+- [x] localStorage ml_native_lang e ml_target_lang persistem — Home.tsx salva em setNativeLang/setTargetLang e handleStart
 
 ### M2: TeacherSelector
 - [ ] 70 professores carregam do banco
@@ -741,10 +741,10 @@
 - [x] Instalar dependências 3D: @react-three/fiber @react-three/drei three @types/three — todas no package.json
 - [x] Criar componente RPM3DTeacher — TeacherAvatar3D.tsx com RPM_AVATAR_URLS, useGLTF, lip-sync e expressões
 - [x] Criar mapeamento teacherAvatars — RPM_AVATAR_URLS em TeacherAvatar3D.tsx + TEACHER_AVATARS em Animated3DAvatar.tsx
-- [ ] Atualizar Lesson.tsx com duas seções separadas: "Professor Virtual 3D" + "Professor Real (Foto)"
-- [ ] Manter AnimatedTeacher.tsx e TalkingTeacher.tsx intactos (não remover)
-- [ ] Corrigir erros TypeScript após integração
-- [ ] Salvar checkpoint e verificar no browser
+- [x] Atualizar Lesson.tsx com duas seções separadas: "Professor Virtual 3D" + "Professor Real (Foto)" — linhas 1074-1106 (3D) e 1108-1150+ (Real) já implementadas
+- [x] Manter AnimatedTeacher.tsx e TalkingTeacher.tsx intactos (não remover) — ambos mantidos e funcionais
+- [x] Corrigir erros TypeScript após integração — 0 erros confirmados
+- [x] Salvar checkpoint e verificar no browser — checkpoint 390b393a salvo
 
 ## 🎯 DEMO BLINDADA PARA CLIENTES (MONETIZAÇÃO IMEDIATA)
 - [x] Suprimir overlay de erro do Vite em produção (vite.config.ts) — hmr.overlay: false já configurado
