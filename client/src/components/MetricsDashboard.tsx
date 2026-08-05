@@ -1,5 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, TrendingDown, Zap, Clock } from "lucide-react";
+import { Activity, TrendingDown, Zap, Clock, History, Globe } from "lucide-react";
+
+interface OptimizationEntry {
+  date: string;
+  action: string;
+  tokensBefore: number;
+  tokensAfter: number;
+  savingPercent: number;
+}
+
+interface LanguageUsage {
+  language: string;
+  requests: number;
+  tokensSaved: number;
+  percentage: number;
+}
 
 interface MetricsData {
   totalRequests: number;
@@ -9,6 +24,8 @@ interface MetricsData {
   ollamaUsage: number;
   lmstudioUsage: number;
   onlineUsage: number;
+  optimizationHistory: OptimizationEntry[];
+  usageByLanguage: LanguageUsage[];
 }
 
 export function MetricsDashboard() {
@@ -21,6 +38,20 @@ export function MetricsDashboard() {
     ollamaUsage: 45,
     lmstudioUsage: 23,
     onlineUsage: 32,
+    optimizationHistory: [
+      { date: "2026-07-28", action: "Prompt compression enabled", tokensBefore: 1850, tokensAfter: 920, savingPercent: 50.3 },
+      { date: "2026-07-25", action: "Cache TTL extended to 24h", tokensBefore: 2100, tokensAfter: 680, savingPercent: 67.6 },
+      { date: "2026-07-20", action: "System prompt deduplication", tokensBefore: 3200, tokensAfter: 1450, savingPercent: 54.7 },
+      { date: "2026-07-15", action: "Context window pruning (keep last 6)", tokensBefore: 4200, tokensAfter: 1800, savingPercent: 57.1 },
+      { date: "2026-07-10", action: "Offline fallback for Ollama", tokensBefore: 1500, tokensAfter: 0, savingPercent: 100 },
+    ],
+    usageByLanguage: [
+      { language: "English", requests: 487, tokensSaved: 142300, percentage: 39.0 },
+      { language: "Português", requests: 312, tokensSaved: 98700, percentage: 28.8 },
+      { language: "Español", requests: 198, tokensSaved: 54200, percentage: 15.9 },
+      { language: "Français", requests: 150, tokensSaved: 31950, percentage: 9.3 },
+      { language: "Deutsch", requests: 100, tokensSaved: 15000, percentage: 7.0 },
+    ],
   };
 
   return (
@@ -125,6 +156,73 @@ export function MetricsDashboard() {
                 />
               </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Optimization History */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <History className="h-5 w-5" />
+            Histórico de Otimizações
+          </CardTitle>
+          <CardDescription>Ações de redução de tokens aplicadas ao longo do tempo</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {metrics.optimizationHistory.map((entry, i) => (
+              <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/50">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium">{entry.action}</span>
+                  <span className="text-xs text-muted-foreground">{entry.date}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <span className="text-xs text-muted-foreground line-through">{entry.tokensBefore.toLocaleString()}</span>
+                    <span className="mx-1 text-xs text-muted-foreground">→</span>
+                    <span className="text-sm font-semibold text-green-600">{entry.tokensAfter.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <TrendingDown className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-bold text-green-600">−{entry.savingPercent}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Usage by Language */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            Uso por Idioma
+          </CardTitle>
+          <CardDescription>Distribuição de requisições e tokens economizados por idioma</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {metrics.usageByLanguage.map((lang, i) => (
+              <div key={i}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{lang.language}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">{lang.requests} req</span>
+                    <span className="text-xs font-semibold text-green-600">{(lang.tokensSaved / 1000).toFixed(1)}K tokens</span>
+                    <span className="text-sm text-muted-foreground">{lang.percentage}%</span>
+                  </div>
+                </div>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${lang.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

@@ -93,6 +93,8 @@ export function AnimatedTeacher({
   const [error, setError] = useState<string | null>(null);
   const [mouthOpen, setMouthOpen] = useState(0);
   const [lipSyncActive, setLipSyncActive] = useState(false);
+  const [expression, setExpression] = useState<"idle" | "smile" | "thinking">("idle");
+  const [expressionProgress, setExpressionProgress] = useState(0); // 0→1 transition progress
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -135,6 +137,53 @@ export function AnimatedTeacher({
       console.error("[AnimatedTeacher] TTS failed:", err.message);
     },
   });
+
+  // Smooth expression transition: animate from current to target expression
+  const transitionExpression = useCallback((target: "idle" | "smile" | "thinking") => {
+    setExpression(target);
+    setExpressionProgress(0);
+    const startTime = Date.now();
+    const duration = 400; // 400ms smooth transition
+    const tick = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      setExpressionProgress(progress);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, []);
+
+  // Auto-cycle expressions when idle (not speaking)
+  useEffect(() => {
+    if (isPlaying || lipSyncActive || isGenerating) return;
+    const interval = setInterval(() => {
+      // Cycle: idle → smile → idle → thinking → idle
+      setExpression((prev) => {
+        if (prev === "idle") return "smile";
+        if (prev === "smile") return "idle";
+        if (prev === "thinking") return "idle";
+        return "idle";
+      });
+      setExpressionProgress(0);
+      const startTime = Date.now();
+      const duration = 600;
+      const tick = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        setExpressionProgress(progress);
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, 4000); // Change expression every 4s when idle
+    return () => clearInterval(interval);
+  }, [isPlaying, lipSyncActive, isGenerating]);
+
+  // Set expression based on speaking state
+  useEffect(() => {
+    if (isGenerating) transitionExpression("thinking");
+    else if (isPlaying || lipSyncActive) transitionExpression("smile");
+    else transitionExpression("idle");
+  }, [isPlaying, lipSyncActive, isGenerating, transitionExpression]);
 
   // Iniciar lip-sync via AudioContext
   const startLipSync = useCallback((url: string) => {
@@ -313,11 +362,31 @@ export function AnimatedTeacher({
             <svg viewBox="0 0 100 100" className="w-4/5 h-4/5">
               {/* Cabeça */}
               <ellipse cx="50" cy="38" rx="22" ry="26" fill={teacherGender === "female" ? "#f4c2a1" : "#e8b89a"} />
-              {/* Olhos */}
-              <ellipse cx="41" cy="34" rx="3.5" ry="4" fill="white" />
-              <ellipse cx="59" cy="34" rx="3.5" ry="4" fill="white" />
-              <circle cx="42" cy="35" r="2" fill="#2d1b00" />
-              <circle cx="60" cy="35" r="2" fill="#2d1b00" />
+              {/* Olhos — com transição de expressão */}
+              {(() => {
+                // Eye shapes vary by expression
+                const eyeOffset = expression === "smile" ? -0.5 * expressionProgress : expression === "thinking" ? 0.8 * expressionProgress : 0;
+                const eyeRy = expression === "smile" ? 3.5 - 0.8 * expressionProgress : expression === "thinking" ? 3.5 + 0.5 * expressionProgress : 3.5;
+                return (
+                  <>
+                    <ellipse cx="41" cy={34 + eyeOffset} rx="3.5" ry={eyeRy} fill="white" />
+                    <ellipse cx="59" cy={34 + eyeOffset} rx="3.5" ry={eyeRy} fill="white" />
+                    <circle cx="42" cy={35 + eyeOffset} r="2" fill="#2d1b00" />
+                    <circle cx="60" cy={35 + eyeOffset} r="2" fill="#2d1b00" />
+                  </>
+                );
+              })()}
+              {/* Sobrancelhas — expressão */}
+              {(() => {
+                const browY = expression === "thinking" ? 27 - 1.5 * expressionProgress : expression === "smile" ? 28 + 0.5 * expressionProgress : 28;
+                const browRotate = expression === "thinking" ? -5 * expressionProgress : 0;
+                return (
+                  <>
+                    <path d={`M 35 ${browY} Q 41 ${browY - 2} 47 ${browY + 0.5}`} fill="none" stroke={teacherGender === "female" ? "#8b4513" : "#3b1c00"} strokeWidth="1.5" strokeLinecap="round" transform={`rotate(${browRotate} 41 ${browY})`} style={{ transition: "d 0.3s ease, transform 0.3s ease" }} />
+                    <path d={`M 53 ${browY + 0.5} Q 59 ${browY - 2} 65 ${browY}`} fill="none" stroke={teacherGender === "female" ? "#8b4513" : "#3b1c00"} strokeWidth="1.5" strokeLinecap="round" transform={`rotate(${-browRotate} 59 ${browY})`} style={{ transition: "d 0.3s ease, transform 0.3s ease" }} />
+                  </>
+                );
+              })()}
               {/* Nariz */}
               <ellipse cx="50" cy="42" rx="2" ry="1.5" fill="#c9956f" />
               {/* Boca — visemas SVG reais */}
@@ -329,6 +398,13 @@ export function AnimatedTeacher({
               <path d={viseme.lower} fill="none" stroke={lipColor} strokeWidth="1.4" strokeLinecap="round" style={{ transition: 'd 0.04s ease' }} />
               {/* Corpo */}
               <rect x="28" y="66" width="44" height="34" rx="8" fill={teacherGender === "female" ? "#6366f1" : "#1e40af"} />
+              {/* Bochechas — aparecem ao sorrir */}
+              {expression === "smile" && expressionProgress > 0.1 && (
+                <>
+                  <ellipse cx="35" cy="44" rx="3" ry="2" fill="#ff9999" opacity={0.3 * expressionProgress} style={{ transition: "opacity 0.3s ease" }} />
+                  <ellipse cx="65" cy="44" rx="3" ry="2" fill="#ff9999" opacity={0.3 * expressionProgress} style={{ transition: "opacity 0.3s ease" }} />
+                </>
+              )}
             </svg>
           </div>
         )}

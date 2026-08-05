@@ -11,6 +11,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
+import { useStreamingText } from "@/hooks/useStreamingText";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -181,6 +182,21 @@ function BlockedNotice({
         </div>
       )}
     </div>
+  );
+}
+
+// ─── Streaming Teacher Message ─────────────────────────────────────────────────
+
+function StreamingTeacherMessage({ content, isLast }: { content: string; isLast: boolean }) {
+  const { displayed, isStreaming } = useStreamingText(isLast ? content : "", 35);
+  if (!isLast) {
+    return <>{content}</>;
+  }
+  return (
+    <>
+      {displayed}
+      {isStreaming && <span className="inline-block w-1 h-3.5 bg-gray-400 ml-0.5 animate-pulse rounded-sm" />}
+    </>
   );
 }
 
@@ -498,7 +514,14 @@ export default function LiveLessonTeacher({
                               : "bg-blue-600 text-white rounded-tr-sm"
                           }`}
                         >
-                          {msg.content}
+                          {msg.role === "teacher" ? (
+                            <StreamingTeacherMessage
+                              content={msg.content}
+                              isLast={msg.id === messages[messages.length - 1]?.id && msg.role === "teacher"}
+                            />
+                          ) : (
+                            msg.content
+                          )}
                         </div>
                       )}
                       <span className="text-xs text-gray-400">

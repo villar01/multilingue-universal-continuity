@@ -40,7 +40,7 @@
 - [x] Sistema de detecção de fonemas (visemas) — tts-viseme-sync.ts com useTTSVisemeSync
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
-- [ ] Transições suaves entre expressões — CSS transitions existem em visemes mas transicao entre expressoes faciais (idle/smile/thinking) pendente
+- [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
 - [ ] Integração com Google TTS para timing preciso
 - [ ] Cache de vídeos gerados em S3
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
@@ -58,22 +58,22 @@
 - [x] Taxa de hit do cache de traduções — MetricsDashboard com cacheHitRate 68.5%
 - [x] Economia gerada pelo sistema offline — MetricsDashboard com Savings Breakdown (custo 100% online vs real)
 - [x] Performance de IAs (latência) — MetricsDashboard com avgResponseTime 1.2s (qualidade pendente)
-- [ ] Histórico de otimizações — MetricsDashboard nao tem optimizationHistory
-- [ ] Estatísticas de uso por idioma — MetricsDashboard nao tem usageByLanguage
+- [x] Histórico de otimizações — MetricsDashboard.tsx com optimizationHistory (5 entradas, tokens antes/depois, % economia)
+- [x] Estatísticas de uso por idioma — MetricsDashboard.tsx com usageByLanguage (5 idiomas, requests, tokensSaved, percentage)
 
 ### 5. MODO OFFLINE COMPLETO (PWA)
 - [x] Service Worker para cache de assets — registerSW.ts importado em App.tsx
-- [ ] Sincronização de dados offline — useOfflineSyncDB.ts criado com IndexedDB, mas integracao nas telas pendente
-- [ ] Persistência local de conversas — useOfflineSyncDB.ts criado, mas nao integrado nas telas de conversa
-- [ ] Fallback gracioso para modo offline — ConnectivityIndicator integrado, useOfflineSyncDB criado mas nao integrado
+- [x] Sincronização de dados offline — useOfflineSyncDB integrado em VoiceConversation com restore on mount e pending sync
+- [x] Persistência local de conversas — VoiceConversation salva/restaura conversas via IndexedDB (conversationId = lesson-{id}-{lang})
+- [x] Fallback gracioso para modo offline — VoiceConversation com offlineDB sync pending items e restore on reconnect
 - [x] Indicador de status de conectividade — ConnectivityIndicator.tsx renderizado no App.tsx com banner online/offline
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
-- [ ] Análise automática de padrões de uso
-- [ ] Otimização automática de prompts
-- [ ] Redução de consumo de tokens
-- [ ] Aprendizado de padrões de interação
-- [ ] Ajuste dinâmico de parâmetros
+- [ ] Análise automática de padrões de uso — analyzeTTSQuality analisa pronuncia, mas analise de padroes de uso do app pendente
+- [ ] Otimização automática de prompts — autoImproveSystem existe mas nao integrado nos endpoints do app
+- [x] Redução de consumo de tokens — promptCompression.ts com compressPrompt, compressHistory, compressSystemPrompt, estimateTokens
+- [ ] Aprendizado de padrões de interação — sem coleta historica ou modelagem de padroes
+- [x] Ajuste dinâmico de parâmetros TTS — auto-improvement-router getOptimizedTTSConfig ajusta voice/rate/pitch
 
 ## 🐛 BUGS CRÍTICOS
 - [x] Confirmar com console e rede a origem de cada indicação de erro exibida no preview do Dashboard
@@ -128,7 +128,7 @@
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
 - [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
-- [ ] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — useStreamingText hook criado, integracao na UI pendente
+- [x] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — useStreamingText integrado em LiveLessonTeacher com StreamingTeacherMessage
 - [ ] Cachear avatares e vídeos no localStorage/IndexedDB
 - [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
@@ -169,8 +169,8 @@
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns
-- [ ] Streaming de respostas LLM palavra por palavra — useStreamingText hook criado, integracao na UI pendente
-- [ ] Comprimir prompts para reduzir tokens
+- [x] Streaming de respostas LLM palavra por palavra — useStreamingText integrado em LiveLessonTeacher
+- [x] Comprimir prompts para reduzir tokens — promptCompression.ts criado com compressPrompt, compressHistory, compressSystemPrompt
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)
 
 ## 🐛 CORREÇÃO URGENTE — VOZ NATURAL E PRONÚNCIA

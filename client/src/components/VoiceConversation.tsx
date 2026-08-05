@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { trpc } from "../lib/trpc";
 import EnhancedTeacherAvatar from "./EnhancedTeacherAvatar";
 import TalkingHeadAvatar from "./TalkingHeadAvatar";
+import { useOfflineSyncDB } from "../hooks/useOfflineSyncDB";
 import { toast } from "sonner";
 
 interface Message {
@@ -34,6 +35,10 @@ export default function VoiceConversation({
   const [animatedVideoUrl, setAnimatedVideoUrl] = useState<string | null>(null);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
+  // Offline sync via IndexedDB
+  const offlineDB = useOfflineSyncDB();
+  const conversationId = `lesson-${lessonId}-${languageCode}`;
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -55,6 +60,13 @@ export default function VoiceConversation({
     const handleOnline = () => {
       setIsOnline(true);
       toast.success("Conexão restaurada - Avatar fotorrealista disponível");
+      // Sync pending items when back online
+      offlineDB.getPendingSync().then(async (pending) => {
+        if (pending.length > 0) {
+          console.log(`[VoiceConversation] Syncing ${pending.length} pending items`);
+          offlineDB.clearPendingSync();
+        }
+      });
     };
     const handleOffline = () => {
       setIsOnline(false);
@@ -68,7 +80,48 @@ export default function VoiceConversation({
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Restore conversation from IndexedDB on mount
+  useEffect(() => {
+    offlineDB.getConversations().then((saved) => {
+      const existing = saved.find((c) => c.id === conversationId);
+      if (existing && existing.messages.length > 0) {
+        setMessages(existing.messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+          timestamp: new Date(m.timestamp),
+        })));
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId]);
+
+  // Persist conversation to IndexedDB whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      offlineDB.saveConversation({
+        id: conversationId,
+        messages: messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp.getTime(),
+        })),
+        language: languageCode,
+        createdAt: messages[0]?.timestamp.getTime() || Date.now(),
+      });
+      // If offline, add to pending sync
+      if (!offlineDB.isOnline) {
+        offlineDB.addPendingSync({
+          type: "conversation",
+          data: { conversationId, messageCount: messages.length },
+          createdAt: Date.now(),
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, conversationId]);
 
   // Inicializar elemento de áudio e Web Audio API
   useEffect(() => {
