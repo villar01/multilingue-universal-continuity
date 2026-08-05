@@ -21,6 +21,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { ClickableText } from "@/components/ClickableWord";
 import VocabularySection from "@/components/VocabularySection";
+import LessonDictionary from "@/components/LessonDictionary";
 import AIChatbot from "@/components/AIChatbot";
 import TeacherSelector from "@/components/TeacherSelector";
 import { TalkingTeacher } from "@/components/TalkingTeacher";
@@ -963,6 +964,14 @@ export default function Lesson() {
             {/* Vocabulary Section - Glossário Bilíngue */}
             {lesson.vocabularyDetailed && lesson.vocabularyDetailed.length > 0 && (
               <div className="mb-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <LessonDictionary
+                    vocabulary={lesson.vocabularyDetailed}
+                    lessonNumber={lesson.orderIndex || 1}
+                    nativeLanguage="pt-BR"
+                    targetLanguage="en-US"
+                  />
+                </div>
                 <VocabularySection
                   vocabulary={lesson.vocabularyDetailed}
                   nativeLanguage="pt-BR"

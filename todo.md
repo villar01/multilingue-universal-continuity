@@ -483,7 +483,7 @@
 - [ ] Monetização Stripe: planos Freemium/Pro/Premium com paywall nas cenas premium
 - [ ] Quiz interativo nas cenas: múltipla escolha com hotspots, salvar pontuação no banco
 - [x] Melhorar cards das cenas com imagens HD - 27 imagens regeneradas com IA
-- [ ] Ícones atraentes para hotspots das cenas (substituir emojis genéricos)
+- [ ] Ícones atraentes para hotspots das cenas (substituir emojis genéricos) — hotspots ainda usam emojis
 
 ## 🔍 AUDITORIA MÓDULO A MÓDULO (2025-05-25)
 
@@ -508,13 +508,13 @@
 - [ ] Todas as 6 cenas carregam sem erro
 
 ### M4: DashboardReal
-- [ ] Paywall lição 6+ (5 grátis)
+- [ ] Paywall lição 6+ (5 grátis) — Dashboard.tsx tem isPremium check mas enforcement em rotas diretas pendente
 - [x] Query getByCourse funciona com targetLanguageId
 - [ ] Texto "5 lições gratuitas" correto
 
 ### M5: ARMode/CameraTranslator
-- [ ] CameraTranslator abre câmera e detecta objetos
-- [ ] Vocabulário SRS real carrega
+- [ ] CameraTranslator abre câmera e detecta objetos — CameraTranslator.tsx existe mas precisa validar abertura de câmera e detecção
+- [ ] Vocabulário SRS real carrega — lib/srs.ts existe mas integração na UI/data flow pendente
 - [ ] Banner Premium 7 dias aparece
 
 ### M6: Voz Natural
@@ -528,10 +528,10 @@
 - [ ] Checkpoint final
 
 ## 📚 SISTEMA DE APRENDIZADO PROGRESSIVO + DICIONÁRIO INTEGRADO
-- [ ] Criar lib/lesson-levels.ts com estrutura A1→C2 e perguntas/respostas por nível
-- [ ] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula)
+- [x] Criar lib/lesson-levels.ts com estrutura A1→C2 e perguntas/respostas por nível — lesson-levels.ts com 6 níveis CEFR, QuestionType, LevelConfig
+- [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
 - [ ] Integrar dificuldade gradativa no Lesson.tsx (começa simples, aumenta progressivamente)
-- [ ] Integrar dicionário nas cenas ImmersiveScene com ícone de livro
+- [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
 - [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
@@ -597,8 +597,8 @@
 ## 🔴 CORREÇÕES CRÍTICAS (Jun 2026)
 - [x] Corrigir precos: R$59,90/mes, R$549,90/ano, R$998,90 vitalicio — Pricing.tsx e SubscriptionPlans.tsx corretos, PricingAssistencial.tsx tem valores diferentes (R$590/ano)
 - [x] Remover texto "Precos em USD" — app e 100% BRL — Pricing.tsx usa BRL com comentario "Pagamento em BRL via PIX"
-- [ ] Corrigir country-compliance.ts: priorizar leis brasileiras (LGPD, Lei Rouanet, ECA, Marco Civil)
-- [ ] Corrigir TermsOfUse.tsx: substituir leis americanas por brasileiras
+- [x] Corrigir country-compliance.ts: priorizar leis brasileiras (LGPD, Lei Rouanet, ECA, Marco Civil) — BRAZILIAN_LAW_PRIORITY adicionado, referências americanas substituídas por brasileiras
+- [x] Corrigir TermsOfUse.tsx: substituir leis americanas por brasileiras — 18 U.S.C. removido, CFAA substituído por Marco Civil + Código Penal, COPPA removido
 - [ ] Criar tabelas app_updates e app_updates_read no banco (schema faltando)
 - [ ] Criar tabela app_telemetry no schema (usada no servidor mas não no schema)
 - [ ] Corrigir 130+ erros de runtime identificados
@@ -674,7 +674,7 @@
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API
 - [x] Hook useTTS com fallback — useNaturalVoice.ts com EdgeTTS + Web Speech API fallback
-- [ ] ImmersiveScene: auto-selecionar cena pelo idioma do perfil (sem mostrar francês)
+- [x] ImmersiveScene: auto-selecionar cena pelo idioma do perfil (sem mostrar francês) — useEffect no mount busca cena com langCode === targetLang.split('-')[0], sceneInitialized ref previne override
 - [x] Todas as telas: exibir PT-BR (nativo) + idioma pretendido em paralelo — ImmersiveScene mostra label (idioma-alvo) + translation (PT-BR) + example + examplePt
 - [x] Pronúncia figurativa em português em todos os hotspots (sem IPA) — 181 hotspots com pronunciation field (ex: tur-e-FEL, ka-FÉ, RÜ)
 

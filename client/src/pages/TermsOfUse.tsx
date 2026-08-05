@@ -378,7 +378,7 @@ export default function TermsOfUse() {
               </ClauseSection>
               <ClauseSection icon={<Shield className="h-5 w-5 text-orange-400" />} title="2. Tolerância ZERO — Proteção de Menores" color="border-orange-500/30">
                 <p>É <strong className="text-orange-300">absolutamente proibido</strong> qualquer conteúdo ou comportamento que envolva pedofilia, pornografia infantil, abuso ou exploração de menores de idade. Violações serão reportadas imediatamente às autoridades competentes (Ministério Público, Polícia Federal, Interpol) e o usuário será banido permanentemente.</p>
-                <p className="mt-2 text-orange-300 text-xs font-medium">Base legal: ECA Art. 241 (Brasil) · 18 U.S.C. § 2256 (EUA) · Convenção ONU sobre Direitos da Criança</p>
+                <p className="mt-2 text-orange-300 text-xs font-medium">Base legal: ECA Art. 241 (Lei 8.069/90 — Brasil) · Convenção ONU sobre Direitos da Criança · Diretiva 2011/93/EU (Europa)</p>
               </ClauseSection>
               <ClauseSection icon={<Globe className="h-5 w-5 text-green-400" />} title="3. Proibição de Discriminação" color="border-green-500/30">
                 <p>São proibidas quaisquer formas de discriminação: racial, religiosa, de gênero, por orientação sexual, por deficiência, por nacionalidade ou por qualquer outra característica. O descumprimento resulta em banimento imediato e permanente da plataforma.</p>
@@ -388,7 +388,7 @@ export default function TermsOfUse() {
                 <p>São proibidos: discurso de ódio, apologia à violência, terrorismo, conteúdo sexual explícito, assédio e qualquer forma de abuso. A plataforma utiliza IA de monitoramento contínuo para detectar e bloquear automaticamente esses conteúdos.</p>
               </ClauseSection>
               <ClauseSection icon={<Lock className="h-5 w-5 text-blue-400" />} title="5. Conformidade Legal por País" color="border-blue-500/30">
-                <p>O usuário compromete-se a respeitar as leis do seu país de residência. A plataforma opera em conformidade com as legislações dos 57 países atendidos, incluindo LGPD (Brasil), GDPR (Europa), COPPA (EUA) e demais normas aplicáveis.</p>
+                <p>O usuário compromete-se a respeitar as leis do seu país de residência. A plataforma opera primariamente sob jurisdição brasileira, em conformidade com a LGPD (Lei 13.709/18), o Marco Civil da Internet (Lei 12.965/14) e o ECA (Lei 8.069/90). Referências internacionais como GDPR (Europa) são complementares.</p>
               </ClauseSection>
               <ClauseSection icon={<Users className="h-5 w-5 text-purple-400" />} title="6. Proteção de Dados e Privacidade" color="border-purple-500/30">
                 <p>Os dados do usuário são protegidos conforme a LGPD (Lei 13.709/18 — Brasil) e GDPR (Regulamento 2016/679 — Europa). Dados de menores de idade têm proteção adicional e requerem consentimento parental expresso.</p>
@@ -397,14 +397,14 @@ export default function TermsOfUse() {
                 <p>Todo o conteúdo da plataforma (aulas, áudios, imagens, professores virtuais) é protegido por direitos autorais. É proibida a reprodução, distribuição ou uso comercial sem autorização expressa.</p>
               </ClauseSection>
               <ClauseSection icon={<AlertTriangle className="h-5 w-5 text-red-300" />} title="8. Segurança da Plataforma" color="border-red-400/30">
-                <p>É proibido tentar burlar sistemas de pagamento, realizar scraping de conteúdo ou executar ataques cibernéticos. Violações serão processadas conforme a <strong className="text-red-300">Lei 12.737/12 (Lei Carolina Dieckmann)</strong> e CFAA (EUA).</p>
+                <p>É proibido tentar burlar sistemas de pagamento, realizar scraping de conteúdo ou executar ataques cibernéticos. Violações serão processadas conforme a <strong className="text-red-300">Lei 12.737/12 (Lei Carolina Dieckmann)</strong>, o <strong className="text-red-300">Marco Civil da Internet (Lei 12.965/14 — Art. 7)</strong> e o <strong className="text-red-300">Código Penal Brasileiro (Decreto-Lei 2.848/40)</strong>.</p>
               </ClauseSection>
               <ClauseSection icon={<Heart className="h-5 w-5 text-emerald-400" />} title="9. Programa Social — Incentivos Fiscais Federais Brasileiros" color="border-emerald-500/30">
                 <p>A MultiLingue Universal participa do ecossistema de incentivos fiscais federais do Governo Brasileiro, oferecendo descontos de até <strong className="text-emerald-300">80%</strong> para entidades qualificadas (Lei Rouanet, PRONAS/PCD, PRONON, CEBAS, OSCIP, FNDE).</p>
               </ClauseSection>
               <ClauseSection icon={<Lock className="h-5 w-5 text-violet-400" />} title="10. Marco Civil da Internet e LGPD Reforçada" color="border-violet-500/30">
                 <p>A plataforma opera em estrita conformidade com o <strong className="text-violet-300">Marco Civil da Internet (Lei 12.965/14)</strong> e a <strong className="text-violet-300">LGPD (Lei 13.709/18)</strong>. O usuário tem direito a acesso, correção, exclusão e portabilidade de seus dados a qualquer momento.</p>
-                <p className="mt-2 text-xs text-violet-300">Legislação adicional: GDPR (Europa) · COPPA (EUA) · PIPEDA (Canadá) · PDPA (Tailândia) · POPIA (África do Sul)</p>
+                <p className="mt-2 text-xs text-violet-300">Legislação complementar: GDPR (Europa) · PIPEDA (Canadá) · PDPA (Tailândia) · POPIA (África do Sul)</p>
               </ClauseSection>
             </div>
 

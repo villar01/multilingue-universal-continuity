@@ -65,7 +65,7 @@ export const UNIVERSAL_RULES: Record<string, ComplianceRule> = {
     type: 'PEDOPHILIA',
     severity: 'CRITICAL',
     description: 'Conteúdo sexual envolvendo menores de idade',
-    legalReference: 'Convenção da ONU sobre os Direitos da Criança (1989) — Art. 34; Lei 8.069/90 ECA (Brasil); 18 U.S.C. § 2256 (EUA); Diretiva 2011/93/EU (Europa)',
+    legalReference: 'Lei 8.069/90 ECA (Brasil) — Art. 241; Convenção da ONU sobre os Direitos da Criança (1989) — Art. 34; Diretiva 2011/93/EU (Europa)',
     immediateAction: 'BAN_USER',
     adminTips: [
       '🚨 AÇÃO IMEDIATA: Banir usuário permanentemente e preservar todos os logs',
@@ -81,7 +81,7 @@ export const UNIVERSAL_RULES: Record<string, ComplianceRule> = {
     type: 'CHILD_ABUSE',
     severity: 'CRITICAL',
     description: 'Abuso, exploração ou negligência infantil',
-    legalReference: 'ECA Art. 5° (Brasil); Child Abuse Prevention Act (EUA); Convenção de Lanzarote (Europa)',
+    legalReference: 'Lei 8.069/90 ECA (Brasil) — Art. 5°; Convenção de Lanzarote (Europa); Convenção da ONU sobre os Direitos da Criança',
     immediateAction: 'BAN_USER',
     adminTips: [
       '🚨 AÇÃO IMEDIATA: Banir e preservar evidências',
@@ -164,7 +164,7 @@ export const UNIVERSAL_RULES: Record<string, ComplianceRule> = {
     type: 'SEXUAL_EXPLICIT',
     severity: 'HIGH',
     description: 'Conteúdo sexual explícito em plataforma educacional',
-    legalReference: 'ECA Art. 241 (Brasil); COPPA (EUA — menores); Regulamento GDPR Art. 8° (Europa)',
+    legalReference: 'Lei 8.069/90 ECA (Brasil) — Art. 241; LGPD (Lei 13.709/18) — Art. 14; Marco Civil da Internet (Lei 12.965/14) — Art. 7',
     immediateAction: 'BAN_USER',
     adminTips: [
       '⚠️ Remover conteúdo e banir usuário',
@@ -545,6 +545,32 @@ export interface SecurityAlert {
   requiresImmediateAction: boolean;
   monetizationRisk: boolean;
 }
+
+/**
+ * Prioridade Legal Brasileira
+ * A plataforma opera primariamente sob jurisdição brasileira. Leis brasileiras
+ * (LGPD, ECA, Marco Civil, Lei Rouanet) têm prioridade sobre referências internacionais.
+ * Referências a leis americanas (18 U.S.C., COPPA, DMCA) são mantidas apenas como
+ * informação complementar, nunca como base legal principal.
+ */
+export const BRAZILIAN_LAW_PRIORITY = {
+  primaryJurisdiction: 'Brasil',
+  primaryLaws: [
+    { code: 'LGPD', full: 'Lei 13.709/18', description: 'Lei Geral de Proteção de Dados' },
+    { code: 'ECA', full: 'Lei 8.069/90', description: 'Estatuto da Criança e do Adolescente' },
+    { code: 'MARCO_CIVIL', full: 'Lei 12.965/14', description: 'Marco Civil da Internet' },
+    { code: 'LEI_ROUANET', full: 'Lei 8.313/91', description: 'Lei de Incentivo à Cultura' },
+    { code: 'CODIGO_CIVIL', full: 'Lei 10.406/02', description: 'Código Civil Brasileiro' },
+    { code: 'CODIGO_PENAL', full: 'Decreto-Lei 2.848/40', description: 'Código Penal' },
+  ],
+  // Leis internacionais usadas apenas como referência complementar
+  secondaryLaws: [
+    { code: 'GDPR', jurisdiction: 'Europa', description: 'Regulamento 2016/679' },
+    { code: 'COPPA', jurisdiction: 'EUA', description: 'Children\'s Online Privacy Protection Act' },
+    { code: 'CONVENCAO_ONU', jurisdiction: 'Internacional', description: 'Convenção sobre Direitos da Criança' },
+  ],
+  note: 'Em caso de conflito entre leis brasileiras e internacionais, prevalece a legislação brasileira. As referências a leis americanas e europeias são meramente informativas.',
+} as const;
 
 /** Detecta padrões de bypass de paywall */
 export function detectPaywallBypass(requestCount: number, timeWindowMs: number, isPremiumEndpoint: boolean, isAuthenticated: boolean): boolean {
