@@ -58,12 +58,12 @@
 - [x] Taxa de hit do cache de traduções — MetricsDashboard com cacheHitRate 68.5%
 - [x] Economia gerada pelo sistema offline — MetricsDashboard com Savings Breakdown (custo 100% online vs real)
 - [x] Performance de IAs (latência) — MetricsDashboard com avgResponseTime 1.2s (qualidade pendente)
-- [x] Histórico de otimizações — MetricsDashboard.tsx com optimizationHistory (5 entradas, tokens antes/depois, % economia)
-- [x] Estatísticas de uso por idioma — MetricsDashboard.tsx com usageByLanguage (5 idiomas, requests, tokensSaved, percentage)
+- [x] Histórico de otimizações — MetricsDashboard.tsx com dados reais via trpc.system.getAiMetrics (optimizationHistory do DB)
+- [x] Estatísticas de uso por idioma — MetricsDashboard.tsx com usageByLanguage via trpc.system.getAiMetrics
 
 ### 5. MODO OFFLINE COMPLETO (PWA)
 - [x] Service Worker para cache de assets — registerSW.ts importado em App.tsx
-- [x] Sincronização de dados offline — useOfflineSyncDB integrado em VoiceConversation com restore on mount e pending sync
+- [x] Sincronização de dados offline — VoiceConversation com replay real via bilingualConversation.continue ao reconectar
 - [x] Persistência local de conversas — VoiceConversation salva/restaura conversas via IndexedDB (conversationId = lesson-{id}-{lang})
 - [x] Fallback gracioso para modo offline — VoiceConversation com offlineDB sync pending items e restore on reconnect
 - [x] Indicador de status de conectividade — ConnectivityIndicator.tsx renderizado no App.tsx com banner online/offline
@@ -71,7 +71,7 @@
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
 - [ ] Análise automática de padrões de uso — analyzeTTSQuality analisa pronuncia, mas analise de padroes de uso do app pendente
 - [ ] Otimização automática de prompts — autoImproveSystem existe mas nao integrado nos endpoints do app
-- [x] Redução de consumo de tokens — promptCompression.ts com compressPrompt, compressHistory, compressSystemPrompt, estimateTokens
+- [x] Redução de consumo de tokens — promptCompression.ts (client+server) integrado em aiProvider.ts, tokensSaved rastreado em metrics
 - [ ] Aprendizado de padrões de interação — sem coleta historica ou modelagem de padroes
 - [x] Ajuste dinâmico de parâmetros TTS — auto-improvement-router getOptimizedTTSConfig ajusta voice/rate/pitch
 
@@ -170,7 +170,7 @@
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns
 - [x] Streaming de respostas LLM palavra por palavra — useStreamingText integrado em LiveLessonTeacher
-- [x] Comprimir prompts para reduzir tokens — promptCompression.ts criado com compressPrompt, compressHistory, compressSystemPrompt
+- [x] Comprimir prompts para reduzir tokens — promptCompression.ts (client+server) integrado em aiProvider.ts generateAI
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)
 
 ## 🐛 CORREÇÃO URGENTE — VOZ NATURAL E PRONÚNCIA

@@ -333,10 +333,40 @@ export function AnimatedTeacher({
               src={resolvedImageUrl}
               alt={resolvedName}
               className="w-full h-full object-cover"
+              style={{
+                filter: expression === "smile"
+                  ? `brightness(${1 + 0.08 * expressionProgress}) saturate(${1 + 0.1 * expressionProgress})`
+                  : expression === "thinking"
+                  ? `brightness(${1 - 0.05 * expressionProgress}) contrast(${1 + 0.05 * expressionProgress})`
+                  : "brightness(1) saturate(1)",
+                transition: "filter 0.4s ease",
+              }}
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
               }}
             />
+            {/* Expression overlay: cheek blush when smiling */}
+            {expression === "smile" && expressionProgress > 0.1 && (
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `radial-gradient(ellipse 30% 20% at 30% 60%, rgba(255,150,150,${0.15 * expressionProgress}), transparent), radial-gradient(ellipse 30% 20% at 70% 60%, rgba(255,150,150,${0.15 * expressionProgress}), transparent)`,
+                  transition: "opacity 0.3s ease",
+                  zIndex: 5,
+                }}
+              />
+            )}
+            {/* Expression overlay: thinking dimming at edges */}
+            {expression === "thinking" && expressionProgress > 0.1 && (
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `radial-gradient(ellipse 60% 50% at 50% 40%, transparent, rgba(0,0,0,${0.15 * expressionProgress}))`,
+                  transition: "opacity 0.3s ease",
+                  zIndex: 5,
+                }}
+              />
+            )}
             
             {/* Overlay de visema SVG sobre a foto (lip-sync real) */}
             {lipSyncActive && (

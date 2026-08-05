@@ -3,6 +3,7 @@ import { generateWithLMStudio, isLMStudioAvailable } from "./lmstudio";
 import { getDb } from "./db";
 import { metrics } from "../drizzle/schema";
 import crypto from "crypto";
+import { compressAIMessages, estimateTokens } from "./promptCompression";
 
 export type AIProvider = "ollama" | "lmstudio";
 
@@ -172,7 +173,13 @@ async function logMetrics(
 export async function generateAI(options: AIGenerateOptions): Promise<AIGenerateResult> {
   const startTime = Date.now();
 
-  // Check cache first
+  // Compress prompts to reduce token usage
+  const { messages: compressedMessages, totalTokensSaved: compressionTokensSaved } =
+    compressAIMessages(options.messages);
+  const originalMessages = options.messages;
+  options.messages = compressedMessages as AIMessage[];
+
+  // Check cache first (using compressed messages for better cache hit rate)
   if (options.useCache !== false) {
     const cacheKey = generateCacheKey(options.messages);
     const cachedResponse = await checkCache(cacheKey);
@@ -196,7 +203,7 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
       return {
         content: cachedResponse,
         tokensUsed: 0,
-        tokensSaved: estimatedTokens,
+        tokensSaved: estimatedTokens + compressionTokensSaved,
         responseTime,
         provider: "ollama",
         cacheHit: true,
@@ -291,13 +298,13 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
         await saveToCache(cacheKey, prompt, result.content, result.tokensUsed, provider);
       }
 
-      // Log metrics
+      // Log metrics (include compression savings)
       await logMetrics(
         options.userId,
         "ai_request",
         provider,
         result.tokensUsed,
-        0,
+        compressionTokensSaved,
         result.responseTime,
         false
       );
@@ -305,7 +312,7 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
       return {
         content: result.content,
         tokensUsed: result.tokensUsed,
-        tokensSaved: 0,
+        tokensSaved: compressionTokensSaved,
         responseTime: result.responseTime,
         provider,
         cacheHit: false,

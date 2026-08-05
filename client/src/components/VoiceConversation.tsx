@@ -60,10 +60,53 @@ export default function VoiceConversation({
     const handleOnline = () => {
       setIsOnline(true);
       toast.success("Conexão restaurada - Avatar fotorrealista disponível");
-      // Sync pending items when back online
+      // Replay pending conversation turns when back online
       offlineDB.getPendingSync().then(async (pending) => {
         if (pending.length > 0) {
-          console.log(`[VoiceConversation] Syncing ${pending.length} pending items`);
+          console.log(`[VoiceConversation] Replaying ${pending.length} pending items`);
+          for (const item of pending) {
+            if (item.type === "conversation" && item.data) {
+              const data = item.data as { conversationId: string; messageCount: number };
+              // Find the saved conversation in IndexedDB
+              const saved = await offlineDB.getConversations();
+              const conv = saved.find((c) => c.id === data.conversationId);
+              if (conv && conv.messages.length > 0) {
+                // Replay the last user message through the online AI for a better response
+                const lastUserMsg = [...conv.messages].reverse().find((m) => m.role === "user");
+                if (lastUserMsg) {
+                  try {
+                    const history = conv.messages.slice(0, -1).map((m) => ({
+                      role: m.role,
+                      content: m.content,
+                    }));
+                    const replayed = await continueConversation.mutateAsync({
+                      lessonId,
+                      history,
+                      targetLanguage: languageCode,
+                      nativeLanguage: "pt-BR",
+                      userLevel: "beginner",
+                    });
+                    // Update the last assistant message with the improved online response
+                    const updatedMessages = conv.messages.slice(0, -1);
+                    updatedMessages.push({
+                      role: "assistant",
+                      content: replayed.response,
+                      timestamp: Date.now(),
+                    });
+                    setMessages(updatedMessages.map((m) => ({
+                      role: m.role as "user" | "assistant",
+                      content: m.content,
+                      timestamp: new Date(m.timestamp),
+                    })));
+                    toast.success("Conversa sincronizada com IA online");
+                  } catch (err) {
+                    console.error("[VoiceConversation] Replay failed:", err);
+                    toast.warning("Sincronização parcial - algumas respostas podem estar limitadas");
+                  }
+                }
+              }
+            }
+          }
           offlineDB.clearPendingSync();
         }
       });
