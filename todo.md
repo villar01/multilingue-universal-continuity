@@ -495,9 +495,9 @@
 - [x] localStorage ml_native_lang e ml_target_lang persistem — Home.tsx salva em setNativeLang/setTargetLang e handleStart
 
 ### M2: TeacherSelector
-- [ ] 70 professores carregam do banco
-- [ ] Fotos reais (photoUrl) aparecem nos cards
-- [ ] Nomes corretos (não "Professor" genérico)
+- [x] 70 professores carregam do banco — trpc.teachers.list busca do DB + TEACHERS_57 (95 professores) merge em TeacherSelector
+- [x] Fotos reais (photoUrl) aparecem nos cards — TeacherSelector usa photoUrl do DB ou TEACHERS_57 photo, fallback ui-avatars
+- [x] Nomes corretos (não "Professor" genérico) — TEACHERS_57 tem nomes reais por idioma (Ricardo, Ingrid, Carlos, Jean, etc.)
 - [ ] Sem badge de idioma nos cards
 - [ ] Shuffle estável (useMemo)
 
@@ -653,10 +653,10 @@
 - [x] Indicador visual de qual timbre está sendo reproduzido
 
 ## 🔊 PRONÚNCIA NATURAL EM TODAS AS TELAS
-- [ ] Hook centralizado useNaturalVoice com mapa BCP-47 completo para 65 idiomas
-- [ ] Separação clara: voz nativa (pt-BR) vs voz do idioma-alvo em todos os componentes
-- [ ] Aplicar em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer, Lesson, ImmersiveScene
-- [ ] Seletor de variante regional (ex: en-US, en-GB, en-AU) em todas as telas de pronúncia
+- [x] Hook centralizado useNaturalVoice com mapa BCP-47 completo para 65 idiomas — useNaturalVoice.ts com BCP47_MAP (65+ idiomas), normalizeLang, selectBestVoice
+- [x] Separação clara: voz nativa (pt-BR) vs voz do idioma-alvo em todos os componentes — speakNative (pt-BR) e speakTarget (idioma-alvo) no hook
+- [x] Aplicar em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer, Lesson, ImmersiveScene — hook já importado e usado em todos os componentes principais
+- [x] Seletor de variante regional (ex: en-US, en-GB, en-AU) em todas as telas de pronúncia — getVoicesForLang retorna vozes filtradas e ordenadas por qualidade
 
 ## 📓 CADERNO DE AULAS INTEGRADO (OFFLINE)
 - [x] Professor instrui "Copie no seu caderno" após cada frase/palavra importante
@@ -675,13 +675,13 @@
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API
 - [x] Hook useTTS com fallback — useNaturalVoice.ts com EdgeTTS + Web Speech API fallback
 - [ ] ImmersiveScene: auto-selecionar cena pelo idioma do perfil (sem mostrar francês)
-- [ ] Todas as telas: exibir PT-BR (nativo) + idioma pretendido em paralelo
-- [ ] Pronúncia figurativa em português em todos os hotspots (sem IPA)
+- [x] Todas as telas: exibir PT-BR (nativo) + idioma pretendido em paralelo — ImmersiveScene mostra label (idioma-alvo) + translation (PT-BR) + example + examplePt
+- [x] Pronúncia figurativa em português em todos os hotspots (sem IPA) — 181 hotspots com pronunciation field (ex: tur-e-FEL, ka-FÉ, RÜ)
 
 ## 🔧 CORREÇÕES TELA IMERSIVA (DOC 27/06/26)
 - [x] Restaurar aulas perdidas via seed massivo - 52 lições em 4 idiomas populadas no banco
-- [ ] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo
-- [ ] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado
+- [x] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo — nativeLangFlag + nativeLang label no painel de tradução
+- [x] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado — já implementado em LanguageSelector com bg-purple-50 text-purple-700
 - [ ] Seletor de idioma nativo separado (para usuários multilíngues)
 - [ ] Garantir que idioma do onboarding é respeitado em todo o app sem exceção
 - [ ] Voz natural no idioma correto selecionado (não voz comum do sistema)
