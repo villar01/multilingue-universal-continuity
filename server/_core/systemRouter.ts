@@ -2,7 +2,7 @@ import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getDb } from "../db";
-import { metrics } from "../../drizzle/schema";
+import { metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
 
 export const systemRouter = router({
@@ -96,6 +96,45 @@ export const systemRouter = router({
         optimizationHistory: [],
         usageByLanguage: [],
       };
+    }
+  }),
+
+  logSecurityEvent: publicProcedure
+    .input(
+      z.object({
+        eventType: z.enum(["paywall_bypass", "rate_limit_exceeded", "scraping_detected", "bot_detected", "moral_violation", "legal_violation", "abuse_content", "discrimination", "unauthorized_access", "suspicious_pattern", "ddos_attempt", "sql_injection", "xss_attempt", "other"]),
+        severity: z.enum(["low", "medium", "high", "critical"]).default("low"),
+        description: z.string().min(1),
+        ip: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const db = await getDb();
+        if (!db) return { success: false };
+        await db.insert(securityEvents).values({
+          eventType: input.eventType,
+          severity: input.severity,
+          description: input.description,
+          ipAddress: input.ip || null,
+          userId: ctx.user?.id || null,
+        });
+        return { success: true };
+      } catch (e) {
+        console.error("[Security] Failed to log event:", e);
+        return { success: false };
+      }
+    }),
+
+  getSecurityEvents: adminProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      if (!db) return { events: [] };
+      const events = await db.select().from(securityEvents).orderBy(desc(securityEvents.createdAt)).limit(50);
+      return { events };
+    } catch (e) {
+      console.error("[Security] Failed to fetch events:", e);
+      return { events: [] };
     }
   }),
 

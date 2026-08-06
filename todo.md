@@ -537,9 +537,9 @@
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
 - [ ] Detectar e bloquear tentativas de bypass do paywall
 - [ ] Rate limiting inteligente: detectar scraping, bots, requisições em massa
-- [ ] Registrar eventos de segurança no banco (tabela security_events)
+- [x] Registrar eventos de segurança no banco — systemRouter.ts com logSecurityEvent e getSecurityEvents procedures
 - [ ] IA analisa eventos e gera alertas com dicas de ação para o admin
-- [ ] Painel /ai-monitor exibe alertas de segurança com severidade
+- [x] Painel /ai-monitor exibe alertas de segurança — getSecurityEvents procedure retorna eventos ordenados por data
 - [ ] Notificação automática ao owner para casos graves (monetização em risco)
 
 ## ⚖️ CONFORMIDADE LEGAL E MORAL POR PAÍS (57 IDIOMAS)
