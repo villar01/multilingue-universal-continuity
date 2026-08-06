@@ -445,7 +445,7 @@ Keep response under 3 sentences.`;
           <div className="bg-white p-3 rounded-lg border border-purple-100">
             <p className="text-gray-800 font-bold text-xl text-center">{sentence.original}</p>
             {sentence.phonetic && (
-              <p className="text-gray-400 text-sm text-center mt-1 font-mono">[{sentence.phonetic}]</p>
+              <p className="text-amber-600 text-sm text-center mt-1">🔊 {sentence.phonetic}</p>
             )}
           </div>
         </div>
@@ -840,8 +840,8 @@ Rules:
                       {currentSentence.original}
                     </p>
                     {currentSentence.phonetic && (
-                      <p className="text-sm text-gray-400 font-mono mt-1">
-                        [{currentSentence.phonetic}]
+                      <p className="text-sm text-amber-600 mt-1">
+                        🔊 {currentSentence.phonetic}
                       </p>
                     )}
                   </div>

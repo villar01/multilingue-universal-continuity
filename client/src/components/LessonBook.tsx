@@ -98,7 +98,7 @@ function TrilingualRow({
       </div>
       {/* Phonetic */}
       <div className="text-amber-700 text-sm leading-relaxed">
-        <span className="text-xs font-semibold text-amber-500 block mb-0.5">🔊 Fonética [IPA]</span>
+        <span className="text-xs font-semibold text-amber-500 block mb-0.5">🔊 Pronúncia (como soa)</span>
         <span className="font-mono text-xs bg-amber-50 px-2 py-0.5 rounded border border-amber-100 inline-block">
           {phonetic || "—"}
         </span>

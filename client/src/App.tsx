@@ -122,6 +122,7 @@ function Router() {
         <Route path="/crm" component={CRMLeads} />
         <Route path="/crm-leads" component={CRMLeads} />
         <Route path="/ar-mode" component={ARMode} />
+        <Route path="/ar-ultimate" component={ARMode} />
         <Route path="/vr-conversation" component={VRConversation} />
         <Route path="/free-talk" component={FreeTalk} />
         <Route path="/word-game" component={WordGame} />

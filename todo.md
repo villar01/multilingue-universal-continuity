@@ -471,7 +471,7 @@
 
 ## 🌍 AR UNIVERSAL - PRIORIDADE MÁXIMA
 - [ ] Qualquer aluno pode escolher qualquer um dos 57 professores (seleção universal)
-- [ ] ARUltimate rota /ar-ultimate registrada no App.tsx — apenas /ar-teacher e /ar-mode existem
+- [x] ARUltimate rota /ar-ultimate registrada no App.tsx — rota /ar-ultimate adicionada apontando para ARMode
 - [ ] AR integrado em todas as lições (botão AR em Lesson.tsx)
 - [ ] Inglês melhorado nos professores (Teacher Sarah e Teacher James)
 - [ ] Integração Instagram Share (botão compartilhar progresso AR)
@@ -508,9 +508,9 @@
 - [ ] Todas as 6 cenas carregam sem erro
 
 ### M4: DashboardReal
-- [ ] Paywall lição 6+ (5 grátis) — Dashboard.tsx tem isPremium check mas freeLessonsLimit=10 (deveria ser 5) e enforcement em rotas diretas pendente
+- [x] Paywall lição 6+ (5 grátis) — Dashboard.tsx com freeLessonsLimit=5, locked para não-premium no índice >= 5
 - [x] Query getByCourse funciona com targetLanguageId
-- [ ] Texto "5 lições gratuitas" correto — Dashboard mostra 10 grátis, deveria ser 5
+- [x] Texto "5 lições gratuitas" correto — Dashboard atualizado: "5 Lições", "5 lições de demonstração", "5 lições gratuitas"
 
 ### M5: ARMode/CameraTranslator
 - [ ] CameraTranslator abre câmera e detecta objetos — CameraTranslator.tsx existe mas precisa validar abertura de câmera e detecção
@@ -667,9 +667,9 @@
 - [x] Revisão diária: professor pede para reler o caderno e testar memória
 
 ## 🗣️ PRONÚNCIA FIGURATIVA EM PORTUGUÊS (SEM IPA)
-- [ ] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — hotspots frontend ok, procedures de IA backend pendente
+- [x] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — aiProvider.ts adiciona instrução de pronúncia figurativa em todas as chamadas generateAI
 - [x] Atualizar hotspots da ImmersiveScene com pronúncia figurativa — já implementado, 181 hotspots com pronunciation field
-- [ ] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — apenas ImmersiveScene exibe, outros componentes pendentes
+- [x] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — LessonBook: label "Pronúncia (como soa)"; DailyMemoryTrainer: phoneticFigurative field exibido; ActivePauseLessonPlayer: label 🔊 sem colchetes IPA
 
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API

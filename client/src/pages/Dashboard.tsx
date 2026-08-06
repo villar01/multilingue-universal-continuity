@@ -58,7 +58,7 @@ export default function Dashboard() {
   
   // Verificar se usuário tem plano premium
   const isPremium = user?.subscriptionType !== "free";
-  const freeLessonsLimit = 10;
+  const freeLessonsLimit = 5;
   const premiumLessonsTotal = 200;
   
   // Usar dados reais ou fallback
@@ -159,9 +159,9 @@ export default function Dashboard() {
                       <Sparkles className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita - 10 Lições</h3>
+                      <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita - 5 Lições</h3>
                       <p className="text-gray-700 mb-4">
-                        Você está usando a versão gratuita com <strong>10 lições de demonstração</strong>. 
+                        Você está usando a versão gratuita com <strong>5 lições de demonstração</strong>. 
                         Desbloqueie <strong>200 lições completas</strong>, <strong>todos os 69 idiomas</strong> e 
                         recursos premium com o plano pago. Novas lições são adicionadas regularmente!
                       </p>
@@ -208,10 +208,10 @@ export default function Dashboard() {
                     value={(lessonsCompleted / totalLessons) * 100} 
                     className="h-2" 
                   />
-                  {!isPremium && lessonsCompleted >= 8 && (
+                  {!isPremium && lessonsCompleted >= 4 && (
                     <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <p className="text-sm text-gray-700">
-                        🎉 <strong>Parabéns!</strong> Você completou {lessonsCompleted} de 10 lições gratuitas. 
+                        🎉 <strong>Parabéns!</strong> Você completou {lessonsCompleted} de 5 lições gratuitas. 
                         Faça upgrade para continuar aprendendo!
                       </p>
                     </div>

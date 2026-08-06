@@ -173,6 +173,17 @@ async function logMetrics(
 export async function generateAI(options: AIGenerateOptions): Promise<AIGenerateResult> {
   const startTime = Date.now();
 
+  // Add pronúncia figurativa instruction to system message
+  const pronunciaInstruction = "IMPORTANTE: Quando fornecer pronúncia de palavras, use pronúncia figurativa em português brasileiro (ex: 'hello' = 'rélou', 'merci' = 'mersí', 'tur-e-FEL'). NUNCA use notação IPA. Escreva a pronúncia como soa para um falante de português brasileiro.";
+  const hasSystemMessage = options.messages.some(m => m.role === 'system');
+  if (hasSystemMessage) {
+    options.messages = options.messages.map(m =>
+      m.role === 'system' ? { ...m, content: m.content + '\n\n' + pronunciaInstruction } : m
+    );
+  } else {
+    options.messages = [{ role: 'system', content: pronunciaInstruction }, ...options.messages];
+  }
+
   // Compress prompts to reduce token usage
   const { messages: compressedMessages, totalTokensSaved: compressionTokensSaved } =
     compressAIMessages(options.messages);
