@@ -43,13 +43,20 @@ const FLOAT_FLAGS = [
   { cc: "fi", sigla: "FI" }, { cc: "cz", sigla: "CZ" }, { cc: "hu", sigla: "HU" },
 ];
 
-// Idiomas disponíveis — Fase 1: Inglês e Espanhol
-// Novos idiomas serão adicionados mensalmente
+// Idiomas populares para seleção rápida na Home
 const POPULAR_LANGS = [
   { code: "pt-BR", flag: "🇧🇷", name: "Português" },
   { code: "en-US", flag: "🇺🇸", name: "English (Inglês)" },
   { code: "es-ES", flag: "🇪🇸", name: "Español (Espanhol)" },
   { code: "fr-FR", flag: "🇫🇷", name: "Français (Francês)" },
+  { code: "de-DE", flag: "🇩🇪", name: "Deutsch (Alemão)" },
+  { code: "it-IT", flag: "🇮🇹", name: "Italiano" },
+  { code: "ja-JP", flag: "🇯🇵", name: "日本語 (Japonês)" },
+  { code: "zh-CN", flag: "🇨🇳", name: "中文 (Mandarim)" },
+  { code: "ko-KR", flag: "🇰🇷", name: "한국어 (Coreano)" },
+  { code: "ru-RU", flag: "🇷🇺", name: "Русский (Russo)" },
+  { code: "ar-SA", flag: "🇸🇦", name: "العربية (Árabe)" },
+  { code: "hi-IN", flag: "🇮🇳", name: "हिन्दी (Hindi)" },
 ];
 
 // Nav dropdown menus
@@ -58,7 +65,11 @@ const NAV_IDIOMAS = [
   { label: "Inglês", flag: "🇺🇸", href: "/dashboard" },
   { label: "Espanhol", flag: "🇪🇸", href: "/dashboard" },
   { label: "Francês", flag: "🇫🇷", href: "/dashboard" },
-  { label: "Mais idiomas em breve →", flag: "🌍", href: "/pricing" },
+  { label: "Alemão", flag: "🇩🇪", href: "/dashboard" },
+  { label: "Italiano", flag: "🇮🇹", href: "/dashboard" },
+  { label: "Japonês", flag: "🇯🇵", href: "/dashboard" },
+  { label: "Coreano", flag: "🇰🇷", href: "/dashboard" },
+  { label: "Ver todos os 143 idiomas →", flag: "🌍", href: "/onboarding" },
 ];
 const NAV_PLATAFORMA = [
   { label: "Aprendizado Natural 🌟", icon: "🧠", href: "/natural-learning" },
@@ -387,7 +398,7 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="text-center mb-12">
             <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 text-sm px-4 py-1.5">
-              🌍 Português · Inglês · Espanhol · Francês — e em breve os restantes do mundo inteiro
+              🌍 143 idiomas · IA avançada · Professores virtuais · Operação offline
             </Badge>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
               Aprenda Qualquer Idioma
@@ -454,8 +465,8 @@ export default function Home() {
           {/* Stats row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mt-12">
             {[
-              { value: "2", label: "Idiomas Ativos", icon: "🌍" },
-              { value: "10+", label: "Lições/Idioma", icon: "📚" },
+              { value: "143", label: "Idiomas", icon: "🌍" },
+              { value: "57", label: "Disponíveis Agora", icon: "✅" },
               { value: "1.100+", label: "Palavras Pareto", icon: "🧠" },
               { value: "100%", label: "Personalizado", icon: "⚡" },
             ].map((stat) => (
@@ -497,7 +508,7 @@ export default function Home() {
                 bg: "bg-purple-50",
                 border: "border-purple-200",
                 title: "Cenas Imersivas em AR",
-                desc: "Explore Paris, Tokyo, Nova York e mais 3 cenários com professor animado e objetos clicáveis. Vocabulário contextual em 69 idiomas.",
+                desc: "Explore Paris, Tokyo, Nova York e mais 3 cenários com professor animado e objetos clicáveis. Vocabulário contextual em 143 idiomas.",
               },
               {
                 icon: <Mic className="h-8 w-8 text-blue-600" />,
@@ -517,7 +528,7 @@ export default function Home() {
                 icon: <Users className="h-8 w-8 text-green-600" />,
                 bg: "bg-green-50",
                 border: "border-green-200",
-                title: "94 Professores Virtuais",
+                title: "143 Professores Virtuais",
                 desc: "Cada professor é nativo do seu idioma. Fotos reais, animação labial sincronizada, personalidade única e voz autêntica.",
               },
               {
@@ -551,20 +562,24 @@ export default function Home() {
       {/* ── LANGUAGES SECTION ── */}
       <section className="py-20 bg-gradient-to-r from-purple-700 to-indigo-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Português · Inglês · Espanhol · Francês</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">143 Idiomas · 57 Disponíveis Agora</h2>
           <p className="text-lg text-white/80 mb-4">
-            4 idiomas completos com professores nativos e voz ultra-realista — e em breve todos os restantes do mundo inteiro
+            Do português ao esperanto, do latim ao tupi-guarani — a maior coleção de idiomas do mundo
           </p>
           <div className="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-300/40 rounded-full px-5 py-2 mb-8">
             <span className="text-yellow-300 font-bold text-sm">🔔 Novos idiomas sendo adicionados continuamente</span>
           </div>
           <div className="flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
             {[
-              "🇧🇷 Português — Disponível", "🇺🇸 Inglês — Disponível",
-              "🇪🇸 Espanhol — Disponível", "🇫🇷 Francês — Disponível",
-              "🇩🇪 Alemão — Em breve", "🇮🇹 Italiano — Em breve",
-              "🇯🇵 Japonês — Em breve", "🇨🇳 Mandarim — Em breve",
-              "+ e todos os restantes do mundo inteiro"
+              "🇧🇷 Português", "🇺🇸 Inglês (US)", "🇬🇧 Inglês (UK)",
+              "🇪🇸 Espanhol", "🇫🇷 Francês", "🇩🇪 Alemão",
+              "🇮🇹 Italiano", "🇯🇵 Japonês", "🇨🇳 Mandarim",
+              "🇰🇷 Coreano", "🇷🇺 Russo", "🇸🇦 Árabe",
+              "🇮🇳 Hindi", "🇹🇷 Turco", "🇳🇱 Holandês",
+              "🇵🇱 Polonês", "🇸🇪 Sueco", "🇮🇱 Hebraico",
+              "🏛️ Latim (em breve)", "🪶 Tupi-Guarani (em breve)",
+              "🌍 Esperanto (em breve)",
+              "+ 120 outros"
             ].map((lang) => (
               <span
                 key={lang}

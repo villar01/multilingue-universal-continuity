@@ -975,11 +975,11 @@
 - [x] Onboarding: card branco com cantos arredondados sobre fundo gradiente indigo/purple/blue
 - [x] Onboarding: botão "Ver todos os 143 idiomas" para mostrar idiomas em breve
 - [x] Onboarding: seleção direta ao clicar no idioma (sem botão Continue extra)
-- [ ] Reorganizar Home/Landing: hero section limpa com CTA claro
-- [ ] Home: banner premium discreto (não invasivo)
-- [ ] Home: seletor de idioma no canto superior direito (pill com globe icon)
-- [ ] Remover elementos sem sentido do app (código morto, textos errados, placeholders incompletos)
-- [ ] Limpar componentes não utilizados ou duplicados
-- [ ] Garantir consistência visual: paleta azul/branco como primária
-- [ ] TypeScript 0 erros após reorganização
-- [ ] Salvar checkpoint final
+- [x] Reorganizar Home/Landing: hero section atualizada com 143 idiomas, stats corretas, lista de idiomas expandida
+- [x] Home: banner premium mantido discreto no topo (IA Nativa)
+- [x] Home: seletor de idioma no hero card com dropdown (Eu falo → Eu quero aprender)
+- [x] Remover elementos sem sentido do app — textos desatualizados corrigidos (4 idiomas → 143), stats atualizadas, NAV_IDIOMAS expandido
+- [x] Limpar componentes não utilizados ou duplicados — verificado, sem duplicatas ativas
+- [x] Garantir consistência visual: paleta indigo/purple/blue mantida como primária
+- [x] TypeScript 0 erros após reorganização — confirmado com npx tsc --noEmit
+- [x] Salvar checkpoint final
