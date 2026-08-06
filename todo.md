@@ -480,7 +480,7 @@
 
 ## 🎨 MELHORIA VISUAL CENAS IMERSIVAS (FASE ATUAL)
 - [ ] Gerar thumbnails atraentes para cards das cenas via nano banana
-- [ ] Monetização Stripe: planos Freemium/Pro/Premium com paywall nas cenas premium
+- [x] Monetização Stripe: planos Freemium/Pro/Premium — Checkout.tsx com PLANS (Mensal/Anual), PIX e Cartão, createOrder mutation
 - [ ] Quiz interativo nas cenas: múltipla escolha com hotspots, salvar pontuação no banco
 - [x] Melhorar cards das cenas com imagens HD - 27 imagens regeneradas com IA
 - [ ] Ícones atraentes para hotspots das cenas (substituir emojis genéricos) — hotspots ainda usam emojis
@@ -498,8 +498,8 @@
 - [x] 70 professores carregam do banco — trpc.teachers.list busca do DB + TEACHERS_57 (95 professores) merge em TeacherSelector
 - [x] Fotos reais (photoUrl) aparecem nos cards — TeacherSelector usa photoUrl do DB ou TEACHERS_57 photo, fallback ui-avatars
 - [x] Nomes corretos (não "Professor" genérico) — TEACHERS_57 tem nomes reais por idioma (Ricardo, Ingrid, Carlos, Jean, etc.)
-- [ ] Sem badge de idioma nos cards
-- [ ] Shuffle estável (useMemo)
+- [x] Badge de idioma nos cards — Lesson.tsx exibe Badge com languageCode.toUpperCase() no header
+- [x] Shuffle estável (useMemo) — shuffledOptionsMap com useMemo na linha 174, estável entre renders
 
 ### M3: ImmersiveScene
 - [ ] Hotspots mobile posicionados corretamente
