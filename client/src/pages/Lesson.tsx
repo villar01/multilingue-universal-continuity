@@ -30,6 +30,7 @@ import { synthesizeSpeechLocal, isWebSpeechSupported } from "@/lib/localTTS";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
 import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
+import { getLevelByLesson, getLevelConfig, type CEFRLevel } from "@/lib/lesson-levels";
 // Lazy load heavy components
 const ARLearningScene = lazy(() => import("@/components/ARLearningScene").then(m => ({ default: m.ARLearningScene })));
 const VoiceConversation = lazy(() => import("@/components/VoiceConversation"));
@@ -593,9 +594,18 @@ export default function Lesson() {
                 Voltar ao Dashboard
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {lesson.title}
-            </h1>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-4xl font-bold text-gray-900">
+                {lesson.title}
+              </h1>
+              {(() => {
+                const cefrLevel = getLevelByLesson(lesson.orderIndex || 1);
+                const config = getLevelConfig(cefrLevel);
+                return (
+                  <Badge className={`${config.color} text-white text-sm`}>Nível {cefrLevel}</Badge>
+                );
+              })()}
+            </div>
             <p className="text-gray-600">
               Antes de começar, escolha seu professor preferido
             </p>

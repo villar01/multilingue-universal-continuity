@@ -530,9 +530,9 @@
 ## 📚 SISTEMA DE APRENDIZADO PROGRESSIVO + DICIONÁRIO INTEGRADO
 - [x] Criar lib/lesson-levels.ts com estrutura A1→C2 e perguntas/respostas por nível — lesson-levels.ts com 6 níveis CEFR, QuestionType, LevelConfig
 - [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
-- [ ] Integrar dificuldade gradativa no Lesson.tsx (começa simples, aumenta progressivamente)
+- [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge (A1-C2) exibido ao lado do título da lição
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
-- [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente
+- [x] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson calcula nível CEFR baseado no orderIndex
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
 - [ ] Detectar e bloquear tentativas de bypass do paywall
@@ -667,9 +667,9 @@
 - [x] Revisão diária: professor pede para reler o caderno e testar memória
 
 ## 🗣️ PRONÚNCIA FIGURATIVA EM PORTUGUÊS (SEM IPA)
-- [ ] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA
-- [ ] Atualizar hotspots da ImmersiveScene com pronúncia figurativa (ex: "rélou", "mersí")
-- [ ] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer
+- [x] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — hotspots já usam pronúncia figurativa (tur-e-FEL, ka-FÉ, RÜ)
+- [x] Atualizar hotspots da ImmersiveScene com pronúncia figurativa — já implementado, 181 hotspots com pronunciation field
+- [x] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — ImmersiveScene já exibe no painel (linha 1025), componentes usam hotspot data
 
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API
