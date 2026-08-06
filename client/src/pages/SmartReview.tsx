@@ -253,11 +253,35 @@ export default function SmartReview() {
 
                 {/* Result Feedback */}
                 {showResult && (
-                  <div className={`p-3 rounded-lg flex items-center gap-2 ${isCorrect ? "bg-green-500/10 text-green-700 dark:text-green-400" : "bg-red-500/10 text-red-700 dark:text-red-400"}`}>
-                    {isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                    <span className="text-sm font-medium">
-                      {isCorrect ? "Correto!" : `Resposta: ${currentExercise.correctAnswer}`}
-                    </span>
+                  <div className="space-y-2">
+                    <div className={`p-3 rounded-lg flex items-center gap-2 ${isCorrect ? "bg-green-500/10 text-green-700 dark:text-green-400" : "bg-red-500/10 text-red-700 dark:text-red-400"}`}>
+                      {isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                      <span className="text-sm font-medium">
+                        {isCorrect ? "Correto!" : `Resposta correta: ${currentExercise.correctAnswer}`}
+                      </span>
+                    </div>
+                    {!isCorrect && (
+                      <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-1">
+                        <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">📋 Correção detalhada:</p>
+                        <p className="text-sm text-muted-foreground">
+                          Sua resposta: <strong className="text-foreground">{exerciseType === "multiple_choice" ? selectedAnswer : textAnswer}</strong>
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Resposta correta: <strong className="text-foreground">{currentExercise.correctAnswer}</strong>
+                        </p>
+                        {currentExercise.hint && (
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">💡 {currentExercise.hint}</p>
+                        )}
+                        {currentExercise.word && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            🔊 Pronúncia: repita «{currentExercise.word}» em voz alta para praticar.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    {isCorrect && currentExercise.word && (
+                      <p className="text-xs text-muted-foreground px-1">🔊 Continue praticando «{currentExercise.word}» para fixar a pronúncia.</p>
+                    )}
                   </div>
                 )}
 

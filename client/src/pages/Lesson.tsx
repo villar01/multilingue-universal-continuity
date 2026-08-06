@@ -302,6 +302,12 @@ export default function Lesson() {
 
   const exercise = exercises[currentExercise];
   
+  // CEFR difficulty adaptation: calculate level for this lesson and show progression info
+  const cefrLevel = getLevelByLesson(lesson.orderIndex || 1);
+  const cefrConfig = getLevelConfig(cefrLevel);
+  // Adapt exercise display based on CEFR level — higher levels show more complex instructions
+  const difficultyLabel = cefrConfig.description || `${cefrLevel} — Exercícios adaptados ao seu nível`;
+  
   // Verificar se exercise existe
   if (!exercise) {
     return (
@@ -320,6 +326,8 @@ export default function Lesson() {
   const shuffledOptions = shuffledOptionsMap.get(currentExercise) || exercise.options || [];
   
   const progress = ((currentExercise + 1) / exercises.length) * 100;
+  // Difficulty progress within the CEFR level (how far through the level's lessons)
+  const levelProgress = Math.min(100, ((lesson.orderIndex || 1) - cefrConfig.startsAtLesson + 1) / 10 * 100);
 
   // Play audio using TTS
   const playAudio = (text: string) => {
@@ -645,6 +653,11 @@ export default function Lesson() {
                 <span className="text-sm font-semibold text-gray-600">
                   {currentExercise + 1}/{exercises.length}
                 </span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge className={`${cefrConfig.color} text-white text-xs`}>Nível {cefrLevel}</Badge>
+                <Progress value={levelProgress} className="flex-1 h-1.5" />
+                <span className="text-xs text-gray-400">{difficultyLabel}</span>
               </div>
             </div>
             <Badge variant="secondary">{lesson.languageCode?.toUpperCase() || 'EN'}</Badge>

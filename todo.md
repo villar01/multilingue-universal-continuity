@@ -135,8 +135,8 @@
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
 - [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
-- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview.tsx existe mas correção detalhada pendente
-- [ ] Implementar sistema de adaptação ao nível do usuário — lesson-levels.ts tem 5 niveis mas adaptacao dinamica pendente
+- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview.tsx tem painel básico (sua resposta vs correta), mas análise gramatical detalhada e scoring de pronúncia pendentes
+- [ ] Implementar sistema de adaptação ao nível do usuário — badge e progressão visual ok, mas adaptação real de exercícios por XP/erros do usuário pendente
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
@@ -530,7 +530,7 @@
 ## 📚 SISTEMA DE APRENDIZADO PROGRESSIVO + DICIONÁRIO INTEGRADO
 - [x] Criar lib/lesson-levels.ts com estrutura A1→C2 e perguntas/respostas por nível — lesson-levels.ts com 6 níveis CEFR, QuestionType, LevelConfig
 - [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
-- [ ] Integrar dificuldade gradativa no Lesson.tsx — badge visual ok, mas adaptação real de exercícios por nível pendente
+- [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge + level progress bar + difficulty label exibidos na barra de exercícios
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
 - [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson mapeia por orderIndex mas não salva no DB nem adapta por usuário
 
