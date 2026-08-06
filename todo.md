@@ -49,7 +49,7 @@
 - [x] Tradução em tempo real via IA offline — translateRealtime procedure em routers.ts com aiProvider
 - [x] Suporte para 50+ idiomas — LANGUAGES_57 em languages.ts com 57 idiomas definidos (integracao funcional em andamento)
 - [x] Cache de traduções frequentes — server/cache.ts com lessonCache
-- [ ] Detecção automática de idioma — LangDropdown e seletores manuais existem, mas sem auto-detect
+- [x] Detecção automática de idioma — detect-native-lang.ts com detectNativeLang() usando navigator.languages + localStorage
 - [x] Interface adaptativa por idioma — Home.tsx com nativeLang/targetLang adaptando textos e seletor
 - [x] Painel de tradução instantânea — procedures translateRealtime + editPhrase no backend, UI na Lesson
 
@@ -91,7 +91,7 @@
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
 - [ ] Modo competitivo multiplayer
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
-- [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem integracao de lembretes
+- [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
 - [ ] Modo imersão total (interface no idioma alvo)
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
@@ -471,7 +471,7 @@
 
 ## 🌍 AR UNIVERSAL - PRIORIDADE MÁXIMA
 - [ ] Qualquer aluno pode escolher qualquer um dos 57 professores (seleção universal)
-- [ ] ARUltimate rota /ar-ultimate registrada no App.tsx
+- [ ] ARUltimate rota /ar-ultimate registrada no App.tsx — apenas /ar-teacher e /ar-mode existem
 - [ ] AR integrado em todas as lições (botão AR em Lesson.tsx)
 - [ ] Inglês melhorado nos professores (Teacher Sarah e Teacher James)
 - [ ] Integração Instagram Share (botão compartilhar progresso AR)
@@ -508,9 +508,9 @@
 - [ ] Todas as 6 cenas carregam sem erro
 
 ### M4: DashboardReal
-- [ ] Paywall lição 6+ (5 grátis) — Dashboard.tsx tem isPremium check mas enforcement em rotas diretas pendente
+- [ ] Paywall lição 6+ (5 grátis) — Dashboard.tsx tem isPremium check mas freeLessonsLimit=10 (deveria ser 5) e enforcement em rotas diretas pendente
 - [x] Query getByCourse funciona com targetLanguageId
-- [ ] Texto "5 lições gratuitas" correto
+- [ ] Texto "5 lições gratuitas" correto — Dashboard mostra 10 grátis, deveria ser 5
 
 ### M5: ARMode/CameraTranslator
 - [ ] CameraTranslator abre câmera e detecta objetos — CameraTranslator.tsx existe mas precisa validar abertura de câmera e detecção
@@ -518,21 +518,21 @@
 - [ ] Banner Premium 7 dias aparece
 
 ### M6: Voz Natural
-- [ ] TTS usa vozes nativas por idioma
-- [ ] Inglês usa voz en-US nativa
-- [ ] Sem crashes de voz
+- [x] TTS usa vozes nativas por idioma — useNaturalVoice com speakNative (pt-BR) e speakTarget (idioma-alvo)
+- [x] Inglês usa voz en-US nativa — BCP47_MAP mapeia en-US corretamente
+- [ ] Sem crashes de voz — fallback existe mas validação completa pendente
 
 ### Final
-- [ ] Zero erros TypeScript
-- [ ] Servidor rodando sem crashes
-- [ ] Checkpoint final
+- [x] Zero erros TypeScript — confirmado com npx tsc --noEmit
+- [x] Servidor rodando sem crashes — dev server ativo e saudável
+- [x] Checkpoint final — c9a0815a salvo
 
 ## 📚 SISTEMA DE APRENDIZADO PROGRESSIVO + DICIONÁRIO INTEGRADO
 - [x] Criar lib/lesson-levels.ts com estrutura A1→C2 e perguntas/respostas por nível — lesson-levels.ts com 6 níveis CEFR, QuestionType, LevelConfig
 - [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
-- [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge (A1-C2) exibido ao lado do título da lição
+- [ ] Integrar dificuldade gradativa no Lesson.tsx — badge visual ok, mas adaptação real de exercícios por nível pendente
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
-- [x] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson calcula nível CEFR baseado no orderIndex
+- [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson mapeia por orderIndex mas não salva no DB nem adapta por usuário
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
 - [ ] Detectar e bloquear tentativas de bypass do paywall
@@ -667,9 +667,9 @@
 - [x] Revisão diária: professor pede para reler o caderno e testar memória
 
 ## 🗣️ PRONÚNCIA FIGURATIVA EM PORTUGUÊS (SEM IPA)
-- [x] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — hotspots já usam pronúncia figurativa (tur-e-FEL, ka-FÉ, RÜ)
+- [ ] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — hotspots frontend ok, procedures de IA backend pendente
 - [x] Atualizar hotspots da ImmersiveScene com pronúncia figurativa — já implementado, 181 hotspots com pronunciation field
-- [x] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — ImmersiveScene já exibe no painel (linha 1025), componentes usam hotspot data
+- [ ] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — apenas ImmersiveScene exibe, outros componentes pendentes
 
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API
@@ -683,8 +683,8 @@
 - [x] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo — nativeLangFlag + nativeLang label no painel de tradução
 - [x] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado — já implementado em LanguageSelector com bg-purple-50 text-purple-700
 - [ ] Seletor de idioma nativo separado (para usuários multilíngues)
-- [ ] Garantir que idioma do onboarding é respeitado em todo o app sem exceção
-- [ ] Voz natural no idioma correto selecionado (não voz comum do sistema)
+- [ ] Garantir que idioma do onboarding é respeitado em todo o app — Onboarding salva profile mas auditoria completa pendente
+- [x] Voz natural no idioma correto selecionado — useNaturalVoice seleciona voz nativa via BCP47_MAP
 
 ## 🐛 BUGS CRÍTICOS - SESSÃO ATUAL
 - [x] Fix Back/Retour button: botão Voltar agora vai para Home em todos os contextos
