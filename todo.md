@@ -142,7 +142,7 @@
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
 - [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
 - [ ] Implementar feedback personalizado baseado em erros do usuário — freeChat tem correction field mas rastreamento de erros pendente
-- [ ] Criar histórico de conversas com análise de progresso — AIChatBox tem message history mas persistencia e analise pendentes
+- [ ] Criar histórico de conversas com análise de progresso — AIChatbot persiste em localStorage mas análise de progresso (métricas, erros, evolução) pendente
 
 ## 🐛 BUG CRÍTICO
 - [x] Corrigir ReferenceError: useRef is not defined em Lesson.tsx (useRef, useEffect adicionados aos imports)

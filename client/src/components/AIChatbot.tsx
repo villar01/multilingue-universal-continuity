@@ -26,13 +26,32 @@ interface AIChatbotProps {
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
 export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChatbotProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: `Hello! I'm your AI conversation partner. Let's practice using the vocabulary from this lesson. Try using words like: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}...`,
-      timestamp: new Date(),
-    },
-  ]);
+  const storageKey = `ml_chat_history_${lessonId}`;
+  const [messages, setMessages] = useState<Message[]>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        }
+      }
+    } catch {}
+    return [
+      {
+        role: 'assistant',
+        content: `Hello! I'm your AI conversation partner. Let's practice using the vocabulary from this lesson. Try using words like: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}...`,
+        timestamp: new Date(),
+      },
+    ];
+  });
+
+  // Persist conversation history to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(messages.slice(-50))); // Keep last 50 messages
+    } catch {}
+  }, [messages, storageKey]);
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
