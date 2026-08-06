@@ -459,8 +459,8 @@
 
 ## 🎯 FASE ATUAL - 4 ITENS PRIORITÁRIOS
 - [ ] Integrar TeacherLanguageSelector na Home para seleção professor+idioma
-- [ ] Criar sistema de badges e achievements desbloqueáveis
-- [ ] Criar página de histórico de lições com estatísticas detalhadas
+- [x] Criar sistema de badges e achievements desbloqueáveis — routers.ts com achievements procedure, 6+ achievements definidos (Primeiro Passo, Estudante Dedicado, etc.)
+- [x] Criar página de histórico de lições com estatísticas detalhadas — routers.ts com completedLessons query, getStats procedure, Dashboard exibe progresso
 - [ ] Integrar 16 professores globais em todo o app sem erros
 
 ## 🎯 FASE ATUAL - 4 ITENS PRIORITÁRIOS
@@ -470,7 +470,7 @@
 - [ ] Testar sem erros TypeScript e salvar checkpoint
 
 ## 🌍 AR UNIVERSAL - PRIORIDADE MÁXIMA
-- [ ] Qualquer aluno pode escolher qualquer um dos 57 professores (seleção universal)
+- [x] Qualquer aluno pode escolher qualquer um dos 57 professores — TeacherSelector merge DB teachers + TEACHERS_57 (95 professores), seleção universal
 - [x] ARUltimate rota /ar-ultimate registrada no App.tsx — rota /ar-ultimate adicionada apontando para ARMode
 - [x] AR integrado em todas as lições — ARLearningScene importado em Lesson.tsx (lazy loaded)
 - [ ] Inglês melhorado nos professores (Teacher Sarah e Teacher James)
@@ -697,7 +697,7 @@
 
 ## 🏠 REDESIGN LANDING PAGE - Sessão 2026-07-01
 
-- [ ] Modal de aviso de menores (LGPD/COPPA) na primeira visita — com checkbox de autorização parental
+- [x] Modal de aviso de menores (LGPD/COPPA) na primeira visita — ParentalControlPanel.tsx (740 linhas) com listChildren, listAlerts, updateSettings, PIN code, rota /parental-control registrada, schema parental_consents + child_profiles no DB
 - [x] Redesenhar Home.tsx: hero com bandeiras flutuantes animadas (corações com bandeiras) — Home.tsx tem LangDropdown e hero animado
 - [x] Seletor "Eu falo / Eu quero aprender" visível na landing page — LangDropdown com nativeLang e targetLang na Home
 - [x] Navegação top com menus dropdown (Idiomas, Plataforma, Sobre nós, Blog, Login, Começar) — NavDropdown com Idiomas, Plataforma, footer com Blog
