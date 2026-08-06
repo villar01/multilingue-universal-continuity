@@ -599,8 +599,8 @@
 - [x] Remover texto "Precos em USD" — app e 100% BRL — Pricing.tsx usa BRL com comentario "Pagamento em BRL via PIX"
 - [x] Corrigir country-compliance.ts: priorizar leis brasileiras (LGPD, Lei Rouanet, ECA, Marco Civil) — BRAZILIAN_LAW_PRIORITY adicionado, referências americanas substituídas por brasileiras
 - [x] Corrigir TermsOfUse.tsx: substituir leis americanas por brasileiras — 18 U.S.C. removido, CFAA substituído por Marco Civil + Código Penal, COPPA removido
-- [ ] Criar tabelas app_updates e app_updates_read no banco (schema faltando)
-- [ ] Criar tabela app_telemetry no schema (usada no servidor mas não no schema)
+- [x] Criar tabelas app_updates e app_updates_read no banco (schema faltando) — criadas via migration 0013
+- [x] Criar tabela app_telemetry no schema — já existia no schema linha 2182
 - [ ] Corrigir 130+ erros de runtime identificados
 
 ## ✅ CORREÇÕES CRÍTICAS (Jun 2026)
@@ -961,3 +961,25 @@
 - [x] Criar backupRestore.ts (snapshots de DB, backup automático a cada 6h, restauração)
 - [x] Aviso de ataque cibernético com instrução de desligar notebook
 - [x] Proteção contra infecções nativas e externas (internet)
+
+## 🎯 REORGANIZAÇÃO E EXPANSÃO (Ago 2026)
+
+- [x] Corrigir schema.ts: remover duplicatas appTelemetry/securityEvents — duplicatas removidas, 1 declaração cada
+- [x] Gerar migration SQL para app_updates, app_updates_read, app_telemetry, security_events — 0013_secret_major_mapleleaf.sql gerado
+- [x] Aplicar migration no banco via webdev_execute_sql — 6 tabelas criadas com sucesso
+- [x] Expandir lista de idiomas para 143 (adicionar idiomas antigos: latim, grego antigo, hebraico bíblico, sânscrito, aramaico, egípcio antigo)
+- [x] Adicionar idiomas indígenas: tupi-guarani, guarani, quíchua, aimará, náhuatl, maia, mapudungun, xavante, yanomami, navajo, cree, inuktitut
+- [x] Adicionar idiomas construídos: esperanto, interlingua, tok pisin, lojban
+- [x] Reorganizar Onboarding: grid limpo de bandeiras em cards arredondados com abas de categoria
+- [x] Onboarding: barra de progresso no topo do card — implementada com width dinâmica (50%/100%)
+- [x] Onboarding: card branco com cantos arredondados sobre fundo gradiente indigo/purple/blue
+- [x] Onboarding: botão "Ver todos os 143 idiomas" para mostrar idiomas em breve
+- [x] Onboarding: seleção direta ao clicar no idioma (sem botão Continue extra)
+- [ ] Reorganizar Home/Landing: hero section limpa com CTA claro
+- [ ] Home: banner premium discreto (não invasivo)
+- [ ] Home: seletor de idioma no canto superior direito (pill com globe icon)
+- [ ] Remover elementos sem sentido do app (código morto, textos errados, placeholders incompletos)
+- [ ] Limpar componentes não utilizados ou duplicados
+- [ ] Garantir consistência visual: paleta azul/branco como primária
+- [ ] TypeScript 0 erros após reorganização
+- [ ] Salvar checkpoint final

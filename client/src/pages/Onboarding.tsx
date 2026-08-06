@@ -3,72 +3,21 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { detectNativeLang } from "@/lib/detect-native-lang";
-import { Globe, ChevronRight, Volume2 } from "lucide-react";
-
-// All 57 languages with flags and codes
-const ALL_LANGUAGES = [
-  { code: "pt-BR", name: "Português (Brasil)", flag: "🇧🇷", nativeName: "Português" },
-  { code: "en-US", name: "English (US)", flag: "🇺🇸", nativeName: "English" },
-  { code: "es-ES", name: "Español", flag: "🇪🇸", nativeName: "Español" },
-  { code: "fr-FR", name: "Français", flag: "🇫🇷", nativeName: "Français" },
-  { code: "de-DE", name: "Deutsch", flag: "🇩🇪", nativeName: "Deutsch" },
-  { code: "it-IT", name: "Italiano", flag: "🇮🇹", nativeName: "Italiano" },
-  { code: "ja-JP", name: "日本語", flag: "🇯🇵", nativeName: "日本語" },
-  { code: "zh-CN", name: "中文 (简体)", flag: "🇨🇳", nativeName: "中文" },
-  { code: "ko-KR", name: "한국어", flag: "🇰🇷", nativeName: "한국어" },
-  { code: "ru-RU", name: "Русский", flag: "🇷🇺", nativeName: "Русский" },
-  { code: "ar-XA", name: "العربية", flag: "🇸🇦", nativeName: "العربية" },
-  { code: "hi-IN", name: "हिन्दी", flag: "🇮🇳", nativeName: "हिन्दी" },
-  { code: "nl-NL", name: "Nederlands", flag: "🇳🇱", nativeName: "Nederlands" },
-  { code: "pl-PL", name: "Polski", flag: "🇵🇱", nativeName: "Polski" },
-  { code: "sv-SE", name: "Svenska", flag: "🇸🇪", nativeName: "Svenska" },
-  { code: "da-DK", name: "Dansk", flag: "🇩🇰", nativeName: "Dansk" },
-  { code: "fi-FI", name: "Suomi", flag: "🇫🇮", nativeName: "Suomi" },
-  { code: "nb-NO", name: "Norsk", flag: "🇳🇴", nativeName: "Norsk" },
-  { code: "tr-TR", name: "Türkçe", flag: "🇹🇷", nativeName: "Türkçe" },
-  { code: "uk-UA", name: "Українська", flag: "🇺🇦", nativeName: "Українська" },
-  { code: "cs-CZ", name: "Čeština", flag: "🇨🇿", nativeName: "Čeština" },
-  { code: "hu-HU", name: "Magyar", flag: "🇭🇺", nativeName: "Magyar" },
-  { code: "ro-RO", name: "Română", flag: "🇷🇴", nativeName: "Română" },
-  { code: "bg-BG", name: "Български", flag: "🇧🇬", nativeName: "Български" },
-  { code: "hr-HR", name: "Hrvatski", flag: "🇭🇷", nativeName: "Hrvatski" },
-  { code: "sk-SK", name: "Slovenčina", flag: "🇸🇰", nativeName: "Slovenčina" },
-  { code: "sl-SI", name: "Slovenščina", flag: "🇸🇮", nativeName: "Slovenščina" },
-  { code: "et-EE", name: "Eesti", flag: "🇪🇪", nativeName: "Eesti" },
-  { code: "lv-LV", name: "Latviešu", flag: "🇱🇻", nativeName: "Latviešu" },
-  { code: "lt-LT", name: "Lietuvių", flag: "🇱🇹", nativeName: "Lietuvių" },
-  { code: "vi-VN", name: "Tiếng Việt", flag: "🇻🇳", nativeName: "Tiếng Việt" },
-  { code: "id-ID", name: "Bahasa Indonesia", flag: "🇮🇩", nativeName: "Indonesia" },
-  { code: "ms-MY", name: "Bahasa Melayu", flag: "🇲🇾", nativeName: "Melayu" },
-  { code: "fa-IR", name: "فارسی", flag: "🇮🇷", nativeName: "فارسی" },
-  { code: "he-IL", name: "עברית", flag: "🇮🇱", nativeName: "עברית" },
-  { code: "el-GR", name: "Ελληνικά", flag: "🇬🇷", nativeName: "Ελληνικά" },
-  { code: "af-ZA", name: "Afrikaans", flag: "🇿🇦", nativeName: "Afrikaans" },
-  { code: "sw-KE", name: "Kiswahili", flag: "🇰🇪", nativeName: "Kiswahili" },
-  { code: "zu-ZA", name: "isiZulu", flag: "🇿🇦", nativeName: "isiZulu" },
-  { code: "yo-NG", name: "Yorùbá", flag: "🇳🇬", nativeName: "Yorùbá" },
-  { code: "ha-NG", name: "Hausa", flag: "🇳🇬", nativeName: "Hausa" },
-  { code: "ig-NG", name: "Igbo", flag: "🇳🇬", nativeName: "Igbo" },
-  { code: "am-ET", name: "አማርኛ", flag: "🇪🇹", nativeName: "አማርኛ" },
-  { code: "bn-IN", name: "বাংলা", flag: "🇧🇩", nativeName: "বাংলা" },
-  { code: "ur-IN", name: "اردو", flag: "🇵🇰", nativeName: "اردو" },
-  { code: "ca-ES", name: "Català", flag: "🏴󠁥󠁳󠁣󠁴󠁿", nativeName: "Català" },
-  { code: "eu-ES", name: "Euskara", flag: "🏴", nativeName: "Euskara" },
-  { code: "gl-ES", name: "Galego", flag: "🇪🇸", nativeName: "Galego" },
-  { code: "sr-RS", name: "Српски", flag: "🇷🇸", nativeName: "Српски" },
-  { code: "pt-PT", name: "Português (Portugal)", flag: "🇵🇹", nativeName: "Português" },
-  { code: "en-GB", name: "English (UK)", flag: "🇬🇧", nativeName: "English" },
-  { code: "zh-TW", name: "中文 (繁體)", flag: "🇹🇼", nativeName: "中文" },
-  { code: "es-MX", name: "Español (México)", flag: "🇲🇽", nativeName: "Español" },
-  { code: "fr-CA", name: "Français (Canada)", flag: "🇨🇦", nativeName: "Français" },
-  { code: "de-AT", name: "Deutsch (Österreich)", flag: "🇦🇹", nativeName: "Deutsch" },
-  { code: "ar-EG", name: "عربي (مصر)", flag: "🇪🇬", nativeName: "عربي" },
-  { code: "xh-ZA", name: "isiXhosa", flag: "🇿🇦", nativeName: "isiXhosa" },
-  { code: "cmn-CN", name: "普通话", flag: "🇨🇳", nativeName: "普通话" },
-];
+import { LANGUAGES_57, AVAILABLE_LANGUAGES, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
+import { Globe, ChevronRight, Search, Sparkles, Clock, Check } from "lucide-react";
 
 const STEP_NATIVE = 1;
 const STEP_TARGET = 2;
+
+type LangCategory = "all" | "modern" | "ancient" | "indigenous" | "constructed";
+
+const CATEGORY_LABELS: Record<LangCategory, string> = {
+  all: "Todos",
+  modern: "Modernos",
+  ancient: "Antigos",
+  indigenous: "Indígenas",
+  constructed: "Construídos",
+};
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
@@ -78,19 +27,18 @@ export default function Onboarding() {
   const [targetLang, setTargetLang] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<LangCategory>("all");
+  const [showAllLanguages, setShowAllLanguages] = useState(false);
 
   const updateProfile = trpc.auth.updateProfile.useMutation();
   const { data: languages } = trpc.languages.list.useQuery();
 
-  // Guard 1: verificar se idioma nativo foi confirmado
-  // Se não confirmado, auto-detecta pelo navegador em vez de bloquear
   useEffect(() => {
     const { confirmed, code } = detectNativeLang();
     if (!confirmed) {
-      // Auto-detectar e salvar silenciosamente (não redirecionar)
       const nav = navigator.language || "pt-BR";
       const prefix = nav.split("-")[0].toLowerCase();
-      const prefixMap: Record<string,string> = {
+      const prefixMap: Record<string, string> = {
         pt: "pt-BR", en: "en-US", es: "es-ES", fr: "fr-FR", de: "de-DE",
         it: "it-IT", ja: "ja-JP", zh: "zh-CN", ko: "ko-KR", ru: "ru-RU",
         ar: "ar-SA", hi: "hi-IN", nl: "nl-NL", pl: "pl-PL", sv: "sv-SE",
@@ -99,12 +47,9 @@ export default function Onboarding() {
       const detected = prefixMap[prefix] || code || "pt-BR";
       localStorage.setItem("ml_native_lang", detected);
       localStorage.setItem("ml_native_lang_confirmed", "true");
-      // Só redireciona para language-detect se o idioma detectado for muito diferente
-      // do esperado (ex: usuário em país estrangeiro)
     }
   }, [setLocation]);
 
-  // Guard 2: verificar se usuário aceitou os termos
   const { data: complianceData, isLoading: complianceLoading } = trpc.compliance.checkAcceptance.useQuery();
   useEffect(() => {
     if (!complianceLoading && complianceData && !complianceData.accepted) {
@@ -112,59 +57,73 @@ export default function Onboarding() {
     }
   }, [complianceData, complianceLoading, setLocation]);
 
-  // Filter languages for target (exclude native)
   const filteredLanguages = useMemo(() => {
-    const base = ALL_LANGUAGES.filter(l => step === STEP_TARGET ? l.code !== nativeLang : true);
-    if (!search.trim()) return base;
-    const q = search.toLowerCase();
-    return base.filter(l => l.name.toLowerCase().includes(q) || l.nativeName.toLowerCase().includes(q));
-  }, [search, nativeLang, step]);
+    let base = LANGUAGES_57;
+    if (step === STEP_TARGET && nativeLang) {
+      base = base.filter(l => l.code !== nativeLang);
+    }
+    if (activeCategory !== "all") {
+      base = base.filter(l => l.category === activeCategory);
+    }
+    if (step === STEP_NATIVE) {
+      base = base.filter(l => l.available);
+    }
+    if (step === STEP_TARGET && !showAllLanguages) {
+      base = base.filter(l => l.available);
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      base = base.filter(l =>
+        l.label.toLowerCase().includes(q) ||
+        l.name.toLowerCase().includes(q) ||
+        l.code.toLowerCase().includes(q)
+      );
+    }
+    return base;
+  }, [search, nativeLang, step, activeCategory, showAllLanguages]);
 
   const handleNativeSelect = (code: string) => {
     setNativeLang(code);
     setSearch("");
     setStep(STEP_TARGET);
+    setActiveCategory("all");
+    setShowAllLanguages(false);
   };
 
-  const handleTargetSelect = async (code: string) => {
-    setTargetLang(code);
+  const handleTargetSelect = async (lang: Language) => {
+    if (!lang.available) return;
+    setTargetLang(lang.code);
     setSaving(true);
     try {
-      // Find matching language ID from DB
-      const dbLang = languages?.find(l => l.code === code.split('-')[0] || l.code === code);
+      const dbLang = languages?.find(l => l.code === lang.code.split('-')[0] || l.code === lang.code);
       await updateProfile.mutateAsync({
         nativeLanguage: nativeLang!,
         targetLanguageId: dbLang?.id,
       });
-      // Save to localStorage for app-wide access
-      const nativeLangObj = ALL_LANGUAGES.find(l => l.code === nativeLang);
-      const targetLangObj = ALL_LANGUAGES.find(l => l.code === code);
       localStorage.setItem("ml_native_lang", nativeLang!);
-      localStorage.setItem("ml_target_lang", code);
+      localStorage.setItem("ml_target_lang", lang.code);
       if (dbLang?.id) localStorage.setItem("ml_target_lang_id", String(dbLang.id));
-      // Write ml_lang_profile so LanguageContext and all components read the correct language
+      const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
       const profile = {
         nativeCode: nativeLang!,
-        nativeName: nativeLangObj?.nativeName || "Português",
-        targetCode: code,
-        targetName: targetLangObj?.nativeName || code,
-        targetFlag: targetLangObj?.flag || "🌐",
+        nativeName: nativeLangObj?.name || "Português",
+        targetCode: lang.code,
+        targetName: lang.name,
+        targetFlag: lang.flag,
       };
       localStorage.setItem("ml_lang_profile", JSON.stringify(profile));
       setLocation("/dashboard");
     } catch (e) {
       console.error("Failed to save profile:", e);
-      // Still proceed even if save fails
-      const nativeLangObj = ALL_LANGUAGES.find(l => l.code === nativeLang);
-      const targetLangObj = ALL_LANGUAGES.find(l => l.code === code);
+      const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
       localStorage.setItem("ml_native_lang", nativeLang!);
-      localStorage.setItem("ml_target_lang", code);
+      localStorage.setItem("ml_target_lang", lang.code);
       const profile = {
         nativeCode: nativeLang!,
-        nativeName: nativeLangObj?.nativeName || "Português",
-        targetCode: code,
-        targetName: targetLangObj?.nativeName || code,
-        targetFlag: targetLangObj?.flag || "🌐",
+        nativeName: nativeLangObj?.name || "Português",
+        targetCode: lang.code,
+        targetName: lang.name,
+        targetFlag: lang.flag,
       };
       localStorage.setItem("ml_lang_profile", JSON.stringify(profile));
       setLocation("/dashboard");
@@ -173,86 +132,175 @@ export default function Onboarding() {
     }
   };
 
-  const nativeLangObj = ALL_LANGUAGES.find(l => l.code === nativeLang);
+  const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
+  const progress = step === STEP_NATIVE ? 50 : 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 flex flex-col items-center justify-start px-4 py-8">
-      {/* Logo */}
-      <div className="flex items-center gap-2 mb-8">
-        <Globe className="h-8 w-8 text-purple-400" />
-        <span className="text-2xl font-bold text-white">MultiLingue Universal</span>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 flex flex-col items-center justify-start px-4 py-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <Globe className="h-7 w-7 text-purple-400" />
+        <span className="text-xl font-bold text-white tracking-tight">MultiLingue Universal</span>
       </div>
 
-      {/* Progress dots */}
-      <div className="flex gap-2 mb-8">
-        <div className={`h-2 w-8 rounded-full transition-all ${step >= STEP_NATIVE ? 'bg-purple-400' : 'bg-white/20'}`} />
-        <div className={`h-2 w-8 rounded-full transition-all ${step >= STEP_TARGET ? 'bg-purple-400' : 'bg-white/20'}`} />
-      </div>
-
-      <div className="w-full max-w-lg">
-        {step === STEP_NATIVE && (
-          <>
-            <h1 className="text-2xl font-bold text-white text-center mb-2">
-              Qual é o seu idioma nativo?
-            </h1>
-            <p className="text-white/60 text-center mb-6 text-sm">
-              Usaremos este idioma para todas as traduções e explicações
-            </p>
-          </>
-        )}
-        {step === STEP_TARGET && (
-          <>
-            <div className="flex items-center gap-2 mb-4">
-              <button
-                onClick={() => { setStep(STEP_NATIVE); setSearch(""); }}
-                className="text-white/60 hover:text-white text-sm flex items-center gap-1"
-              >
-                ← Voltar
-              </button>
-            </div>
-            <h1 className="text-2xl font-bold text-white text-center mb-1">
-              Qual idioma você quer aprender?
-            </h1>
-            <p className="text-white/60 text-center mb-2 text-sm">
-              Idioma nativo: {nativeLangObj?.flag} {nativeLangObj?.nativeName}
-            </p>
-            <p className="text-white/50 text-center mb-6 text-xs">
-              56 idiomas disponíveis
-            </p>
-          </>
-        )}
-
-        {/* Search */}
-        <div className="relative mb-4">
-          <input
-            type="text"
-            placeholder="Buscar idioma..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-purple-400"
+      {/* Main Card */}
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+        {/* Progress Bar */}
+        <div className="h-2 bg-gray-100 relative">
+          <div
+            className="h-full bg-indigo-600 rounded-r-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Language grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[50vh] overflow-y-auto pr-1">
-          {filteredLanguages.map(lang => (
-            <button
-              key={lang.code}
-              onClick={() => step === STEP_NATIVE ? handleNativeSelect(lang.code) : handleTargetSelect(lang.code)}
-              disabled={saving}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/15 hover:border-purple-400/50 transition-all active:scale-95"
-            >
-              <span className="text-3xl">{lang.flag}</span>
-              <span className="text-white text-xs font-medium text-center leading-tight">{lang.nativeName}</span>
-            </button>
-          ))}
-        </div>
+        <div className="p-6 sm:p-8">
+          {/* Step Content */}
+          {step === STEP_NATIVE && (
+            <>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Qual é o seu idioma nativo?
+              </h1>
+              <p className="text-gray-500 text-sm mb-6">
+                Usaremos este idioma para todas as traduções e explicações
+              </p>
+            </>
+          )}
+          {step === STEP_TARGET && (
+            <>
+              <div className="flex items-center gap-3 mb-4">
+                <button
+                  onClick={() => { setStep(STEP_NATIVE); setSearch(""); setActiveCategory("all"); setShowAllLanguages(false); }}
+                  className="text-gray-400 hover:text-gray-700 text-sm flex items-center gap-1"
+                >
+                  ← Voltar
+                </button>
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                Qual idioma você quer aprender?
+              </h1>
+              <p className="text-gray-500 text-sm mb-2">
+                Idioma nativo: {nativeLangObj?.flag} {nativeLangObj?.name}
+              </p>
+              <p className="text-indigo-600 text-xs font-medium mb-6">
+                {AVAILABLE_LANGUAGES.length} idiomas disponíveis agora · {TOTAL_LANGUAGES} no total
+              </p>
+            </>
+          )}
 
-        {saving && (
-          <div className="text-center mt-6 text-white/60 text-sm">
-            Salvando preferências...
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Buscar idioma..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
+            />
           </div>
-        )}
+
+          {/* Category Tabs (target step only) */}
+          {step === STEP_TARGET && (
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+              {(Object.keys(CATEGORY_LABELS) as LangCategory[]).map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                    activeCategory === cat
+                      ? "bg-indigo-600 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {CATEGORY_LABELS[cat]}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Language Grid */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[45vh] overflow-y-auto pr-1">
+            {filteredLanguages.map(lang => (
+              <button
+                key={lang.code}
+                onClick={() => step === STEP_NATIVE
+                  ? handleNativeSelect(lang.code)
+                  : handleTargetSelect(lang)
+                }
+                disabled={saving || (step === STEP_TARGET && !lang.available)}
+                className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all active:scale-95 ${
+                  step === STEP_TARGET && !lang.available
+                    ? "bg-gray-50 border-gray-100 cursor-not-allowed opacity-60"
+                    : "bg-white border-gray-200 hover:bg-indigo-50 hover:border-indigo-400"
+                }`}
+              >
+                {/* Flag in rounded square */}
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border-2 ${
+                  lang.available
+                    ? "border-gray-100 bg-gray-50"
+                    : "border-gray-100 bg-gray-100"
+                }`}>
+                  {lang.flag}
+                </div>
+                {/* Language name */}
+                <span className={`text-xs font-medium text-center leading-tight ${
+                  lang.available ? "text-gray-900" : "text-gray-400"
+                }`}>
+                  {lang.name}
+                </span>
+                {/* Available badge */}
+                {lang.available && step === STEP_TARGET && (
+                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                  </div>
+                )}
+                {/* Coming soon badge */}
+                {!lang.available && step === STEP_TARGET && (
+                  <div className="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100">
+                    <Clock className="w-2 h-2 text-amber-600" />
+                    <span className="text-[8px] font-bold text-amber-600 uppercase">Em breve</span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Show all languages toggle */}
+          {step === STEP_TARGET && !search && activeCategory === "all" && (
+            <button
+              onClick={() => setShowAllLanguages(!showAllLanguages)}
+              className="w-full mt-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+            >
+              {showAllLanguages ? (
+                <>Mostrar apenas disponíveis</>
+              ) : (
+                <>Ver todos os {TOTAL_LANGUAGES} idiomas</>
+              )}
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Empty state */}
+          {filteredLanguages.length === 0 && (
+            <div className="text-center py-12 text-gray-400">
+              <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Nenhum idioma encontrado</p>
+            </div>
+          )}
+
+          {/* Saving indicator */}
+          {saving && (
+            <div className="text-center mt-4 text-indigo-600 text-sm font-medium">
+              Salvando preferências...
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Footer info */}
+      <div className="mt-6 flex items-center gap-2 text-white/40 text-xs">
+        <Sparkles className="w-3 h-3" />
+        <span>{TOTAL_LANGUAGES} idiomas · IA avançada · Professores virtuais</span>
       </div>
     </div>
   );

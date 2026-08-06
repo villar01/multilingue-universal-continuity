@@ -92,6 +92,13 @@
       "when": 1783162978714,
       "tag": "0012_shiny_colossus",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1786013219376,
+      "tag": "0013_secret_major_mapleleaf",
+      "breakpoints": true
     }
   ]
 }

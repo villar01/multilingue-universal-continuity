@@ -2291,3 +2291,27 @@ export const parentalAlerts = mysqlTable("parental_alerts", {
 
 export type ParentalAlert = typeof parentalAlerts.$inferSelect;
 export type InsertParentalAlert = typeof parentalAlerts.$inferInsert;
+
+// ===== App Updates =====
+export const appUpdates = mysqlTable("app_updates", {
+  id: int("id").autoincrement().primaryKey(),
+  version: varchar("version", { length: 20 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body"),
+  severity: varchar("severity", { length: 20 }).default("info"),
+  isRead: boolean("isRead").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AppUpdate = typeof appUpdates.$inferSelect;
+export type InsertAppUpdate = typeof appUpdates.$inferInsert;
+
+// ===== App Updates Read (per-user read tracking) =====
+export const appUpdatesRead = mysqlTable("app_updates_read", {
+  id: int("id").autoincrement().primaryKey(),
+  updateId: int("updateId").notNull().references(() => appUpdates.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull(),
+  readAt: timestamp("readAt").defaultNow().notNull(),
+});
+export type AppUpdateRead = typeof appUpdatesRead.$inferSelect;
+export type InsertAppUpdateRead = typeof appUpdatesRead.$inferInsert;
+
