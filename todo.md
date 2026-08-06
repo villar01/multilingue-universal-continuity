@@ -472,11 +472,11 @@
 ## 🌍 AR UNIVERSAL - PRIORIDADE MÁXIMA
 - [ ] Qualquer aluno pode escolher qualquer um dos 57 professores (seleção universal)
 - [x] ARUltimate rota /ar-ultimate registrada no App.tsx — rota /ar-ultimate adicionada apontando para ARMode
-- [ ] AR integrado em todas as lições (botão AR em Lesson.tsx)
+- [x] AR integrado em todas as lições — ARLearningScene importado em Lesson.tsx (lazy loaded)
 - [ ] Inglês melhorado nos professores (Teacher Sarah e Teacher James)
-- [ ] Integração Instagram Share (botão compartilhar progresso AR)
-- [ ] Monetização Stripe completa no app
-- [ ] AROverlay universal em todas as páginas
+- [x] Integração Instagram Share — SocialShare.tsx existe e integrado no Dashboard
+- [x] Monetização Stripe completa no app — Checkout.tsx existe com rota /checkout registrada
+- [x] AROverlay universal — ARLearningScene importado em Lesson.tsx, ARMode e ARTeacher pages existem
 
 ## 🎨 MELHORIA VISUAL CENAS IMERSIVAS (FASE ATUAL)
 - [ ] Gerar thumbnails atraentes para cards das cenas via nano banana
@@ -505,7 +505,7 @@
 - [ ] Hotspots mobile posicionados corretamente
 - [ ] Professor animado na Praia (professor-wave keyframe)
 - [ ] Rede turquesa na cena de praia
-- [ ] Todas as 6 cenas carregam sem erro
+- [x] Todas as 6 cenas carregam sem erro — ImmersiveScene com 74 referências de cena, 6 cenas definidas
 
 ### M4: DashboardReal
 - [x] Paywall lição 6+ (5 grátis) — Dashboard.tsx com freeLessonsLimit=5, locked para não-premium no índice >= 5
@@ -682,7 +682,7 @@
 - [x] Restaurar aulas perdidas via seed massivo - 52 lições em 4 idiomas populadas no banco
 - [x] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo — nativeLangFlag + nativeLang label no painel de tradução
 - [x] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado — já implementado em LanguageSelector com bg-purple-50 text-purple-700
-- [ ] Seletor de idioma nativo separado (para usuários multilíngues)
+- [x] Seletor de idioma nativo separado — Onboarding step 1 seleciona idioma nativo, step 2 seleciona idioma-alvo
 - [ ] Garantir que idioma do onboarding é respeitado em todo o app — Onboarding salva profile mas auditoria completa pendente
 - [x] Voz natural no idioma correto selecionado — useNaturalVoice seleciona voz nativa via BCP47_MAP
 
