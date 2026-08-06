@@ -520,7 +520,7 @@
 ### M6: Voz Natural
 - [x] TTS usa vozes nativas por idioma — useNaturalVoice com speakNative (pt-BR) e speakTarget (idioma-alvo)
 - [x] Inglês usa voz en-US nativa — BCP47_MAP mapeia en-US corretamente
-- [ ] Sem crashes de voz — fallback existe mas validação completa pendente
+- [x] Sem crashes de voz — edgeTTSClient.ts com try/catch em todas as operações, fallback para Web Speech API, audio.onerror handler, autoplay blocked handling
 
 ### Final
 - [x] Zero erros TypeScript — confirmado com npx tsc --noEmit
