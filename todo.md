@@ -1012,7 +1012,7 @@
 ## 🎯 REORGANIZAÇÃO INTEGRAL (Ago 2026)
 - [x] Reorganizar Onboarding: seleção clara em 2 passos (Eu falo → Eu quero aprender) com barra de progresso, grid de bandeiras, abas de categoria, badges disponível/em breve
 - [x] Reorganizar Dashboard: lições em cards numerados (Aula N) com badge CEFR colorido e progressão visual clara
-- [ ] Reorganizar ImmersiveScene: seleção de cena em grid organizado por nível (Iniciante → Intermediário → Avançado)
+- [x] Reorganizar ImmersiveScene: seleção de cena com filtros por nível CEFR (A1-A2 Iniciante, B1-B2 Médio, C1-C2 Avançado) + badges coloridos
 - [ ] Garantir que fluxo do início ao fim seja linear: Onboarding → Dashboard → Lição 1 → Lição 2 → ... → Lição N
 - [ ] Adicionar tela de "Escolha seu professor" após seleção de idiomas (professor aparece antes de começar)
 - [ ] Garantir que cada nível (A1, A2, B1, B2, C1, C2) tenha tela própria com lições numeradas

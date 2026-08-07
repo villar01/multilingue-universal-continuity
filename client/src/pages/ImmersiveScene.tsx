@@ -2049,7 +2049,7 @@ export default function ImmersiveScene() {
                 border: filter === f ? "1px solid #6366f1" : "1px solid rgba(255,255,255,0.1)",
               }}
             >
-              {f === "all" ? "Todos" : f === "beginner" ? "Iniciante" : f === "intermediate" ? "Médio" : "Avançado"}
+              {f === "all" ? "Todos" : f === "beginner" ? "A1-A2 Iniciante" : f === "intermediate" ? "B1-B2 Médio" : "C1-C2 Avançado"}
             </button>
           ))}
         </div>
