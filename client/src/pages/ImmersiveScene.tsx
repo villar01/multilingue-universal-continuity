@@ -1134,6 +1134,10 @@ export default function ImmersiveScene() {
       if (!targetCode) targetCode = localStorage.getItem("ml_target_lang") || "";
       if (targetCode) {
         const base = targetCode.split("-")[0].toLowerCase();
+        // Prefer beginner difficulty scene for the target language (first lesson should be easy)
+        const beginnerMatch = IMMERSIVE_SCENES.find(s => (s.langCode === base || s.teacherLang.startsWith(base)) && s.difficulty === "beginner");
+        if (beginnerMatch) return beginnerMatch;
+        // Fallback to any scene matching the language
         const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.startsWith(base));
         if (match) return match;
       }
