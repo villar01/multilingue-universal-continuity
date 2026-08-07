@@ -897,7 +897,7 @@ function TeacherAvatar({
           position: "relative",
           width: "100%",
           animation: isSpeaking
-            ? "teacher-talk 0.35s ease-in-out infinite"
+            ? "teacher-talk 1.2s ease-in-out infinite"
             : (scene.teacherAnimation
               ? `${scene.teacherAnimation} 4s ease-in-out infinite`
               : "teacher-breathe 4s ease-in-out infinite"),
@@ -1398,13 +1398,11 @@ export default function ImmersiveScene() {
           }
           /* ── Professor talking (lip-sync simulation) ── */
           @keyframes teacher-talk {
-            0%   { transform: scaleX(1)    translateY(0)    scaleY(1); }
-            15%  { transform: scaleX(1.02) translateY(-2px) scaleY(1.01); }
-            30%  { transform: scaleX(0.99) translateY(-1px) scaleY(1.02); }
-            45%  { transform: scaleX(1.02) translateY(-3px) scaleY(1.01); }
-            60%  { transform: scaleX(1)    translateY(-2px) scaleY(1); }
-            75%  { transform: scaleX(1.01) translateY(-1px) scaleY(1.015); }
-            100% { transform: scaleX(1)    translateY(0)    scaleY(1); }
+            0%   { transform: translateY(0)    scaleY(1); }
+            25%  { transform: translateY(-1px) scaleY(1.005); }
+            50%  { transform: translateY(-2px) scaleY(1.01); }
+            75%  { transform: translateY(-1px) scaleY(1.005); }
+            100% { transform: translateY(0)    scaleY(1); }
           }
           /* ── Lip-sync overlay (mouth movement) ── */
           @keyframes lip-sync {

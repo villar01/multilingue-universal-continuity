@@ -996,7 +996,7 @@
 - [x] Voz sincronizada com gênero do professor — teacherGender adicionado a todas as cenas, speak() passa gender ao TTS
 - [x] Dashboard usa idioma-alvo do usuário em vez de hardcoded languageId=1
 - [x] Coluna target_language_id adicionada ao banco (migration 0014)
-- [ ] Corrigir animação do professor tremendo na ImmersiveScene
+- [x] Corrigir animação do professor tremendo na ImmersiveScene — teacher-talk suavizada: 1.2s ease-in-out (era 0.35s), transform reduzido (sem scaleX, apenas translateY suave)
 - [ ] Garantir que primeira aula seja nível beginner (não advanced)
 - [ ] Garantir que idiomas não misturem (português + inglês, sem espanhol misturado)
 - [ ] Adicionar perguntas interativas após controle parental (estilo apps concorrentes)
