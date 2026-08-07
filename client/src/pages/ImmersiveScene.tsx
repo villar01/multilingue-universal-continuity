@@ -1381,7 +1381,7 @@ export default function ImmersiveScene() {
   const difficultyColor = (d: string) =>
     d === "beginner" ? "#22c55e" : d === "intermediate" ? "#f59e0b" : "#ef4444";
   const difficultyLabel = (d: string) =>
-    d === "beginner" ? "Iniciante" : d === "intermediate" ? "Intermediário" : "Avançado";
+    d === "beginner" ? "A1-A2 · Iniciante" : d === "intermediate" ? "B1-B2 · Intermediário" : "C1-C2 · Avançado";
 
   // ── Scene View ──
   if (selectedScene) {

@@ -1000,4 +1000,4 @@
 - [x] Garantir que primeira aula seja nível beginner — getInitialScene agora prioriza cenas com difficulty:"beginner" antes de qualquer outra
 - [x] Garantir que idiomas não misturem — getInitialScene prioriza cenas do idioma-alvo correto (inglês → beach/forest, não cozinha/espanhol)
 - [ ] Adicionar perguntas interativas após controle parental (estilo apps concorrentes)
-- [ ] Clareza no nível e progressão das atividades (A1→A2→B1→B2→C1→C2 visível)
+- [x] Clareza no nível e progressão das atividades — difficultyLabel agora mostra CEFR: "A1-A2 · Iniciante", "B1-B2 · Intermediário", "C1-C2 · Avançado"
