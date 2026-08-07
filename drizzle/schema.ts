@@ -20,6 +20,7 @@ export const users = mysqlTable("users", {
   
   // User preferences
   nativeLanguage: varchar("nativeLanguage", { length: 10 }), // ISO 639-1 code
+  targetLanguageId: int("target_language_id"), // Idioma que o usuário quer aprender
   learningGoal: text("learningGoal"),
   dailyGoalMinutes: int("dailyGoalMinutes").default(10),
   // Gamification

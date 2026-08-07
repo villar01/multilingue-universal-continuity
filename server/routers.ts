@@ -111,6 +111,7 @@ export const appRouter = router({
         const { eq } = await import('drizzle-orm');
         const updateData: Record<string, unknown> = {};
         if (input.nativeLanguage !== undefined) updateData.nativeLanguage = input.nativeLanguage;
+        if (input.targetLanguageId !== undefined) updateData.targetLanguageId = input.targetLanguageId;
         if (input.learningGoal !== undefined) updateData.learningGoal = input.learningGoal;
         if (Object.keys(updateData).length > 0) {
           await database.update(users).set(updateData).where(eq(users.id, ctx.user.id));

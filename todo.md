@@ -983,3 +983,21 @@
 - [x] Garantir consistência visual: paleta indigo/purple/blue mantida como primária
 - [x] TypeScript 0 erros após reorganização — confirmado com npx tsc --noEmit
 - [x] Salvar checkpoint final
+
+## 🐛 BUG: Seleção de Idiomas Não Funciona Corretamente (Ago 2026)
+- [x] Investigar por que seleção de idioma nativo e idioma-alvo não persiste corretamente — Dashboard hardcoded para languageId=1, ignorando ml_target_lang_id do Onboarding
+- [x] Corrigir Onboarding: garantir que nativeLang e targetLang são salvos no profile — updateProfile agora salva targetLanguageId no DB (coluna target_language_id adicionada)
+- [ ] Corrigir Home: garantir que LangDropdown respeita idiomas selecionados no Onboarding
+- [x] Corrigir Dashboard: garantir que lições carregam no idioma-alvo correto — targetLangId agora lê ml_target_lang_id do localStorage com fallback para ml_lang_profile.targetCode
+- [x] Garantir redundância: localStorage + profile DB sincronizados — Onboarding salva ml_target_lang_id + ml_lang_profile + updateProfile DB
+- [x] Testar fluxo completo: Dashboard agora lê targetLangId do localStorage em vez de hardcoded languageId=1
+
+## 🎯 CORREÇÕES DE QUALIDADE (Ago 2026 - Baseado no feedback)
+- [x] Voz sincronizada com gênero do professor — teacherGender adicionado a todas as cenas, speak() passa gender ao TTS
+- [x] Dashboard usa idioma-alvo do usuário em vez de hardcoded languageId=1
+- [x] Coluna target_language_id adicionada ao banco (migration 0014)
+- [ ] Corrigir animação do professor tremendo na ImmersiveScene
+- [ ] Garantir que primeira aula seja nível beginner (não advanced)
+- [ ] Garantir que idiomas não misturem (português + inglês, sem espanhol misturado)
+- [ ] Adicionar perguntas interativas após controle parental (estilo apps concorrentes)
+- [ ] Clareza no nível e progressão das atividades (A1→A2→B1→B2→C1→C2 visível)

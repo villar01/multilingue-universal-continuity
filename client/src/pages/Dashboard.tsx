@@ -45,9 +45,25 @@ export default function Dashboard() {
   // Buscar idiomas disponíveis
   const { data: languages } = trpc.languages.list.useQuery();
   
-  // Buscar lições do primeiro idioma (Inglês)
+  // Buscar idioma-alvo do perfil do usuário (salvo no Onboarding)
+  const targetLangId = (() => {
+    try {
+      const stored = localStorage.getItem("ml_target_lang_id");
+      if (stored) return parseInt(stored);
+    } catch {}
+    // Fallback: encontrar idioma-alvo pelo código
+    const targetCode = (() => {
+      try {
+        const profile = JSON.parse(localStorage.getItem("ml_lang_profile") || "{}");
+        return profile.targetCode || "en";
+      } catch { return "en"; }
+    })();
+    const lang = languages?.find(l => l.code === targetCode || l.code === targetCode.split('-')[0]);
+    return lang?.id || 1;
+  })();
+
   const { data: courses } = trpc.courses.getByLanguage.useQuery(
-    { languageId: 1 },
+    { languageId: targetLangId },
     { enabled: !!languages && languages.length > 0 }
   );
   
