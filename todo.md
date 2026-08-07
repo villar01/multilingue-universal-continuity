@@ -70,7 +70,7 @@
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
 - [ ] Análise automática de padrões de uso — analyzeTTSQuality analisa pronuncia, mas analise de padroes de uso do app pendente
-- [ ] Otimização automática de prompts — autoImproveSystem existe mas nao integrado nos endpoints do app
+- [ ] Otimização automática de prompts — autoImproveSystem existe em auto-improvement-router.ts mas não integrado nos endpoints/fluxos principais do app
 - [x] Redução de consumo de tokens — promptCompression.ts (client+server) integrado em aiProvider.ts, tokensSaved rastreado em metrics
 - [ ] Aprendizado de padrões de interação — sem coleta historica ou modelagem de padroes
 - [x] Ajuste dinâmico de parâmetros TTS — auto-improvement-router getOptimizedTTSConfig ajusta voice/rate/pitch
@@ -92,7 +92,7 @@
 - [ ] Modo competitivo multiplayer
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
-- [ ] Modo imersão total (interface no idioma alvo)
+- [ ] Modo imersão total — texto marketing existe mas interface real no idioma-alvo não implementada
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
 - [x] Adicionar "mom" ao vocabulário
@@ -129,7 +129,7 @@
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
 - [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
 - [x] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — useStreamingText integrado em LiveLessonTeacher com StreamingTeacherMessage
-- [ ] Cachear avatares e vídeos no localStorage/IndexedDB
+- [ ] Cachear avatares e vídeos no localStorage/IndexedDB — VoiceConversation usa IndexedDB para conversas mas cache de avatares/vídeos não implementado
 - [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
