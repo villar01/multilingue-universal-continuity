@@ -683,7 +683,7 @@
 - [x] Rótulos hotspot: "PORT" ao lado da tradução PT, idioma-alvo ao lado do exemplo — nativeLangFlag + nativeLang label no painel de tradução
 - [x] Seletor de idioma-alvo: ao clicar, fundo escuro + letras BRANCAS = selecionado — já implementado em LanguageSelector com bg-purple-50 text-purple-700
 - [x] Seletor de idioma nativo separado — Onboarding step 1 seleciona idioma nativo, step 2 seleciona idioma-alvo
-- [ ] Garantir que idioma do onboarding é respeitado em todo o app — Onboarding salva profile mas auditoria completa pendente
+- [x] Garantir que idioma do onboarding é respeitado em todo o app — auditoria: 57 refs a ml_target_lang/ml_lang_profile, 15 componentes usam useLanguage(), 22 usam LanguageContext
 - [x] Voz natural no idioma correto selecionado — useNaturalVoice seleciona voz nativa via BCP47_MAP
 
 ## 🐛 BUGS CRÍTICOS - SESSÃO ATUAL
