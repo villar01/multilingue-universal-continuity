@@ -41,7 +41,7 @@
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
-- [ ] Integração com Google TTS para timing preciso
+- [ ] Integração com Google TTS para timing preciso — ttsGoogle router existe mas não integrado nos fluxos de avatar/lip-sync
 - [ ] Cache de vídeos gerados em S3
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 
@@ -152,7 +152,7 @@
 - [x] Criar página /clips com lista de vídeos educacionais curtos (Clips.tsx criado, rota adicionada)
 - [x] Adicionar 2 professores fotorrealistas adicionais (Professor Carlos - Espanhol, Professor Jean - Francês)
 - [x] Garantir Professora Ingrid visível e funcional (3 professores criados: Ingrid-English, Carlos-Spanish, Jean-French)
-- [ ] Testar animação lip-sync de todos avatares (Ricardo, Ingrid, Carlos, Jean)
+- [ ] Testar animação lip-sync de todos avatares — mecanismos existem mas validação individual de Ricardo, Ingrid, Carlos, Jean pendente
 - [ ] Verificar sincronização de voz real sem defeitos
 - [ ] Popular banco com clipes educacionais (mom, dad, brother, sister, family)
 
