@@ -153,14 +153,31 @@ export default function Dashboard() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
+        {/* Welcome Section with Global Progress */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
             Olá, {user?.name}! 👋
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-4">
             Continue sua jornada de aprendizado hoje
           </p>
+          {/* Global Progress Bar */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-gray-700">Progresso do curso</span>
+              <span className="text-sm font-bold text-indigo-600">
+                {Math.round((lessonsCompleted / Math.max(totalLessons, 1)) * 100)}%
+              </span>
+            </div>
+            <Progress
+              value={(lessonsCompleted / Math.max(totalLessons, 1)) * 100}
+              className="h-3"
+            />
+            <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+              <span>{lessonsCompleted} de {totalLessons} lições completas</span>
+              <span>Nível {level} · {level <= 2 ? 'A1-A2' : level <= 4 ? 'B1-B2' : 'C1-C2'}</span>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
