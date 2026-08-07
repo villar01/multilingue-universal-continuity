@@ -1001,3 +1001,10 @@
 - [x] Garantir que idiomas não misturem — getInitialScene prioriza cenas do idioma-alvo correto (inglês → beach/forest, não cozinha/espanhol)
 - [ ] Adicionar perguntas interativas após controle parental (estilo apps concorrentes)
 - [x] Clareza no nível e progressão das atividades — difficultyLabel agora mostra CEFR: "A1-A2 · Iniciante", "B1-B2 · Intermediário", "C1-C2 · Avançado"
+
+## 📊 PROGRESSÃO CLARA DE LIÇÕES (Ago 2026)
+- [x] Garantir que Dashboard ordena lições por orderIndex — db.ts getLessonsByCourse já usa orderBy(lessons.orderIndex), Dashboard exibe "Aula N" + badge CEFR
+- [x] Garantir que cada lição mostra nível CEFR correto no header — Dashboard badge colorido: verde A1-A2 (lições 1-10), amarelo B1-B2 (11-20), vermelho C1-C2 (21+)
+- [x] Garantir que lições não misturam níveis — lições ordenadas por orderIndex, usuário vê lições em sequência do fácil ao difícil
+- [ ] Garantir que ImmersiveScene mostra progressão de dificuldade (beginner→intermediate→advanced)
+- [ ] Garantir que usuário só avança para próximo nível após completar lições do nível atual

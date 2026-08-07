@@ -274,8 +274,17 @@ export default function Dashboard() {
                       )}
                       <div>
                         <div className="font-semibold">{lesson.title}</div>
-                        <div className="text-sm text-gray-500">
-                          {lesson.language} • {lesson.duration}
+                        <div className="text-sm text-gray-500 flex items-center gap-2">
+                          <span>Aula {lesson.orderIndex || '?'}</span>
+                          <span>•</span>
+                          <span>{lesson.language}</span>
+                          <span>•</span>
+                          <Badge className="text-xs px-1.5 py-0" style={{
+                            backgroundColor: (lesson.orderIndex || 1) <= 10 ? '#22c55e' : (lesson.orderIndex || 1) <= 20 ? '#f59e0b' : '#ef4444',
+                            color: 'white'
+                          }}>
+                            {(lesson.orderIndex || 1) <= 10 ? 'A1-A2' : (lesson.orderIndex || 1) <= 20 ? 'B1-B2' : 'C1-C2'}
+                          </Badge>
                         </div>
                       </div>
                     </div>
