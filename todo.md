@@ -987,7 +987,7 @@
 ## 🐛 BUG: Seleção de Idiomas Não Funciona Corretamente (Ago 2026)
 - [x] Investigar por que seleção de idioma nativo e idioma-alvo não persiste corretamente — Dashboard hardcoded para languageId=1, ignorando ml_target_lang_id do Onboarding
 - [x] Corrigir Onboarding: garantir que nativeLang e targetLang são salvos no profile — updateProfile agora salva targetLanguageId no DB (coluna target_language_id adicionada)
-- [ ] Corrigir Home: garantir que LangDropdown respeita idiomas selecionados no Onboarding
+- [x] Corrigir Home: garantir que LangDropdown respeita idiomas selecionados no Onboarding — Home usa useLanguage() que lê ml_lang_profile do localStorage (mesma key que Onboarding salva)
 - [x] Corrigir Dashboard: garantir que lições carregam no idioma-alvo correto — targetLangId agora lê ml_target_lang_id do localStorage com fallback para ml_lang_profile.targetCode
 - [x] Garantir redundância: localStorage + profile DB sincronizados — Onboarding salva ml_target_lang_id + ml_lang_profile + updateProfile DB
 - [x] Testar fluxo completo: Dashboard agora lê targetLangId do localStorage em vez de hardcoded languageId=1
