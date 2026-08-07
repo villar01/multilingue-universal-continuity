@@ -514,7 +514,7 @@
 
 ### M5: ARMode/CameraTranslator
 - [ ] CameraTranslator abre câmera e detecta objetos — CameraTranslator.tsx existe mas precisa validar abertura de câmera e detecção
-- [ ] Vocabulário SRS real carrega — lib/srs.ts existe mas integração na UI/data flow pendente
+- [x] Vocabulário SRS real carrega — ARMode.tsx com SRS SM-2, 6 modos, 12 categorias, conectado ao progresso do usuário
 - [ ] Banner Premium 7 dias aparece
 
 ### M6: Voz Natural
@@ -535,8 +535,8 @@
 - [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson mapeia por orderIndex mas não salva no DB nem adapta por usuário
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
-- [ ] Detectar e bloquear tentativas de bypass do paywall
-- [ ] Rate limiting inteligente: detectar scraping, bots, requisições em massa
+- [x] Detectar e bloquear tentativas de bypass do paywall — security-monitor.ts com eventType "paywall_bypass", systemRouter com logSecurityEvent
+- [x] Rate limiting inteligente — security.ts com rate limiting, systemRouter com eventType "rate_limit_exceeded", "scraping_detected", "bot_detected"
 - [x] Registrar eventos de segurança no banco — systemRouter.ts com logSecurityEvent e getSecurityEvents procedures
 - [ ] IA analisa eventos e gera alertas com dicas de ação para o admin
 - [x] Painel /ai-monitor exibe alertas de segurança — getSecurityEvents procedure retorna eventos ordenados por data
@@ -1017,3 +1017,12 @@
 - [ ] Adicionar tela de "Escolha seu professor" após seleção de idiomas (professor aparece antes de começar)
 - [ ] Garantir que cada nível (A1, A2, B1, B2, C1, C2) tenha tela própria com lições numeradas
 - [x] Adicionar barra de progresso global no Dashboard — card branco com % de conclusão, lições completas e nível CEFR
+
+## 🎨 ANIMAÇÕES DE QUALIDADE (Ago 2026)
+- [x] Melhorar animação do professor: respiração (teacher-breathe) + balanço de cabeça (head-sway) combinados
+- [x] Adicionar overlay de boca animada — mouth-talk keyframe com variação de largura/altura sincronizada ao falar
+- [x] Adicionar piscadas naturais dos olhos — eye-blink keyframe a cada 4s com opacity flash
+- [x] Adicionar movimento de cabeça natural — head-sway com rotação suave (-1.5deg a +1.5deg) + translateY
+- [x] Sincronizar expressões com estado de fala — mouth overlay visível apenas quando isSpeaking, head-sway mais rápido ao falar
+- [ ] Adicionar gestos de mãos quando professor explica conceitos
+- [ ] Melhorar transições entre idle/falando/ouvindo com curvas de animação naturais

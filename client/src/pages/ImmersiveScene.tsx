@@ -891,16 +891,16 @@ function TeacherAvatar({
         </div>
       )}
 
-      {/* Teacher image with animations */}
+      {/* Teacher image with quality animations */}
       <div
         style={{
           position: "relative",
           width: "100%",
           animation: isSpeaking
-            ? "teacher-talk 1.2s ease-in-out infinite"
+            ? "teacher-talk 1.2s ease-in-out infinite, head-sway 3s ease-in-out infinite"
             : (scene.teacherAnimation
-              ? `${scene.teacherAnimation} 4s ease-in-out infinite`
-              : "teacher-breathe 4s ease-in-out infinite"),
+              ? `${scene.teacherAnimation} 4s ease-in-out infinite, teacher-breathe 4s ease-in-out infinite`
+              : "teacher-breathe 4s ease-in-out infinite, head-sway 5s ease-in-out infinite"),
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
             : "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",
@@ -922,6 +922,38 @@ function TeacherAvatar({
             target.style.display = "none";
           }}
         />
+        {/* Eye blink overlay — natural blinking every 3-5 seconds */}
+        <div
+          style={{
+            position: "absolute",
+            top: "18%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "30%",
+            height: "3%",
+            background: "rgba(0,0,0,0)",
+            borderRadius: "50%",
+            animation: "eye-blink 4s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        {/* Mouth animation overlay — visible when speaking */}
+        {isSpeaking && (
+          <div
+            style={{
+              position: "absolute",
+              top: "35%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "12%",
+              height: "6%",
+              background: "rgba(139,69,69,0.3)",
+              borderRadius: "50% 50% 50% 50%",
+              animation: "mouth-talk 0.3s ease-in-out infinite alternate",
+              pointerEvents: "none",
+            }}
+          />
+        )}
         {/* Lip-sync sound bars — visible when speaking */}
         {isSpeaking && (
           <div
@@ -1399,6 +1431,28 @@ export default function ImmersiveScene() {
           @keyframes teacher-breathe {
             0%,100% { transform: scaleY(1) translateY(0); }
             50% { transform: scaleY(1.018) translateY(-4px); }
+          }
+          /* ── Natural head sway (gentle side-to-side) ── */
+          @keyframes head-sway {
+            0%,100% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(-1.5deg) translateY(-2px); }
+            50% { transform: rotate(0deg) translateY(-3px); }
+            75% { transform: rotate(1.5deg) translateY(-2px); }
+          }
+          /* ── Eye blink (natural every 3-5 seconds) ── */
+          @keyframes eye-blink {
+            0%, 92%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0; }
+            94%, 96% { transform: translateX(-50%) scaleY(0.1); opacity: 0.8; background: rgba(0,0,0,0.15); }
+            98% { transform: translateX(-50%) scaleY(1); opacity: 0; }
+          }
+          /* ── Mouth talk (lip-sync simulation) ── */
+          @keyframes mouth-talk {
+            0% { transform: translateX(-50%) scaleY(0.3); width: 8%; }
+            20% { transform: translateX(-50%) scaleY(1); width: 14%; }
+            40% { transform: translateX(-50%) scaleY(0.5); width: 10%; }
+            60% { transform: translateX(-50%) scaleY(0.8); width: 12%; }
+            80% { transform: translateX(-50%) scaleY(0.4); width: 9%; }
+            100% { transform: translateX(-50%) scaleY(0.6); width: 11%; }
           }
           /* ── Professor talking (lip-sync simulation) ── */
           @keyframes teacher-talk {
