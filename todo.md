@@ -503,7 +503,7 @@
 
 ### M3: ImmersiveScene
 - [ ] Hotspots mobile posicionados corretamente
-- [ ] Professor animado na Praia (professor-wave keyframe)
+- [x] Professor animado na Praia (professor-wave keyframe) — beach scene tem teacherAnimation: "professor-wave", keyframe definido na linha 1430
 - [ ] Rede turquesa na cena de praia
 - [x] Todas as 6 cenas carregam sem erro — ImmersiveScene com 74 referências de cena, 6 cenas definidas
 
