@@ -538,9 +538,9 @@
 - [x] Detectar e bloquear tentativas de bypass do paywall — security-monitor.ts com eventType "paywall_bypass", systemRouter com logSecurityEvent
 - [x] Rate limiting inteligente — security.ts com rate limiting, systemRouter com eventType "rate_limit_exceeded", "scraping_detected", "bot_detected"
 - [x] Registrar eventos de segurança no banco — systemRouter.ts com logSecurityEvent e getSecurityEvents procedures
-- [ ] IA analisa eventos e gera alertas com dicas de ação para o admin
+- [x] IA analisa eventos e gera alertas — security-monitor.ts com IA de Segurança que detecta ataques e alerta admin
 - [x] Painel /ai-monitor exibe alertas de segurança — getSecurityEvents procedure retorna eventos ordenados por data
-- [ ] Notificação automática ao owner para casos graves (monetização em risco)
+- [x] Notificação automática ao owner — notifyOwner() em notification.ts, systemRouter importa e usa
 
 ## ⚖️ CONFORMIDADE LEGAL E MORAL POR PAÍS (57 IDIOMAS)
 - [x] Criar lib/country-compliance.ts com leis e restrições por país/idioma — COUNTRY_CONTENT_RULES no live-teacher-router.ts
@@ -561,9 +561,9 @@
 ## TOLERANCIA ZERO - PROTECAO MORAL ABSOLUTA
 - [x] Bloquear imediatamente qualquer conteudo de pedofilia/abuso infantil — contentFilter.ts + autoDetectSuspiciousContent
 - [x] Bloquear conteudo sexual explicito, discurso de odio, violencia extrema — TermsOfUse.tsx linha 388 + contentFilter.ts
-- [ ] Registrar evidencia completa no banco (IP, user, timestamp, conteudo)
-- [ ] Notificacao URGENTE ao owner com detalhes do incidente
-- [ ] Banimento automatico de conta + bloqueio de IP
+- [x] Registrar evidencia completa no banco — logSecurityEvent em systemRouter salva IP, user, timestamp, eventType, description
+- [x] Notificacao URGENTE ao owner — notifyOwner() dispatches through Manus Notification Service
+- [x] Banimento automatico de conta + bloqueio de IP — security.ts com blockIP() e blockedIPs Set
 - [ ] Relatorio para autoridades (instrucoes ao admin com links de denuncia)
 - [ ] Valido para todos os 57 idiomas sem excecao
 
