@@ -35,7 +35,7 @@
 - [x] Fallback automático para Manus AI se ambos offline — aiProvider.ts fallback chain termina em invokeLLM (Manus)
 
 ### 2. AVATARES FOTORREALISTAS COM LIP-SYNC PERFEITO
-- [ ] Criar foto profissional Professora Ingrid (feminino, inglês)
+- [ ] Criar foto profissional Professora Ingrid (feminino, inglês) — Ingrid existe em TEACHERS_57 mas como teacher norueguesa, precisa de foto específica para inglês
 - [ ] Criar foto profissional Professor Ricardo (masculino, português)
 - [x] Sistema de detecção de fonemas (visemas) — tts-viseme-sync.ts com useTTSVisemeSync
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
