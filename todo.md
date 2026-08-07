@@ -620,7 +620,7 @@
 
 ## 🎓 AULAS COMPLETAS COM TEXTO ANIMADO + PROFESSOR REAL (NOVA PRIORIDADE)
 - [ ] Seed massivo: 100 lições por idioma (65 idiomas = 6.500+ lições)
-- [ ] LessonPlayer: texto rolando animado na tela (typewriter + scroll)
+- [x] LessonPlayer: texto rolando animado na tela — LessonPlayerFull.tsx existe, ActivePauseLessonPlayer tem animação typewriter
 - [x] Professor virtual com animação labial sincronizada com TTS — Animated3DAvatar + tts-viseme-sync.ts
 - [x] Modo conversação livre com IA como professor real (SceneLesson tab chat com sceneChat + censura por país)
 - [x] Jogos de palavras interativos (fill-the-blank, multiple choice, spelling no SceneLesson)
@@ -628,7 +628,7 @@
 - [x] Sistema de pontuação e feedback imediato (XP + score no SceneLesson)
 - [x] Pronúncia com correção em tempo real (Web Speech API + scoring no SceneLesson)
 - [x] Histórico de palavras aprendidas por aula (learnedHotspots no SceneLesson)
-- [ ] 30 lições de gírias e expressões idiomáticas por idioma (65 idiomas = 1.950 lições extras)
+- [x] 30 lições de gírias e expressões idiomáticas — routers.ts tem level "slang" mapeado para "Gírias e Expressões", seed files existem
 - [x] Sistema "Pausa Ativa": professor para após cada frase e pergunta o que o aluno entendeu
 - [x] Reformulações de frases com sinônimos do dicionário (seletor de sinônimos)
 - [x] Exercícios de fala, escrita e conversação interativa dentro e fora do texto
