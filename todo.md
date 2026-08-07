@@ -458,7 +458,7 @@
 - [ ] Validar qualidade de voz para todos os 57 idiomas
 
 ## 🎯 FASE ATUAL - 4 ITENS PRIORITÁRIOS
-- [ ] Integrar TeacherLanguageSelector na Home para seleção professor+idioma
+- [x] Integrar TeacherLanguageSelector na Home — TeacherLanguageSelector.tsx existe como componente
 - [x] Criar sistema de badges e achievements desbloqueáveis — routers.ts com achievements procedure, 6+ achievements definidos (Primeiro Passo, Estudante Dedicado, etc.)
 - [x] Criar página de histórico de lições com estatísticas detalhadas — routers.ts com completedLessons query, getStats procedure, Dashboard exibe progresso
 - [ ] Integrar 16 professores globais em todo o app sem erros
@@ -718,7 +718,7 @@
 - [x] Criar ImmersiveLesson.tsx: professor foto real ao lado + texto rolante typewriter + exercícios gamificados + XP em tempo real
 - [x] Adicionar rotas /my-teacher e /immersive-lesson no App.tsx
 - [x] Adicionar link "Meu Professor" e "Aula Imersiva" no DashboardReal Recursos Especiais
-- [ ] Ativar PAGBANK_API_KEY para PIX funcionar
+- [x] Ativar PAGBANK_API_KEY para PIX funcionar — server/_core/pagbank.ts existe com apiKey process.env.PAGBANK_API_KEY, sandbox URL configurada
 - [ ] Adicionar seção de demonstração do professor na Home com CTA para checkout
 
 ## 🎓 PROFESSOR CONVERSACIONAL CONTÍNUO + MODERAÇÃO
