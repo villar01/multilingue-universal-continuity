@@ -95,23 +95,30 @@ export default function LocalAINotification() {
             ) : (
               <div className="mt-3 space-y-2 rounded-lg bg-blue-100/50 p-3 dark:bg-blue-900/30">
                 <p className="text-xs font-semibold text-blue-800 dark:text-blue-200">
-                  Como instalar a IA local (Qwen 2.5):
+                  Instalação completa passo a passo (Qwen 2.5):
                 </p>
-                <ol className="space-y-1.5 text-xs text-blue-700 dark:text-blue-300">
+                <ol className="space-y-2 text-xs text-blue-700 dark:text-blue-300">
                   <li>
-                    <strong>1.</strong> Baixe o Ollama em{' '}
-                    <a href="https://ollama.ai/download" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-                      ollama.ai/download
-                    </a>
+                    <strong>Passo 1:</strong> Clique no botão Iniciar do Windows, digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">powershell</code>, clique com botão direito em "Windows PowerShell" e selecione <strong>"Executar como administrador"</strong>. Se aparecer tela azul perguntando permissão, clique em <strong>"Sim"</strong>.
                   </li>
                   <li>
-                    <strong>2.</strong> Instale no seu computador (Windows, Mac ou Linux)
+                    <strong>Passo 2:</strong> Se o Ollama não estiver instalado, no PowerShell cole este comando e tecle Enter:{' '}
+                    <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">irm https://ollama.com/install.ps1 | iex</code>
+                    <br />Ou baixe em{' '}
+                    <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
+                      ollama.com/download
+                    </a>{' '}e clique em "Download for Windows".
                   </li>
                   <li>
-                    <strong>3.</strong> Abra o terminal e execute: <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">ollama run qwen2.5:3b</code>
+                    <strong>Passo 3:</strong> No PowerShell (como administrador), digite exatamente:{' '}
+                    <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">ollama run qwen2.5</code>
+                    <br />Tecle <strong>Enter</strong>. Ele vai baixar uns 4GB. Aguarde terminar.
                   </li>
                   <li>
-                    <strong>4.</strong> A IA será detectada automaticamente pelo app
+                    <strong>Passo 4:</strong> Quando aparecer <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">&gt;&gt;&gt;</code> significa que está pronto. Digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">/bye</code> e tecle Enter para sair. A IA fica instalada permanentemente.
+                  </li>
+                  <li>
+                    <strong>Passo 5:</strong> O app MultiLingue Universal detecta automaticamente o Ollama na porta 11434 e usa o Qwen 2.5 para voz natural e animação de qualidade, sem custos, funcionando offline.
                   </li>
                 </ol>
                 <p className="text-xs text-blue-600 dark:text-blue-400">
