@@ -954,6 +954,23 @@ function TeacherAvatar({
             }}
           />
         )}
+        {/* Hand gesture overlay — visible when explaining */}
+        {isSpeaking && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "15%",
+              right: "10%",
+              width: "15%",
+              height: "20%",
+              background: "rgba(255,255,255,0.1)",
+              borderRadius: "50%",
+              border: "1px solid rgba(255,255,255,0.15)",
+              animation: "hand-gesture 2s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+        )}
         {/* Lip-sync sound bars — visible when speaking */}
         {isSpeaking && (
           <div
@@ -1453,6 +1470,21 @@ export default function ImmersiveScene() {
             60% { transform: translateX(-50%) scaleY(0.8); width: 12%; }
             80% { transform: translateX(-50%) scaleY(0.4); width: 9%; }
             100% { transform: translateX(-50%) scaleY(0.6); width: 11%; }
+          }
+          /* ── Hand gesture (teacher explaining) ── */
+          @keyframes hand-gesture {
+            0%, 100% { transform: translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            30% { transform: translateX(8px) rotate(5deg); opacity: 0.8; }
+            50% { transform: translateX(-5px) rotate(-3deg); opacity: 0.6; }
+            70% { transform: translateX(6px) rotate(4deg); opacity: 0.7; }
+            90% { opacity: 0.3; }
+          }
+          /* ── Natural transition between idle and speaking ── */
+          @keyframes natural-transition {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.01) translateY(-2px); }
+            100% { transform: scale(1) translateY(0); }
           }
           /* ── Professor talking (lip-sync simulation) ── */
           @keyframes teacher-talk {

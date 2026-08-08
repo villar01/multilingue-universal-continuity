@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2, HelpCircle } from 'lucide-react';
 import CybersecurityAlert from '@/components/CybersecurityAlert';
 
 const DAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -299,7 +299,7 @@ export default function ParentalControlPanel() {
             <div className="lg:col-span-3">
               {selectedChild && (
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4 bg-slate-900/50">
+                  <TabsList className="grid w-full grid-cols-5 bg-slate-900/50">
                     <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600">
                       <TrendingUp className="w-4 h-4 mr-1" /> Visão Geral
                     </TabsTrigger>
@@ -311,6 +311,9 @@ export default function ParentalControlPanel() {
                     </TabsTrigger>
                     <TabsTrigger value="security" className="data-[state=active]:bg-blue-600">
                       <Lock className="w-4 h-4 mr-1" /> Segurança
+                    </TabsTrigger>
+                    <TabsTrigger value="quiz" className="data-[state=active]:bg-blue-600">
+                      <HelpCircle className="w-4 h-4 mr-1" /> Perguntas
                     </TabsTrigger>
                   </TabsList>
 
@@ -340,6 +343,40 @@ export default function ParentalControlPanel() {
                       pinError={pinError}
                       onDelete={() => { deleteChild.mutate({ childId: selectedChild.id }); setSelectedChildId(null); }}
                     />
+                  </TabsContent>
+
+                  {/* Interactive Questions Tab */}
+                  <TabsContent value="quiz" className="mt-4 space-y-4">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-bold text-blue-400">Perguntas Interativas</h3>
+                      <p className="text-sm text-slate-400">Perguntas sobre o aprendizado da criança para acompanhar o progresso</p>
+                      <div className="space-y-3">
+                        <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                          <p className="font-medium text-slate-200 mb-2">1. Qual idioma seu filho mais gosta de aprender?</p>
+                          <div className="flex gap-2 flex-wrap">
+                            {['Inglês', 'Espanhol', 'Francês', 'Alemão', 'Italiano', 'Japonês'].map(lang => (
+                              <button key={lang} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-blue-600 text-sm transition-all">{lang}</button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                          <p className="font-medium text-slate-200 mb-2">2. Quantas lições por dia são adequadas?</p>
+                          <div className="flex gap-2 flex-wrap">
+                            {['1 lição', '2 lições', '3 lições', '5 lições', 'Sem limite'].map(opt => (
+                              <button key={opt} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-blue-600 text-sm transition-all">{opt}</button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                          <p className="font-medium text-slate-200 mb-2">3. Seu filho prefere aprender com:</p>
+                          <div className="flex gap-2 flex-wrap">
+                            {['Professor virtual', 'Voz e áudio', 'Jogos e quiz', 'Leitura'].map(opt => (
+                              <button key={opt} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-blue-600 text-sm transition-all">{opt}</button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </TabsContent>
                 </Tabs>
               )}

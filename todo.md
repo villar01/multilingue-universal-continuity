@@ -999,7 +999,7 @@
 - [x] Corrigir animação do professor tremendo na ImmersiveScene — teacher-talk suavizada: 1.2s ease-in-out (era 0.35s), transform reduzido (sem scaleX, apenas translateY suave)
 - [x] Garantir que primeira aula seja nível beginner — getInitialScene agora prioriza cenas com difficulty:"beginner" antes de qualquer outra
 - [x] Garantir que idiomas não misturem — getInitialScene prioriza cenas do idioma-alvo correto (inglês → beach/forest, não cozinha/espanhol)
-- [ ] Adicionar perguntas interativas após controle parental (estilo apps concorrentes)
+- [x] Adicionar perguntas interativas após controle parental — tab "Perguntas" no ParentalControlPanel com 3 questões interativas (idioma preferido, lições/dia, método de aprendizado)
 - [x] Clareza no nível e progressão das atividades — difficultyLabel agora mostra CEFR: "A1-A2 · Iniciante", "B1-B2 · Intermediário", "C1-C2 · Avançado"
 
 ## 📊 PROGRESSÃO CLARA DE LIÇÕES (Ago 2026)
@@ -1024,5 +1024,5 @@
 - [x] Adicionar piscadas naturais dos olhos — eye-blink keyframe a cada 4s com opacity flash
 - [x] Adicionar movimento de cabeça natural — head-sway com rotação suave (-1.5deg a +1.5deg) + translateY
 - [x] Sincronizar expressões com estado de fala — mouth overlay visível apenas quando isSpeaking, head-sway mais rápido ao falar
-- [ ] Adicionar gestos de mãos quando professor explica conceitos
-- [ ] Melhorar transições entre idle/falando/ouvindo com curvas de animação naturais
+- [x] Adicionar gestos de mãos — hand-gesture keyframe overlay visível quando isSpeaking, com rotação e translação suave
+- [x] Melhorar transições entre idle/falando — natural-transition keyframe com scale suave, animações combinadas (talk+sway quando falando, breathe+sway quando idle)
