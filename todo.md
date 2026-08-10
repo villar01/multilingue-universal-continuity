@@ -1014,7 +1014,7 @@
 - [x] Reorganizar Dashboard: lições em cards numerados (Aula N) com badge CEFR colorido e progressão visual clara
 - [x] Reorganizar ImmersiveScene: seleção de cena com filtros por nível CEFR (A1-A2 Iniciante, B1-B2 Médio, C1-C2 Avançado) + badges coloridos
 - [x] Garantir que fluxo do início ao fim seja linear — Home → Onboarding (se sem idioma) → Dashboard → /complete-lesson/{id} → próxima lição
-- [ ] Adicionar tela de "Escolha seu professor" após seleção de idiomas (professor aparece antes de começar)
+- [x] Adicionar tela de "Escolha seu professor" após seleção de idiomas — STEP_TEACHER no Onboarding com TeacherSelector, botão Voltar e Começar a aprender, salva ml_selected_teacher
 - [ ] Garantir que cada nível (A1, A2, B1, B2, C1, C2) tenha tela própria com lições numeradas
 - [x] Adicionar barra de progresso global no Dashboard — card branco com % de conclusão, lições completas e nível CEFR
 

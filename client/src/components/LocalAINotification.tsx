@@ -121,6 +121,19 @@ export default function LocalAINotification() {
                     <strong>Passo 5:</strong> O app MultiLingue Universal detecta automaticamente o Ollama na porta 11434 e usa o Qwen 2.5 para voz natural e animação de qualidade, sem custos, funcionando offline.
                   </li>
                 </ol>
+                <div className="mt-2 rounded-lg bg-amber-100/50 p-2 dark:bg-amber-900/20">
+                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-300">
+                    Alternativas gratuitas (se Qwen 2.5 se tornar pago):
+                  </p>
+                  <ul className="mt-1 space-y-1 text-xs text-amber-600 dark:text-amber-400">
+                    <li>• <strong>Llama 3.2</strong> (Meta) — gratuito e permanente: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run llama3.2</code></li>
+                    <li>• <strong>Phi-3 Mini</strong> (Microsoft) — leve e gratuito: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run phi3</code></li>
+                    <li>• <strong>Gemma 2</strong> (Google) — gratuito e permanente: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run gemma2</code></li>
+                  </ul>
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                    Todas essas IAs são gratuitas, permanentes e funcionam offline. O app detecta qualquer uma automaticamente.
+                  </p>
+                </div>
                 <p className="text-xs text-blue-600 dark:text-blue-400">
                   A IA local melhora voz, animação e reduz custos do app.
                   Você pode usar o app sem ela, mas com a IA instalada a qualidade é máxima.

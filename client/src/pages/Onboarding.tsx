@@ -4,10 +4,12 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { detectNativeLang } from "@/lib/detect-native-lang";
 import { LANGUAGES_57, AVAILABLE_LANGUAGES, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
-import { Globe, ChevronRight, Search, Sparkles, Clock, Check } from "lucide-react";
+import { Globe, ChevronRight, Search, Sparkles, Clock, Check } from 'lucide-react';
+import TeacherSelector from '@/components/TeacherSelector';
 
 const STEP_NATIVE = 1;
 const STEP_TARGET = 2;
+const STEP_TEACHER = 3;
 
 type LangCategory = "all" | "modern" | "ancient" | "indigenous" | "constructed";
 
@@ -29,6 +31,7 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
   const [activeCategory, setActiveCategory] = useState<LangCategory>("all");
   const [showAllLanguages, setShowAllLanguages] = useState(false);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<number | null>(null);
 
   const updateProfile = trpc.auth.updateProfile.useMutation();
   const { data: languages } = trpc.languages.list.useQuery();
@@ -90,42 +93,40 @@ export default function Onboarding() {
     setShowAllLanguages(false);
   };
 
-  const handleTargetSelect = async (lang: Language) => {
+  const handleTargetSelect = (lang: Language) => {
     if (!lang.available) return;
     setTargetLang(lang.code);
+    setStep(STEP_TEACHER);
+  };
+
+  const handleFinishWithTeacher = async () => {
     setSaving(true);
     try {
-      const dbLang = languages?.find(l => l.code === lang.code.split('-')[0] || l.code === lang.code);
+      const dbLang = languages?.find(l => l.code === (targetLang || '').split('-')[0] || l.code === targetLang);
       await updateProfile.mutateAsync({
         nativeLanguage: nativeLang!,
         targetLanguageId: dbLang?.id,
       });
       localStorage.setItem("ml_native_lang", nativeLang!);
-      localStorage.setItem("ml_target_lang", lang.code);
+      localStorage.setItem("ml_target_lang", targetLang!);
       if (dbLang?.id) localStorage.setItem("ml_target_lang_id", String(dbLang.id));
-      const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
+      if (selectedTeacherId) localStorage.setItem("ml_selected_teacher", String(selectedTeacherId));
+      const nativeLangObj2 = LANGUAGES_57.find(l => l.code === nativeLang);
+      const targetLangObj2 = LANGUAGES_57.find(l => l.code === targetLang);
       const profile = {
         nativeCode: nativeLang!,
-        nativeName: nativeLangObj?.name || "Português",
-        targetCode: lang.code,
-        targetName: lang.name,
-        targetFlag: lang.flag,
+        nativeName: nativeLangObj2?.name || "Português",
+        targetCode: targetLang!,
+        targetName: targetLangObj2?.name || "English",
+        targetFlag: targetLangObj2?.flag || "🌐",
       };
       localStorage.setItem("ml_lang_profile", JSON.stringify(profile));
       setLocation("/dashboard");
     } catch (e) {
       console.error("Failed to save profile:", e);
-      const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
       localStorage.setItem("ml_native_lang", nativeLang!);
-      localStorage.setItem("ml_target_lang", lang.code);
-      const profile = {
-        nativeCode: nativeLang!,
-        nativeName: nativeLangObj?.name || "Português",
-        targetCode: lang.code,
-        targetName: lang.name,
-        targetFlag: lang.flag,
-      };
-      localStorage.setItem("ml_lang_profile", JSON.stringify(profile));
+      localStorage.setItem("ml_target_lang", targetLang!);
+      if (selectedTeacherId) localStorage.setItem("ml_selected_teacher", String(selectedTeacherId));
       setLocation("/dashboard");
     } finally {
       setSaving(false);
@@ -133,7 +134,8 @@ export default function Onboarding() {
   };
 
   const nativeLangObj = LANGUAGES_57.find(l => l.code === nativeLang);
-  const progress = step === STEP_NATIVE ? 50 : 100;
+  const targetLangObj = LANGUAGES_57.find(l => l.code === targetLang);
+  const progress = step === STEP_NATIVE ? 33 : step === STEP_TARGET ? 66 : 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 flex flex-col items-center justify-start px-4 py-6">
@@ -296,6 +298,40 @@ export default function Onboarding() {
           )}
         </div>
       </div>
+
+      {/* Step 3: Teacher Selection */}
+      {step === STEP_TEACHER && (
+        <div className="w-full max-w-4xl">
+          <div className="bg-white rounded-2xl shadow-2xl p-6">
+            <div className="text-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-900">Escolha seu Professor</h2>
+              <p className="text-gray-500 text-sm mt-1">Selecione o professor que vai acompanhar seu aprendizado em {targetLangObj?.name || targetLang}</p>
+            </div>
+            <div className="max-h-[400px] overflow-y-auto">
+              <TeacherSelector
+                languageCode={targetLang || 'en'}
+                selectedTeacherId={selectedTeacherId ?? undefined}
+                onSelect={(id: number) => setSelectedTeacherId(id)}
+              />
+            </div>
+            <div className="mt-4 flex gap-3">
+              <button
+                onClick={() => setStep(STEP_TARGET)}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={handleFinishWithTeacher}
+                disabled={saving}
+                className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+              >
+                {saving ? "Salvando..." : "Começar a aprender"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer info */}
       <div className="mt-6 flex items-center gap-2 text-white/40 text-xs">
