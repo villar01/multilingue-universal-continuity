@@ -269,53 +269,73 @@ export default function Dashboard() {
                   Continue de onde parou
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {nextLessons.map((lesson: any) => (
-                  <div 
-                    key={lesson.id}
-                    className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
-                      lesson.locked 
-                        ? 'bg-gray-50 border-gray-200' 
-                        : 'bg-blue-50 border-blue-200 hover:border-blue-400 cursor-pointer'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      {lesson.locked ? (
-                        <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                          <Lock className="h-6 w-6 text-gray-400" />
-                        </div>
-                      ) : (
-                        <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
-                          <Play className="h-6 w-6 text-white" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-semibold">{lesson.title}</div>
-                        <div className="text-sm text-gray-500 flex items-center gap-2">
-                          <span>Aula {lesson.orderIndex || '?'}</span>
-                          <span>•</span>
-                          <span>{lesson.language}</span>
-                          <span>•</span>
-                          <Badge className="text-xs px-1.5 py-0" style={{
-                            backgroundColor: (lesson.orderIndex || 1) <= 10 ? '#22c55e' : (lesson.orderIndex || 1) <= 20 ? '#f59e0b' : '#ef4444',
-                            color: 'white'
-                          }}>
-                            {(lesson.orderIndex || 1) <= 10 ? 'A1-A2' : (lesson.orderIndex || 1) <= 20 ? 'B1-B2' : 'C1-C2'}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                    {lesson.locked ? (
-                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
-                        🔒 Premium
-                      </Badge>
-                    ) : (
-                      <Link href={`/complete-lesson/${lesson.id}`}>
-                        <Button>Começar</Button>
-                      </Link>
-                    )}
+              <CardContent className="space-y-4">
+                {/* Level A1-A2: Iniciante */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#22c55e' }} />
+                    <h4 className="font-bold text-sm text-gray-700">Nível A1-A2 · Iniciante</h4>
+                    <span className="text-xs text-gray-400">(Lições 1-10)</span>
                   </div>
-                ))}
+                  <div className="space-y-2">
+                    {nextLessons.filter((l: any) => (l.orderIndex || 1) <= 10).map((lesson: any) => (
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-green-50 border-green-200 hover:border-green-400 cursor-pointer'}`}>
+                        <div className="flex items-center gap-3">
+                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-green-600" />}
+                          <div>
+                            <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
+                            <div className="text-xs text-gray-500">{lesson.language}</div>
+                          </div>
+                        </div>
+                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Level B1-B2: Intermediário */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
+                    <h4 className="font-bold text-sm text-gray-700">Nível B1-B2 · Intermediário</h4>
+                    <span className="text-xs text-gray-400">(Lições 11-20)</span>
+                  </div>
+                  <div className="space-y-2">
+                    {nextLessons.filter((l: any) => (l.orderIndex || 1) > 10 && (l.orderIndex || 1) <= 20).map((lesson: any) => (
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-amber-50 border-amber-200 hover:border-amber-400 cursor-pointer'}`}>
+                        <div className="flex items-center gap-3">
+                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-amber-600" />}
+                          <div>
+                            <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
+                            <div className="text-xs text-gray-500">{lesson.language}</div>
+                          </div>
+                        </div>
+                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Level C1-C2: Avançado */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }} />
+                    <h4 className="font-bold text-sm text-gray-700">Nível C1-C2 · Avançado</h4>
+                    <span className="text-xs text-gray-400">(Lições 21+)</span>
+                  </div>
+                  <div className="space-y-2">
+                    {nextLessons.filter((l: any) => (l.orderIndex || 1) > 20).map((lesson: any) => (
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200 hover:border-red-400 cursor-pointer'}`}>
+                        <div className="flex items-center gap-3">
+                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-red-600" />}
+                          <div>
+                            <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
+                            <div className="text-xs text-gray-500">{lesson.language}</div>
+                          </div>
+                        </div>
+                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
