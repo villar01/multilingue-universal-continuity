@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Send, Mic, Volume2, Bot, User, Loader2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
@@ -55,6 +55,23 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const conversationStats = useMemo(() => {
+    const learnerMessages = messages.filter((message) => message.role === 'user');
+    const learnerWords = learnerMessages.reduce((total, message) => {
+      return total + message.content.trim().split(/\s+/).filter(Boolean).length;
+    }, 0);
+    const practicedWords = vocabulary.filter((item) => {
+      const normalizedWord = item.word.toLocaleLowerCase();
+      return learnerMessages.some((message) => message.content.toLocaleLowerCase().includes(normalizedWord));
+    });
+
+    return {
+      turns: learnerMessages.length,
+      learnerWords,
+      practicedWords,
+    };
+  }, [messages, vocabulary]);
 
   const chatMutation = trpc.conversationAI.continue.useMutation({
     onSuccess: (response: any) => {
@@ -134,6 +151,12 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           Online
         </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2 text-center text-xs">
+        <div><strong className="block text-blue-700">{conversationStats.turns}</strong><span className="text-slate-500">turnos</span></div>
+        <div><strong className="block text-blue-700">{conversationStats.learnerWords}</strong><span className="text-slate-500">palavras</span></div>
+        <div><strong className="block text-blue-700">{conversationStats.practicedWords.length}</strong><span className="text-slate-500">vocábulos praticados</span></div>
       </div>
 
       {/* Messages */}

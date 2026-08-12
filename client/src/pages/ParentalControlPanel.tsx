@@ -392,6 +392,7 @@ export default function ParentalControlPanel() {
 function UsageOverview({ childId, childName }: { childId: number; childName: string }) {
   const { data: todayUsage, isLoading } = trpc.parentalControl.getTodayUsage.useQuery({ childId });
   const { data: weeklyUsage } = trpc.parentalControl.getWeeklyUsage.useQuery({ childId });
+  const { data: interactionPatterns } = trpc.parentalControl.getUsagePatterns.useQuery({ childId });
 
   if (isLoading) {
     return (
@@ -444,6 +445,35 @@ function UsageOverview({ childId, childName }: { childId: number; childName: str
           </CardContent>
         </Card>
       </div>
+
+      <Card className="bg-slate-900/50 border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-base">Padrões de Interação</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div className="rounded-lg bg-slate-800/50 p-3">
+            <p className="text-slate-400 text-xs">Atividades registradas</p>
+            <p className="mt-1 text-xl font-bold">{interactionPatterns?.totalInteractions || 0}</p>
+            <p className="text-xs text-slate-500">em {interactionPatterns?.activeDays || 0} dias ativos</p>
+          </div>
+          <div className="rounded-lg bg-slate-800/50 p-3">
+            <p className="text-slate-400 text-xs">Idiomas mais praticados</p>
+            <p className="mt-1 font-medium">{interactionPatterns?.topLanguages?.length
+              ? interactionPatterns.topLanguages.map((item) => `${item.languageCode.toUpperCase()} (${item.count})`).join(" · ")
+              : "Ainda sem dados"}</p>
+            <p className="mt-1 text-xs text-slate-500">{interactionPatterns?.peakHour === null || interactionPatterns?.peakHour === undefined
+              ? "Horário preferido ainda indisponível"
+              : `Maior atividade por volta de ${String(interactionPatterns.peakHour).padStart(2, "0")}:00`}</p>
+          </div>
+          <div className="rounded-lg bg-slate-800/50 p-3">
+            <p className="text-slate-400 text-xs">Interações sinalizadas</p>
+            <p className={`mt-1 text-xl font-bold ${(interactionPatterns?.flaggedInteractions || 0) > 0 ? "text-amber-400" : "text-green-400"}`}>
+              {interactionPatterns?.flaggedInteractions || 0}
+            </p>
+            <p className="text-xs text-slate-500">conteúdos exigindo atenção</p>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Weekly Sessions */}
       <Card className="bg-slate-900/50 border-slate-800">

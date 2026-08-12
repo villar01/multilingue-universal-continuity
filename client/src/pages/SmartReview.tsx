@@ -18,6 +18,13 @@ type Exercise = {
   direction?: string;
 };
 
+type GrammarAnalysis = {
+  hasErrors: boolean;
+  errors: Array<{ original: string; corrected: string; explanation: string }>;
+  correctedText: string;
+  feedback: string;
+};
+
 export default function SmartReview() {
   const { user } = useAuth();
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
@@ -31,6 +38,7 @@ export default function SmartReview() {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [grammarAnalysis, setGrammarAnalysis] = useState<GrammarAnalysis | null>(null);
 
   const generateMutation = trpc.smartReview.generate.useMutation({
     onSuccess: (data) => {
@@ -42,10 +50,14 @@ export default function SmartReview() {
       setShowResult(false);
       setSelectedAnswer("");
       setTextAnswer("");
+      setGrammarAnalysis(null);
     },
   });
 
   const submitAnswerMutation = trpc.smartReview.submitAnswer.useMutation();
+  const analyzeGrammarMutation = trpc.aiChat.analyzeGrammar.useMutation({
+    onSuccess: (analysis) => setGrammarAnalysis(analysis as GrammarAnalysis),
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("ml_target_lang");
@@ -65,6 +77,11 @@ export default function SmartReview() {
     setIsCorrect(correct);
     setShowResult(true);
     if (correct) setScore(score + 1);
+    if (!correct && answer.trim() && currentExercise.type !== "matching") {
+      analyzeGrammarMutation.mutate({ text: answer.trim(), languageCode: targetLanguage });
+    } else {
+      setGrammarAnalysis(null);
+    }
 
     if (currentExercise.word) {
       submitAnswerMutation.mutate({
@@ -84,6 +101,7 @@ export default function SmartReview() {
       setShowResult(false);
       setSelectedAnswer("");
       setTextAnswer("");
+      setGrammarAnalysis(null);
     }
   };
 
@@ -276,6 +294,23 @@ export default function SmartReview() {
                           <p className="text-xs text-muted-foreground mt-1">
                             🔊 Pronúncia: repita «{currentExercise.word}» em voz alta para praticar.
                           </p>
+                        )}
+                        {analyzeGrammarMutation.isPending && (
+                          <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">Analisando gramática e estrutura da sua resposta…</p>
+                        )}
+                        {grammarAnalysis && (
+                          <div className="mt-3 rounded-md border border-amber-300/60 bg-background/60 p-3 space-y-2">
+                            <p className="text-sm font-semibold text-foreground">Análise detalhada da IA</p>
+                            <p className="text-xs text-muted-foreground">{grammarAnalysis.feedback}</p>
+                            {grammarAnalysis.errors.map((error, index) => (
+                              <div key={`${error.original}-${index}`} className="text-xs text-muted-foreground">
+                                <span className="line-through text-red-600">{error.original}</span>
+                                <span className="mx-1">→</span>
+                                <strong className="text-foreground">{error.corrected}</strong>
+                                <span className="block mt-0.5">{error.explanation}</span>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     )}

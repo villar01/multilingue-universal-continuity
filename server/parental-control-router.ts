@@ -4,8 +4,22 @@ import { TRPCError } from '@trpc/server';
 import { getDb } from './db';
 import { childProfiles, parentalSettings, usageSessions, parentalAlerts } from '../drizzle/schema';
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
+import { getUsagePatterns } from './contentFilter';
 
 export const parentalControlRouter = router({
+  getUsagePatterns: protectedProcedure
+    .input(z.object({ childId: z.number().optional() }))
+    .query(async ({ ctx, input }) => {
+      if (input.childId) {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+        const [child] = await database.select().from(childProfiles)
+          .where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
+        if (!child) throw new TRPCError({ code: 'FORBIDDEN', message: 'Child profile not found' });
+      }
+      return getUsagePatterns(ctx.user.id, input.childId);
+    }),
+
   // ── CHILD PROFILES ──────────────────────────────────────────
   listChildren: protectedProcedure
     .query(async ({ ctx }) => {

@@ -48,14 +48,14 @@ export default function VoiceConversation({
         name: "Professor Ricardo",
         gender: "male" as const,
         fallbackLanguage: "pt-BR" as const,
-        imageUrl: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
+        imageUrl: "/manus-storage/teacher-ricardo-portuguese_5a5c9de8.png",
       }
     : {
         avatarId: "professora-ingrid",
         name: "Professora Ingrid",
         gender: "female" as const,
         fallbackLanguage: "en-US" as const,
-        imageUrl: "/manus-storage/teacher-ingrid-english_0ff40d15.png",
+        imageUrl: "/manus-storage/teacher-ingrid-english_b938d99a.png",
       };
   const cachedVideoId = `lesson-video-${lessonId}-${languageCode}`;
 

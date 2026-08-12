@@ -28,13 +28,13 @@ interface Animated3DAvatarProps {
 
 // Mapeamento de professores para avatares 8K CDN
 const TEACHER_AVATARS = {
-  1: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
+  1: "/manus-storage/teacher-ricardo-portuguese_5a5c9de8.png",
   2: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-camila-8k.png",
   3: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-joao-8k.png",
   4: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-maria-8k.png",
   5: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-miguel-8k.png",
-  150001: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
-  150002: "/manus-storage/teacher-ingrid-english_0ff40d15.png",
+  150001: "/manus-storage/teacher-ricardo-portuguese_5a5c9de8.png",
+  150002: "/manus-storage/teacher-ingrid-english_b938d99a.png",
 };
 
 export function Animated3DAvatar({

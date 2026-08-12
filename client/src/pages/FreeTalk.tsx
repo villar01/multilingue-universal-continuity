@@ -34,6 +34,8 @@ type Message = {
   content: string;
   newWords?: string[];
   correction?: string;
+  errorType?: "grammar" | "vocabulary" | "pronunciation" | "comprehension" | null;
+  adaptiveHint?: string;
   timestamp: number;
 };
 
@@ -106,11 +108,28 @@ export default function FreeTalk() {
         topic: finalTopic,
       });
 
+      const errorType = result.errorType as Message["errorType"];
+      let adaptiveHint = "";
+      if (result.correction && errorType) {
+        const storageKey = `ml_free_talk_error_patterns_${targetLang}`;
+        const previous = JSON.parse(localStorage.getItem(storageKey) || "{}") as Record<string, number>;
+        const frequency = (previous[errorType] || 0) + 1;
+        localStorage.setItem(storageKey, JSON.stringify({ ...previous, [errorType]: frequency }));
+        if (frequency >= 2) {
+          const labels: Record<string, string> = {
+            grammar: "gramática", vocabulary: "vocabulário", pronunciation: "pronúncia", comprehension: "compreensão",
+          };
+          adaptiveHint = `Você repetiu dificuldades em ${labels[errorType]}. Vou ajustar as próximas respostas para reforçar este ponto.`;
+        }
+      }
+
       const assistantMsg: Message = {
         role: "assistant",
         content: result.reply,
         newWords: result.newWords || [],
         correction: result.correction || "",
+        errorType,
+        adaptiveHint,
         timestamp: Date.now(),
       };
 
@@ -326,6 +345,11 @@ export default function FreeTalk() {
               {msg.correction && (
                 <div className="mt-1.5 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-xs text-amber-200">
                   ✏️ <strong>Correção:</strong> {msg.correction}
+                </div>
+              )}
+              {msg.adaptiveHint && (
+                <div className="mt-1.5 px-3 py-2 bg-cyan-500/20 border border-cyan-400/30 rounded-xl text-xs text-cyan-100">
+                  🎯 <strong>Plano personalizado:</strong> {msg.adaptiveHint}
                 </div>
               )}
 

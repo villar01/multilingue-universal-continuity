@@ -4,7 +4,25 @@
  * Docs: https://docs.d-id.com/reference/createtalk
  */
 
+import { createHash } from "crypto";
+import { storagePut } from "../storage";
+
 const DID_API_URL = "https://api.d-id.com";
+
+async function cacheGeneratedVideo(sourceUrl: string, cacheSeed: string): Promise<string> {
+  try {
+    const response = await fetch(sourceUrl);
+    if (!response.ok) throw new Error(`video fetch failed: ${response.status}`);
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const hash = createHash("sha256").update(cacheSeed).digest("hex");
+    const { url } = await storagePut(`video-cache/liveportrait/${hash}.mp4`, buffer, "video/mp4");
+    console.log(`[D-ID] Video cached in S3: ${hash.slice(0, 12)}`);
+    return url;
+  } catch (error) {
+    console.warn("[D-ID] Unable to cache generated video; returning provider URL", error);
+    return sourceUrl;
+  }
+}
 
 // Mapeamento de languageCode → voz D-ID (Microsoft Neural TTS)
 const DID_VOICE_MAP: Record<string, string> = {
@@ -139,7 +157,7 @@ async function pollDIDTalk(id: string, apiKey: string): Promise<string> {
     console.log(`[D-ID] Poll ${i + 1}: ${status.status}`);
     if (status.status === "done" && status.result_url) {
       console.log(`[D-ID] Video ready: ${status.result_url}`);
-      return status.result_url;
+      return cacheGeneratedVideo(status.result_url, `${id}:${status.result_url}`);
     }
     if (status.status === "error") {
       throw new Error(`D-ID failed: ${status.error?.description || "unknown"}`);

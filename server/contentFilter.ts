@@ -247,6 +247,59 @@ export async function getFlaggedCount(
 }
 
 /**
+ * Summarize interaction patterns using aggregate data only. Detailed message content
+ * stays restricted to the protected interaction-history view.
+ */
+export async function getUsagePatterns(userId: number, childProfileId?: number): Promise<{
+  totalInteractions: number;
+  activeDays: number;
+  flaggedInteractions: number;
+  peakHour: number | null;
+  topLanguages: Array<{ languageCode: string; count: number }>;
+  topActivities: Array<{ interactionType: string; count: number }>;
+}> {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+    const childFilter = childProfileId ? sql` AND child_profile_id = ${childProfileId}` : sql``;
+    const summaryResult = await db.execute(sql`
+      SELECT COUNT(*) AS totalInteractions,
+             COUNT(DISTINCT DATE(created_at)) AS activeDays,
+             SUM(CASE WHEN is_flagged = TRUE THEN 1 ELSE 0 END) AS flaggedInteractions
+      FROM interaction_logs WHERE user_id = ${userId}${childFilter}
+    `);
+    const languageResult = await db.execute(sql`
+      SELECT language_code AS languageCode, COUNT(*) AS count
+      FROM interaction_logs WHERE user_id = ${userId}${childFilter}
+      GROUP BY language_code ORDER BY count DESC LIMIT 3
+    `);
+    const activityResult = await db.execute(sql`
+      SELECT interaction_type AS interactionType, COUNT(*) AS count
+      FROM interaction_logs WHERE user_id = ${userId}${childFilter}
+      GROUP BY interaction_type ORDER BY count DESC LIMIT 3
+    `);
+    const hourlyResult = await db.execute(sql`
+      SELECT HOUR(created_at) AS hour, COUNT(*) AS count
+      FROM interaction_logs WHERE user_id = ${userId}${childFilter}
+      GROUP BY HOUR(created_at) ORDER BY count DESC LIMIT 1
+    `);
+    const summary = ((summaryResult[0] as unknown as any[]) || [])[0] || {};
+    const peak = ((hourlyResult[0] as unknown as any[]) || [])[0] || null;
+    return {
+      totalInteractions: Number(summary.totalInteractions || 0),
+      activeDays: Number(summary.activeDays || 0),
+      flaggedInteractions: Number(summary.flaggedInteractions || 0),
+      peakHour: peak ? Number(peak.hour) : null,
+      topLanguages: (((languageResult[0] as unknown as any[]) || [])).map((row) => ({ languageCode: String(row.languageCode || ""), count: Number(row.count || 0) })),
+      topActivities: (((activityResult[0] as unknown as any[]) || [])).map((row) => ({ interactionType: String(row.interactionType || ""), count: Number(row.count || 0) })),
+    };
+  } catch (error) {
+    console.error("[ContentFilter] Failed to analyze interaction patterns:", error);
+    return { totalInteractions: 0, activeDays: 0, flaggedInteractions: 0, peakHour: null, topLanguages: [], topActivities: [] };
+  }
+}
+
+/**
  * Age-based content restrictions based on country laws
  * - COPPA (US): Under 13 requires parental consent
  * - GDPR (EU): Under 16 requires parental consent (varies by member state)

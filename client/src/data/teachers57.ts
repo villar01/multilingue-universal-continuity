@@ -978,7 +978,7 @@ export const TEACHERS_57: Teacher57[] = [
     voiceLang: 'en-US',
     flag: '🇺🇸',
     avatar: '👩🏼‍🏫',
-    photo: '/manus-storage/teacher-ingrid-english_0ff40d15.png',
+    photo: '/manus-storage/teacher-ingrid-english_b938d99a.png',
     color: '#3C3B6E',
     greeting: 'Hello! Ready to learn English?',
     origin: 'New York, USA',

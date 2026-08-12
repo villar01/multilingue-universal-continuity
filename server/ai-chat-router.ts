@@ -82,7 +82,10 @@ export const aiChatRouter = router({
     .mutation(async ({ input }) => {
       const { text, languageCode } = input;
 
-      const systemPrompt = `You are a grammar expert. Analyze the following English text and provide:
+      const languageName = new Intl.DisplayNames(["en"], { type: "language" })
+        .of(languageCode.split("-")[0]) || languageCode;
+
+      const systemPrompt = `You are a ${languageName} grammar expert. Analyze the following ${languageName} text and provide:
 1. Grammar errors (if any)
 2. Suggestions for improvement
 3. Corrected version

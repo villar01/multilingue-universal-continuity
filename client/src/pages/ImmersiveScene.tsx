@@ -10,6 +10,7 @@ import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
+import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 
 // ─── Teacher map: idioma do aluno → professor ─────────────────────────────────
 const LANG_TEACHERS: Record<string, { name: string; image: string }> = {
@@ -852,6 +853,7 @@ function TeacherAvatar({
   greeting,
   showGreeting,
   isSpeaking,
+  spokenText,
   overrideName,
   overrideImage,
 }: {
@@ -859,9 +861,11 @@ function TeacherAvatar({
   greeting: string;
   showGreeting: boolean;
   isSpeaking?: boolean;
+  spokenText?: string;
   overrideName?: string;
   overrideImage?: string;
 }) {
+  const { viseme, mouthStyle } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
   return (
     <div
       className="absolute bottom-0 right-4 flex flex-col items-center z-30"
@@ -945,13 +949,12 @@ function TeacherAvatar({
               top: "35%",
               left: "50%",
               transform: "translateX(-50%)",
-              width: "12%",
-              height: "6%",
+              ...mouthStyle,
               background: "rgba(139,69,69,0.3)",
-              borderRadius: "50% 50% 50% 50%",
-              animation: "mouth-talk 0.3s ease-in-out infinite alternate",
+              transition: "width 75ms linear, height 75ms linear, border-radius 75ms linear",
               pointerEvents: "none",
             }}
+            aria-label={`Viseme ${viseme}`}
           />
         )}
         {/* Hand gesture overlay — visible when explaining */}
@@ -1868,6 +1871,7 @@ export default function ImmersiveScene() {
           greeting={greetingText}
           showGreeting={showGreeting}
           isSpeaking={isSpeaking}
+          spokenText={greetingText}
           overrideName={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).name}
           overrideImage={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).image}
         />

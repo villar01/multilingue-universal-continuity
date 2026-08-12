@@ -42,7 +42,7 @@
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
 - [ ] Integração com Google TTS para timing preciso — ttsGoogle router existe mas não integrado nos fluxos de avatar/lip-sync
-- [ ] Cache de vídeos gerados em S3
+- [x] Cache de vídeos gerados em S3 — LivePortrait baixa o MP4 concluído, armazena em video-cache/liveportrait no S3 e retorna a URL estável; mantém fallback seguro para a URL do provedor
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 
 ### 3. SISTEMA MULTILÍNGUE UNIVERSAL
@@ -69,7 +69,7 @@
 - [x] Indicador de status de conectividade — ConnectivityIndicator.tsx renderizado no App.tsx com banner online/offline
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
-- [ ] Análise automática de padrões de uso — analyzeTTSQuality analisa pronuncia, mas analise de padroes de uso do app pendente
+- [x] Análise automática de padrões de uso — interaction_logs é agregado por criança (dias ativos, idioma, atividade, horário preferido e alertas); painel parental exibe os padrões sem expor mensagens privadas
 - [ ] Otimização automática de prompts — autoImproveSystem existe em auto-improvement-router.ts mas não integrado nos endpoints/fluxos principais do app
 - [x] Redução de consumo de tokens — promptCompression.ts (client+server) integrado em aiProvider.ts, tokensSaved rastreado em metrics
 - [ ] Aprendizado de padrões de interação — sem coleta historica ou modelagem de padroes
@@ -135,14 +135,14 @@
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
 - [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
-- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview.tsx tem painel básico (sua resposta vs correta), mas análise gramatical detalhada e scoring de pronúncia pendentes
+- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview agora chama análise gramatical por IA e explica cada correção; scoring de pronúncia por áudio ainda pendente
 - [ ] Implementar sistema de adaptação ao nível do usuário — badge e progressão visual ok, mas adaptação real de exercícios por XP/erros do usuário pendente
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
 - [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
-- [ ] Implementar feedback personalizado baseado em erros do usuário — Lesson registra cada tentativa, exibe plano de reforço por erro recorrente e adaptive.getRecommendation orienta o próximo exercício; integração equivalente no freeChat ainda pendente
-- [ ] Criar histórico de conversas com análise de progresso — AIChatbot persiste em localStorage mas análise de progresso (métricas, erros, evolução) pendente
+- [x] Implementar feedback personalizado baseado em erros do usuário — Lesson registra tentativas e mostra plano de reforço por erro recorrente; FreeTalk classifica correções, memoriza padrões locais por idioma e exibe orientação personalizada
+- [x] Criar histórico de conversas com análise de progresso — AIChatbot mantém 50 mensagens por lição e exibe turnos, palavras produzidas e vocabulário da lição efetivamente praticado
 
 ## 🐛 BUG CRÍTICO
 - [x] Corrigir ReferenceError: useRef is not defined em Lesson.tsx (useRef, useEffect adicionados aos imports)
@@ -283,9 +283,9 @@
 
 ## 👄 SINCRONIZAÇÃO LABIAL REALISTA COM PHONEME-TO-VISEME MAPPING
 - [ ] Implementar sistema de análise de phonemes do áudio
-- [ ] Criar mapeamento phoneme→viseme (A, B, C, D, E, F, G, H, X)
+- [x] Criar mapeamento phoneme→viseme (A, B, C, D, E, F, G, H, X) — useVisemeSequence converte o texto falado em visemes e muda a forma da boca do professor imersivo
 - [ ] Integrar Web Speech API para análise em tempo real
-- [ ] Implementar transições suaves entre visemes (interpolação)
+- [x] Implementar transições suaves entre visemes (interpolação) — mudanças de largura, altura e curvatura da boca usam transição curta para cada viseme
 - [ ] Sincronizar movimento labial com timestamp do áudio
 - [ ] Adicionar micro-expressões faciais (piscadas, sobrancelhas)
 
