@@ -346,6 +346,7 @@
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
 - [x] Garantir por teste que uma lição de inglês não pode resolver professor ou voz de português por fallback genérico — `en` feminino resolve Sarah/en-US e rejeita `prof-pt-br`; regressões de catálogo e voz aprovadas
 - [x] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma — `resolveVoice` recusa idioma desconhecido, seletor filtra a mesma família linguística e regressões de contexto validam a rejeição de voz estrangeira
+- [ ] Usar a variante regional e o gênero do professor escolhido em cada fala neural da lição, sem reduzir a voz a um código genérico do curso
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
 - [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice
@@ -410,6 +411,10 @@
 - [ ] Professor aparece em AR na câmera do usuário
 - [ ] Integrar lip-sync no modo AR
 - [ ] Botão "Ver Professor em RA" na página de lição
+- [x] Corrigir objetos, rótulos e hotspots trocados na cena imersiva de praia — grade artificial removida; palmeira, oceano, onda e areia foram reposicionados sobre objetos visíveis e a fala passou a usar inglês
+- [ ] Eliminar os erros em série da cena imersiva unificando coordenada, objeto, rótulo, idioma de fala e clique em uma única definição validada
+- [ ] Revisar e validar todas as cenas imersivas, cena por cena, com hotspot posicionado no objeto visível e fala no idioma-alvo
+- [x] Exibir em cada cena imersiva o professor nativo definido para aquele cenário, sem sobrescrever o retrato pela seleção global de outro idioma — avatar agora usa diretamente o professor, retrato e locale configurados na cena; Yuki/Tóquio e Giulia/Hotel validados visualmente
 
 ### Fase 5: Potencializar IAs
 - [ ] TTS: Google WaveNet primário, Web Speech fallback offline

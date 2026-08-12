@@ -10,6 +10,7 @@ import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
+import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
@@ -18,6 +19,7 @@ import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Plane, Shell,
 const HOTSPOT_ICON_COMPONENTS: Array<[string, LucideIcon]> = [
   ["sun", Sun], ["wave", Waves], ["ocean", Waves], ["sea", Waves], ["palm", TreePalm],
   ["tree", TreePalm], ["shell", Shell], ["sand", Umbrella], ["umbrella", Umbrella],
+  ["towel", Shirt],
   ["cloud", Cloud], ["coffee", Coffee], ["restaurant", Utensils], ["food", Utensils],
   ["airport", Plane], ["plane", Plane], ["car", Car], ["home", Home], ["house", Home],
   ["book", BookOpen], ["museum", Landmark], ["apple", Apple], ["dog", Dog], ["shirt", Shirt],
@@ -27,26 +29,6 @@ function HotspotVisual({ hotspot, size = 24 }: { hotspot: Hotspot; size?: number
   const source = `${hotspot.id} ${hotspot.label}`.toLowerCase();
   const Icon = HOTSPOT_ICON_COMPONENTS.find(([key]) => source.includes(key))?.[1] || Sparkles;
   return <Icon size={size} strokeWidth={2.35} aria-hidden="true" />;
-}
-
-// ─── Teacher map: idioma do aluno → professor ─────────────────────────────────
-const LANG_TEACHERS: Record<string, { name: string; image: string }> = {
-  "en":  { name: "James",  image: "/manus-storage/prof_james_b9f2fff7.png" },
-  "pt":  { name: "Ana",    image: "/manus-storage/prof_ana_241ffde7.png" },
-  "es":  { name: "Carlos", image: "/manus-storage/prof_carlos_3a763932.jpg" },
-  "fr":  { name: "Sophie", image: "/manus-storage/prof_sophie_a6324ef6.png" },
-  "de":  { name: "Hans",   image: "/manus-storage/prof_hans_62b758a6.png" },
-  "it":  { name: "Giulia", image: "/manus-storage/prof_giulia_f8adfeb6.png" },
-  "ja":  { name: "Yuki",   image: "/manus-storage/prof_yuki_ae657681.png" },
-  "ar":  { name: "Omar",   image: "/manus-storage/prof_omar_5c108d44.png" },
-  "ru":  { name: "Ivan",   image: "/manus-storage/prof_ivan_5c4962f5.png" },
-  "pl":  { name: "Maja",   image: "/manus-storage/prof_maja_860515c8.png" },
-  "tr":  { name: "Emre",   image: "/manus-storage/prof_emre_78eb8ccb.png" },
-  "hi":  { name: "Priya",  image: "/manus-storage/prof_priya_7c36613d.png" },
-};
-function getTeacherForLang(targetLang: string, fallback: { name: string; image: string }) {
-  const base = (targetLang || "").split("-")[0].toLowerCase();
-  return LANG_TEACHERS[base] || fallback;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -125,12 +107,10 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"Excellent! Your English is great! Keep practicing every day!", textPt:"Excelente! Seu ingl\u00eas est\u00e1 \u00f3timo! Continue praticando todos os dias!"},
     ],
     hotspots:[
-      {id:"ocean", x:60, y:32, label:"Ocean", translation:"Oceano", pronunciation:"OH-shën", example:"The ocean is deep.", examplePt:"O oceano é profundo.", icon:"🌊", color:"#06b6d4"}, // Turquoise
-      {id:"sand", x:40, y:72, label:"Sand", translation:"Areia", pronunciation:"SÆND", example:"The sand is warm.", examplePt:"A areia está quente.", icon:"🏖️", color:"#f59e0b"},
-      {id:"palm", x:15, y:28, label:"Palm Tree", translation:"Palmeira", pronunciation:"PAAM-tree", example:"The palm tree is tall.", examplePt:"A palmeira é alta.", icon:"🌴", color:"#22c55e"},
-      {id:"shell", x:70, y:77, label:"Shell", translation:"Concha", pronunciation:"SHEL", example:"I found a shell.", examplePt:"Encontrei uma concha.", icon:"🐚", color:"#f97316"},
-      {id:"sun", x:82, y:12, label:"Sun", translation:"Sol", pronunciation:"SÂN", example:"The sun is bright.", examplePt:"O sol está brilhante.", icon:"☀️", color:"#eab308"},
-      {id:"wave", x:50, y:52, label:"Wave", translation:"Onda", pronunciation:"WEYV", example:"The wave is big.", examplePt:"A onda é grande.", icon:"🌊", color:"#14b8a6"}, // Turquoise net
+      {id:"palm", x:79, y:24, label:"Palm Tree", translation:"Palmeira", pronunciation:"PAAM-tree", example:"The palm tree is tall.", examplePt:"A palmeira é alta.", icon:"🌴", color:"#22c55e"},
+      {id:"ocean", x:24, y:66, label:"Ocean", translation:"Oceano", pronunciation:"OH-shën", example:"The ocean is deep.", examplePt:"O oceano é profundo.", icon:"🌊", color:"#06b6d4"},
+      {id:"wave", x:38, y:58, label:"Wave", translation:"Onda", pronunciation:"WEYV", example:"The wave is big.", examplePt:"A onda é grande.", icon:"🌊", color:"#14b8a6"},
+      {id:"sand", x:59, y:82, label:"Sand", translation:"Areia", pronunciation:"SÆND", example:"The sand is warm.", examplePt:"A areia está quente.", icon:"🏖️", color:"#f59e0b"},
     ]
   },
   {
@@ -177,12 +157,12 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"素晴らしい！毎日練習してください！", textPt:"Maravilhoso! Pratique todos os dias!"},
     ],
     hotspots:[
-      {id:"jinja", x:30, y:32, label:"神社", translation:"Santuário", pronunciation:"djin-dja", example:"神社は美しいです。", examplePt:"O santuário é bonito.", icon:"⛩️", color:"#dc2626"},
-      {id:"tori", x:55, y:65, label:"通り", translation:"Rua", pronunciation:"to-ori", example:"通りは賑やかです。", examplePt:"A rua é movimentada.", icon:"🛣️", color:"#7c3aed"},
-      {id:"kanban", x:70, y:38, label:"看板", translation:"Placa", pronunciation:"can-ban", example:"看板が見えます。", examplePt:"Vejo a placa.", icon:"📋", color:"#0891b2"},
-      {id:"chochin", x:20, y:58, label:"提灯", translation:"Lanterna", pronunciation:"cho-chin", example:"提灯が光ります。", examplePt:"A lanterna brilha.", icon:"🏮", color:"#ea580c"},
-      {id:"sakura", x:45, y:22, label:"桜", translation:"Cerejeira", pronunciation:"sa-ku-ra", example:"桜が咲いています。", examplePt:"A cerejeira está florescendo.", icon:"🌸", color:"#ec4899"},
-      {id:"fuji", x:80, y:22, label:"富士山", translation:"Monte Fuji", pronunciation:"fu-dji-san", example:"富士山は高いです。", examplePt:"O Monte Fuji é alto.", icon:"🗻", color:"#64748b"},
+      {id:"fuji", x:47, y:18, label:"富士山", translation:"Monte Fuji", pronunciation:"fu-dji-san", example:"富士山は高いです。", examplePt:"O Monte Fuji é alto.", icon:"🗻", color:"#64748b"},
+      {id:"street", x:54, y:72, label:"通り", translation:"Rua", pronunciation:"to-ori", example:"通りは賑やかです。", examplePt:"A rua é movimentada.", icon:"🛣️", color:"#7c3aed"},
+      {id:"billboard", x:22, y:37, label:"広告", translation:"Publicidade", pronunciation:"ko-ku", example:"広告が見えます。", examplePt:"Vejo uma publicidade.", icon:"📋", color:"#0891b2"},
+      {id:"screen", x:70, y:40, label:"画面", translation:"Tela", pronunciation:"ga-men", example:"画面が明るいです。", examplePt:"A tela está iluminada.", icon:"📺", color:"#2563eb"},
+      {id:"building", x:84, y:48, label:"建物", translation:"Prédio", pronunciation:"ta-te-mo-no", example:"建物が高いです。", examplePt:"O prédio é alto.", icon:"🏢", color:"#6366f1"},
+      {id:"sign", x:74, y:56, label:"看板", translation:"Placa", pronunciation:"can-ban", example:"看板が見えます。", examplePt:"Vejo a placa.", icon:"📋", color:"#14b8a6"},
     ]
   },
   {
@@ -203,12 +183,12 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"Great choice! Your English is excellent. Keep it up!", textPt:"Ótima escolha! Seu inglês está excelente. Continue assim!"},
     ],
     hotspots:[
-      {id:"sky", x:65, y:18, label:"Skyscraper", translation:"Arranha-céu", pronunciation:"SCAI-screi-per", example:"The skyscraper is tall.", examplePt:"O arranha-céu é alto.", icon:"🏙️", color:"#6366f1"},
-      {id:"taxi", x:40, y:72, label:"Taxi", translation:"Táxi", pronunciation:"TÆK-si", example:"I need a taxi.", examplePt:"Preciso de um táxi.", icon:"🚕", color:"#eab308"},
-      {id:"bridge", x:20, y:45, label:"Bridge", translation:"Ponte", pronunciation:"BRIDJ", example:"The bridge is long.", examplePt:"A ponte é longa.", icon:"🌉", color:"#94a3b8"},
-      {id:"park", x:55, y:58, label:"Park", translation:"Parque", pronunciation:"PAARK", example:"The park is green.", examplePt:"O parque é verde.", icon:"🌳", color:"#22c55e"},
-      {id:"hotdog", x:30, y:78, label:"Hot Dog", translation:"Cachorro-quente", pronunciation:"HOT-dog", example:"I eat a hot dog.", examplePt:"Eu como um cachorro-quente.", icon:"🌭", color:"#f97316"},
-      {id:"subway", x:75, y:80, label:"Subway", translation:"Metrô", pronunciation:"SÂB-wei", example:"Take the subway.", examplePt:"Pegue o metrô.", icon:"🚇", color:"#8b5cf6"},
+      {id:"statue", x:7, y:48, label:"Statue", translation:"Estátua", pronunciation:"STÉ-tchu", example:"The statue is famous.", examplePt:"A estátua é famosa.", icon:"🗽", color:"#16a34a"},
+      {id:"tower", x:47, y:36, label:"Tower", translation:"Torre", pronunciation:"TAU-er", example:"The tower is tall.", examplePt:"A torre é alta.", icon:"🏙️", color:"#6366f1"},
+      {id:"skyline", x:67, y:55, label:"Skyline", translation:"Horizonte urbano", pronunciation:"SCAI-lain", example:"The skyline is beautiful.", examplePt:"O horizonte urbano é bonito.", icon:"🏙️", color:"#0ea5e9"},
+      {id:"river", x:43, y:72, label:"River", translation:"Rio", pronunciation:"RI-ver", example:"The river is wide.", examplePt:"O rio é largo.", icon:"🌊", color:"#0891b2"},
+      {id:"sunset", x:79, y:29, label:"Sunset", translation:"Pôr do sol", pronunciation:"SÂN-set", example:"The sunset is golden.", examplePt:"O pôr do sol é dourado.", icon:"☀️", color:"#f59e0b"},
+      {id:"building", x:79, y:58, label:"Building", translation:"Prédio", pronunciation:"BIL-ding", example:"The building is tall.", examplePt:"O prédio é alto.", icon:"🏢", color:"#64748b"},
     ]
   },
   {
@@ -233,8 +213,8 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {id:"horno", x:50, y:65, label:"Horno", translation:"Forno", pronunciation:"OR-no", example:"El horno está caliente.", examplePt:"O forno está quente.", icon:"🔥", color:"#f97316"},
       {id:"mesa", x:70, y:75, label:"Mesa", translation:"Mesa", pronunciation:"ME-sa", example:"La mesa está limpia.", examplePt:"A mesa está limpa.", icon:"🪑", color:"#a16207"},
       {id:"ventana", x:80, y:25, label:"Ventana", translation:"Janela", pronunciation:"ben-TA-na", example:"La ventana está abierta.", examplePt:"A janela está aberta.", icon:"🪟", color:"#0891b2"},
-      {id:"cuchillo", x:35, y:55, label:"Cuchillo", translation:"Faca", pronunciation:"ku-TCHI-lho", example:"El cuchillo es afilado.", examplePt:"A faca é afiada.", icon:"🔪", color:"#dc2626"},
-      {id:"plato", x:60, y:80, label:"Plato", translation:"Prato", pronunciation:"PLA-to", example:"El plato está en la mesa.", examplePt:"O prato está na mesa.", icon:"🍽️", color:"#7c3aed"},
+      {id:"cuchara", x:35, y:52, label:"Cuchara", translation:"Colher", pronunciation:"ku-TCHA-ra", example:"La cuchara está en el recipiente.", examplePt:"A colher está no recipiente.", icon:"🥄", color:"#dc2626"},
+      {id:"encimera", x:60, y:80, label:"Encimera", translation:"Bancada", pronunciation:"en-si-ME-ra", example:"La encimera está limpia.", examplePt:"A bancada está limpa.", icon:"🪵", color:"#7c3aed"},
     ]
   },
   {
@@ -255,12 +235,12 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"Perfeita escolha! Seu portugu\u00eas est\u00e1 excelente. Parab\u00e9ns!", textPt:"Perfeita escolha! Seu portugu\u00eas est\u00e1 excelente. Parab\u00e9ns!"},
     ],
     hotspots:[
-      {id:"pasta", x:50, y:65, label:"Massa", translation:"Pasta", pronunciation:"MA-ssa", example:"A massa está deliciosa.", examplePt:"A massa está deliciosa.", icon:"🍝", color:"#f59e0b"},
-      {id:"vino", x:25, y:45, label:"Vinho", translation:"Wine", pronunciation:"VI-nho", example:"O vinho é tinto.", examplePt:"O vinho é tinto.", icon:"🍷", color:"#dc2626"},
-      {id:"tavolo", x:65, y:75, label:"Mesa", translation:"Table", pronunciation:"ME-za", example:"A mesa está limpa.", examplePt:"A mesa está limpa.", icon:"🪑", color:"#a16207"},
-      {id:"candela", x:45, y:35, label:"Vela", translation:"Candle", pronunciation:"VE-la", example:"A vela ilumina a mesa.", examplePt:"A vela ilumina a mesa.", icon:"🕯️", color:"#eab308"},
-      {id:"menu", x:80, y:40, label:"Cardápio", translation:"Menu", pronunciation:"kar-DA-piu", example:"O cardápio tem muitas opções.", examplePt:"O cardápio tem muitas opções.", icon:"📋", color:"#6366f1"},
-      {id:"cameriere", x:15, y:30, label:"Garçom", translation:"Waiter", pronunciation:"gar-sõ", example:"O garçom é muito atencioso.", examplePt:"O garçom é muito atencioso.", icon:"🧑‍🍳", color:"#0891b2"},
+      {id:"massa", x:28, y:77, label:"Massa", translation:"Pasta", pronunciation:"MA-ssa", example:"A massa está deliciosa.", examplePt:"A massa está deliciosa.", icon:"🍝", color:"#f59e0b"},
+      {id:"vinho", x:25, y:45, label:"Vinho", translation:"Wine", pronunciation:"VI-nho", example:"O vinho é tinto.", examplePt:"O vinho é tinto.", icon:"🍷", color:"#dc2626"},
+      {id:"mesa", x:70, y:54, label:"Mesa", translation:"Table", pronunciation:"ME-za", example:"A mesa está limpa.", examplePt:"A mesa está limpa.", icon:"🪑", color:"#a16207"},
+      {id:"vela", x:41, y:49, label:"Vela", translation:"Candle", pronunciation:"VE-la", example:"A vela ilumina a mesa.", examplePt:"A vela ilumina a mesa.", icon:"🕯️", color:"#eab308"},
+      {id:"quadro", x:84, y:33, label:"Quadro", translation:"Picture", pronunciation:"KWA-dro", example:"O quadro está na parede.", examplePt:"The picture is on the wall.", icon:"🖼️", color:"#6366f1"},
+      {id:"janela", x:14, y:28, label:"Janela", translation:"Window", pronunciation:"ja-NE-la", example:"A janela é grande.", examplePt:"The window is big.", icon:"🪟", color:"#0891b2"},
     ]
   },
   {
@@ -282,18 +262,18 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"gate", x:60, y:30, label:"Gate", translation:"Portão", pronunciation:"GEYT", example:"The gate is open.", examplePt:"O portão está aberto.", icon:"🚪", color:"#6366f1"},
-      {id:"luggage", x:30, y:70, label:"Luggage", translation:"Bagagem", pronunciation:"LÆG-idj", example:"My luggage is heavy.", examplePt:"Minha bagagem é pesada.", icon:"🧳", color:"#f59e0b"},
-      {id:"passport", x:50, y:55, label:"Passport", translation:"Passaporte", pronunciation:"PÆS-port", example:"Show your passport.", examplePt:"Mostre seu passaporte.", icon:"📘", color:"#0ea5e9"},
-      {id:"plane", x:75, y:20, label:"Airplane", translation:"Avião", pronunciation:"EYR-pleyn", example:"The airplane is landing.", examplePt:"O avião está pousando.", icon:"✈️", color:"#94a3b8"},
-      {id:"screen", x:20, y:35, label:"Screen", translation:"Tela", pronunciation:"SKREEN", example:"Check the screen.", examplePt:"Verifique a tela.", icon:"📺", color:"#8b5cf6"},
-      {id:"security", x:45, y:80, label:"Security", translation:"Segurança", pronunciation:"si-KYUR-iti", example:"Pass through security.", examplePt:"Passe pela segurança.", icon:"🔒", color:"#dc2626"},
+      {id:"traveler", x:62, y:58, label:"Traveler", translation:"Viajante", pronunciation:"TRÉ-ve-ler", example:"The traveler has a backpack.", examplePt:"O viajante tem uma mochila.", icon:"🧍", color:"#f59e0b"},
+      {id:"people", x:50, y:55, label:"People", translation:"Pessoas", pronunciation:"PI-pol", example:"The people are waiting.", examplePt:"As pessoas estão esperando.", icon:"👥", color:"#0ea5e9"},
+      {id:"departures", x:90, y:18, label:"Departures", translation:"Partidas", pronunciation:"di-PAAR-tchers", example:"The departures board is updated.", examplePt:"O quadro de partidas está atualizado.", icon:"📋", color:"#94a3b8"},
+      {id:"window", x:20, y:35, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"The window is large.", examplePt:"A janela é grande.", icon:"🪟", color:"#8b5cf6"},
+      {id:"walkway", x:45, y:72, label:"Walkway", translation:"Esteira móvel", pronunciation:"UÓK-wei", example:"The walkway is moving.", examplePt:"A esteira móvel está em movimento.", icon:"➡️", color:"#dc2626"},
     ]
   },
   {
     id:"hotel", name:"Hotel de Luxo", nameEn:"Luxury Hotel", flag:"🏨",
     bgImage:"/manus-storage/scene_hotel_8fff9928.jpg",
     teacherImage:"/manus-storage/prof_giulia_f8adfeb6.png",
-    teacherName:"Giulia", teacherLang:"en-US", langCode:"en", teacherGender:"female",
+    teacherName:"Giulia", teacherLang:"it-IT", langCode:"it", teacherGender:"female",
     teacherGreeting:"Benvenuto in hotel! Impariamo le parole dell'hotel!",
     greetingPt:"Bem-vindo ao hotel! Vamos aprender palavras do hotel!",
     difficulty:"intermediate", premium:false,
@@ -308,11 +288,11 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"reception", x:40, y:55, label:"Reception", translation:"Recepção", pronunciation:"re-tche-TSIO-ne", example:"La reception è al piano terra.", examplePt:"A recepção fica no térreo.", icon:"🛎️", color:"#f59e0b"},
-      {id:"chiave", x:65, y:45, label:"Chiave", translation:"Chave", pronunciation:"KIA-ve", example:"Ecco la chiave della camera.", examplePt:"Aqui está a chave do quarto.", icon:"🗝️", color:"#eab308"},
-      {id:"ascensore", x:80, y:35, label:"Ascensore", translation:"Elevador", pronunciation:"a-shen-SO-re", example:"L'ascensore è a destra.", examplePt:"O elevador fica à direita.", icon:"🛗", color:"#6366f1"},
-      {id:"piscina", x:20, y:40, label:"Piscina", translation:"Piscina", pronunciation:"pi-SHI-na", example:"La piscina è grande.", examplePt:"A piscina é grande.", icon:"🏊", color:"#0ea5e9"},
-      {id:"camera", x:55, y:25, label:"Camera", translation:"Quarto", pronunciation:"KA-me-ra", example:"La camera è al terzo piano.", examplePt:"O quarto fica no terceiro andar.", icon:"🛏️", color:"#8b5cf6"},
-      {id:"ristorante", x:30, y:75, label:"Ristorante", translation:"Restaurante", pronunciation:"ris-to-RAN-te", example:"Il ristorante apre alle sette.", examplePt:"O restaurante abre às sete.", icon:"🍽️", color:"#dc2626"},
+      {id:"lampadario", x:55, y:22, label:"Lampadario", translation:"Lustre", pronunciation:"lam-pa-DA-rio", example:"Il lampadario è grande.", examplePt:"O lustre é grande.", icon:"💡", color:"#eab308"},
+      {id:"colonna", x:80, y:35, label:"Colonna", translation:"Coluna", pronunciation:"ko-LON-na", example:"La colonna è alta.", examplePt:"A coluna é alta.", icon:"🏛️", color:"#6366f1"},
+      {id:"poltrona", x:28, y:74, label:"Poltrona", translation:"Poltrona", pronunciation:"pol-TRO-na", example:"La poltrona è comoda.", examplePt:"A poltrona é confortável.", icon:"🪑", color:"#0ea5e9"},
+      {id:"pianta", x:48, y:56, label:"Pianta", translation:"Planta", pronunciation:"PIAN-ta", example:"La pianta è verde.", examplePt:"A planta é verde.", icon:"🌿", color:"#8b5cf6"},
+      {id:"lampada", x:66, y:55, label:"Lampada", translation:"Luminária", pronunciation:"lam-PA-da", example:"La lampada è accesa.", examplePt:"A luminária está acesa.", icon:"💡", color:"#dc2626"},
     ]
   },
   {
@@ -397,7 +377,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"park", name:"Parque da Cidade", nameEn:"City Park", flag:"🌳",
     bgImage:"/manus-storage/scene_park_22801348.jpg",
     teacherImage:"/manus-storage/prof_sophie_a6324ef6.png",
-    teacherName:"Sophie", teacherLang:"en-US", langCode:"en",
+    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr",
     teacherGreeting:"Bienvenue au parc! Profitons de la nature!",
     greetingPt:"Bem-vindo ao parque! Vamos aproveitar a natureza!",
     difficulty:"beginner", premium:false,
@@ -412,18 +392,18 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"arbre", x:25, y:25, label:"Arbre", translation:"Árvore", pronunciation:"AR-bre", example:"L'arbre est grand.", examplePt:"A árvore é grande.", icon:"🌳", color:"#16a34a"},
-      {id:"banc", x:55, y:65, label:"Banc", translation:"Banco", pronunciation:"BON", example:"Assieds-toi sur le banc.", examplePt:"Sente-se no banco.", icon:"🪑", color:"#a16207"},
+      {id:"jeux", x:10, y:62, label:"Jeux", translation:"Brinquedos", pronunciation:"JÖ", example:"Les jeux sont dans le parc.", examplePt:"Os brinquedos estão no parque.", icon:"🎠", color:"#a16207"},
       {id:"fontaine", x:70, y:45, label:"Fontaine", translation:"Fonte", pronunciation:"fon-TEN", example:"La fontaine est belle.", examplePt:"A fonte é bonita.", icon:"⛲", color:"#0ea5e9"},
-      {id:"fleur2", x:35, y:72, label:"Fleur", translation:"Flor", pronunciation:"FLÖR", example:"La fleur est rouge.", examplePt:"A flor é vermelha.", icon:"🌹", color:"#dc2626"},
-      {id:"chemin", x:50, y:80, label:"Chemin", translation:"Caminho", pronunciation:"SHMEN", example:"Le chemin est long.", examplePt:"O caminho é longo.", icon:"🛤️", color:"#f59e0b"},
-      {id:"oiseau", x:80, y:20, label:"Oiseau", translation:"Pássaro", pronunciation:"wa-ZO", example:"L'oiseau chante.", examplePt:"O pássaro canta.", icon:"🐦", color:"#2563eb"},
+      {id:"personnes", x:50, y:62, label:"Personnes", translation:"Pessoas", pronunciation:"per-SON", example:"Les personnes marchent dans le parc.", examplePt:"As pessoas caminham no parque.", icon:"👥", color:"#dc2626"},
+      {id:"chien", x:60, y:68, label:"Chien", translation:"Cachorro", pronunciation:"SHIEN", example:"Le chien est dans le parc.", examplePt:"O cachorro está no parque.", icon:"🐕", color:"#f59e0b"},
+      {id:"herbe", x:45, y:80, label:"Herbe", translation:"Grama", pronunciation:"ERB", example:"L'herbe est verte.", examplePt:"A grama é verde.", icon:"🌿", color:"#2563eb"},
     ]
   },
   {
     id:"mountain", name:"Montanha Nevada", nameEn:"Snowy Mountain", flag:"🏔️",
     bgImage:"/manus-storage/scene_mountain_531032d0.jpg",
     teacherImage:"/manus-storage/prof_hans_62b758a6.png",
-    teacherName:"Hans", teacherLang:"en-US", langCode:"en", teacherGender:"male",
+    teacherName:"Hans", teacherLang:"de-DE", langCode:"de", teacherGender:"male",
     teacherGreeting:"Willkommen auf dem Berg! Lernen wir Natur-Vokabular!",
     greetingPt:"Bem-vindo à montanha! Vamos aprender vocabulário da natureza!",
     difficulty:"intermediate", premium:false,
@@ -437,12 +417,12 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"Ausgezeichnet! Dein Deutsch ist wirklich gut. Weiter so!", textPt:"Excelente! Seu alemão está realmente bom. Continue assim!"},
     ],
     hotspots:[
-      {id:"gipfel", x:50, y:15, label:"Gipfel", translation:"Cume", pronunciation:"GIP-fel", example:"Der Gipfel ist schneebedeckt.", examplePt:"O cume está coberto de neve.", icon:"🏔️", color:"#94a3b8"},
+      {id:"gipfel", x:50, y:28, label:"Gipfel", translation:"Cume", pronunciation:"GIP-fel", example:"Der Gipfel ist schneebedeckt.", examplePt:"O cume está coberto de neve.", icon:"🏔️", color:"#94a3b8"},
       {id:"schnee", x:35, y:35, label:"Schnee", translation:"Neve", pronunciation:"SHNEY", example:"Der Schnee ist weiß.", examplePt:"A neve é branca.", icon:"❄️", color:"#e2e8f0"},
       {id:"wald2", x:20, y:55, label:"Wald", translation:"Floresta", pronunciation:"VALT", example:"Der Wald ist dunkel.", examplePt:"A floresta é escura.", icon:"🌲", color:"#16a34a"},
       {id:"fels", x:70, y:45, label:"Fels", translation:"Rocha", pronunciation:"FELS", example:"Der Fels ist hart.", examplePt:"A rocha é dura.", icon:"🪨", color:"#78716c"},
       {id:"wolke", x:75, y:18, label:"Wolke", translation:"Nuvem", pronunciation:"VOL-ke", example:"Die Wolke ist weiß.", examplePt:"A nuvem é branca.", icon:"☁️", color:"#94a3b8"},
-      {id:"adler", x:85, y:30, label:"Adler", translation:"Águia", pronunciation:"AA-dler", example:"Der Adler fliegt hoch.", examplePt:"A águia voa alto.", icon:"🦅", color:"#a16207"},
+      {id:"see", x:50, y:65, label:"See", translation:"Lago", pronunciation:"ZE", example:"Der See ist klar.", examplePt:"O lago é claro.", icon:"🌊", color:"#a16207"},
     ]
   },
   {
@@ -464,18 +444,17 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"sand2", x:50, y:75, label:"رمل", translation:"Areia", pronunciation:"raml", example:"الرمل ساخن جداً.", examplePt:"A areia está muito quente.", icon:"🏜️", color:"#f59e0b"},
-      {id:"camel", x:30, y:45, label:"جمل", translation:"Camelo", pronunciation:"jamal", example:"الجمل حيوان الصحراء.", examplePt:"O camelo é o animal do deserto.", icon:"🐪", color:"#a16207"},
+      {id:"caravan", x:82, y:55, label:"قافلة", translation:"Caravana", pronunciation:"qa-fi-la", example:"القافلة تسير في الصحراء.", examplePt:"A caravana caminha no deserto.", icon:"🐪", color:"#a16207"},
       {id:"sun2", x:70, y:15, label:"شمس", translation:"Sol", pronunciation:"SHAMS", example:"الشمس حارة جداً.", examplePt:"O sol está muito quente.", icon:"☀️", color:"#eab308"},
-      {id:"oasis", x:20, y:55, label:"واحة", translation:"Oásis", pronunciation:"WA-ha", example:"الواحة في الصحراء.", examplePt:"O oásis fica no deserto.", icon:"🌴", color:"#22c55e"},
-      {id:"dune", x:75, y:55, label:"كثيب", translation:"Duna", pronunciation:"ka-THIIB", example:"الكثيب رملي.", examplePt:"A duna é de areia.", icon:"🏔️", color:"#d97706"},
-      {id:"star", x:85, y:20, label:"نجمة", translation:"Estrela", pronunciation:"najma", example:"النجمة تلمع.", examplePt:"A estrela brilha.", icon:"⭐", color:"#fbbf24"},
+      {id:"footprints", x:55, y:72, label:"آثار", translation:"Pegadas", pronunciation:"aa-THAAR", example:"الآثار في الرمل.", examplePt:"As pegadas estão na areia.", icon:"👣", color:"#22c55e"},
+      {id:"dune", x:55, y:45, label:"كثيب", translation:"Duna", pronunciation:"ka-THIIB", example:"الكثيب رملي.", examplePt:"A duna é de areia.", icon:"🏔️", color:"#d97706"},
     ]
   },
   {
     id:"farm", name:"Fazenda Campestre", nameEn:"Country Farm", flag:"🌾",
     bgImage:"/manus-storage/scene_farm_2fb3b2ba.jpg",
     teacherImage:"/manus-storage/prof_maja_860515c8.png",
-    teacherName:"Maja", teacherLang:"en-US", langCode:"en", teacherGender:"female",
+    teacherName:"Maja", teacherLang:"pl-PL", langCode:"pl", teacherGender:"female",
     teacherGreeting:"Witaj na farmie! Uczmy się słownictwa wiejskiego!",
     greetingPt:"Bem-vindo à fazenda! Vamos aprender vocabulário rural!",
     difficulty:"intermediate", premium:false,
@@ -501,7 +480,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"museum", name:"Museu de Arte", nameEn:"Art Museum", flag:"🎨",
     bgImage:"/manus-storage/scene_museum_36dd2df4.jpg",
     teacherImage:"/manus-storage/prof_giulia_f8adfeb6.png",
-    teacherName:"Giulia", teacherLang:"en-US", langCode:"en", teacherGender:"female",
+    teacherName:"Giulia", teacherLang:"it-IT", langCode:"it", teacherGender:"female",
     teacherGreeting:"Benvenuto al museo! Scopriamo l'arte insieme!",
     greetingPt:"Bem-vindo ao museu! Vamos descobrir a arte juntos!",
     difficulty:"advanced", premium:true,
@@ -553,7 +532,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"gym", name:"Academia de Ginástica", nameEn:"Fitness Gym", flag:"💪",
     bgImage:"/manus-storage/scene_gym_f96cac6f.jpg",
     teacherImage:"/manus-storage/prof_emre_78eb8ccb.png",
-    teacherName:"Emre", teacherLang:"en-US", langCode:"en", teacherGender:"male",
+    teacherName:"Emre", teacherLang:"tr-TR", langCode:"tr", teacherGender:"male",
     teacherGreeting:"Spor salonuna hoş geldiniz! Spor kelimelerini öğrenelim!",
     greetingPt:"Bem-vindo à academia! Vamos aprender vocabulário de esportes!",
     difficulty:"intermediate", premium:false,
@@ -579,7 +558,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"library", name:"Biblioteca", nameEn:"Library", flag:"📚",
     bgImage:"/manus-storage/scene_library_732f048d.jpg",
     teacherImage:"/manus-storage/prof_maja_860515c8.png",
-    teacherName:"Maja", teacherLang:"en-US", langCode:"en", teacherGender:"female",
+    teacherName:"Maja", teacherLang:"pl-PL", langCode:"pl", teacherGender:"female",
     teacherGreeting:"Witaj w bibliotece! Czytajmy razem!",
     greetingPt:"Bem-vindo à biblioteca! Vamos ler juntos!",
     difficulty:"beginner", premium:false,
@@ -605,7 +584,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"office", name:"Escritório Moderno", nameEn:"Modern Office", flag:"💼",
     bgImage:"/manus-storage/scene_office_7981f124.jpg",
     teacherImage:"/manus-storage/prof_ivan_5c4962f5.png",
-    teacherName:"Ivan", teacherLang:"en-US", langCode:"en", teacherGender:"male",
+    teacherName:"Ivan", teacherLang:"ru-RU", langCode:"ru", teacherGender:"male",
     teacherGreeting:"Добро пожаловать в офис! Учим деловую лексику!",
     greetingPt:"Bem-vindo ao escritório! Vamos aprender vocabulário de negócios!",
     difficulty:"intermediate", premium:true,
@@ -631,7 +610,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"metro", name:"Metrô de Paris", nameEn:"Paris Metro", flag:"🚇",
     bgImage:"/manus-storage/scene_metro_5fffc615.jpg",
     teacherImage:"/manus-storage/prof_sophie_a6324ef6.png",
-    teacherName:"Sophie", teacherLang:"en-US", langCode:"en",
+    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr",
     teacherGreeting:"Bienvenue dans le métro! Apprenons à voyager!",
     greetingPt:"Bem-vindo ao metrô! Vamos aprender a viajar!",
     difficulty:"intermediate", premium:false,
@@ -657,7 +636,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"port", name:"Porto Mediterrâneo", nameEn:"Mediterranean Port", flag:"⛵",
     bgImage:"/manus-storage/scene_port_e35f99dc.jpg",
     teacherImage:"/manus-storage/prof_giulia_f8adfeb6.png",
-    teacherName:"Giulia", teacherLang:"en-US", langCode:"en", teacherGender:"female",
+    teacherName:"Giulia", teacherLang:"it-IT", langCode:"it", teacherGender:"female",
     teacherGreeting:"Benvenuto al porto! Impariamo il vocabolario del mare!",
     greetingPt:"Bem-vindo ao porto! Vamos aprender vocabulário do mar!",
     difficulty:"intermediate", premium:false,
@@ -683,7 +662,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"medieval", name:"Mercado Medieval", nameEn:"Medieval Market", flag:"🏰",
     bgImage:"/manus-storage/scene_medieval_402d8fa3.jpg",
     teacherImage:"/manus-storage/prof_hans_62b758a6.png",
-    teacherName:"Hans", teacherLang:"en-US", langCode:"en", teacherGender:"male",
+    teacherName:"Hans", teacherLang:"de-DE", langCode:"de", teacherGender:"male",
     teacherGreeting:"Willkommen auf dem mittelalterlichen Markt! Lernen wir Geschichte!",
     greetingPt:"Bem-vindo ao mercado medieval! Vamos aprender história!",
     difficulty:"advanced", premium:true,
@@ -1247,6 +1226,11 @@ export default function ImmersiveScene() {
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
     try {
+      const requestedSceneId = new URLSearchParams(window.location.search).get("scene")?.trim();
+      if (requestedSceneId) {
+        const requestedScene = IMMERSIVE_SCENES.find((scene) => scene.id === requestedSceneId);
+        if (requestedScene) return requestedScene;
+      }
       // Priority 1: LanguageContext profile (already loaded from localStorage)
       let targetCode = profile.targetCode || "";
       // Priority 2: ml_lang_profile in localStorage
@@ -1272,6 +1256,16 @@ export default function ImmersiveScene() {
   const [selectedScene, setSelectedScene] = useState<Scene | null>(() => getInitialScene());
   const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
   const sceneInitialized = useRef(false); // Track if scene was auto-initialized from targetLang
+
+  useEffect(() => {
+    const requestedSceneId = new URLSearchParams(window.location.search).get("scene")?.trim();
+    if (!requestedSceneId) return;
+    const requestedScene = IMMERSIVE_SCENES.find((scene) => scene.id === requestedSceneId);
+    if (requestedScene && requestedScene.id !== selectedScene?.id) {
+      setSelectedScene(requestedScene);
+      sceneInitialized.current = true;
+    }
+  }, [selectedScene?.id]);
 
   // ── Native + Target from LanguageContext (single source of truth) ──
   const nativeLang = profile.nativeCode || "pt-BR";
@@ -1611,10 +1605,9 @@ export default function ImmersiveScene() {
     setNotebookCount(loadNotebook().length);
     setGreetingText(`${hotspot.label} — ${hotspot.translation}`);
     setShowGreeting(true);
-    // Speak in target language (student's chosen language), then in native language
-    // targetLang is the BCP-47 code the user selected (e.g. 'pt-BR', 'en-US', 'es-ES')
-    speak(hotspot.label, targetLang || effectiveSpeakLang(selectedScene));
-    setTimeout(() => speak(hotspot.translation, nativeLang), 1800);
+    // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
+    const hotspotSpeech = getImmersiveHotspotSpeech(hotspot, selectedScene);
+    speak(hotspotSpeech.text, hotspotSpeech.language, undefined, hotspotSpeech.gender);
     setTimeout(() => setShowGreeting(false), 5000);
   }, [selectedScene, learnedWords, speak, nativeLang]);
 
@@ -1900,31 +1893,6 @@ export default function ImmersiveScene() {
           }}
         />
 
-        {/* Turquoise net overlay for Tropical Beach scene — the fishing net is part of the background image */}
-        {/* Positioned at bottom-left area where the net typically appears in beach scenes */}
-        {selectedScene.id === "beach" && (
-          <div
-            style={{
-              position: "absolute",
-              left: "2%",
-              bottom: "15%",
-              width: "28%",
-              height: "35%",
-              pointerEvents: "none",
-              zIndex: 2,
-              // Net pattern using CSS — turquoise/teal color
-              backgroundImage: `
-                linear-gradient(rgba(20,184,166,0.55) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(20,184,166,0.55) 2px, transparent 2px)
-              `,
-              backgroundSize: "18px 18px",
-              borderRadius: "4px",
-              // Subtle glow
-              filter: "drop-shadow(0 0 8px rgba(20,184,166,0.7))",
-            }}
-          />
-        )}
-
         {/* Top HUD */}
         <div
           className="immersive-hud absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-40"
@@ -2092,7 +2060,7 @@ export default function ImmersiveScene() {
                   animation: "label-pop 0.3s ease-out",
                 }}
               >
-                {getHotspotLabel(hotspot.id, hotspot.label, effectiveLang(selectedScene))}
+                {hotspot.label}
               </div>
               </div>{/* end float wrapper */}
             </div>
@@ -2169,8 +2137,6 @@ export default function ImmersiveScene() {
           isSpeaking={isSpeaking}
           spokenText={greetingText}
           audioViseme={audioViseme}
-          overrideName={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).name}
-          overrideImage={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).image}
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}

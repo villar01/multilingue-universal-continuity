@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveVoiceConversationTeacher } from "../client/src/lib/voiceConversationTeacher";
+import { resolveTeacherSpeechVoice, resolveVoiceConversationTeacher } from "../client/src/lib/voiceConversationTeacher";
 
 describe("perfil da conversa por voz", () => {
   it("mantém o professor selecionado quando a voz pertence ao idioma da aula", () => {
@@ -22,5 +22,21 @@ describe("perfil da conversa por voz", () => {
       gender: "male",
       voiceLanguageCode: "pt-BR",
     }, "en-US")).toBeUndefined();
+  });
+
+  it("mantém a variante regional e o gênero do professor selecionado na fala da aula", () => {
+    expect(resolveTeacherSpeechVoice({
+      name: "Professor James",
+      gender: "male",
+      voiceLanguageCode: "en-GB",
+    }, "en-US")).toEqual({ voiceLang: "en-GB", gender: "male" });
+  });
+
+  it("usa somente o idioma da aula quando o perfil selecionado é incompatível", () => {
+    expect(resolveTeacherSpeechVoice({
+      name: "Professor Ricardo",
+      gender: "male",
+      voiceLanguageCode: "pt-BR",
+    }, "en-US")).toEqual({ voiceLang: "en-US", gender: "female" });
   });
 });

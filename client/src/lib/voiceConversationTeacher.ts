@@ -35,3 +35,14 @@ export function resolveVoiceConversationTeacher(
     imageUrl: teacher.photoUrl || undefined,
   };
 }
+
+export function resolveTeacherSpeechVoice(
+  teacher: VoiceConversationTeacherInput | undefined,
+  targetLanguage: string,
+): { voiceLang: string; gender: "male" | "female" } {
+  const compatibleTeacher = resolveVoiceConversationTeacher(teacher, targetLanguage);
+  return {
+    voiceLang: compatibleTeacher?.fallbackLanguage ?? targetLanguage,
+    gender: compatibleTeacher?.gender ?? "female",
+  };
+}

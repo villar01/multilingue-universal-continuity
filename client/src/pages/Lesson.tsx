@@ -30,12 +30,13 @@ import { TalkingTeacher } from "@/components/TalkingTeacher";
 import { TEACHERS_57 } from "@/data/teachers57";
 import { matchTeacherCatalog } from "@/lib/teacherCatalogMatch";
 import { enrichTeacherProfile } from "@/lib/teacherProfile";
-import { synthesizeSpeechLocal, isWebSpeechSupported } from "@/lib/localTTS";
+import { synthesizeSpeechLocal as synthesizeSpeechLocalBase, isWebSpeechSupported } from "@/lib/localTTS";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
 import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
 import { getLevelByLesson, getLevelConfig, type CEFRLevel } from "@/lib/lesson-levels";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { resolveTeacherSpeechVoice } from "@/lib/voiceConversationTeacher";
 // Lazy load heavy components
 const ARLearningScene = lazy(() => import("@/components/ARLearningScene").then(m => ({ default: m.ARLearningScene })));
 const VoiceConversation = lazy(() => import("@/components/VoiceConversation"));
@@ -164,6 +165,16 @@ export default function Lesson() {
   }, [allTeachers, selectedTeacherId, preferredTeacher]);
   // Manter compatibilidade com teacherList
   const teacherList = allTeachers;
+  const teacherVoice = useMemo(() => resolveTeacherSpeechVoice(
+    teacher ? {
+      id: teacher.id,
+      name: teacher.name,
+      gender: (teacher as any).gender,
+      photoUrl: (teacher as any).photoUrl || (teacher as any).photo_url,
+      voiceLanguageCode: (teacher as any).voiceLanguageCode || (teacher as any).voice_language_code,
+    } : undefined,
+    lesson?.languageCode || "en-US",
+  ), [teacher, lesson?.languageCode]);
 
   // Embaralhar opções uma vez por exercício (usando useMemo para estabilidade)
   const shuffledOptionsMap = useMemo(() => {
@@ -203,7 +214,7 @@ export default function Lesson() {
   });
 
   // TTS mutation para professor falar feedback — Edge TTS Neural (alta qualidade)
-  const generateTeacherAudio = trpc.tts.speak.useMutation({
+  const generateTeacherAudioMutation = trpc.tts.speak.useMutation({
     onSuccess: (result) => {
       // Reproduzir áudio base64 diretamente
       try {
@@ -217,6 +228,20 @@ export default function Lesson() {
       console.log('Teacher audio generation error:', error);
     }
   });
+  const generateTeacherAudio = {
+    mutate: (input: { text: string; voiceLang?: string; gender?: "male" | "female" }) =>
+      generateTeacherAudioMutation.mutate({
+        ...input,
+        voiceLang: teacherVoice.voiceLang,
+        gender: teacherVoice.gender,
+      }),
+  };
+  const synthesizeSpeechLocal = (
+    text: string,
+    _requestedLocale: string,
+    _requestedGender: "male" | "female",
+    callbacks: Parameters<typeof synthesizeSpeechLocalBase>[3],
+  ) => synthesizeSpeechLocalBase(text, teacherVoice.voiceLang, teacherVoice.gender, callbacks);
 
   // STT mutation
   const analyzePronunciationMutation = trpc.stt.analyzePronunciation.useMutation({
@@ -231,7 +256,7 @@ export default function Lesson() {
 
   // Professor fala automaticamente ao entrar na lição (Web Speech API - sem bloqueio de autoplay)
   useEffect(() => {
-    if (!lesson) return;
+    if (!lesson || !teacher) return;
     const lang = (lesson.languageCode || 'en').toLowerCase();
     let welcomeText = `Welcome! Lesson ${lesson.orderIndex}: ${lesson.title}. Let's get started!`;
     if (lang.startsWith('pt')) welcomeText = `Bem-vindo! Lição ${lesson.orderIndex}: ${lesson.title}. Vamos começar!`;
@@ -244,13 +269,13 @@ export default function Lesson() {
     else if (lang.startsWith('ko')) welcomeText = `어서오세요! ${lesson.orderIndex}번 수업: ${lesson.title}. 시작합시다!`;
     setTeacherText(welcomeText);
     setTeacherExpression("happy");
-    // Gerar áudio de boas-vindas via Google Neural2 TTS (voz natural de alta qualidade)
-    const rawLang = lesson.languageCode || 'en-US';
+    // A saudação deve preservar a variante regional do professor escolhido.
     generateTeacherAudio.mutate({
       text: welcomeText,
-      voiceLang: rawLang, // usar voz padrão Neural2 do idioma
+      voiceLang: teacherVoice.voiceLang,
+      gender: teacherVoice.gender,
     });
-  }, [lesson?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lesson?.id, teacher?.id, teacherVoice.voiceLang, teacherVoice.gender]); // eslint-disable-line react-hooks/exhaustive-deps
   
   // Mostrar loading ou gerando exercícios via IA
   if (loadingLesson || loadingExercises) {
