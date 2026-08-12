@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2, HelpCircle } from 'lucide-react';
+import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
 import CybersecurityAlert from '@/components/CybersecurityAlert';
 
 const DAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -770,6 +770,35 @@ function SecurityTab({
 
           {/* Cybersecurity Alert System */}
           <CybersecurityAlert />
+
+          {/* Official reporting guide — human decision and official channels only */}
+          <Card className="bg-amber-950/20 border-amber-800/50">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2 text-amber-300">
+                <Shield className="w-5 h-5" /> Orientação para denúncia oficial
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-slate-300">
+              <p>Use esta orientação somente em casos graves identificados pelo sistema, como possível violência, exploração ou risco a crianças. A decisão e o envio da denúncia devem ser feitos por um adulto responsável ou pela equipe autorizada.</p>
+              <ol className="list-decimal pl-5 space-y-1 text-slate-400">
+                <li>Preserve os registros do incidente e o horário; não altere nem apague evidências.</li>
+                <li>Proteja a criança: interrompa o contato e bloqueie a conta ou o dispositivo quando necessário.</li>
+                <li>Em risco imediato, acione a emergência local. No Brasil, a Polícia Militar atende pelo <strong className="text-slate-200">190</strong>.</li>
+                <li>Para violações de direitos de crianças e adolescentes no Brasil, registre a denúncia no canal oficial abaixo ou procure o Conselho Tutelar local.</li>
+              </ol>
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                <a href="https://www.gov.br/pt-br/servicos/denunciar-violacao-de-direitos-humanos" target="_blank" rel="noreferrer">
+                  <Button variant="outline" className="border-amber-500/50 text-amber-200 hover:bg-amber-500/10">
+                    <ExternalLink className="w-4 h-4 mr-2" /> Canal oficial Disque 100
+                  </Button>
+                </a>
+                <a href="https://www.gov.br/mdh/pt-br/acesso-a-informacao/disque-100/disque-100" target="_blank" rel="noreferrer">
+                  <Button variant="ghost" className="text-amber-200 hover:bg-amber-500/10">Como funciona o Disque 100</Button>
+                </a>
+              </div>
+              <p className="text-xs text-slate-500">Esta tela fornece orientação e links oficiais; não substitui emergência, autoridade competente ou orientação jurídica.</p>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

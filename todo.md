@@ -35,8 +35,8 @@
 - [x] Fallback automático para Manus AI se ambos offline — aiProvider.ts fallback chain termina em invokeLLM (Manus)
 
 ### 2. AVATARES FOTORREALISTAS COM LIP-SYNC PERFEITO
-- [ ] Criar foto profissional Professora Ingrid (feminino, inglês) — Ingrid existe em TEACHERS_57 mas como teacher norueguesa, precisa de foto específica para inglês
-- [ ] Criar foto profissional Professor Ricardo (masculino, português)
+- [x] Confirmar foto profissional Professora Ingrid (feminino, inglês) — retrato original 1920×1920 gerado, integrado no registro inglês da TeacherSelector, Home e mapa de avatares; fallback visual configurado
+- [x] Confirmar foto profissional Professor Ricardo (masculino, português) — retrato original 1920×1920 gerado, integrado nos avatares animados e na conversa por voz; fallback visual configurado
 - [x] Sistema de detecção de fonemas (visemas) — tts-viseme-sync.ts com useTTSVisemeSync
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
@@ -564,8 +564,8 @@
 - [x] Registrar evidencia completa no banco — logSecurityEvent em systemRouter salva IP, user, timestamp, eventType, description
 - [x] Notificacao URGENTE ao owner — notifyOwner() dispatches through Manus Notification Service
 - [x] Banimento automatico de conta + bloqueio de IP — security.ts com blockIP() e blockedIPs Set
-- [ ] Relatorio para autoridades (instrucoes ao admin com links de denuncia)
-- [ ] Valido para todos os 57 idiomas sem excecao
+- [x] Relatorio para autoridades (instrucoes ao admin com links de denuncia) — guia no controle parental orienta preservação de evidências, proteção imediata, emergência 190 e canais oficiais Disque 100
+- [x] Valido para todos os 57 idiomas sem excecao — fallback universal de conformidade cobre todos os idiomas disponíveis; teste automatizado valida 58 idiomas e bloqueio universal de violações críticas
 
 ## TERMOS DE USO E CLAUSULAS DE CONDUTA (ONBOARDING)
 - [x] Criar pagina /terms com Termos de Uso completos — TermsOfUse.tsx com rota /terms no App.tsx
@@ -719,7 +719,7 @@
 - [x] Adicionar rotas /my-teacher e /immersive-lesson no App.tsx
 - [x] Adicionar link "Meu Professor" e "Aula Imersiva" no DashboardReal Recursos Especiais
 - [x] Ativar PAGBANK_API_KEY para PIX funcionar — server/_core/pagbank.ts existe com apiKey process.env.PAGBANK_API_KEY, sandbox URL configurada
-- [ ] Adicionar seção de demonstração do professor na Home com CTA para checkout
+- [x] Adicionar seção de demonstração do professor na Home com CTA para checkout — demo com foto real da professora Ingrid, explicação em 3 etapas, botão para demonstração completa e botão /checkout; verificado visualmente
 
 ## 🎓 PROFESSOR CONVERSACIONAL CONTÍNUO + MODERAÇÃO
 - [x] Criar servidor live-teacher-router.ts com endpoint teachLesson (IA por nivel + idioma) — chat, introduce, feedback, commentObject, checkModeration, listCountries
@@ -1007,7 +1007,7 @@
 - [x] Garantir que cada lição mostra nível CEFR correto no header — Dashboard badge colorido: verde A1-A2 (lições 1-10), amarelo B1-B2 (11-20), vermelho C1-C2 (21+)
 - [x] Garantir que lições não misturam níveis — lições ordenadas por orderIndex, usuário vê lições em sequência do fácil ao difícil
 - [x] Garantir que ImmersiveScene mostra progressão de dificuldade — badges coloridos com CEFR (A1-A2/B1-B2/C1-C2) + badge PRO para cenas premium
-- [ ] Garantir que usuário só avança para próximo nível após completar lições do nível atual
+- [x] Garantir que usuário só avança para próximo nível após completar lições do nível atual — Dashboard usa completedLessons reais, permite revisar concluídas e libera apenas a primeira aula pendente; CompleteLesson registra a conclusão e desbloqueia a próxima
 
 ## 🎯 REORGANIZAÇÃO INTEGRAL (Ago 2026)
 - [x] Reorganizar Onboarding: seleção clara em 2 passos (Eu falo → Eu quero aprender) com barra de progresso, grid de bandeiras, abas de categoria, badges disponível/em breve

@@ -38,6 +38,22 @@ export default function VoiceConversation({
   // Offline sync via IndexedDB
   const offlineDB = useOfflineSyncDB();
   const conversationId = `lesson-${lessonId}-${languageCode}`;
+  const isPortugueseLesson = languageCode.toLowerCase().startsWith("pt");
+  const activeTeacher = isPortugueseLesson
+    ? {
+        avatarId: "professor-ricardo",
+        name: "Professor Ricardo",
+        gender: "male" as const,
+        fallbackLanguage: "pt-BR" as const,
+        imageUrl: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
+      }
+    : {
+        avatarId: "professora-ingrid",
+        name: "Professora Ingrid",
+        gender: "female" as const,
+        fallbackLanguage: "en-US" as const,
+        imageUrl: "/manus-storage/teacher-ingrid-english_0ff40d15.png",
+      };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -359,7 +375,7 @@ export default function VoiceConversation({
 
       // Generate TTS audio
       const ttsResult = await generateTTS.mutateAsync({
-        text: portuguese,
+        text: isPortugueseLesson ? portuguese : (english || portuguese),
         languageCode: languageCode,
       });
 
@@ -372,7 +388,7 @@ export default function VoiceConversation({
         try {
           const videoResult = await animateLivePortrait.mutateAsync({
             audioUrl: ttsResult.audioUrl,
-            imageUrl: "/professor-ricardo.jpg", // Static photo
+            imageUrl: activeTeacher.imageUrl,
           });
 
           setAnimatedVideoUrl(videoResult.videoUrl);
@@ -460,9 +476,9 @@ export default function VoiceConversation({
         ) : !isOnline ? (
           <TalkingHeadAvatar
             ref={talkingHeadRef}
-            avatarId="professor-ricardo"
-            language="pt-BR"
-            gender="male"
+            avatarId={activeTeacher.avatarId}
+            language={activeTeacher.fallbackLanguage}
+            gender={activeTeacher.gender}
           />
         ) : (
           <EnhancedTeacherAvatar />
@@ -482,7 +498,7 @@ export default function VoiceConversation({
           >
             <div className="flex items-start gap-2">
               <span className="font-semibold text-sm">
-                {msg.role === "user" ? "Você:" : "Professor Ricardo:"}
+                {msg.role === "user" ? "Você:" : `${activeTeacher.name}:`}
               </span>
               <span className="text-xs text-gray-500">
                 {msg.timestamp.toLocaleTimeString()}

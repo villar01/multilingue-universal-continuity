@@ -677,15 +677,38 @@ export function createSecurityAlert(
   };
 }
 
-/** Retorna regras de conformidade para um idioma/país */
-export function getComplianceForLanguage(languageCode: string): CountryCompliance | undefined {
-  return COUNTRY_COMPLIANCE.find(c => c.languageCodes.includes(languageCode));
+/** Retorna regras de conformidade para um idioma/país, com proteção universal como fallback. */
+export function getComplianceForLanguage(languageCode: string): CountryCompliance {
+  const normalizedCode = languageCode.toLowerCase();
+  const specificRuleSet = COUNTRY_COMPLIANCE.find((country) =>
+    country.languageCodes.some((code) => code.toLowerCase() === normalizedCode),
+  );
+
+  if (specificRuleSet) return specificRuleSet;
+
+  return {
+    countryCode: 'UNIVERSAL',
+    countryName: 'Proteção universal',
+    languageCodes: [languageCode],
+    specificRules: {},
+    prohibitedContent: [],
+    culturalNotes: ['Regras universais de proteção infantil, segurança e respeito são aplicadas a este idioma.'],
+  };
 }
 
 /** Verifica se conteúdo é permitido em um país específico */
 export function isContentAllowedInCountry(content: string, languageCode: string): { allowed: boolean; reason?: string; rule?: ComplianceRule } {
+  const universalViolation = detectMoralViolation(content);
+  if (universalViolation.detected && universalViolation.type) {
+    const rule = UNIVERSAL_RULES[universalViolation.type];
+    return {
+      allowed: false,
+      reason: rule?.description || 'Violação das regras universais de segurança',
+      rule,
+    };
+  }
+
   const compliance = getComplianceForLanguage(languageCode);
-  if (!compliance) return { allowed: true };
 
   for (const prohibited of compliance.prohibitedContent) {
     if (content.toLowerCase().includes(prohibited.toLowerCase())) {

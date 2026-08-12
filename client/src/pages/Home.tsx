@@ -23,12 +23,14 @@ import {
   Award,
   ArrowRight,
   Cpu,
+  CreditCard,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import UserGuide from "@/components/UserGuide";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import AnimatedTeacher from "@/components/AnimatedTeacher";
 // Floating flag items for hero animation — bandeira SVG + sigla
 const FLOAT_FLAGS = [
   { cc: "us", sigla: "US" }, { cc: "br", sigla: "BR" }, { cc: "fr", sigla: "FR" },
@@ -664,6 +666,40 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TEACHER DEMONSTRATION ── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl overflow-hidden border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-8 md:p-12">
+            <div className="grid md:grid-cols-[auto_1fr] items-center gap-8">
+              <div className="flex justify-center">
+                <AnimatedTeacher
+                  teacherName="Ingrid"
+                  teacherGender="female"
+                  teacherImageUrl="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+                  languageCode="en-US"
+                  text="Hello! I am Ingrid. Let us learn English together."
+                  size="lg"
+                />
+              </div>
+              <div>
+                <Badge className="mb-4 bg-violet-100 text-violet-700">Demonstração do professor virtual</Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Aprenda com um professor que explica, fala e acompanha seu ritmo</h2>
+                <p className="text-gray-600 text-lg mb-5">A demonstração mostra o professor virtual com fala, movimento, vocabulário contextual e uma sequência de aulas organizada por nível.</p>
+                <div className="grid sm:grid-cols-3 gap-3 mb-7 text-sm">
+                  <div className="rounded-xl bg-white p-3 border border-indigo-100"><strong className="block text-indigo-700">1. Ouça</strong>Fala no idioma-alvo</div>
+                  <div className="rounded-xl bg-white p-3 border border-indigo-100"><strong className="block text-indigo-700">2. Pratique</strong>Repita e responda</div>
+                  <div className="rounded-xl bg-white p-3 border border-indigo-100"><strong className="block text-indigo-700">3. Avance</strong>Desbloqueie a próxima aula</div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link href="/ar-teacher"><Button className="bg-indigo-600 hover:bg-indigo-700"><Video className="mr-2 h-4 w-4" />Ver demonstração completa</Button></Link>
+                  <Link href="/checkout"><Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"><CreditCard className="mr-2 h-4 w-4" />Conhecer os planos</Button></Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

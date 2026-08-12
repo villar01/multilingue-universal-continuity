@@ -28,11 +28,13 @@ interface Animated3DAvatarProps {
 
 // Mapeamento de professores para avatares 8K CDN
 const TEACHER_AVATARS = {
-  1: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-ricardo-8k.png",
+  1: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
   2: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-camila-8k.png",
   3: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-joao-8k.png",
   4: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-maria-8k.png",
   5: "https://manus-user-assets.s3.us-west-1.amazonaws.com/1738726382639-teacher-miguel-8k.png",
+  150001: "/manus-storage/teacher-ricardo-portuguese_8d7b9a41.png",
+  150002: "/manus-storage/teacher-ingrid-english_0ff40d15.png",
 };
 
 export function Animated3DAvatar({
@@ -50,6 +52,9 @@ export function Animated3DAvatar({
   const ttsSync = useTTSVisemeSync((_viseme: any) => {});
 
   const avatarUrl = TEACHER_AVATARS[teacherId as keyof typeof TEACHER_AVATARS] || TEACHER_AVATARS[1];
+  const fallbackAvatarUrl = teacherId === 150002
+    ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+    : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face";
 
   // Animação labial baseada no texto
   useEffect(() => {
@@ -85,6 +90,10 @@ export function Animated3DAvatar({
         alt="Professor"
         className="w-full h-full rounded-full object-cover shadow-2xl"
         style={{ filter: isTeaching ? "brightness(1.04)" : "brightness(1)", transition: "filter 0.3s" }}
+        onError={(event) => {
+          const image = event.currentTarget;
+          if (image.src !== fallbackAvatarUrl) image.src = fallbackAvatarUrl;
+        }}
       />
 
       {/* SVG overlay de boca natural — apenas quando falando */}

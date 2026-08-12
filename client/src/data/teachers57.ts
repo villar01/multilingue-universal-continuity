@@ -971,14 +971,14 @@ export const TEACHERS_57: Teacher57[] = [
   // F2. Inglês Americano - Feminino
   {
     id: 'profa-en-us',
-    name: 'Teacher Sarah Mitchell',
-    nativeName: 'Teacher Sarah Mitchell',
+    name: 'Teacher Ingrid Larsen',
+    nativeName: 'Teacher Ingrid Larsen',
     language: 'English (US)',
     langCode: 'en',
     voiceLang: 'en-US',
     flag: '🇺🇸',
     avatar: '👩🏼‍🏫',
-    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
+    photo: '/manus-storage/teacher-ingrid-english_0ff40d15.png',
     color: '#3C3B6E',
     greeting: 'Hello! Ready to learn English?',
     origin: 'New York, USA',

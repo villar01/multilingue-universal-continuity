@@ -31,6 +31,7 @@ interface ConversationMessage {
 
 interface Lesson {
   id: number;
+  courseId?: number;
   title: string;
   description?: string;
   audioUrl?: string;
@@ -50,6 +51,7 @@ export default function CompleteLesson() {
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [userMessage, setUserMessage] = useState("");
   const [isAISpeaking, setIsAISpeaking] = useState(false);
+  const [lessonStartedAt] = useState(() => Date.now());
   const { isRecording, audioBlob, startRecording, stopRecording, reset: resetRecording } = useVoiceRecording();
   const [isTranscribing, setIsTranscribing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -62,6 +64,30 @@ export default function CompleteLesson() {
   const continueConversation = trpc.conversationAI.continue.useMutation();
   const generateAudio = trpc.tts.generate.useMutation();
   const transcribeAudio = trpc.voiceTranscription.transcribe.useMutation();
+  const completeLesson = trpc.progress.completeLesson.useMutation();
+  const utils = trpc.useUtils();
+
+  const handleCompleteLesson = async () => {
+    if (!lesson) return;
+
+    try {
+      await completeLesson.mutateAsync({
+        lessonId: lesson.id,
+        courseId: lesson.courseId || 1,
+        score: 100,
+        timeSpentSeconds: Math.max(60, Math.floor((Date.now() - lessonStartedAt) / 1000)),
+      });
+      await Promise.all([
+        utils.progress.getCompletedLessons.invalidate(),
+        utils.progress.getStats.invalidate(),
+      ]);
+      toast.success("Lição concluída! A próxima aula foi desbloqueada.");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error completing lesson:", error);
+      toast.error("Não foi possível registrar a conclusão. Tente novamente.");
+    }
+  };
 
   // Auto-scroll no chat
   useEffect(() => {
@@ -569,6 +595,13 @@ export default function CompleteLesson() {
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
+                <Button
+                  onClick={handleCompleteLesson}
+                  disabled={completeLesson.isPending}
+                  className="mt-4 w-full bg-green-600 hover:bg-green-700"
+                >
+                  {completeLesson.isPending ? "Registrando conclusão..." : "Concluir lição e desbloquear a próxima"}
+                </Button>
               </Card>
 
               {/* Teacher Avatar */}

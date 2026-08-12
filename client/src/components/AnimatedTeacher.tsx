@@ -306,6 +306,9 @@ export function AnimatedTeacher({
   const lipAmp = Math.max(0, Math.min(1, mouthOpen));
   const viseme = getViseme(lipAmp);
   const lipColor = teacherGender === "female" ? "#c0607a" : "#8b4513";
+  const fallbackPortraitUrl = teacherGender === "female"
+    ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+    : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face";
 
   return (
     <div className={`flex flex-col items-center gap-2 ${className}`}>
@@ -341,8 +344,9 @@ export function AnimatedTeacher({
                   : "brightness(1) saturate(1)",
                 transition: "filter 0.4s ease",
               }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
+              onError={(event) => {
+                const image = event.currentTarget;
+                if (image.src !== fallbackPortraitUrl) image.src = fallbackPortraitUrl;
               }}
             />
             {/* Expression overlay: cheek blush when smiling */}

@@ -28,6 +28,7 @@ import WeeklyChallenges from "@/components/WeeklyChallenges";
 import ReferralWidget from "@/components/ReferralWidget";
 import { SocialShare } from "@/components/SocialShare";
 import NotificationCenter from "@/components/NotificationCenter";
+import { buildLessonProgression } from "@/lib/lessonProgression";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -39,6 +40,11 @@ export default function Dashboard() {
   
   // Buscar conquistas do usuário
   const { data: userAchievements, isLoading: loadingAchievements } = trpc.achievements.getUserAchievements.useQuery(undefined, {
+    enabled: !!user,
+  });
+  
+  // Registros reais que determinam o avanço linear das aulas.
+  const { data: completedLessonRows = [] } = trpc.progress.getCompletedLessons.useQuery(undefined, {
     enabled: !!user,
   });
   
@@ -84,14 +90,18 @@ export default function Dashboard() {
   const lessonsCompleted = userStats?.totalLessonsCompleted || 0;
   const totalLessons = isPremium ? premiumLessonsTotal : freeLessonsLimit;
   
-  // Próximas lições (primeiras não completadas)
-  const nextLessons = (lessons as any)?.lessons?.slice(0, 5).map((lesson: any, index: number) => ({
-    id: lesson.id,
-    title: lesson.title,
-    language: "Inglês",
+  // Avanço linear: o aluno pode revisar aulas concluídas e abrir somente a
+  // primeira aula ainda não concluída. As seguintes permanecem bloqueadas.
+  const nextLessons = buildLessonProgression(
+    (lessons as any)?.lessons || [],
+    (completedLessonRows as any[]).map((row: any) => row.lessonId),
+    isPremium,
+    freeLessonsLimit,
+  ).map((lesson: any) => ({
+    ...lesson,
+    language: lesson.language || "Idioma selecionado",
     duration: "15 min",
-    locked: !isPremium && index >= freeLessonsLimit
-  })) || [];
+  }));
   
   // Conquistas recentes (últimas 3)
   const recentAchievements = userAchievements?.slice(0, 3).map(ua => ({
@@ -279,15 +289,15 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-2">
                     {nextLessons.filter((l: any) => (l.orderIndex || 1) <= 10).map((lesson: any) => (
-                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-green-50 border-green-200 hover:border-green-400 cursor-pointer'}`}>
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${(lesson.locked || lesson.progressLocked) ? 'bg-gray-50 border-gray-200' : 'bg-green-50 border-green-200 hover:border-green-400 cursor-pointer'}`}>
                         <div className="flex items-center gap-3">
-                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-green-600" />}
+                          {(lesson.locked || lesson.progressLocked) ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-green-600" />}
                           <div>
                             <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
                             <div className="text-xs text-gray-500">{lesson.language}</div>
                           </div>
                         </div>
-                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                        {(lesson.locked || lesson.progressLocked) ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">{lesson.progressLocked ? '🔒 Conclua a aula anterior' : '🔒 Premium'}</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
                       </div>
                     ))}
                   </div>
@@ -301,15 +311,15 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-2">
                     {nextLessons.filter((l: any) => (l.orderIndex || 1) > 10 && (l.orderIndex || 1) <= 20).map((lesson: any) => (
-                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-amber-50 border-amber-200 hover:border-amber-400 cursor-pointer'}`}>
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${(lesson.locked || lesson.progressLocked) ? 'bg-gray-50 border-gray-200' : 'bg-amber-50 border-amber-200 hover:border-amber-400 cursor-pointer'}`}>
                         <div className="flex items-center gap-3">
-                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-amber-600" />}
+                          {(lesson.locked || lesson.progressLocked) ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-amber-600" />}
                           <div>
                             <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
                             <div className="text-xs text-gray-500">{lesson.language}</div>
                           </div>
                         </div>
-                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                        {(lesson.locked || lesson.progressLocked) ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">{lesson.progressLocked ? '🔒 Conclua a aula anterior' : '🔒 Premium'}</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
                       </div>
                     ))}
                   </div>
@@ -323,15 +333,15 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-2">
                     {nextLessons.filter((l: any) => (l.orderIndex || 1) > 20).map((lesson: any) => (
-                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${lesson.locked ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200 hover:border-red-400 cursor-pointer'}`}>
+                      <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${(lesson.locked || lesson.progressLocked) ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200 hover:border-red-400 cursor-pointer'}`}>
                         <div className="flex items-center gap-3">
-                          {lesson.locked ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-red-600" />}
+                          {(lesson.locked || lesson.progressLocked) ? <Lock className="h-5 w-5 text-gray-400" /> : <Play className="h-5 w-5 text-red-600" />}
                           <div>
                             <div className="font-semibold text-sm">Aula {lesson.orderIndex}: {lesson.title}</div>
                             <div className="text-xs text-gray-500">{lesson.language}</div>
                           </div>
                         </div>
-                        {lesson.locked ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">🔒 Premium</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
+                        {(lesson.locked || lesson.progressLocked) ? <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">{lesson.progressLocked ? '🔒 Conclua a aula anterior' : '🔒 Premium'}</Badge> : <Link href={`/complete-lesson/${lesson.id}`}><Button size="sm" variant="outline">Começar</Button></Link>}
                       </div>
                     ))}
                   </div>
