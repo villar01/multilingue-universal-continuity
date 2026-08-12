@@ -474,7 +474,7 @@
 - [x] Qualquer aluno pode escolher qualquer um dos 57 professores — TeacherSelector merge DB teachers + TEACHERS_57 (95 professores), seleção universal
 - [x] ARUltimate rota /ar-ultimate registrada no App.tsx — rota /ar-ultimate adicionada apontando para ARMode
 - [x] AR integrado em todas as lições — ARLearningScene importado em Lesson.tsx (lazy loaded)
-- [ ] Inglês melhorado nos professores (Teacher Sarah e Teacher James)
+- [x] Inglês melhorado nos professores (Teacher Sarah e Teacher James) — registros e catálogo sincronizados: Sarah usa FEMALE/en-US e James usa MALE/en-GB, ambos ativos com retratos duráveis
 - [x] Integração Instagram Share — SocialShare.tsx existe e integrado no Dashboard
 - [x] Monetização Stripe completa no app — Checkout.tsx existe com rota /checkout registrada
 - [x] AROverlay universal — ARLearningScene importado em Lesson.tsx, ARMode e ARTeacher pages existem

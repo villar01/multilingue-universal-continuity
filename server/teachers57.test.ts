@@ -8,10 +8,12 @@ describe('English teacher catalog', () => {
 
     expect(sarah).toMatchObject({
       gender: 'female',
+      voiceLang: 'en-US',
       photo: '/manus-storage/teacher-sarah-mitchell_91c289f4.png',
     });
     expect(james).toMatchObject({
       gender: 'male',
+      voiceLang: 'en-GB',
       photo: '/manus-storage/teacher-james-williams-v2_6511d727.png',
     });
   });
