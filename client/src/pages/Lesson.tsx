@@ -28,6 +28,8 @@ import AIChatbot from "@/components/AIChatbot";
 import TeacherSelector from "@/components/TeacherSelector";
 import { TalkingTeacher } from "@/components/TalkingTeacher";
 import { TEACHERS_57 } from "@/data/teachers57";
+import { matchTeacherCatalog } from "@/lib/teacherCatalogMatch";
+import { enrichTeacherProfile } from "@/lib/teacherProfile";
 import { synthesizeSpeechLocal, isWebSpeechSupported } from "@/lib/localTTS";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
@@ -157,19 +159,7 @@ export default function Lesson() {
       ?? (preferredTeacher as typeof allTeachers[0] | undefined)
       ?? allTeachers[0];
     if (!dbTeacher) return undefined;
-    // Enrich with TEACHERS_57 data: photo, gender, specialty, flag, origin
-    const langShort = ((dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || '').split('-')[0].toLowerCase();
-    const t57 = TEACHERS_57.find(t => t.langCode.toLowerCase() === langShort)
-      || TEACHERS_57.find(t => t.voiceLang.toLowerCase() === ((dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || '').toLowerCase());
-    return {
-      ...dbTeacher,
-      photoUrl: (dbTeacher as any).photoUrl || (dbTeacher as any).photo_url || t57?.photo || null,
-      gender: (dbTeacher as any).gender || t57?.gender || 'female',
-      specialty: (dbTeacher as any).specialty || t57?.specialty || 'Conversação e Gramática',
-      origin: t57?.origin || '',
-      flag: t57?.flag || '',
-      voiceLanguageCode: (dbTeacher as any).voiceLanguageCode || (dbTeacher as any).voice_language_code || t57?.voiceLang || 'en-US',
-    };
+    return enrichTeacherProfile(dbTeacher as any);
   }, [allTeachers, selectedTeacherId, preferredTeacher]);
   // Manter compatibilidade com teacherList
   const teacherList = allTeachers;
@@ -1153,9 +1143,10 @@ export default function Lesson() {
               <div className="flex flex-col items-center gap-4 py-4 px-4">
                 {(() => {
                   const langCode = lesson?.languageCode || 'en-US';
-                  const t57Base = TEACHERS_57.find(t => t.langCode === langCode || t.voiceLang === langCode)
+                  const languageTeacher = TEACHERS_57.find(t => t.langCode === langCode || t.voiceLang === langCode)
                     || TEACHERS_57.find(t => langCode.startsWith(t.langCode.split('-')[0]))
                     || TEACHERS_57[0];
+                  const t57Base = teacher ? matchTeacherCatalog(TEACHERS_57, teacher as any) || languageTeacher : languageTeacher;
                   const t57 = teacher
                     ? { ...t57Base, name: teacher.name, photo: (teacher as any).photoUrl || (teacher as any).photo_url || t57Base.photo }
                     : t57Base;
@@ -1187,9 +1178,10 @@ export default function Lesson() {
               <div className="flex flex-col items-center gap-3 py-4 px-4">
                 {(() => {
                   const langCode = lesson?.languageCode || 'en-US';
-                  const t57Base = TEACHERS_57.find(t => t.langCode === langCode || t.voiceLang === langCode)
+                  const languageTeacher = TEACHERS_57.find(t => t.langCode === langCode || t.voiceLang === langCode)
                     || TEACHERS_57.find(t => langCode.startsWith(t.langCode.split('-')[0]))
                     || TEACHERS_57[0];
+                  const t57Base = teacher ? matchTeacherCatalog(TEACHERS_57, teacher as any) || languageTeacher : languageTeacher;
                   const realPhoto = teacher
                     ? ((teacher as any).photoUrl || (teacher as any).photo_url || t57Base.photo)
                     : t57Base.photo;

@@ -1053,3 +1053,9 @@
 
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
+
+## 🧭 ESCOLHA DOCENTE TRANSPARENTE
+- [ ] Exibir variante regional, cidade de origem e voz nativa nos cards de professores de inglês para orientar a escolha sem tentativa e erro
+
+## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
+- [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — o enriquecimento de professor da Lesson agora usa o perfil regional canônico; teste confirma retrato masculino, origem London e en-GB

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Volume2, Loader2, Star, BadgeCheck } from "lucide-react";
+import { Check, Volume2, Loader2, Star, BadgeCheck, MapPin, Mic2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
@@ -200,6 +200,16 @@ export default function TeacherSelector({
           const displayName = teacher.name || getTeacherDisplayName(teacher.id, languageCode).name;
           const tags = getTagsForTeacher(teacher.personality);
           const teacherLang = teacher.voiceLanguageCode || languageCode;
+          const regionalLabel = teacherLang === "en-US"
+            ? "Inglês americano"
+            : teacherLang === "en-GB"
+              ? "Inglês britânico"
+              : teacher.langName || getLangName(teacherLang);
+          const nativeVoiceLabel = teacher.gender === "male"
+            ? "Voz masculina nativa"
+            : teacher.gender === "female"
+              ? "Voz feminina nativa"
+              : "Voz neural nativa";
           const rawPhoto = teacher.photoUrl || teacher.photo_url || null;
           const photoUrl = rawPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&size=200&background=4f46e5&color=fff&bold=true`;
           const isRecommended = idx === 0 && teachersForLanguage.length > 0; // first native teacher
@@ -245,7 +255,7 @@ export default function TeacherSelector({
               {/* Language flag + name badge */}
               <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5 z-10">
                 <span className="text-white text-[10px] font-medium">
-                  {teacher.flag || ''} {teacher.langName || getLangName(teacherLang)}
+                  {teacher.flag || ''} {regionalLabel}
                 </span>
               </div>
 
@@ -255,6 +265,16 @@ export default function TeacherSelector({
                 {teacher.specialty && (
                   <p className="text-white/70 text-[10px] leading-tight truncate mt-0.5">{teacher.specialty}</p>
                 )}
+                <div className="mt-1 space-y-0.5 text-[9px] text-white/80 leading-tight">
+                  {teacher.origin && (
+                    <p className="flex items-center gap-1 truncate" title={teacher.origin}>
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />{teacher.origin}
+                    </p>
+                  )}
+                  <p className="flex items-center gap-1 truncate" title={`${nativeVoiceLabel} — ${teacherLang}`}>
+                    <Mic2 className="w-2.5 h-2.5 shrink-0" />{nativeVoiceLabel}
+                  </p>
+                </div>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {tags.slice(0, 2).map((tag: string, i: number) => (
                     <span
