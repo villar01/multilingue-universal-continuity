@@ -35,6 +35,17 @@ export default function Onboarding() {
 
   const updateProfile = trpc.auth.updateProfile.useMutation();
   const { data: languages } = trpc.languages.list.useQuery();
+  const availableTargetCodes = useMemo(
+    () => LANGUAGES_57.filter((language) => language.available).map((language) => language.code),
+    [],
+  );
+  const { data: teacherCoverage, isLoading: isTeacherCoverageLoading } = trpc.teachers.coverage.useQuery({
+    languageCodes: availableTargetCodes,
+  });
+  const coverageByLanguage = useMemo(
+    () => new Map((teacherCoverage || []).map((coverage) => [coverage.languageCode, coverage])),
+    [teacherCoverage],
+  );
 
   useEffect(() => {
     const { confirmed, code } = detectNativeLang();
@@ -94,7 +105,7 @@ export default function Onboarding() {
   };
 
   const handleTargetSelect = (lang: Language) => {
-    if (!lang.available) return;
+    if (!lang.available || !coverageByLanguage.get(lang.code)?.isAvailable) return;
     setTargetLang(lang.code);
     setStep(STEP_TEACHER);
   };
@@ -185,7 +196,7 @@ export default function Onboarding() {
                 Idioma nativo: {nativeLangObj?.flag} {nativeLangObj?.name}
               </p>
               <p className="text-indigo-600 text-xs font-medium mb-6">
-                {AVAILABLE_LANGUAGES.length} idiomas disponíveis agora · {TOTAL_LANGUAGES} no total
+                {teacherCoverage?.filter((coverage) => coverage.isAvailable).length ?? 0} idiomas com professor e voz verificados agora · {TOTAL_LANGUAGES} no total
               </p>
             </>
           )}
@@ -223,23 +234,31 @@ export default function Onboarding() {
 
           {/* Language Grid */}
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[45vh] overflow-y-auto pr-1">
-            {filteredLanguages.map(lang => (
+            {filteredLanguages.map(lang => {
+              const coverage = coverageByLanguage.get(lang.code);
+              const isTargetStep = step === STEP_TARGET;
+              const hasVerifiedTeacher = Boolean(coverage?.isAvailable);
+              const targetIsSelectable = !isTargetStep || (lang.available && hasVerifiedTeacher && !isTeacherCoverageLoading);
+              const targetIsComingSoon = isTargetStep && !lang.available;
+              const targetNeedsTeacher = isTargetStep && lang.available && !isTeacherCoverageLoading && !hasVerifiedTeacher;
+
+              return (
               <button
                 key={lang.code}
                 onClick={() => step === STEP_NATIVE
                   ? handleNativeSelect(lang.code)
                   : handleTargetSelect(lang)
                 }
-                disabled={saving || (step === STEP_TARGET && !lang.available)}
+                disabled={saving || !targetIsSelectable}
                 className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all active:scale-95 ${
-                  step === STEP_TARGET && !lang.available
+                  !targetIsSelectable
                     ? "bg-gray-50 border-gray-100 cursor-not-allowed opacity-60"
                     : "bg-white border-gray-200 hover:bg-indigo-50 hover:border-indigo-400"
                 }`}
               >
                 {/* Flag in rounded square */}
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border-2 ${
-                  lang.available
+                  targetIsSelectable
                     ? "border-gray-100 bg-gray-50"
                     : "border-gray-100 bg-gray-100"
                 }`}>
@@ -247,25 +266,37 @@ export default function Onboarding() {
                 </div>
                 {/* Language name */}
                 <span className={`text-xs font-medium text-center leading-tight ${
-                  lang.available ? "text-gray-900" : "text-gray-400"
+                  targetIsSelectable ? "text-gray-900" : "text-gray-400"
                 }`}>
                   {lang.name}
                 </span>
-                {/* Available badge */}
-                {lang.available && step === STEP_TARGET && (
+                {/* Verified teacher + neural voice badge */}
+                {isTargetStep && hasVerifiedTeacher && !isTeacherCoverageLoading && (
                   <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                   </div>
                 )}
-                {/* Coming soon badge */}
-                {!lang.available && step === STEP_TARGET && (
+                {isTargetStep && isTeacherCoverageLoading && lang.available && (
+                  <div className="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-100">
+                    <Clock className="w-2 h-2 text-blue-600" />
+                    <span className="text-[8px] font-bold text-blue-600 uppercase">Verificando</span>
+                  </div>
+                )}
+                {targetIsComingSoon && (
                   <div className="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100">
                     <Clock className="w-2 h-2 text-amber-600" />
                     <span className="text-[8px] font-bold text-amber-600 uppercase">Em breve</span>
                   </div>
                 )}
+                {targetNeedsTeacher && (
+                  <div className="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100">
+                    <Clock className="w-2 h-2 text-amber-600" />
+                    <span className="text-[8px] font-bold text-amber-600 uppercase">Preparando professor</span>
+                  </div>
+                )}
               </button>
-            ))}
+              );
+            })}
           </div>
 
           {/* Show all languages toggle */}

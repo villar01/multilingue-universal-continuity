@@ -1099,7 +1099,7 @@
 ## 🧑‍🏫 ORGANIZAÇÃO DOCENTE PRÓPRIA
 - [ ] Padronizar a apresentação de professor por idioma, variante regional, origem, especialidade, voz e nível CEFR nas telas prioritárias, mantendo conteúdo e interface originais
 - [x] Remover fallback global en-US do perfil docente para que dados incompletos nunca criem voz inglesa indevida — perfis sem variante preservam locale vazio e regressão aprovada
-- [ ] Mapear e indicar na seleção se cada idioma possui um ou mais professores compatíveis, sem prometer dupla cobertura onde ela não existe
+- [x] Mapear e indicar na seleção se cada idioma possui um ou mais professores compatíveis, sem prometer dupla cobertura onde ela não existe — onboarding consulta cobertura verificada de perfil + voz neural, sinaliza preparação e bloqueia idiomas sem cobertura; TypeScript e 70 testes aprovados
 - [x] Impedir que um idioma disponível prossiga para aula sem perfil de professor e voz da mesma família linguística — seletor não usa fallback entre idiomas, onboarding exige escolha compatível e Edge TTS recusa voz ausente; 68 testes e TypeScript aprovados
 - [x] Preservar o par idioma nativo + idioma de estudo ao trocar de professor, bloqueando qualquer terceiro idioma, voz ou sotaque incompatível — contrato compartilhado e regressões cobrem a troca de língua nativa e a rejeição de voz estrangeira
 

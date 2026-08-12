@@ -41,6 +41,7 @@ import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
+import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 
 
 export const appRouter = router({
@@ -2018,6 +2019,13 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
     list: publicProcedure
       .query(async () => {
         return await db.listVirtualTeachers();
+      }),
+
+    // Exibir somente cobertura real: perfil docente + voz neural compatível.
+    coverage: publicProcedure
+      .input(z.object({ languageCodes: z.array(z.string()).max(143) }))
+      .query(({ input }) => {
+        return input.languageCodes.map(getTeacherVoiceCoverage);
       }),
   }),
 
