@@ -887,11 +887,19 @@ function TeacherAvatar({
   const { viseme, mouthStyle } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
   const synchronizedMouthStyle = audioViseme
     ? {
-        width: `${Math.max(7, audioViseme.mouthWidth * 0.22)}%`,
-        height: `${Math.max(2, audioViseme.mouthHeight * 0.22)}%`,
-        borderRadius: `${Math.max(38, 48 + audioViseme.lipRound * 0.25)}%`,
+        width: `${Math.min(34, Math.max(17, audioViseme.mouthWidth * 0.55))}%`,
+        height: `${Math.min(16, Math.max(4.5, audioViseme.mouthHeight * 0.55))}%`,
+        borderRadius: `${Math.max(38, Math.min(50, 44 + audioViseme.lipRound * 0.55))}%`,
       }
     : mouthStyle;
+  const jawOffset = audioViseme ? Math.min(4, audioViseme.jawDrop * 0.16) : 0;
+  const mouthOpen = audioViseme
+    ? audioViseme.mouthHeight >= 14
+    : ["A", "C", "D", "F"].includes(viseme);
+  const tongueVisible = Boolean(audioViseme?.tongueVisible);
+  const teethVisible = audioViseme
+    ? !tongueVisible && audioViseme.mouthHeight >= 7 && audioViseme.mouthHeight < 22
+    : ["C", "E", "G"].includes(viseme);
   return (
     <div
       className="absolute bottom-0 right-4 flex flex-col items-center z-30"
@@ -994,21 +1002,53 @@ function TeacherAvatar({
             animation: "cheek-warmth 2.4s ease-in-out infinite", pointerEvents: "none",
           }}
         />
-        {/* Mouth animation overlay — visible when speaking */}
+        {/* Facial mouth — directly follows the audio-clock viseme dimensions. */}
         {isSpeaking && (
           <div
             style={{
               position: "absolute",
-              top: "35%",
+              top: "36%",
               left: "50%",
-              transform: "translateX(-50%)",
+              transform: `translateX(-50%) translateY(${jawOffset - 3}%)`,
               ...synchronizedMouthStyle,
-              background: "rgba(139,69,69,0.3)",
-              transition: "width 75ms linear, height 75ms linear, border-radius 75ms linear",
+              background: "radial-gradient(ellipse at 50% 48%, rgba(52,12,16,0.96) 0%, rgba(94,30,35,0.92) 53%, rgba(214,105,112,0.46) 76%, rgba(255,180,180,0.08) 100%)",
+              border: "1px solid rgba(82,24,30,0.72)",
+              boxShadow: "0 1px 3px rgba(45,8,12,0.55), inset 0 1px 1px rgba(255,209,209,0.28)",
+              mixBlendMode: "multiply",
+              overflow: "hidden",
+              transition: "width 55ms linear, height 55ms linear, border-radius 55ms linear, transform 55ms linear",
               pointerEvents: "none",
             }}
             aria-label={audioViseme ? "Viseme sincronizado ao áudio" : `Viseme ${viseme}`}
-          />
+          >
+            {teethVisible && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute", top: "8%", left: "18%", width: "64%", height: "25%",
+                  borderRadius: "50%", background: "rgba(255,240,225,0.68)",
+                }}
+              />
+            )}
+            {tongueVisible && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute", bottom: "3%", left: "22%", width: "56%", height: "54%",
+                  borderRadius: "55% 55% 42% 42%", background: "rgba(224,93,108,0.72)",
+                }}
+              />
+            )}
+            {mouthOpen && !tongueVisible && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute", bottom: "4%", left: "24%", width: "52%", height: "30%",
+                  borderRadius: "50%", background: "rgba(162,49,64,0.48)",
+                }}
+              />
+            )}
+          </div>
         )}
         {/* Hand gesture overlay — visible when explaining */}
         {isSpeaking && (
@@ -1026,27 +1066,6 @@ function TeacherAvatar({
               pointerEvents: "none",
             }}
           />
-        )}
-        {/* Lip-sync sound bars — visible when speaking */}
-        {isSpeaking && (
-          <div
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1"
-            style={{ background: "rgba(0,0,0,0.5)", borderRadius: 8, padding: "4px 8px" }}
-          >
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                style={{
-                  width: "4px",
-                  height: "16px",
-                  background: "#a78bfa",
-                  borderRadius: "2px",
-                  animation: `sound-bar 0.25s ease-in-out infinite alternate`,
-                  animationDelay: `${i * 0.07}s`,
-                }}
-              />
-            ))}
-          </div>
         )}
         {/* Glow ring when speaking */}
         {isSpeaking && (
@@ -1321,6 +1340,19 @@ export default function ImmersiveScene() {
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { syncWithAudio, stop: stopVisemeSync } = useTTSVisemeSync(handleAudioViseme);
 
+  const stopTeacherAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    stopVisemeSync();
+    setAudioViseme(null);
+    setIsSpeaking(false);
+  }, [stopVisemeSync]);
+
+  useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
+
   const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, revokeOnEnd = false) => {
     const audio = new Audio(source);
     audioRef.current = audio;
@@ -1329,12 +1361,14 @@ export default function ImmersiveScene() {
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
+      if (audioRef.current === audio) audioRef.current = null;
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     audio.onerror = () => {
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
+      if (audioRef.current === audio) audioRef.current = null;
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     syncWithAudio(audio, phrase, language);
@@ -1344,8 +1378,8 @@ export default function ImmersiveScene() {
   // Speak using Microsoft Neural TTS (server) — fallback to browser speech
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female') => {
     if (!text?.trim()) return;
-    // Stop any currently playing audio
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    // A troca de fala deve também encerrar o relógio de visemas anterior.
+    stopTeacherAudio();
     stopEdgeTTS();
     const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
     try {
@@ -1374,7 +1408,7 @@ export default function ImmersiveScene() {
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
-  }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, ttsMut]);
+  }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");

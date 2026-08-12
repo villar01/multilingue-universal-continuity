@@ -1051,6 +1051,14 @@
 ## 👄 LIP-SYNC POR ÁUDIO REAL — TALKINGTEACHER
 - [x] Conectar a animação de fallback do TalkingTeacher à amplitude real do áudio neural, sem ciclo visual fixo — o sinal do Edge TTS move o overlay e é zerado ao parar a fala; teste de ciclo de vida aprovado
 
+## 🏝️ CENA IMERSIVA — SINCRONIZAÇÃO AUDIOVISUAL
+- [x] Verificar e reforçar a sincronização entre voz neural, visemas e animação do professor em Tropical Beach após iniciar o diálogo — Google Neural TTS usa o relógio real do áudio; interrupções agora zeram visemas e estado de fala imediatamente
+
+## 🐛 CENA IMERSIVA — BOCA VISÍVEL
+- [x] Substituir a barra auxiliar por uma boca facial visível, com abertura e formato guiados pelos visemas do áudio — barra removida; camada facial usa dimensões do áudio neural
+- [x] Diferenciar visualmente boca aberta, arredondada, sorriso, dentes e fechamento labial durante a fala real do professor — poses por visema usam abertura, arredondamento, mandíbula, dentes e língua; regressão validada
+- [ ] Confirmar visualmente no navegador a boca facial durante o diálogo iniciado pelo aluno em Tropical Beach
+
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
 
