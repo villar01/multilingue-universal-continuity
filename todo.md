@@ -1062,6 +1062,10 @@
 ## 🐛 CENA IMERSIVA — INICIALIZAÇÃO INCONSISTENTE
 - [x] Corrigir a saudação Tropical Beach exibida sobre o cenário Nova York e impedir que o diálogo inicial fique preso — troca de cena agora reinicia juntos diálogo, áudio, visemas, saudação, hotspots e progresso local; estado inicial validado visualmente
 
+## 🎙️ MICROFONE — DISPONIBILIDADE NO APLICATIVO
+- [x] Corrigir o estado "microfone não disponível" quando o dispositivo já está configurado no notebook — fluxos principais usam acesso centralizado com HTTPS, permissão, dispositivo ocupado e fallback de codec tratados
+- [ ] Confirmar no navegador do aluno que o microfone inicia a gravação após aceitar a permissão do site
+
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
 

@@ -8,10 +8,8 @@ export function useVoiceRecording() {
 
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
 
       chunksRef.current = [];
 
@@ -56,3 +54,4 @@ export function useVoiceRecording() {
     reset,
   };
 }
+import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';

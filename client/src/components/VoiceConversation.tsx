@@ -4,7 +4,8 @@ import { Button } from "./ui/button";
 import { trpc } from "../lib/trpc";
 import EnhancedTeacherAvatar from "./EnhancedTeacherAvatar";
 import TalkingHeadAvatar from "./TalkingHeadAvatar";
-import { useOfflineSyncDB } from "../hooks/useOfflineSyncDB";
+import { useOfflineSyncDB } from "@/hooks/useOfflineSyncDB";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { toast } from "sonner";
 
 interface Message {
@@ -258,10 +259,8 @@ export default function VoiceConversation({
   // Iniciar gravação de áudio
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
 
       audioChunksRef.current = [];
 
@@ -307,7 +306,7 @@ export default function VoiceConversation({
       toast.info("🎤 Gravando... Fale agora!");
     } catch (error: any) {
       console.error("[VoiceConversation] Microphone error:", error);
-      toast.error("Erro ao acessar microfone. Verifique as permissões.");
+      toast.error(microphoneErrorMessage(error));
     }
   };
 
