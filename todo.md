@@ -504,7 +504,7 @@
 - [x] Shuffle estável (useMemo) — shuffledOptionsMap com useMemo na linha 174, estável entre renders
 
 ### M3: ImmersiveScene
-- [ ] Hotspots mobile posicionados corretamente
+- [x] Hotspots mobile posicionados corretamente — validação em 390×844 confirmou ícones e etiquetas visíveis após compactar HUD e reservar área inferior
 - [x] Professor animado na Praia (professor-wave keyframe) — beach scene tem teacherAnimation: "professor-wave", keyframe definido na linha 1430
 - [ ] Rede turquesa na cena de praia
 - [x] Todas as 6 cenas carregam sem erro — ImmersiveScene com 74 referências de cena, 6 cenas definidas

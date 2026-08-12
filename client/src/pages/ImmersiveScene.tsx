@@ -902,7 +902,7 @@ function TeacherAvatar({
     : ["C", "E", "G"].includes(viseme);
   return (
     <div
-      className="absolute bottom-0 right-4 flex flex-col items-center z-30"
+      className="immersive-teacher absolute bottom-0 right-4 flex flex-col items-center z-30"
       style={{ width: "clamp(120px, 18vw, 220px)" }}
     >
       {/* Speech bubble */}
@@ -1783,6 +1783,33 @@ export default function ImmersiveScene() {
           /* ── Hotspot hover ── */
           .hotspot-btn { transition: transform 0.15s cubic-bezier(0.23,1,0.32,1); }
           .hotspot-btn:hover { transform: translate(-50%,-50%) scale(1.15); }
+          /* ── Compact mobile scene controls: preserve hotspots and a safe lower dialogue area. ── */
+          @media (max-width: 640px) {
+            .immersive-hud {
+              padding: 8px !important;
+              gap: 6px;
+              align-items: flex-start !important;
+            }
+            .immersive-hud-title { display: none !important; }
+            .immersive-hud-actions {
+              gap: 4px !important;
+              max-width: calc(100vw - 92px);
+              overflow-x: auto;
+              scrollbar-width: none;
+            }
+            .immersive-hud-actions::-webkit-scrollbar { display: none; }
+            .immersive-hud-actions > :nth-child(n+5) { display: none !important; }
+            .immersive-teacher {
+              right: 8px !important;
+              width: 112px !important;
+            }
+            .immersive-start-dialog { bottom: 52px !important; }
+            .immersive-dialog {
+              bottom: 52px !important;
+              padding-right: 116px !important;
+              padding-left: 8px !important;
+            }
+          }
           /* ── Fade in ── */
           @keyframes fade-in {
             from { opacity: 0; } to { opacity: 1; }
@@ -1854,7 +1881,7 @@ export default function ImmersiveScene() {
 
         {/* Top HUD */}
         <div
-          className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-40"
+          className="immersive-hud absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-40"
           style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)" }}
         >
           <button
@@ -1864,11 +1891,11 @@ export default function ImmersiveScene() {
           >
             ← Voltar
           </button>
-          <div className="flex items-center gap-2 text-white font-bold" style={{ fontSize: "clamp(13px, 1.8vw, 18px)" }}>
+          <div className="immersive-hud-title flex items-center gap-2 text-white font-bold" style={{ fontSize: "clamp(13px, 1.8vw, 18px)" }}>
             <span>{selectedScene.flag}</span>
             <span>{immersionMode ? selectedScene.nameEn : selectedScene.name}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="immersive-hud-actions flex items-center gap-2">
             {/* Idioma nativo: fica oculto durante a imersão total */}
             {!immersionMode && <div
               style={{ background: "#ffffff", color: "#1d4ed8", border: "1.5px solid #93c5fd", borderRadius: "9999px", padding: "4px 10px", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}
@@ -2104,7 +2131,7 @@ export default function ImmersiveScene() {
         {!dlgOpen && (
           <button
             onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
-            className="absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
+            className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
               bottom: "100px", left: "50%", transform: "translateX(-50%)",
               background: "rgba(99,102,241,0.85)", backdropFilter: "blur(8px)",
@@ -2117,7 +2144,7 @@ export default function ImmersiveScene() {
         )}
         {dlgOpen && selectedScene.dialog[dlgStep] && (
           <div
-            className="absolute left-0 right-0 z-50"
+            className="immersive-dialog absolute left-0 right-0 z-50"
             style={{
               bottom: "60px",
               padding: "0 clamp(8px,2vw,24px)",
