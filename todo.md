@@ -1050,3 +1050,6 @@
 
 ## 👄 LIP-SYNC POR ÁUDIO REAL — TALKINGTEACHER
 - [x] Conectar a animação de fallback do TalkingTeacher à amplitude real do áudio neural, sem ciclo visual fixo — o sinal do Edge TTS move o overlay e é zerado ao parar a fala; teste de ciclo de vida aprovado
+
+## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
+- [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal

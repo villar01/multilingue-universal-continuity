@@ -4,6 +4,7 @@ import { Check, Volume2, Loader2, Star, BadgeCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { matchTeacherCatalog } from "@/lib/teacherCatalogMatch";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { TEACHERS_57 } from "@/data/teachers57";
 
@@ -69,10 +70,7 @@ export default function TeacherSelector({
     // 1. Add DB teachers first (enriched with TEACHERS_57 data)
     if (dbTeachers && dbTeachers.length > 0) {
       dbTeachers.forEach((t: any) => {
-        const t57 = TEACHERS_57.find(t57 => {
-          const tCode = (t.voiceLanguageCode || t.voice_language_code || '').split('-')[0].toLowerCase();
-          return t57.langCode.toLowerCase() === tCode || t57.voiceLang.toLowerCase() === (t.voiceLanguageCode || t.voice_language_code || '').toLowerCase();
-        });
+        const t57 = matchTeacherCatalog(TEACHERS_57, t);
         merged.push({
           ...t,
           // O catálogo curado é a fonte visual canônica; evita que URLs legadas
