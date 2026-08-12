@@ -56,6 +56,14 @@ describe("🎤 Voice TTS System (Edge TTS)", () => {
       expect(voice).toContain("en-US");
     });
 
+    it("mantém Sarah na voz neural feminina de inglês americano", () => {
+      expect(resolveVoice("en-US", "female")).toBe("en-US-JennyNeural");
+    });
+
+    it("mantém James na voz neural masculina de inglês britânico", () => {
+      expect(resolveVoice("en-GB", "male")).toBe("en-GB-RyanNeural");
+    });
+
     it("deve resolver voz para código curto 'pt'", () => {
       const voice = resolveVoice("pt");
       expect(voice).toBeDefined();
@@ -88,6 +96,18 @@ describe("🎤 Voice TTS System (Edge TTS)", () => {
       const result = await synthesizeEdgeTTS("Hello, how are you?", "en-US");
       expect(result).toBeDefined();
       expect(result.audioBase64).toBeDefined();
+      expect(result.audioBase64.length).toBeGreaterThan(100);
+      expect(result.durationEstimateMs).toBeGreaterThan(0);
+    }, 15000);
+
+    it("sintetiza James com a voz neural britânica masculina correta", async () => {
+      const result = await synthesizeEdgeTTS(
+        "Good day. Shall we begin our English lesson?",
+        "en-GB",
+        undefined,
+        "male",
+      );
+      expect(result.voice).toBe("en-GB-RyanNeural");
       expect(result.audioBase64.length).toBeGreaterThan(100);
       expect(result.durationEstimateMs).toBeGreaterThan(0);
     }, 15000);
