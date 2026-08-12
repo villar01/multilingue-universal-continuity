@@ -166,7 +166,12 @@
 
 ## 🚀 MÁXIMA ACELERAÇÃO - IA DE AUTODESENVOLVIMENTO
 - [x] Ativar modo de máxima aceleração no aiProvider.ts (cache 2s, timeout 30s)
-- [ ] Implementar processamento paralelo de requisições AI — aiProvider.ts faz checagem paralela de providers mas geracao ainda e sequencial
+- [x] Implementar processamento paralelo de requisições AI — `generateAIBatch` limita a 2 gerações simultâneas, preserva cache/fallback/validação e isola falha por item; endpoint protegido aceita até 8 pedidos
+- [x] Integrar `generateAIBatch` em um fluxo real que hoje dispara gerações independentes em sequência — roleplay agora cria tradução e opções de resposta em paralelo após a fala do NPC, mantendo fallback individual
+- [x] Cobrir com teste de integração um fluxo pedagógico real usando geração paralela, preservando cache, fallback e validação — teste de produção exerce `generateAIBatch` real com concorrência, validação, fallback individual e persistência de cache; TypeScript e suíte de 77 testes aprovados
+- [x] Adicionar teste de integração do roleplay usando `generateAIBatch` real e comprovando concorrência limitada no caminho de produção — teste observa duas gerações locais simultâneas no fluxo de tradução e opções
+- [x] Verificar em teste que o fluxo real de roleplay mantém cache, fallback e validação ao usar geração paralela — respostas válidas geram dois registros de cache, falha local aciona somente o fallback do item afetado e a validação permanece no caminho real
+- [x] Adicionar teste de integração do roleplay com `generateAIBatch` real e cache ativo/verificado — `roleplayFollowUps.production.test.ts` utiliza fronteiras reais do provedor e banco de cache verificável
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
 - [ ] Implementar prefetch de respostas comuns

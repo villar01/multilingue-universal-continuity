@@ -5,6 +5,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
+import { generateRoleplayFollowUps } from "./roleplayFollowUps";
 
 const SCENARIO_CONTEXTS: Record<string, { npcName: string; npcRole: string; setting: string }> = {
   restaurant: {
@@ -86,43 +87,20 @@ ${isComplete ? "This is the final exchange. Wrap up the conversation naturally a
         ],
       });
 
-      const npcMessage = response.choices?.[0]?.message?.content || `Hello! Welcome. How can I help you today?`;
+      const rawNpcMessage = response.choices?.[0]?.message?.content;
+      const npcMessage = typeof rawNpcMessage === "string" && rawNpcMessage.trim()
+        ? rawNpcMessage.trim()
+        : "Hello! Welcome. How can I help you today?";
 
-      // Gerar tradução para o português
-      const translationResponse = await invokeLLM({
-        messages: [
-          {
-            role: "system",
-            content: "Translate the following text to Brazilian Portuguese. Return ONLY the translation.",
-          },
-          { role: "user", content: npcMessage },
-        ],
-      });
-      const translation = translationResponse.choices?.[0]?.message?.content || "";
-
-      // Gerar 3 opções de resposta para o aluno
-      const optionsResponse = await invokeLLM({
-        messages: [
-          {
-            role: "system",
-            content: `Generate exactly 3 short response options in ${input.targetLanguage} for the student to reply to: "${npcMessage}"
-Context: ${ctx.setting}
-Rules:
-- Each option must be 1 sentence max
-- Options should be natural and varied (e.g., one formal, one casual, one question)
-- Return ONLY a JSON array of 3 strings, nothing else
-Example: ["Option A", "Option B", "Option C"]`,
-          },
-          { role: "user", content: "Generate the 3 options:" },
-        ],
-        response_format: { type: "json_object" },
+      const { translation, optionsContent } = await generateRoleplayFollowUps({
+        npcMessage,
+        targetLanguage: input.targetLanguage,
+        setting: ctx.setting,
       });
 
       let options: string[] = [];
       try {
-        const rawContent = optionsResponse.choices?.[0]?.message?.content;
-        const contentStr = typeof rawContent === "string" ? rawContent : JSON.stringify(rawContent) || "{}";
-        const parsed = JSON.parse(contentStr);
+        const parsed = JSON.parse(optionsContent);
         options = Array.isArray(parsed) ? parsed : (parsed.options || parsed.choices || []);
       } catch {
         options = [

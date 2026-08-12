@@ -24,7 +24,7 @@ import { precisionClipsRouter } from './precision-clips-router';
 import { bilingualConversationRouter } from './bilingual-conversation-router';
 import { animatePortrait, animatePortraitWithText, checkLivePortraitHealth } from './_core/liveportrait';
 import { clipsRouter } from './routers-clips';
-import { generateAI, getProvidersStatus } from './aiProvider';
+import { generateAI, generateAIBatch, getProvidersStatus } from './aiProvider';
 import { sigaRouter } from './siga-router';
 import { crmRouter } from './crm-router';
 import { adventureRouter } from './adventure-router';
@@ -90,6 +90,25 @@ export const appRouter = router({
           userId: ctx.user.id,
         });
         return result;
+      }),
+    generateBatch: protectedProcedure
+      .input(z.object({
+        requests: z.array(z.object({
+          messages: z.array(z.object({
+            role: z.enum(["system", "user", "assistant"]),
+            content: z.string(),
+          })),
+          temperature: z.number().optional(),
+          max_tokens: z.number().optional(),
+          preferredProvider: z.enum(["ollama", "lmstudio"]).optional(),
+          useCache: z.boolean().optional(),
+        })).min(1).max(8),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return generateAIBatch(
+          input.requests.map((request) => ({ ...request, userId: ctx.user.id })),
+          2,
+        );
       }),
     getStatus: protectedProcedure
       .query(async () => {

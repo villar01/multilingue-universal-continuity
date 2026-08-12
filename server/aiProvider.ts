@@ -30,6 +30,57 @@ export interface AIGenerateResult {
   cacheHit: boolean;
 }
 
+export type AIBatchGenerateItem =
+  | { ok: true; result: AIGenerateResult }
+  | { ok: false; error: string };
+
+/**
+ * Runs independent work with a small, explicit concurrency ceiling. The
+ * ceiling protects local Ollama/LM Studio from being overloaded while still
+ * allowing unrelated requests (for example, separate exercise prompts) to
+ * progress in parallel.
+ */
+export async function runBoundedParallel<T, R>(
+  items: readonly T[],
+  worker: (item: T, index: number) => Promise<R>,
+  maxConcurrent = 2,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  const workerCount = Math.min(Math.max(1, Math.floor(maxConcurrent)), items.length);
+  let nextIndex = 0;
+
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      results[index] = await worker(items[index], index);
+    }
+  }));
+
+  return results;
+}
+
+/**
+ * Generates independent AI responses concurrently. Each request retains the
+ * same cache, validation, provider fallback and metric behavior as generateAI;
+ * one failure is returned only for its own item and never cancels other work.
+ */
+export async function generateAIBatch(
+  requests: readonly AIGenerateOptions[],
+  maxConcurrent = 2,
+  execute: (request: AIGenerateOptions) => Promise<AIGenerateResult> = generateAI,
+): Promise<AIBatchGenerateItem[]> {
+  return runBoundedParallel(requests, async (request) => {
+    try {
+      return { ok: true, result: await execute({ ...request }) };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }, maxConcurrent);
+}
+
 /**
  * Check availability of AI providers with caching
  */
