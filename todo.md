@@ -88,7 +88,7 @@
 - [x] Avatar fotorrealista não move a boca (video src corrigido)
 - [x] Professora Ingrid criada com foto profissional
 - [ ] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso
-- [ ] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso
+- [ ] Separar limites de navegação/ativos e API sensível, validando que a cena não recebe 429 enquanto excesso de API continua bloqueado
 
 ## 📋 PRÓXIMAS FEATURES
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
@@ -219,6 +219,12 @@
 - [ ] Aplicar classificação etária e bloqueio de tema por país em todas as conversas com professor e IA
 - [ ] Exibir para responsáveis histórico supervisionável, alertas e motivos de bloqueio sem expor mais dados do que o necessário
 - [x] Criar comunicação para responsáveis no início e no controle parental, explicando proteções reais, benefícios, limites e dever de custódia/acompanhamento do menor — aviso incluído no consentimento de menor e validado visualmente no painel parental, sem prometer substituição da responsabilidade do responsável legal
+- [ ] Acionar alerta sonoro e visual ao detectar conteúdo incompatível com a idade, com motivo auditável para o responsável
+- [ ] Permitir apenas autorização parental temporária por PIN para conteúdo etariamente inadequado e não ilegal; manter bloqueio absoluto para risco grave ou conteúdo ilegal
+
+## 📘 GUIA DE USO E SEGURANÇA
+- [x] Criar guia simples para alunos e responsáveis sobre acesso, idiomas, professores, microfone, cenas, exercícios, voz, alertas e controle parental — UserGuide ampliado com ciclo Pareto, uso de microfone, alertas etários, PIN, painel parental e dever contínuo de acompanhamento; acesso confirmado no painel parental
+- [ ] Exibir atalhos contextuais para o guia nos fluxos iniciais, de conversa e de controle parental
 
 ## 🚀🚀🚀 AUMENTAR VELOCIDADE E PRECISÃO DA IA EM MAIS 10X (TOTAL 1000X)
 - [ ] Reduzir cache de 0.02s para 0.002s (mais 10x = 1000x total)

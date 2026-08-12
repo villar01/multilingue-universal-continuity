@@ -4,7 +4,7 @@
  * Filters inappropriate content from LLM responses and teacher-student interactions.
  * Logs all interactions for parental monitoring.
  * 
- * Legal compliance: GDPR (EU), COPPA (US), Lei 13.859 (Brazil)
+ * Safety basis: ECA Digital (Lei 15.211/2025), LGPD, ECA e regras locais aplicáveis.
  */
 
 import { getDb } from './db.js';
@@ -303,7 +303,7 @@ export async function getUsagePatterns(userId: number, childProfileId?: number):
  * Age-based content restrictions based on country laws
  * - COPPA (US): Under 13 requires parental consent
  * - GDPR (EU): Under 16 requires parental consent (varies by member state)
- * - Lei 13.859 (Brazil): Content rating, parental consent for minors
+ * - Brasil: política de conteúdo etário deve ser revisada com ECA Digital (Lei 15.211/2025), LGPD e regulamentação aplicável
  */
 export function getAgeRestrictions(age: number, country: string = 'BR'): {
   requiresParentalConsent: boolean;

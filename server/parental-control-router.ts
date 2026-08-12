@@ -2,9 +2,10 @@ import { router, protectedProcedure } from './_core/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { getDb } from './db';
-import { childProfiles, parentalSettings, usageSessions, parentalAlerts } from '../drizzle/schema';
+import { childProfiles, parentalSettings, usageSessions, parentalAlerts, parentalContentDecisions } from '../drizzle/schema';
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
 import { getUsagePatterns } from './contentFilter';
+import { assessChildSafety } from './childSafetyPolicy';
 
 export const parentalControlRouter = router({
   getUsagePatterns: protectedProcedure
@@ -262,6 +263,69 @@ export const parentalControlRouter = router({
         icon: input.icon,
       });
       return { success: true };
+    }),
+
+  listContentDecisions: protectedProcedure
+    .input(z.object({ childId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const [child] = await database.select().from(childProfiles)
+        .where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
+      if (!child) throw new TRPCError({ code: 'FORBIDDEN', message: 'Child profile not found' });
+      return database.select().from(parentalContentDecisions)
+        .where(eq(parentalContentDecisions.childId, input.childId))
+        .orderBy(desc(parentalContentDecisions.createdAt));
+    }),
+
+  decideContentAlert: protectedProcedure
+    .input(z.object({
+      childId: z.number(),
+      alertId: z.number(),
+      pin: z.string().length(4),
+      decision: z.enum(['allow_temporarily', 'keep_blocked']),
+      durationMinutes: z.number().min(5).max(60).default(30),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+
+      const [child] = await database.select().from(childProfiles)
+        .where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
+      if (!child) throw new TRPCError({ code: 'FORBIDDEN', message: 'Child profile not found' });
+
+      const [settings] = await database.select().from(parentalSettings)
+        .where(eq(parentalSettings.childId, input.childId));
+      if (!settings || settings.pinCode !== input.pin) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'PIN do responsável inválido' });
+      }
+
+      const [alert] = await database.select().from(parentalAlerts)
+        .where(and(eq(parentalAlerts.id, input.alertId), eq(parentalAlerts.childId, input.childId)));
+      if (!alert) throw new TRPCError({ code: 'NOT_FOUND', message: 'Alerta não encontrado' });
+
+      const safety = assessChildSafety(alert.alertType, null);
+      if (safety.decision === 'absolute_block') {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Conteúdo de alto risco ou ilegal não pode ser liberado manualmente.' });
+      }
+      if (input.decision === 'allow_temporarily' && !safety.canParentOverride) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Este alerta não permite autorização temporária.' });
+      }
+
+      const expiresAt = input.decision === 'allow_temporarily'
+        ? new Date(Date.now() + input.durationMinutes * 60 * 1000)
+        : null;
+      await database.insert(parentalContentDecisions).values({
+        childId: input.childId,
+        alertId: input.alertId,
+        parentId: ctx.user.id,
+        category: alert.alertType,
+        decision: input.decision,
+        expiresAt,
+      });
+      await database.update(parentalAlerts).set({ isRead: true })
+        .where(eq(parentalAlerts.id, input.alertId));
+      return { success: true, expiresAt, reason: safety.reason };
     }),
 
   // ── CYBERSECURITY THREAT PROCEDURES ─────────────────────────

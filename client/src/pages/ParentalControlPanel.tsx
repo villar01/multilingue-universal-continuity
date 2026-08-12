@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +14,8 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
 import CybersecurityAlert from '@/components/CybersecurityAlert';
+import { hasAudibleParentalAlert, playParentalAlertSound } from '@/lib/parentalAlertSound';
+import UserGuide from '@/components/UserGuide';
 
 const DAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const EMOJI_OPTIONS = ['👧', '👦', '🧒', '👶', '🧑', '👨', '👩'];
@@ -142,12 +144,14 @@ export default function ParentalControlPanel() {
               <p className="text-xs text-slate-400">Monitore e gerencie o aprendizado em tempo real</p>
             </div>
           </div>
-          <Dialog open={showAddChild} onOpenChange={setShowAddChild}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-1" /> Adicionar Criança
-              </Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <UserGuide nativeLang="pt-BR" compact triggerClassName="text-sm text-slate-200 hover:text-white font-medium transition-colors px-2 py-1" />
+            <Dialog open={showAddChild} onOpenChange={setShowAddChild}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-4 h-4 mr-1" /> Adicionar Criança
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Adicionar Perfil de Criança</DialogTitle>
@@ -199,7 +203,8 @@ export default function ParentalControlPanel() {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
       </div>
 
@@ -660,19 +665,46 @@ function LimitsTab({ childId }: { childId: number }) {
 
 // ── Alerts Tab ───────────────────────────────────────────────
 function AlertsTab({ alerts, onMarkRead }: { alerts: any[]; onMarkRead: (id: number) => void }) {
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const soundedAlertIds = useRef(new Set<number>());
+  useEffect(() => {
+    if (!soundEnabled || !hasAudibleParentalAlert(alerts)) return;
+    const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && ["inappropriate_content", "age_content_review", "child_safety", "content_blocked"].includes(alert.alertType));
+    if (!unreadSafetyAlert || soundedAlertIds.current.has(unreadSafetyAlert.id)) return;
+    soundedAlertIds.current.add(unreadSafetyAlert.id);
+    playParentalAlertSound();
+  }, [alerts, soundEnabled]);
+
+  const soundControl = (
+    <Alert className="border-amber-500/40 bg-amber-950/30">
+      <Bell className="h-4 w-4 text-amber-300" />
+      <AlertTitle className="text-amber-200">Alerta sonoro do responsável</AlertTitle>
+      <AlertDescription className="flex flex-wrap items-center justify-between gap-3 text-amber-50/90">
+        <span>Ative um sinal sonoro para novos alertas de conteúdo e segurança. O som só é ativado após sua confirmação.</span>
+        <Button size="sm" variant="outline" onClick={() => { setSoundEnabled(true); playParentalAlertSound(); }}>
+          {soundEnabled ? 'Som ativado' : 'Ativar e testar som'}
+        </Button>
+      </AlertDescription>
+    </Alert>
+  );
+
   if (!alerts || alerts.length === 0) {
     return (
-      <Card className="bg-slate-900/50 border-slate-800">
-        <CardContent className="pt-6 text-center">
-          <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-green-500" />
-          <p className="text-slate-400">Nenhum alerta. Tudo funcionando bem!</p>
-        </CardContent>
-      </Card>
+      <div className="space-y-3">
+        {soundControl}
+        <Card className="bg-slate-900/50 border-slate-800">
+          <CardContent className="pt-6 text-center">
+            <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-green-500" />
+            <p className="text-slate-400">Nenhum alerta. Tudo funcionando bem!</p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
     <div className="space-y-3">
+      {soundControl}
       {alerts.map(alert => (
         <Alert key={alert.id} className={`bg-slate-900/50 border-slate-800 ${!alert.isRead ? 'border-l-4 border-l-blue-500' : ''}`}>
           <div className="flex items-start gap-3">

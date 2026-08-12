@@ -2295,6 +2295,20 @@ export const parentalAlerts = mysqlTable("parental_alerts", {
 export type ParentalAlert = typeof parentalAlerts.$inferSelect;
 export type InsertParentalAlert = typeof parentalAlerts.$inferInsert;
 
+export const parentalContentDecisions = mysqlTable("parental_content_decisions", {
+  id: int("id").autoincrement().primaryKey(),
+  childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
+  alertId: int("alertId").notNull().references(() => parentalAlerts.id, { onDelete: "cascade" }),
+  parentId: int("parentId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  category: varchar("category", { length: 50 }).notNull(),
+  decision: mysqlEnum("decision", ["allow_temporarily", "keep_blocked"]).notNull(),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ParentalContentDecision = typeof parentalContentDecisions.$inferSelect;
+export type InsertParentalContentDecision = typeof parentalContentDecisions.$inferInsert;
+
 // ===== App Updates =====
 export const appUpdates = mysqlTable("app_updates", {
   id: int("id").autoincrement().primaryKey(),

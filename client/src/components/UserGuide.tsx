@@ -74,7 +74,8 @@ const GUIDE_CONTENT: Record<string, GuideContent> = {
         steps: [
           "Acesse 'Memória Diária' para revisar palavras com flashcards.",
           "Pratique todos os dias para não esquecer o vocabulário.",
-          "O sistema Pareto mostra as 1.100 palavras mais usadas no idioma.",
+          "No ciclo Pareto, tente lembrar sem olhar, escreva a palavra e crie uma frase nova.",
+          "O sistema Pareto prioriza as palavras mais usadas no idioma.",
         ],
       },
       {
@@ -253,13 +254,41 @@ const GUIDE_CONTENT: Record<string, GuideContent> = {
   },
 };
 
+const SAFETY_GUIDE_SECTIONS: Record<"pt" | "en", GuideSection> = {
+  pt: {
+    icon: "🛡️",
+    title: "8. Segurança e controle parental",
+    steps: [
+      "Alunos: usem apenas o seu perfil e avisem um responsável se aparecer algo desconfortável ou inadequado.",
+      "Microfone: o aplicativo pede permissão antes de gravar; permita somente quando quiser praticar fala e desligue a gravação ao terminar.",
+      "Responsáveis: acessem 'Controle Parental' para definir PIN, tempo de uso, níveis, alertas e histórico supervisionável.",
+      "Conteúdo inadequado para a idade gera alerta visual e sonoro quando ativado. Conteúdo ilegal ou de alto risco continua bloqueado; somente tema legal e etariamente inadequado pode receber decisão temporária com PIN.",
+      "As ferramentas apoiam a proteção, mas o acompanhamento e a orientação do menor continuam sendo responsabilidade do pai, mãe ou responsável legal.",
+    ],
+  },
+  en: {
+    icon: "🛡️",
+    title: "8. Safety and parental controls",
+    steps: [
+      "Learners: use only your own profile and tell a responsible adult if anything feels uncomfortable or inappropriate.",
+      "Microphone: the app asks before recording. Allow it only when you want speaking practice and stop recording when finished.",
+      "Responsible adults: open 'Parental Control' to set a PIN, time limits, levels, alerts, and supervised history.",
+      "Age-inappropriate content triggers a visual and optional audible alert. Illegal or high-risk content remains blocked; only legal age-inappropriate topics can receive a temporary PIN-confirmed decision.",
+      "These tools support safety but never replace the ongoing care and guidance of a parent or legal guardian.",
+    ],
+  },
+};
+
 // Fallback to English if language not found
 function getGuideContent(langCode: string): GuideContent {
-  if (GUIDE_CONTENT[langCode]) return GUIDE_CONTENT[langCode];
+  let content: GuideContent | undefined = GUIDE_CONTENT[langCode];
   const base = langCode.split("-")[0];
-  const match = Object.keys(GUIDE_CONTENT).find(k => k.startsWith(base));
-  if (match) return GUIDE_CONTENT[match];
-  return GUIDE_CONTENT["en-US"];
+  if (!content) {
+    const match = Object.keys(GUIDE_CONTENT).find(k => k.startsWith(base));
+    content = match ? GUIDE_CONTENT[match] : GUIDE_CONTENT["en-US"];
+  }
+  const safety = base === "pt" ? SAFETY_GUIDE_SECTIONS.pt : SAFETY_GUIDE_SECTIONS.en;
+  return { ...content, sections: [...content.sections, safety] };
 }
 
 // ─── Label for the button in each native language ────────────────────────────
