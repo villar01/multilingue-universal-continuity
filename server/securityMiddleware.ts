@@ -3,7 +3,9 @@ import type { Request, Response, NextFunction } from 'express';
 // ── Rate Limiting ─────────────────────────────────────────────
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
-const RATE_LIMIT_MAX = 100;
+// Uma página de aula carrega vários recursos e chamadas tRPC. O limite continua
+// estrito contra abuso, mas comporta uma navegação legítima por trás de proxies.
+const RATE_LIMIT_MAX = 300;
 
 // ── DDoS Protection ───────────────────────────────────────────
 const globalRequestCounts = { count: 0, resetTime: Date.now() + RATE_LIMIT_WINDOW };
@@ -155,3 +157,10 @@ setInterval(() => {
     if (now > data.resetTime) requestCounts.delete(ip);
   }
 }, 5 * 60 * 1000);
+
+/** Somente para isolamento determinístico dos testes de segurança. */
+export function __resetSecurityStateForTests(): void {
+  requestCounts.clear();
+  globalRequestCounts.count = 0;
+  globalRequestCounts.resetTime = Date.now() + RATE_LIMIT_WINDOW;
+}

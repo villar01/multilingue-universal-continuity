@@ -217,7 +217,7 @@
 - [ ] Clipe: "brother" (irmão) com falante nativo
 - [ ] Clipe: "sister" (irmã) com falante nativo
 - [ ] Clipe: "family" (família) com falante nativo
-- [ ] Integrar clipes com lição 390001
+- [x] Integrar clipes com a lição de família existente — a referência 390001 não existe no banco atual; a lição real "My Family" (id 2) recebeu sequência pedagógica própria e renderiza FamilyVocabularyClips após a escolha do professor
 
 ## 🚀🚀🚀🚀 AUMENTAR VELOCIDADE E PRECISÃO DA IA EM 20X (TOTAL 20.000X)
 - [x] Reduzir cache de 0.002s para 0.0001s (mais 20x = 20.000x total)

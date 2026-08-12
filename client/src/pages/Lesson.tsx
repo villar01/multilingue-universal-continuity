@@ -1032,11 +1032,12 @@ export default function Lesson() {
                   nativeLanguage="pt-BR"
                   targetLanguage="en-US"
                 />
-                {lesson.languageCode?.toLowerCase().startsWith("en") && /family|mother|father|brother|sister/i.test(`${lesson.title} ${lesson.description || ""}`) && (
-                  <div className="mt-5">
-                    <FamilyVocabularyClips />
-                  </div>
-                )}
+              </div>
+            )}
+
+            {lesson.languageCode?.toLowerCase().startsWith("en") && /family|mother|father|brother|sister/i.test(`${lesson.title} ${lesson.description || ""}`) && (
+              <div className="mb-6">
+                <FamilyVocabularyClips />
               </div>
             )}
 
