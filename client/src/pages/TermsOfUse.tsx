@@ -533,6 +533,12 @@ export default function TermsOfUse() {
               </p>
             </div>
 
+            <div className="bg-emerald-500/10 border border-emerald-400/30 rounded-xl p-4 mb-6 text-sm text-emerald-100 space-y-2">
+              <p className="font-bold text-emerald-300">Proteção acompanhada de supervisão responsável</p>
+              <p>O perfil do menor utiliza filtros de conteúdo, controles parentais, registros supervisionáveis de interações, alertas e limites de uso configuráveis.</p>
+              <p>Essas ferramentas apoiam a proteção, mas não substituem o dever contínuo de custódia, acompanhamento e orientação do pai, mãe ou responsável legal.</p>
+            </div>
+
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-white/80 text-sm font-medium block mb-1">Nome completo do responsável *</label>
@@ -564,7 +570,7 @@ export default function TermsOfUse() {
               <CheckItem checked={guardian.confirmedTerms} onChange={() => toggleGuardian("confirmedTerms")} label="Li e aceito os Termos de Uso e Política de Conduta da plataforma em nome do menor." />
               <CheckItem checked={guardian.confirmedMoral} onChange={() => toggleGuardian("confirmedMoral")} label="Estou ciente das regras de conduta moral e ética e me responsabilizo pelo uso adequado pelo menor." />
               <CheckItem checked={guardian.confirmedParental} onChange={() => toggleGuardian("confirmedParental")} label="Autorizo o acesso do menor à plataforma e me comprometo a supervisionar seu uso, podendo revogar esta autorização a qualquer momento." />
-              <CheckItem checked={guardian.confirmedLegal} onChange={() => toggleGuardian("confirmedLegal")} label="Declaro que as informações fornecidas são verdadeiras e assumo responsabilidade legal pelo uso do menor nesta plataforma." bold />
+              <CheckItem checked={guardian.confirmedLegal} onChange={() => toggleGuardian("confirmedLegal")} label="Declaro que as informações fornecidas são verdadeiras e reconheço meu dever contínuo de custódia e acompanhamento do menor; as ferramentas do aplicativo não substituem essa responsabilidade." bold />
             </div>
 
             {error && <p className="text-red-400 text-sm mb-4">{error}</p>}

@@ -203,6 +203,16 @@ export default function ParentalControlPanel() {
         </div>
       </div>
 
+      <div className="container mx-auto px-4 pt-5">
+        <Alert className="border-emerald-500/40 bg-emerald-950/30">
+          <Shield className="h-4 w-4 text-emerald-300" />
+          <AlertTitle className="text-emerald-200">Proteção com acompanhamento responsável</AlertTitle>
+          <AlertDescription className="text-emerald-50/90">
+            Este painel reúne controles de tempo, filtros, alertas e histórico supervisionável para apoiar a proteção do menor. Configure as salvaguardas, acompanhe os alertas e oriente o uso: nenhuma ferramenta substitui o dever contínuo de cuidado do responsável legal.
+          </AlertDescription>
+        </Alert>
+      </div>
+
       {/* PIN Setup Dialog - Obrigatorio no primeiro acesso */}
       <Dialog open={showPinSetup} onOpenChange={() => {}}>
         <DialogContent className="bg-slate-900 border-slate-700">

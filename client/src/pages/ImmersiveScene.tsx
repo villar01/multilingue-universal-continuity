@@ -4,6 +4,7 @@ import VoiceSelector, { speakWithPreference } from "../components/VoiceSelector"
 import { useLocation } from "wouter";
 import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../components/Notebook";
 import ParetoPanel from "../components/ParetoPanel";
+import { ParetoPracticeCycle } from "../components/ParetoPracticeCycle";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
@@ -11,6 +12,7 @@ import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
+import { allowsBrowserSpeechFallback, type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
@@ -183,12 +185,12 @@ export const IMMERSIVE_SCENES: Scene[] = [
       {speaker:"teacher", text:"Great choice! Your English is excellent. Keep it up!", textPt:"Ótima escolha! Seu inglês está excelente. Continue assim!"},
     ],
     hotspots:[
-      {id:"statue", x:7, y:48, label:"Statue", translation:"Estátua", pronunciation:"STÉ-tchu", example:"The statue is famous.", examplePt:"A estátua é famosa.", icon:"🗽", color:"#16a34a"},
-      {id:"tower", x:47, y:36, label:"Tower", translation:"Torre", pronunciation:"TAU-er", example:"The tower is tall.", examplePt:"A torre é alta.", icon:"🏙️", color:"#6366f1"},
-      {id:"skyline", x:67, y:55, label:"Skyline", translation:"Horizonte urbano", pronunciation:"SCAI-lain", example:"The skyline is beautiful.", examplePt:"O horizonte urbano é bonito.", icon:"🏙️", color:"#0ea5e9"},
-      {id:"river", x:43, y:72, label:"River", translation:"Rio", pronunciation:"RI-ver", example:"The river is wide.", examplePt:"O rio é largo.", icon:"🌊", color:"#0891b2"},
-      {id:"sunset", x:79, y:29, label:"Sunset", translation:"Pôr do sol", pronunciation:"SÂN-set", example:"The sunset is golden.", examplePt:"O pôr do sol é dourado.", icon:"☀️", color:"#f59e0b"},
-      {id:"building", x:79, y:58, label:"Building", translation:"Prédio", pronunciation:"BIL-ding", example:"The building is tall.", examplePt:"O prédio é alto.", icon:"🏢", color:"#64748b"},
+      {id:"statue", x:7, y:48, label:"Statue", translation:"Estátua", pronunciation:"STÉ-tchu", example:"The statue is big.", examplePt:"A estátua é grande.", icon:"🗽", color:"#16a34a"},
+      {id:"building", x:47, y:36, label:"Building", translation:"Prédio", pronunciation:"BIL-ding", example:"The building is tall.", examplePt:"O prédio é alto.", icon:"🏙️", color:"#6366f1"},
+      {id:"city", x:67, y:55, label:"City", translation:"Cidade", pronunciation:"SI-ti", example:"This is a big city.", examplePt:"Esta é uma cidade grande.", icon:"🏙️", color:"#0ea5e9"},
+      {id:"water", x:43, y:72, label:"Water", translation:"Água", pronunciation:"UÓ-ter", example:"The water is blue.", examplePt:"A água é azul.", icon:"🌊", color:"#0891b2"},
+      {id:"sun", x:79, y:29, label:"Sun", translation:"Sol", pronunciation:"SÂN", example:"The sun is yellow.", examplePt:"O sol é amarelo.", icon:"☀️", color:"#f59e0b"},
+      {id:"window", x:79, y:58, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"The window is large.", examplePt:"A janela é grande.", icon:"🪟", color:"#64748b"},
     ]
   },
   {
@@ -262,11 +264,11 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"gate", x:60, y:30, label:"Gate", translation:"Portão", pronunciation:"GEYT", example:"The gate is open.", examplePt:"O portão está aberto.", icon:"🚪", color:"#6366f1"},
-      {id:"traveler", x:62, y:58, label:"Traveler", translation:"Viajante", pronunciation:"TRÉ-ve-ler", example:"The traveler has a backpack.", examplePt:"O viajante tem uma mochila.", icon:"🧍", color:"#f59e0b"},
+      {id:"person", x:62, y:58, label:"Person", translation:"Pessoa", pronunciation:"PER-son", example:"The person is waiting.", examplePt:"A pessoa está esperando.", icon:"🧍", color:"#f59e0b"},
       {id:"people", x:50, y:55, label:"People", translation:"Pessoas", pronunciation:"PI-pol", example:"The people are waiting.", examplePt:"As pessoas estão esperando.", icon:"👥", color:"#0ea5e9"},
-      {id:"departures", x:90, y:18, label:"Departures", translation:"Partidas", pronunciation:"di-PAAR-tchers", example:"The departures board is updated.", examplePt:"O quadro de partidas está atualizado.", icon:"📋", color:"#94a3b8"},
+      {id:"sign", x:90, y:18, label:"Sign", translation:"Placa", pronunciation:"SAIN", example:"Read the sign.", examplePt:"Leia a placa.", icon:"📋", color:"#94a3b8"},
       {id:"window", x:20, y:35, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"The window is large.", examplePt:"A janela é grande.", icon:"🪟", color:"#8b5cf6"},
-      {id:"walkway", x:45, y:72, label:"Walkway", translation:"Esteira móvel", pronunciation:"UÓK-wei", example:"The walkway is moving.", examplePt:"A esteira móvel está em movimento.", icon:"➡️", color:"#dc2626"},
+      {id:"floor", x:45, y:72, label:"Floor", translation:"Chão", pronunciation:"FLÓR", example:"The floor is clean.", examplePt:"O chão está limpo.", icon:"⬇️", color:"#dc2626"},
     ]
   },
   {
@@ -1072,6 +1074,7 @@ function VocabCard({
   nativeLangFlag,
   onClose,
   onSpeak,
+  onPractice,
 }: {
   hotspot: Hotspot;
   langCode: string;
@@ -1079,6 +1082,7 @@ function VocabCard({
   nativeLangFlag: string;
   onClose: () => void;
   onSpeak: (text: string, lang: string) => void;
+  onPractice: () => void;
 }) {
   return (
     <div
@@ -1176,6 +1180,13 @@ function VocabCard({
             {hotspot.examplePt}
           </div>
         </div>
+        <button
+          type="button"
+          onClick={onPractice}
+          className="w-full rounded-xl bg-amber-400 px-3 py-2 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+        >
+          🧠 Praticar e criar frase
+        </button>
       </div>
     </div>
   );
@@ -1389,7 +1400,7 @@ export default function ImmersiveScene() {
   }, [stopVisemeSync, syncWithAudio]);
 
   // Speak using Microsoft Neural TTS (server) — fallback to browser speech
-  const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female') => {
+  const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (!text?.trim()) return;
     // A troca de fala deve também encerrar o relógio de visemas anterior.
     stopTeacherAudio();
@@ -1415,7 +1426,12 @@ export default function ImmersiveScene() {
         return;
       }
     } catch { /* fallback below */ }
-    // Fallback: browser speech
+    if (!allowsBrowserSpeechFallback(purpose)) {
+      setGreetingText("A voz neural não está disponível agora. Toque novamente para ouvir a pronúncia natural.");
+      setIsSpeaking(false);
+      return;
+    }
+    // Último fallback apenas para diálogo do professor, nunca para pronúncia de objetos.
     if (activeDialogLineRef.current === text) setDlgAudioClock(false);
     speakWithPreference(text, lang, {
       rate: 0.85,
@@ -1426,6 +1442,7 @@ export default function ImmersiveScene() {
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
+  const [practiceHotspot, setPracticeHotspot] = useState<Hotspot | null>(null);
   const [particles, setParticles] = useState(false);
   const [score, setScore] = useState(0);
   const [learnedWords, setLearnedWords] = useState<Set<string>>(() => new Set<string>());
@@ -1607,7 +1624,7 @@ export default function ImmersiveScene() {
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
     const hotspotSpeech = getImmersiveHotspotSpeech(hotspot, selectedScene);
-    speak(hotspotSpeech.text, hotspotSpeech.language, undefined, hotspotSpeech.gender);
+    speak(hotspotSpeech.text, hotspotSpeech.language, undefined, hotspotSpeech.gender, "hotspot");
     setTimeout(() => setShowGreeting(false), 5000);
   }, [selectedScene, learnedWords, speak, nativeLang]);
 
@@ -2079,9 +2096,18 @@ export default function ImmersiveScene() {
               nativeLang={nativeLang}
               nativeLangFlag={nativeLangInfo?.flag || "🇧🇷"}
               onClose={() => setActiveHotspot(null)}
-              onSpeak={speak}
+              onSpeak={(text, language) => speak(text, language, undefined, selectedScene.teacherGender, "hotspot")}
+              onPractice={() => setPracticeHotspot(activeHotspot)}
             />
           </div>
+        )}
+
+        {practiceHotspot && (
+          <ParetoPracticeCycle
+            term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
+            onClose={() => setPracticeHotspot(null)}
+            onSpeak={(text) => speak(text, selectedScene.teacherLang, undefined, selectedScene.teacherGender, "hotspot")}
+          />
         )}
 
         {quizOpen && quizQuestion && (

@@ -87,6 +87,8 @@
 - [x] "Michael Johnson" → "Professor Ricardo"
 - [x] Avatar fotorrealista não move a boca (video src corrigido)
 - [x] Professora Ingrid criada com foto profissional
+- [ ] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso
+- [ ] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso
 
 ## 📋 PRÓXIMAS FEATURES
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
@@ -102,6 +104,8 @@
 - [x] Implementar exercícios ditados pelo professor/professora
 - [x] Sistema de correção de pronúncia em tempo real (aluno fala, professor corrige)
 - [x] Opção de escolha entre Professor Ricardo e Professora Ingrid para exercícios
+- [ ] Ajustar palavras de inglês dos hotspots ao nível CEFR e ao vocabulário frequente já consolidado nas lições
+- [ ] Fazer hotspots de inglês usarem a voz neural natural regional do professor, sem degradação para síntese do navegador
 
 ## 🎬 NOVOS RECURSOS DO BACKUP
 - [x] ReelsPage - Clipes educacionais estilo TikTok/Instagram com falantes nativos
@@ -138,6 +142,8 @@
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
 - [x] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview chama análise gramatical por IA, explica cada correção e inclui exercício de microfone com pontuação de pronúncia
 - [x] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil; SmartReview cruza XP e erros recorrentes para ajustar quantidade, foco e mensagem dos exercícios de reforço
+- [ ] Aplicar progressão CEFR gradual e coerente às cenas, lições, exercícios, conversas e revisões, do vocabulário concreto inicial à prática avançada
+- [ ] Integrar ciclo Pareto em todo o app: vocabulário útil, recuperação ativa, escrita, memorização e criação de novas frases por nível
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
@@ -206,6 +212,13 @@
 - [x] Adicionar validação de resposta para aumentar precisão
 - [x] Implementar retry automático em caso de falha (até 2 tentativas)
 - [x] Ativar modo HYPER TURBO em todos endpoints (100X ORIGINAL)
+
+## 🛡️ PROTEÇÃO DE MENORES, ECA DIGITAL E CONTEÚDO POR PAÍS
+- [ ] Auditar o consentimento inicial, controle parental, registro de interações e filtros de conteúdo à luz do ECA Digital, LGPD e regras aplicáveis
+- [ ] Exigir perfil etário, responsável e consentimento verificável antes de liberar conversas de menores
+- [ ] Aplicar classificação etária e bloqueio de tema por país em todas as conversas com professor e IA
+- [ ] Exibir para responsáveis histórico supervisionável, alertas e motivos de bloqueio sem expor mais dados do que o necessário
+- [x] Criar comunicação para responsáveis no início e no controle parental, explicando proteções reais, benefícios, limites e dever de custódia/acompanhamento do menor — aviso incluído no consentimento de menor e validado visualmente no painel parental, sem prometer substituição da responsabilidade do responsável legal
 
 ## 🚀🚀🚀 AUMENTAR VELOCIDADE E PRECISÃO DA IA EM MAIS 10X (TOTAL 1000X)
 - [ ] Reduzir cache de 0.02s para 0.002s (mais 10x = 1000x total)
