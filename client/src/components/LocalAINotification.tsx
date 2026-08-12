@@ -47,8 +47,16 @@ export default function LocalAINotification() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-md animate-in slide-in-from-bottom-5 duration-300">
-      <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-5 shadow-lg dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950">
+    <div className="fixed bottom-2 right-2 z-50 w-[calc(100vw-1rem)] max-w-md animate-in slide-in-from-bottom-5 duration-300 sm:bottom-4 sm:right-4 sm:w-auto">
+      <div className="relative rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-3 shadow-lg dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950 sm:p-5">
+        <button
+          type="button"
+          onClick={handleDismiss}
+          aria-label="Fechar aviso de IA Local"
+          className="absolute right-2 top-2 rounded-full px-2 py-0.5 text-sm font-bold text-blue-700 transition hover:bg-blue-100 dark:text-blue-200 dark:hover:bg-blue-900"
+        >
+          ×
+        </button>
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
             <svg className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -59,10 +67,10 @@ export default function LocalAINotification() {
             <h3 className="text-sm font-bold text-blue-900 dark:text-blue-100">
               Melhore sua experiência com IA Local
             </h3>
-            <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+            <p className="mt-1 pr-6 text-xs text-blue-700 dark:text-blue-300">
               Instale uma IA gratuita no seu computador para ter:
             </p>
-            <ul className="mt-2 space-y-1 text-xs text-blue-600 dark:text-blue-400">
+            <ul className="mt-2 hidden space-y-1 text-xs text-blue-600 dark:text-blue-400 sm:block">
               <li className="flex items-center gap-1.5">
                 <span className="text-green-500">✓</span> Voz natural de altíssima qualidade
               </li>
@@ -78,7 +86,7 @@ export default function LocalAINotification() {
             </ul>
 
             {!expanded ? (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   onClick={handleInstall}
                   className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 active:scale-95"

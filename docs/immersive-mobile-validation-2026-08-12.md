@@ -13,3 +13,8 @@ Data: 2026-08-12
 - O cabeçalho foi compactado em telas estreitas, preservando voltar e seleção de idiomas sem cobrir os hotspots.
 - Os hotspots de praia permaneceram visíveis e clicáveis, com as etiquetas fora da área inferior reservada.
 - O professor e o diálogo receberam área inferior própria; a mensagem opcional de IA Local ainda pode ser dispensada pelo aluno pelo botão **Agora não**.
+
+## Aviso de IA Local
+
+- O aviso passou a usar largura segura e espaçamento compacto no celular.
+- Um botão de fechar imediato permite dispensá-lo sem cobrir a conversa, o professor ou os controles da cena.
