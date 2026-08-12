@@ -347,7 +347,8 @@ export function AnimatedTeacher({
             src={videoUrl}
             autoPlay
             playsInline
-            muted={isMuted}
+            muted
+            aria-label="Vídeo visual do professor; a voz vem do áudio neural sincronizado"
             onEnded={() => { setIsPlaying(false); onSpeakEnd?.(); }}
             onPlay={() => setIsPlaying(true)}
             className="absolute inset-0 w-full h-full object-cover"
