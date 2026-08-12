@@ -4096,8 +4096,15 @@ Máximo 2 frases por resposta.`,
         if (userVocab.length === 0) {
           return { exercises: [], message: 'Ainda não há vocabulário para revisar. Complete algumas lições primeiro!' };
         }
+        const errorPatterns = await db.getUserErrorPatterns(ctx.user.id);
+        const focusError = errorPatterns.find((pattern) => (pattern.frequency || 0) >= 2);
+        const rankedVocab = [...userVocab].sort((a, b) => {
+          const aNeed = (a.totalWrong || 0) - (a.totalCorrect || 0);
+          const bNeed = (b.totalWrong || 0) - (b.totalCorrect || 0);
+          return bNeed - aNeed;
+        });
         const exercises: any[] = [];
-        for (const item of userVocab.slice(0, 5)) {
+        for (const item of rankedVocab.slice(0, 5)) {
           if (input.exerciseType === 'multiple_choice') {
             const distractors = userVocab.filter(v => v.word !== item.word)
               .sort(() => Math.random() - 0.5).slice(0, 3).map(v => v.translation);
@@ -4111,7 +4118,14 @@ Máximo 2 frases por resposta.`,
             exercises.push({ type: 'matching', word: item.word, translation: item.translation });
           }
         }
-        return { exercises, source: 'local' };
+        return {
+          exercises,
+          source: 'local',
+          focus: focusError?.errorType || null,
+          message: focusError
+            ? `Revisão adaptada: vamos reforçar ${focusError.errorType === 'grammar' ? 'gramática' : focusError.errorType === 'pronunciation' ? 'pronúncia' : focusError.errorType === 'comprehension' ? 'compreensão' : 'vocabulário'}.`
+            : 'Revisão organizada pelo seu histórico de respostas.',
+        };
       }),
     submitAnswer: protectedProcedure
       .input(z.object({ word: z.string(), translation: z.string(), targetLanguage: z.string(), quality: z.number().min(0).max(5) }))

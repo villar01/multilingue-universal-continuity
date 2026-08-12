@@ -92,7 +92,7 @@
 - [ ] Modo competitivo multiplayer
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
-- [ ] Modo imersão total — preferência persistente implementada na LanguageContext e controle ativo na ImmersiveScene (cena em idioma-alvo, rótulo nativo oculto); aplicar o modo em Dashboard e Lesson ainda pendente
+- [ ] Modo imersão total — preferência persistente e controle presentes em Dashboard, ImmersiveScene e Lesson; ocultação/tradução integral dos textos auxiliares de todos os subcomponentes ainda pendente
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
 - [x] Adicionar "mom" ao vocabulário
@@ -136,7 +136,7 @@
 - [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
 - [x] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview chama análise gramatical por IA, explica cada correção e inclui exercício de microfone com pontuação de pronúncia
-- [ ] Implementar sistema de adaptação ao nível do usuário — badge e progressão visual ok, mas adaptação real de exercícios por XP/erros do usuário pendente
+- [ ] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil e SmartReview agora prioriza vocabulário com mais erros e informa a habilidade em reforço; ajuste de dificuldade por XP ainda pendente
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
@@ -287,7 +287,7 @@
 - [ ] Integrar Web Speech API para análise em tempo real
 - [x] Implementar transições suaves entre visemes (interpolação) — mudanças de largura, altura e curvatura da boca usam transição curta para cada viseme
 - [x] Sincronizar movimento labial com timestamp do áudio — TTSVisemeSync agora usa currentTime do áudio, respeita play/pause/seek e ajusta a linha de visemas à duração real do MP3
-- [ ] Adicionar micro-expressões faciais (piscadas, sobrancelhas)
+- [x] Adicionar micro-expressões faciais (piscadas, sobrancelhas) — professor imersivo combina piscadas, sobrancelhas atentas e rubor suave das bochechas com o estado de fala
 
 ## 🎬 VÍDEOS EDUCACIONAIS ORIGINAIS (INSPIRADO EM MELHORES PRÁTICAS)
 - [ ] Criar estrutura de vídeos curtos (2-5 min) por conceito

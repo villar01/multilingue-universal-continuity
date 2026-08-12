@@ -44,12 +44,14 @@ export default function SmartReview() {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [adaptationFocus, setAdaptationFocus] = useState<string | null>(null);
   const [grammarAnalysis, setGrammarAnalysis] = useState<GrammarAnalysis | null>(null);
 
   const generateMutation = trpc.smartReview.generate.useMutation({
     onSuccess: (data) => {
       setExercises(data.exercises as Exercise[]);
       setMessage(data.message || "");
+      setAdaptationFocus(data.focus || null);
       setCurrentIndex(0);
       setScore(0);
       setCompleted(false);
@@ -219,6 +221,12 @@ export default function SmartReview() {
               <span className="text-muted-foreground">Exercício {currentIndex + 1} de {exercises.length}</span>
               <Badge variant="secondary">Acertos: {score}</Badge>
             </div>
+            {adaptationFocus && (
+              <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950/30 dark:text-indigo-100">
+                <Sparkles className="mr-1 inline h-3.5 w-3.5" />
+                Esta sequência prioriza seu reforço de {adaptationFocus === "grammar" ? "gramática" : adaptationFocus === "pronunciation" ? "pronúncia" : adaptationFocus === "comprehension" ? "compreensão" : "vocabulário"}.
+              </div>
+            )}
             <Progress value={((currentIndex) / exercises.length) * 100} />
 
             <Card>

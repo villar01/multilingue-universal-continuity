@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { ClickableText } from "@/components/ClickableWord";
 import VocabularySection from "@/components/VocabularySection";
 import LessonDictionary from "@/components/LessonDictionary";
+import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import AIChatbot from "@/components/AIChatbot";
 import TeacherSelector from "@/components/TeacherSelector";
 import { TalkingTeacher } from "@/components/TalkingTeacher";
@@ -687,7 +688,10 @@ export default function Lesson() {
                 <span className="text-xs text-gray-400">{difficultyLabel}</span>
               </div>
             </div>
-            <Badge variant="secondary">{lesson.languageCode?.toUpperCase() || 'EN'}</Badge>
+            <div className="flex items-center gap-2">
+              <ImmersionModeToggle compact />
+              <Badge variant="secondary">{lesson.languageCode?.toUpperCase() || 'EN'}</Badge>
+            </div>
           </div>
         </div>
       </header>

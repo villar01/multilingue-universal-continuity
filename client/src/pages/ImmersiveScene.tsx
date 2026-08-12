@@ -952,6 +952,33 @@ function TeacherAvatar({
             pointerEvents: "none",
           }}
         />
+        {/* Subtle eyebrow and cheek micro-expressions retain the portrait's natural appearance. */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute", top: "14%", left: "39%", width: "9%", height: "1.6%",
+            borderTop: "2px solid rgba(55,35,28,0.28)", borderRadius: "50%",
+            animation: isSpeaking ? "brow-focus 1.8s ease-in-out infinite" : "brow-focus 5s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute", top: "14%", right: "39%", width: "9%", height: "1.6%",
+            borderTop: "2px solid rgba(55,35,28,0.28)", borderRadius: "50%",
+            animation: isSpeaking ? "brow-focus 1.8s ease-in-out infinite reverse" : "brow-focus 5s ease-in-out infinite reverse",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute", top: "32%", left: "34%", width: "32%", height: "13%",
+            borderRadius: "50%", background: isSpeaking ? "radial-gradient(ellipse, rgba(255,154,154,.12), transparent 68%)" : "transparent",
+            animation: "cheek-warmth 2.4s ease-in-out infinite", pointerEvents: "none",
+          }}
+        />
         {/* Mouth animation overlay — visible when speaking */}
         {isSpeaking && (
           <div
@@ -1506,6 +1533,14 @@ export default function ImmersiveScene() {
             0%, 92%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0; }
             94%, 96% { transform: translateX(-50%) scaleY(0.1); opacity: 0.8; background: rgba(0,0,0,0.15); }
             98% { transform: translateX(-50%) scaleY(1); opacity: 0; }
+          }
+          @keyframes brow-focus {
+            0%,100% { transform: translateY(0) rotate(0deg); opacity: .46; }
+            50% { transform: translateY(-2px) rotate(-2deg); opacity: .78; }
+          }
+          @keyframes cheek-warmth {
+            0%,100% { opacity: .25; transform: scale(.94); }
+            50% { opacity: .72; transform: scale(1.04); }
           }
           /* ── Mouth talk (lip-sync simulation) ── */
           @keyframes mouth-talk {
