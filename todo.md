@@ -1097,7 +1097,7 @@
 
 ## 🧑‍🏫 ORGANIZAÇÃO DOCENTE PRÓPRIA
 - [ ] Padronizar a apresentação de professor por idioma, variante regional, origem, especialidade, voz e nível CEFR nas telas prioritárias, mantendo conteúdo e interface originais
-- [ ] Remover fallback global en-US do perfil docente para que dados incompletos nunca criem voz inglesa indevida
+- [x] Remover fallback global en-US do perfil docente para que dados incompletos nunca criem voz inglesa indevida — perfis sem variante preservam locale vazio e regressão aprovada
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
 - [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB

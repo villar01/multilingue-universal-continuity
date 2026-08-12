@@ -16,7 +16,7 @@ export function enrichTeacherProfile<T extends PersistedTeacher>(teacher: T) {
   const voiceLanguageCode = teacher.voiceLanguageCode
     || teacher.voice_language_code
     || catalogTeacher?.voiceLang
-    || "en-US";
+    || "";
 
   return {
     ...teacher,

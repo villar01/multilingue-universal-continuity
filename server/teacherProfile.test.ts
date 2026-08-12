@@ -18,4 +18,13 @@ describe('lesson teacher profile enrichment', () => {
       voiceLanguageCode: 'en-GB',
     });
   });
+
+  it('never invents an English voice locale for an incomplete profile', () => {
+    const profile = enrichTeacherProfile({
+      id: 999,
+      name: 'Professor sem variante definida',
+    });
+
+    expect(profile.voiceLanguageCode).toBe('');
+  });
 });
