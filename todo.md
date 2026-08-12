@@ -221,6 +221,8 @@
 - [x] Criar comunicação para responsáveis no início e no controle parental, explicando proteções reais, benefícios, limites e dever de custódia/acompanhamento do menor — aviso incluído no consentimento de menor e validado visualmente no painel parental, sem prometer substituição da responsabilidade do responsável legal
 - [ ] Acionar alerta sonoro e visual ao detectar conteúdo incompatível com a idade, com motivo auditável para o responsável
 - [ ] Permitir apenas autorização parental temporária por PIN para conteúdo etariamente inadequado e não ilegal; manter bloqueio absoluto para risco grave ou conteúdo ilegal
+- [ ] Aplicar a política de bloqueio e alerta parental diretamente às entradas e saídas das conversas de IA e professor
+- [ ] Remover contexto adulto padrão e rota pública desprotegida das conversas de IA, exigindo perfil etário e consentimento aplicáveis
 
 ## 📘 GUIA DE USO E SEGURANÇA
 - [x] Criar guia simples para alunos e responsáveis sobre acesso, idiomas, professores, microfone, cenas, exercícios, voz, alertas e controle parental — UserGuide ampliado com ciclo Pareto, uso de microfone, alertas etários, PIN, painel parental e dever contínuo de acompanhamento; acesso confirmado no painel parental
@@ -367,6 +369,7 @@
 - [x] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma — `resolveVoice` recusa idioma desconhecido, seletor filtra a mesma família linguística e regressões de contexto validam a rejeição de voz estrangeira
 - [ ] Usar a variante regional e o gênero do professor escolhido em cada fala neural da lição, sem reduzir a voz a um código genérico do curso
 - [x] Corrigir rejeição do Google Neural TTS quando a voz configurada não corresponde ao gênero solicitado na cena imersiva — com gênero definido e sem voz específica, o Google escolhe voz neural compatível do locale; voz específica passa como neutra para evitar conflito 400; 91 testes e TypeScript aprovados
+- [x] Eliminar timeout externo dos testes Edge TTS, mantendo testes determinísticos de locale, gênero, sotaque, cache e contrato de áudio — transporte Edge foi isolado para teste; síntese real permanece em produção; TypeScript e 101 testes aprovados
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
 - [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice

@@ -5,12 +5,21 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-import { describe, it, expect } from "vitest";
+import { afterEach, beforeEach, describe, it, expect } from "vitest";
 import {
   EDGE_TTS_VOICES,
   resolveVoice,
   synthesizeEdgeTTS,
+  __setEdgeTtsTransportForTests,
 } from "./edge-tts";
+
+beforeEach(() => {
+  __setEdgeTtsTransportForTests(async () => Buffer.alloc(192, 7));
+});
+
+afterEach(() => {
+  __setEdgeTtsTransportForTests(null);
+});
 
 describe("🎤 Voice TTS System (Edge TTS)", () => {
   describe("Configuração de Vozes", () => {

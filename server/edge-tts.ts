@@ -246,6 +246,26 @@ export interface TTSSynthResult {
 
 // Cache em memória simples (evita re-síntese de frases repetidas)
 const ttsCache = new Map<string, TTSSynthResult>();
+type EdgeTtsTransport = (voice: string, text: string, options: ProsodyOptions) => Promise<Buffer>;
+let edgeTtsTransportOverride: EdgeTtsTransport | null = null;
+
+/** Usado exclusivamente por testes para validar idioma, voz e cache sem rede externa. */
+export function __setEdgeTtsTransportForTests(transport: EdgeTtsTransport | null): void {
+  edgeTtsTransportOverride = transport;
+  ttsCache.clear();
+}
+
+async function synthesizeWithEdgeTransport(voice: string, text: string, options: ProsodyOptions): Promise<Buffer> {
+  if (edgeTtsTransportOverride) return edgeTtsTransportOverride(voice, text, options);
+  const tts = new MsEdgeTTS();
+  await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+  const { audioStream } = tts.toStream(text, options);
+  const chunks: Buffer[] = [];
+  for await (const chunk of audioStream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as Uint8Array));
+  }
+  return Buffer.concat(chunks);
+}
 
 /**
  * Sintetiza texto com Edge TTS e retorna base64 do MP3
@@ -266,10 +286,6 @@ export async function synthesizeEdgeTTS(
     return { ...ttsCache.get(cacheKey)!, cached: true };
   }
 
-  const tts = new MsEdgeTTS();
-  // Usar 48KHz para máxima qualidade de áudio
-  await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
-
   // Ajuste de prosody por idioma para dicção mais natural
   const isJaZh = voiceLang.startsWith("ja") || voiceLang.startsWith("zh");
   const isAr = voiceLang.startsWith("ar");
@@ -280,13 +296,7 @@ export async function synthesizeEdgeTTS(
     pitch: isEn ? "-2Hz" : isPt ? "-1Hz" : "+0Hz",
   };
 
-  const { audioStream } = tts.toStream(text, options);
-  const chunks: Buffer[] = [];
-  for await (const chunk of audioStream) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as Uint8Array));
-  }
-
-  const audioBuffer = Buffer.concat(chunks);
+  const audioBuffer = await synthesizeWithEdgeTransport(voice, text, options);
   const audioBase64 = audioBuffer.toString("base64");
   const durationEstimateMs = Math.max(800, Math.ceil((text.length / 15) * 1000));
 

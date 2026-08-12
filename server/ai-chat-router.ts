@@ -1,6 +1,9 @@
 import { z } from 'zod';
-import { publicProcedure, router } from './_core/trpc';
+import { protectedProcedure, router } from './_core/trpc';
 import { invokeLLM } from './_core/llm';
+import { TRPCError } from '@trpc/server';
+import { getUserSafetyContext, moderateAIResponse } from './content-moderation';
+import { checkContent } from './contentFilter';
 
 /**
  * Router para chatbot IA conversacional
@@ -11,7 +14,7 @@ export const aiChatRouter = router({
    * Chat conversacional com IA
    * Contexto: vocabulário da lição + correção gramatical
    */
-  chat: publicProcedure
+  chat: protectedProcedure
     .input(
       z.object({
         lessonId: z.number(),
@@ -20,8 +23,30 @@ export const aiChatRouter = router({
         languageCode: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { message, vocabulary, languageCode } = input;
+      const safety = await getUserSafetyContext(ctx.user.id);
+      if (safety.context.ageGroup === 'infantil' && !safety.hasParentalConsent) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'É necessário consentimento do responsável para liberar conversas infantis.' });
+      }
+      const deterministicInput = await checkContent(message, languageCode.split('-')[0]);
+      if (deterministicInput.isBlocked) {
+        return {
+          message: 'Essa mensagem não pode ser usada neste perfil. Escolha uma palavra segura da lição para continuar.',
+          corrections: [],
+          blocked: true,
+          flaggedContent: deterministicInput.matchedPatterns,
+        };
+      }
+      const inputModeration = await moderateAIResponse(safety.context, message, message);
+      if (!inputModeration.isAllowed) {
+        return {
+          message: 'Vamos manter a conversa segura e focada na lição. Escolha uma palavra do vocabulário para continuar.',
+          corrections: [],
+          blocked: true,
+          flaggedContent: inputModeration.flaggedContent,
+        };
+      }
 
       // Prompt para IA com contexto da lição
       const systemPrompt = `You are a friendly English teacher helping a student practice conversation.
@@ -53,12 +78,19 @@ export const aiChatRouter = router({
           ],
         });
 
-        const aiMessage = response.choices[0]?.message?.content || 
+        const rawAiMessage = response.choices[0]?.message?.content || 
           "I'm sorry, I didn't understand. Can you try again?";
+        const deterministicOutput = await checkContent(String(rawAiMessage), languageCode.split('-')[0]);
+        const outputModeration = await moderateAIResponse(safety.context, String(rawAiMessage), message);
+        const aiMessage = !deterministicOutput.isBlocked && outputModeration.isAllowed
+          ? (outputModeration.reformulatedResponse || String(rawAiMessage))
+          : 'Let us continue with a safe lesson topic. Please choose one of the lesson words.';
 
         return {
           message: aiMessage,
           corrections: [], // TODO: Extrair correções específicas
+          blocked: deterministicOutput.isBlocked || !outputModeration.isAllowed,
+          flaggedContent: deterministicOutput.isBlocked ? deterministicOutput.matchedPatterns : outputModeration.flaggedContent,
         };
       } catch (error) {
         console.error('[AI Chat] Erro:', error);
@@ -72,15 +104,39 @@ export const aiChatRouter = router({
   /**
    * Análise de gramática e sugestões
    */
-  analyzeGrammar: publicProcedure
+  analyzeGrammar: protectedProcedure
     .input(
       z.object({
         text: z.string(),
         languageCode: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { text, languageCode } = input;
+      const safety = await getUserSafetyContext(ctx.user.id);
+      if (safety.context.ageGroup === 'infantil' && !safety.hasParentalConsent) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'É necessário consentimento do responsável para liberar conversas infantis.' });
+      }
+      const deterministicInput = await checkContent(text, languageCode.split('-')[0]);
+      if (deterministicInput.isBlocked) {
+        return {
+          hasErrors: false,
+          errors: [],
+          correctedText: '',
+          feedback: 'Este conteúdo não pode ser analisado neste perfil. Escolha uma frase segura da lição.',
+          blocked: true,
+        };
+      }
+      const inputModeration = await moderateAIResponse(safety.context, text, text);
+      if (!inputModeration.isAllowed) {
+        return {
+          hasErrors: false,
+          errors: [],
+          correctedText: '',
+          feedback: 'Este conteúdo não pode ser analisado neste perfil. Escolha uma frase segura da lição.',
+          blocked: true,
+        };
+      }
 
       const languageName = new Intl.DisplayNames(["en"], { type: "language" })
         .of(languageCode.split("-")[0]) || languageCode;

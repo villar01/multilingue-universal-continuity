@@ -57,6 +57,33 @@ export interface UserContext {
   moderationLevel?: "strict" | "moderate" | "relaxed";
 }
 
+export async function getUserSafetyContext(userId: number): Promise<{
+  context: UserContext;
+  hasSafetyProfile: boolean;
+  hasParentalConsent: boolean;
+}> {
+  const db = await getDb();
+  if (!db) {
+    return { context: { userId, ageGroup: "adulto" }, hasSafetyProfile: false, hasParentalConsent: false };
+  }
+  const [profile] = await db.select().from(userSafetyProfile)
+    .where(eq(userSafetyProfile.userId, userId)).limit(1);
+  if (!profile) {
+    return { context: { userId, ageGroup: "adulto" }, hasSafetyProfile: false, hasParentalConsent: false };
+  }
+  return {
+    context: {
+      userId,
+      ageGroup: profile.ageGroup as AgeGroup,
+      country: profile.country || undefined,
+      religion: profile.religion || undefined,
+      moderationLevel: profile.moderationLevel as UserContext["moderationLevel"],
+    },
+    hasSafetyProfile: true,
+    hasParentalConsent: Boolean(profile.parentalConsentGiven),
+  };
+}
+
 // ============================================================
 // REGRAS DE MODERAÇÃO PADRÃO
 // ============================================================
