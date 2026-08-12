@@ -13,6 +13,21 @@ import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
+import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Plane, Shell, Shirt, Sparkles, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
+
+const HOTSPOT_ICON_COMPONENTS: Array<[string, LucideIcon]> = [
+  ["sun", Sun], ["wave", Waves], ["ocean", Waves], ["sea", Waves], ["palm", TreePalm],
+  ["tree", TreePalm], ["shell", Shell], ["sand", Umbrella], ["umbrella", Umbrella],
+  ["cloud", Cloud], ["coffee", Coffee], ["restaurant", Utensils], ["food", Utensils],
+  ["airport", Plane], ["plane", Plane], ["car", Car], ["home", Home], ["house", Home],
+  ["book", BookOpen], ["museum", Landmark], ["apple", Apple], ["dog", Dog], ["shirt", Shirt],
+];
+
+function HotspotVisual({ hotspot, size = 24 }: { hotspot: Hotspot; size?: number }) {
+  const source = `${hotspot.id} ${hotspot.label}`.toLowerCase();
+  const Icon = HOTSPOT_ICON_COMPONENTS.find(([key]) => source.includes(key))?.[1] || Sparkles;
+  return <Icon size={size} strokeWidth={2.35} aria-hidden="true" />;
+}
 
 // ─── Teacher map: idioma do aluno → professor ─────────────────────────────────
 const LANG_TEACHERS: Record<string, { name: string; image: string }> = {
@@ -1085,7 +1100,7 @@ function VocabCard({
         style={{ background: `${hotspot.color}22` }}
       >
         <div className="flex items-center gap-2">
-          <span style={{ fontSize: "1.6rem" }}>{hotspot.icon}</span>
+          <span className="inline-flex" style={{ color: hotspot.color }}><HotspotVisual hotspot={hotspot} size={25} /></span>
           <div>
             {/* Show the word in the target language (what student is learning) */}
             <div className="text-white font-bold" style={{ fontSize: "clamp(14px, 1.8vw, 18px)" }}>
@@ -1366,6 +1381,10 @@ export default function ImmersiveScene() {
   const [particles, setParticles] = useState(false);
   const [score, setScore] = useState(0);
   const [learnedWords, setLearnedWords] = useState<Set<string>>(() => new Set<string>());
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizFeedback, setQuizFeedback] = useState<"correct" | "wrong" | null>(null);
+  const sceneXpMut = trpc.gamification.addXP.useMutation();
   const [filter, setFilter] = useState<"all" | "beginner" | "intermediate" | "advanced">("all");
   const [search, setSearch] = useState("");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -1375,6 +1394,27 @@ export default function ImmersiveScene() {
   const [notebookCount, setNotebookCount] = useState(() => loadNotebook().length);
   // Pareto Panel state
   const [paretoOpen, setParetoOpen] = useState(false);
+  const quizHotspots = selectedScene?.hotspots || [];
+  const quizQuestion = quizHotspots.length ? quizHotspots[quizIndex % quizHotspots.length] : null;
+  const quizOptions = quizQuestion
+    ? [quizQuestion.translation, ...quizHotspots
+        .filter((hotspot) => hotspot.id !== quizQuestion.id && hotspot.translation !== quizQuestion.translation)
+        .map((hotspot) => hotspot.translation)
+        .slice(0, 3)]
+    : [];
+  const handleQuizAnswer = (answer: string) => {
+    if (!quizQuestion || quizFeedback) return;
+    const correct = answer === quizQuestion.translation;
+    setQuizFeedback(correct ? "correct" : "wrong");
+    if (correct) {
+      setScore((current) => current + 10);
+      sceneXpMut.mutate({ xp: 10, type: "exercise" });
+    }
+    window.setTimeout(() => {
+      setQuizFeedback(null);
+      setQuizIndex((current) => current + 1);
+    }, 900);
+  };
   // ── Native language label for dialog panel ──
   const nativeLangLabel = (() => {
     const code = (nativeLang || 'pt-BR').split('-')[0].toLowerCase();
@@ -1848,6 +1888,14 @@ export default function ImmersiveScene() {
             >
               ⭐ {score}
             </div>
+            <button
+              type="button"
+              onClick={(event) => { event.stopPropagation(); setQuizFeedback(null); setQuizOpen((open) => !open); }}
+              className="rounded-full px-3 py-1.5 text-xs font-bold text-white transition hover:scale-105"
+              style={{ background: "rgba(99,102,241,.88)", backdropFilter: "blur(8px)" }}
+            >
+              {quizOpen ? "Fechar quiz" : "Quiz da cena"}
+            </button>
             <div
               className="text-white px-3 py-1.5 rounded-full"
               style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
@@ -1895,7 +1943,7 @@ export default function ImmersiveScene() {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.12)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)"; }}
               >
-                {learned ? "✓" : hotspot.icon}
+                {learned ? "✓" : <HotspotVisual hotspot={hotspot} size={24} />}
               </div>
               {/* Label always visible — translated to student's target language */}
               <div
@@ -1937,6 +1985,48 @@ export default function ImmersiveScene() {
               onClose={() => setActiveHotspot(null)}
               onSpeak={speak}
             />
+          </div>
+        )}
+
+        {quizOpen && quizQuestion && (
+          <div
+            className="absolute left-1/2 top-1/2 z-40 w-[min(92vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border p-5 shadow-2xl"
+            style={{ background: "rgba(15,23,42,.95)", borderColor: "rgba(129,140,248,.65)", backdropFilter: "blur(18px)" }}
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Quiz da cena"
+          >
+            <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-indigo-200">
+              <span>Revisão da cena</span>
+              <span>+10 XP</span>
+            </div>
+            <p className="mb-1 text-sm text-slate-300">Qual é a tradução de:</p>
+            <p className="mb-5 text-3xl font-black text-white">{getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}</p>
+            <div className="grid gap-2">
+              {quizOptions.map((option) => {
+                const isCorrectOption = option === quizQuestion.translation;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleQuizAnswer(option)}
+                    className="rounded-xl border px-4 py-3 text-left text-sm font-semibold text-white transition hover:border-indigo-300 hover:bg-indigo-500/20"
+                    style={{
+                      borderColor: quizFeedback && isCorrectOption ? "#4ade80" : quizFeedback === "wrong" && !isCorrectOption ? "rgba(248,113,113,.4)" : "rgba(148,163,184,.35)",
+                      background: quizFeedback && isCorrectOption ? "rgba(34,197,94,.18)" : "rgba(255,255,255,.04)",
+                    }}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            {quizFeedback && (
+              <p className={`mt-4 text-sm font-bold ${quizFeedback === "correct" ? "text-emerald-300" : "text-amber-200"}`}>
+                {quizFeedback === "correct" ? "Correto! Você ganhou 10 XP." : `Quase. A resposta é “${quizQuestion.translation}”.`}
+              </p>
+            )}
           </div>
         )}
 

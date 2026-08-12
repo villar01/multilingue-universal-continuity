@@ -481,9 +481,9 @@
 ## 🎨 MELHORIA VISUAL CENAS IMERSIVAS (FASE ATUAL)
 - [ ] Gerar thumbnails atraentes para cards das cenas via nano banana
 - [x] Monetização Stripe: planos Freemium/Pro/Premium — Checkout.tsx com PLANS (Mensal/Anual), PIX e Cartão, createOrder mutation
-- [ ] Quiz interativo nas cenas: múltipla escolha com hotspots, salvar pontuação no banco
+- [x] Quiz interativo nas cenas: múltipla escolha com hotspots, salvar pontuação no banco — ImmersiveScene apresenta quiz por objeto, concede +10 XP via gamification.addXP e atualiza a pontuação visível
 - [x] Melhorar cards das cenas com imagens HD - 27 imagens regeneradas com IA
-- [ ] Ícones atraentes para hotspots das cenas (substituir emojis genéricos) — hotspots ainda usam emojis
+- [x] Ícones atraentes para hotspots das cenas (substituir emojis genéricos) — HotspotVisual usa ícones consistentes (sol, ondas, palmeira, concha, café, avião, restaurante e outros) em vez de emojis genéricos
 
 ## 🔍 AUDITORIA MÓDULO A MÓDULO (2025-05-25)
 
