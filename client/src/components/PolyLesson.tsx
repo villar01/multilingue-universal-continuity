@@ -12,6 +12,7 @@ const SceneLesson = lazy(() => import('./SceneLesson'));
 const SentenceBuilder = lazy(() => import('./SentenceBuilder'));
 import { speakEdgeTTS, stopEdgeTTS, onLipSyncAmplitude } from "@/lib/edgeTTSClient";
 import { createAudioRecorder, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { microphoneErrorMessage } from "@/lib/microphoneAccess";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -54,8 +55,8 @@ async function recordAudioBlob(durationMs = 4000): Promise<Blob | null> {
       recorder.start();
       setTimeout(() => { try { recorder.stop(); } catch {} }, durationMs);
     });
-  } catch {
-    return null;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -75,22 +76,22 @@ async function scorePronunciationWhisper(
   expectedWord: string,
   langCode: string,
   transcribeFn: (audioData: string, language: string) => Promise<{ text: string }>
-): Promise<{ score: number; heard: string }> {
+): Promise<{ score: number; heard: string; microphoneMessage?: string }> {
   // Try MediaRecorder first (works in Firefox, Safari, Chrome)
   const hasMediaRecorder = typeof (window as any).MediaRecorder !== 'undefined';
   const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   if (hasMediaRecorder && hasGetUserMedia) {
-    const blob = await recordAudioBlob(4000);
-    if (blob && blob.size > 1000) {
-      try {
+    try {
+      const blob = await recordAudioBlob(4000);
+      if (blob && blob.size > 1000) {
         const base64 = await blobToBase64(blob);
         const result = await transcribeFn(base64, langCode.split('-')[0]);
         const heard = (result.text || '').trim();
         const score = levenshteinScore(expectedWord, heard);
         return { score, heard };
-      } catch {
-        // fall through to Web Speech API
       }
+    } catch (error) {
+      return { score: -1, heard: '', microphoneMessage: microphoneErrorMessage(error) };
     }
   }
   // Fallback: Web Speech API (Chrome only)
@@ -266,6 +267,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
   const [isRecordingPron, setIsRecordingPron] = useState(false);
   const [pronScore, setPronScore] = useState<number | null>(null);
   const [pronHeard, setPronHeard] = useState<string>('');
+  const [microphoneIssue, setMicrophoneIssue] = useState<string | null>(null);
 
   const transcribeMutation = trpc.voiceTranscription.transcribe.useMutation();
 
@@ -313,6 +315,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
     setIsRecordingPron(true);
     setPronScore(null);
     setPronHeard('');
+    setMicrophoneIssue(null);
     try {
       // Use MediaRecorder + Whisper (works in all browsers incl. Firefox/Safari)
       const transcribeFn = async (audioData: string, language: string) => {
@@ -320,7 +323,9 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
       };
       const result = await scorePronunciationWhisper(word, languageCode, transcribeFn);
       if (result.score === -1) {
-        toast.error('Microfone não disponível — verifique as permissões do navegador');
+        const message = result.microphoneMessage || 'O reconhecimento de voz não ficou disponível neste navegador.';
+        setMicrophoneIssue(message);
+        toast.error(message);
       } else {
         setPronScore(result.score);
         setPronHeard(result.heard);
@@ -1531,6 +1536,12 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
                   <button onClick={() => handlePronunciationCheck(currentWord.word)} disabled={isRecordingPron} style={{ background: isRecordingPron ? '#e17055' : 'rgba(255,255,255,0.1)', border: `2px solid ${isRecordingPron ? '#e17055' : 'rgba(255,255,255,0.3)'}`, borderRadius: 50, width: 52, height: 52, fontSize: 22, cursor: 'pointer' }}>{isRecordingPron ? '🔴' : '🎤'}</button>
                 </div>
                 {pronScore !== null && <div style={{ marginTop: 10, padding: '8px 14px', borderRadius: 10, background: pronScore >= 80 ? 'rgba(0,184,148,0.2)' : 'rgba(253,203,110,0.2)', fontSize: 16, fontWeight: 800, color: pronScore >= 80 ? '#00b894' : '#fdcb6e' }}>{pronScore >= 80 ? '🎉' : '👍'} {pronScore}%</div>}
+                {microphoneIssue && (
+                  <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 10, background: 'rgba(214,48,49,0.16)', border: '1px solid rgba(255,118,117,0.65)', color: '#ffecec', fontSize: 13, lineHeight: 1.45 }}>
+                    <div>🎙️ {microphoneIssue}</div>
+                    <button onClick={() => handlePronunciationCheck(currentWord.word)} style={{ marginTop: 8, background: '#fff', color: '#2d3436', border: 'none', borderRadius: 8, padding: '6px 10px', fontWeight: 700, cursor: 'pointer' }}>Tentar microfone novamente</button>
+                  </div>
+                )}
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <span style={{ fontSize: 13, color: '#888', flex: 1 }}>{cartilhaWordIndex + 1} / {words.length}</span>
