@@ -1058,6 +1058,7 @@
 ## 🐛 CENA IMERSIVA — BOCA VISÍVEL
 - [x] Substituir a barra auxiliar por uma boca facial visível, com abertura e formato guiados pelos visemas do áudio — barra removida; camada facial usa dimensões do áudio neural
 - [x] Diferenciar visualmente boca aberta, arredondada, sorriso, dentes e fechamento labial durante a fala real do professor — poses por visema usam abertura, arredondamento, mandíbula, dentes e língua; regressão validada
+- [x] Reposicionar a boca facial do Professor James na região inferior do rosto e manter contraste durante a fala — camada movida de 36% para 51% da altura do retrato
 - [ ] Confirmar visualmente no navegador a boca facial durante o diálogo iniciado pelo aluno em Tropical Beach
 
 ## 🐛 CENA IMERSIVA — INICIALIZAÇÃO INCONSISTENTE

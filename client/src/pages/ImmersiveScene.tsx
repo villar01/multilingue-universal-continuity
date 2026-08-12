@@ -1007,14 +1007,14 @@ function TeacherAvatar({
           <div
             style={{
               position: "absolute",
-              top: "36%",
+              top: "51%",
               left: "50%",
               transform: `translateX(-50%) translateY(${jawOffset - 3}%)`,
               ...synchronizedMouthStyle,
               background: "radial-gradient(ellipse at 50% 48%, rgba(52,12,16,0.96) 0%, rgba(94,30,35,0.92) 53%, rgba(214,105,112,0.46) 76%, rgba(255,180,180,0.08) 100%)",
               border: "1px solid rgba(82,24,30,0.72)",
               boxShadow: "0 1px 3px rgba(45,8,12,0.55), inset 0 1px 1px rgba(255,209,209,0.28)",
-              mixBlendMode: "multiply",
+              mixBlendMode: "normal",
               overflow: "hidden",
               transition: "width 55ms linear, height 55ms linear, border-radius 55ms linear, transform 55ms linear",
               pointerEvents: "none",
