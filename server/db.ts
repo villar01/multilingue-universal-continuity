@@ -628,6 +628,14 @@ export async function completeLesson(data: {
 
   // 2. Atualizar ou criar progresso do curso
   const existingProgress = await getUserProgress(data.userId, data.courseId);
+  const completedInCourse = (existingProgress?.completedLessons || 0) + 1;
+  // Six persisted progression bands: A1, A2, B1, B2, C1 and C2.
+  const calculatedLevel = completedInCourse <= 5 ? 1
+    : completedInCourse <= 10 ? 2
+    : completedInCourse <= 20 ? 3
+    : completedInCourse <= 35 ? 4
+    : completedInCourse <= 60 ? 5
+    : 6;
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -657,7 +665,7 @@ export async function completeLesson(data: {
     // Atualizar progresso existente
     await db.update(userProgress)
       .set({
-        completedLessons: (existingProgress.completedLessons || 0) + 1,
+        completedLessons: completedInCourse,
         totalPoints: (existingProgress.totalPoints || 0) + xpEarned,
         currentStreak: newStreak,
         longestStreak: Math.max(newStreak, existingProgress.longestStreak || 0),
@@ -687,7 +695,12 @@ export async function completeLesson(data: {
     } as any);
   }
 
-  // 3. Verificar e desbloquear conquistas
+  // 3. Persist the learner's current CEFR band for adaptive routes and UI.
+  await db.update(users)
+    .set({ currentLevel: calculatedLevel })
+    .where(eq(users.id, data.userId));
+
+  // 4. Verificar e desbloquear conquistas
   await checkAndUnlockAchievements(data.userId);
 }
 

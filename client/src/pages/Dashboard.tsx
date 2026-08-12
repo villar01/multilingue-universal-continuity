@@ -52,19 +52,20 @@ export default function Dashboard() {
   const { data: languages } = trpc.languages.list.useQuery();
   
   // Buscar idioma-alvo do perfil do usuário (salvo no Onboarding)
+  const targetLanguageCode = (() => {
+    try {
+      const profile = JSON.parse(localStorage.getItem("ml_lang_profile") || "{}");
+      return profile.targetCode || localStorage.getItem("ml_target_lang") || "en-US";
+    } catch { return "en-US"; }
+  })();
+
   const targetLangId = (() => {
     try {
       const stored = localStorage.getItem("ml_target_lang_id");
       if (stored) return parseInt(stored);
     } catch {}
     // Fallback: encontrar idioma-alvo pelo código
-    const targetCode = (() => {
-      try {
-        const profile = JSON.parse(localStorage.getItem("ml_lang_profile") || "{}");
-        return profile.targetCode || "en";
-      } catch { return "en"; }
-    })();
-    const lang = languages?.find(l => l.code === targetCode || l.code === targetCode.split('-')[0]);
+    const lang = languages?.find(l => l.code === targetLanguageCode || l.code === targetLanguageCode.split('-')[0]);
     return lang?.id || 1;
   })();
 
@@ -76,6 +77,15 @@ export default function Dashboard() {
   const { data: lessons } = trpc.lessons.getByCourse.useQuery(
     { courseId: courses?.[0]?.id || 1 },
     { enabled: !!courses && courses.length > 0 }
+  );
+
+  const { data: adaptivePath } = trpc.adaptive.getPath.useQuery(
+    { targetLanguage: targetLanguageCode },
+    { enabled: !!user }
+  );
+  const { data: adaptiveRecommendation } = trpc.adaptive.getRecommendation.useQuery(
+    { targetLanguage: targetLanguageCode },
+    { enabled: !!user }
   );
   
   // Verificar se usuário tem plano premium
@@ -188,6 +198,27 @@ export default function Dashboard() {
               <span>Nível {level} · {level <= 2 ? 'A1-A2' : level <= 4 ? 'B1-B2' : 'C1-C2'}</span>
             </div>
           </div>
+          {adaptiveRecommendation && (
+            <Card className="mt-4 border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50">
+              <CardContent className="p-4 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+                <div className="flex gap-3">
+                  <div className="mt-0.5 rounded-xl bg-indigo-600 p-2 h-fit"><Target className="h-5 w-5 text-white" /></div>
+                  <div>
+                    <p className="font-semibold text-indigo-950">Próximo passo personalizado</p>
+                    <p className="text-sm text-slate-600">{adaptiveRecommendation.reason}</p>
+                    {adaptivePath && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        Nível recomendado: {adaptivePath.level} · Pontos a reforçar: {adaptivePath.weakAreas.length ? adaptivePath.weakAreas.join(", ") : "nenhum no momento"}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {adaptiveRecommendation.type === "review" && (
+                  <Link href="/smart-review"><Button size="sm" variant="outline" className="border-indigo-200 text-indigo-700">Revisar agora</Button></Link>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">

@@ -5,10 +5,11 @@
 import { useState, useEffect, useCallback } from "react";
 
 const DB_NAME = "multilingue-offline";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_CONVERSATIONS = "conversations";
 const STORE_LESSONS = "lessons";
 const STORE_PENDING = "pending-sync";
+const STORE_MEDIA = "media-cache";
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -25,6 +26,9 @@ function openDB(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(STORE_PENDING)) {
         db.createObjectStore(STORE_PENDING, { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(STORE_MEDIA)) {
+        db.createObjectStore(STORE_MEDIA, { keyPath: "id" });
       }
     };
   });
@@ -48,6 +52,14 @@ export interface PendingSync {
   type: "conversation" | "progress" | "lesson_completion";
   data: unknown;
   createdAt: number;
+}
+
+export interface CachedMedia {
+  id: string;
+  url: string;
+  type: "avatar" | "video";
+  blob: Blob;
+  cachedAt: number;
 }
 
 export function useOfflineSyncDB() {
@@ -138,6 +150,37 @@ export function useOfflineSyncDB() {
     }
   }, []);
 
+  // Save media bytes locally so photos and generated videos remain available offline.
+  const cacheMedia = useCallback(async (media: Omit<CachedMedia, "blob" | "cachedAt">) => {
+    try {
+      const response = await fetch(media.url);
+      if (!response.ok) return;
+      const blob = await response.blob();
+      const db = await openDB();
+      const tx = db.transaction(STORE_MEDIA, "readwrite");
+      tx.objectStore(STORE_MEDIA).put({ ...media, blob, cachedAt: Date.now() } satisfies CachedMedia);
+    } catch {
+      // Keep the online URL as fallback if an asset cannot be cached locally.
+    }
+  }, []);
+
+  const getCachedMediaUrl = useCallback(async (id: string): Promise<string | null> => {
+    try {
+      const db = await openDB();
+      const tx = db.transaction(STORE_MEDIA, "readonly");
+      const request = tx.objectStore(STORE_MEDIA).get(id);
+      return await new Promise((resolve) => {
+        request.onsuccess = () => {
+          const media = request.result as CachedMedia | undefined;
+          resolve(media?.blob ? URL.createObjectURL(media.blob) : null);
+        };
+        request.onerror = () => resolve(null);
+      });
+    } catch {
+      return null;
+    }
+  }, []);
+
   // Add pending sync item (will be synced when online)
   const addPendingSync = useCallback(async (item: Omit<PendingSync, "id">) => {
     try {
@@ -186,6 +229,8 @@ export function useOfflineSyncDB() {
     getConversations,
     cacheLesson,
     getCachedLessons,
+    cacheMedia,
+    getCachedMediaUrl,
     addPendingSync,
     getPendingSync,
     clearPendingSync,

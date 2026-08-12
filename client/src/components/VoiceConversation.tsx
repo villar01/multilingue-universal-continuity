@@ -33,10 +33,13 @@ export default function VoiceConversation({
   const [teacherEmotion, setTeacherEmotion] = useState<"neutral" | "happy" | "thinking" | "encouraging">("neutral");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [animatedVideoUrl, setAnimatedVideoUrl] = useState<string | null>(null);
+  const [cachedVideoUrl, setCachedVideoUrl] = useState<string | null>(null);
+  const [cachedPortraitUrl, setCachedPortraitUrl] = useState<string | null>(null);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
   // Offline sync via IndexedDB
   const offlineDB = useOfflineSyncDB();
+  const { cacheMedia, getCachedMediaUrl } = offlineDB;
   const conversationId = `lesson-${lessonId}-${languageCode}`;
   const isPortugueseLesson = languageCode.toLowerCase().startsWith("pt");
   const activeTeacher = isPortugueseLesson
@@ -54,6 +57,7 @@ export default function VoiceConversation({
         fallbackLanguage: "en-US" as const,
         imageUrl: "/manus-storage/teacher-ingrid-english_0ff40d15.png",
       };
+  const cachedVideoId = `lesson-video-${lessonId}-${languageCode}`;
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -63,6 +67,30 @@ export default function VoiceConversation({
   const animationFrameRef = useRef<number | null>(null);
   const talkingHeadRef = useRef<any>(null);
   const recognitionRef = useRef<any>(null); // Web Speech API
+
+  useEffect(() => {
+    void cacheMedia({
+      id: `teacher-portrait-${activeTeacher.avatarId}`,
+      url: activeTeacher.imageUrl,
+      type: "avatar",
+    });
+  }, [activeTeacher.avatarId, activeTeacher.imageUrl, cacheMedia]);
+
+  useEffect(() => {
+    let active = true;
+    void getCachedMediaUrl(cachedVideoId).then((url) => {
+      if (active && url) setCachedVideoUrl(url);
+    });
+    return () => { active = false; };
+  }, [cachedVideoId, getCachedMediaUrl]);
+
+  useEffect(() => {
+    let active = true;
+    void getCachedMediaUrl(`teacher-portrait-${activeTeacher.avatarId}`).then((url) => {
+      if (active && url) setCachedPortraitUrl(url);
+    });
+    return () => { active = false; };
+  }, [activeTeacher.avatarId, getCachedMediaUrl]);
 
   // Mutations
   const transcribeAudio = trpc.voiceTranscription.transcribe.useMutation();
@@ -392,6 +420,7 @@ export default function VoiceConversation({
           });
 
           setAnimatedVideoUrl(videoResult.videoUrl);
+          void cacheMedia({ id: cachedVideoId, url: videoResult.videoUrl, type: "video" });
           
           // Play video
           const videoElement = document.getElementById("photorealistic-video") as HTMLVideoElement;
@@ -445,6 +474,8 @@ export default function VoiceConversation({
     return { portuguese, english };
   };
 
+  const playableVideoUrl = isOnline ? animatedVideoUrl : cachedVideoUrl;
+
   return (
     <div className="space-y-6">
       {/* Connection Status */}
@@ -458,10 +489,10 @@ export default function VoiceConversation({
 
       {/* Avatar Display */}
       <div className="relative">
-        {isOnline && animatedVideoUrl && !isGeneratingVideo ? (
+        {playableVideoUrl && !isGeneratingVideo ? (
           <video
             id="photorealistic-video"
-            src={animatedVideoUrl}
+            src={playableVideoUrl}
             className="w-full max-w-md mx-auto rounded-lg shadow-lg"
             controls={false}
             autoPlay
@@ -474,12 +505,21 @@ export default function VoiceConversation({
             <p className="text-gray-600">Gerando avatar fotorrealista...</p>
           </div>
         ) : !isOnline ? (
-          <TalkingHeadAvatar
-            ref={talkingHeadRef}
-            avatarId={activeTeacher.avatarId}
-            language={activeTeacher.fallbackLanguage}
-            gender={activeTeacher.gender}
-          />
+          cachedPortraitUrl ? (
+            <div className="relative mx-auto w-64 h-64 rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
+              <img src={cachedPortraitUrl} alt={activeTeacher.name} className="w-full h-full object-cover" />
+              <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 px-3 py-2 text-center text-sm text-white">
+                {activeTeacher.name} · disponível offline
+              </div>
+            </div>
+          ) : (
+            <TalkingHeadAvatar
+              ref={talkingHeadRef}
+              avatarId={activeTeacher.avatarId}
+              language={activeTeacher.fallbackLanguage}
+              gender={activeTeacher.gender}
+            />
+          )
         ) : (
           <EnhancedTeacherAvatar />
         )}

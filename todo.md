@@ -129,7 +129,7 @@
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
 - [x] Adicionar skeleton loaders durante carregamento — Skeleton component adicionado a DashboardReal
 - [x] Implementar streaming de respostas LLM (texto aparece palavra por palavra) — useStreamingText integrado em LiveLessonTeacher com StreamingTeacherMessage
-- [ ] Cachear avatares e vídeos no localStorage/IndexedDB — VoiceConversation usa IndexedDB para conversas mas cache de avatares/vídeos não implementado
+- [x] Cachear avatares e vídeos no localStorage/IndexedDB — useOfflineSyncDB v2 possui media-cache com Blob; VoiceConversation armazena e lê retratos/vídeos, reproduz vídeo em cache ou retrato offline antes do fallback 3D
 - [x] Reduzir bundle size com code splitting — App.tsx usa lazy() + Suspense para todas as paginas
 
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
@@ -532,7 +532,7 @@
 - [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
 - [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge + level progress bar + difficulty label exibidos na barra de exercícios
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
-- [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — getLevelByLesson mapeia por orderIndex mas não salva no DB nem adapta por usuário
+- [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — completeLesson agora salva currentLevel (A1→C2) no perfil; adaptação automática de perguntas por erros do aluno ainda pendente
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
 - [x] Detectar e bloquear tentativas de bypass do paywall — security-monitor.ts com eventType "paywall_bypass", systemRouter com logSecurityEvent
