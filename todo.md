@@ -42,6 +42,7 @@
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
 - [ ] Integração com Google TTS para timing preciso — ImmersiveScene prioriza Google Neural TTS, preserva gênero e sincroniza visemes pelo áudio; integrar os demais fluxos de avatar/lip-sync ainda pendente
+- [x] AnimatedTeacher: aplicar relógio do Google Neural TTS ao retrato fotorrealista — visemas por tempo controlam abertura, largura, arredondamento e língua da boca
 - [x] Cache de vídeos gerados em S3 — LivePortrait baixa o MP4 concluído, armazena em video-cache/liveportrait no S3 e retorna a URL estável; mantém fallback seguro para a URL do provedor
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 

@@ -12,6 +12,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { Play, Volume2, VolumeX, Loader2, RefreshCw } from "lucide-react";
+import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 
 interface AnimatedTeacherProps {
   teacherId?: number;
@@ -93,6 +94,7 @@ export function AnimatedTeacher({
   const [error, setError] = useState<string | null>(null);
   const [mouthOpen, setMouthOpen] = useState(0);
   const [lipSyncActive, setLipSyncActive] = useState(false);
+  const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const [expression, setExpression] = useState<"idle" | "smile" | "thinking">("idle");
   const [expressionProgress, setExpressionProgress] = useState(0); // 0→1 transition progress
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -101,6 +103,7 @@ export function AnimatedTeacher({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number>(0);
   const lastTextRef = useRef<string>("");
+  const { syncWithAudio, stop: stopVisemeSync } = useTTSVisemeSync(setAudioViseme);
 
   // Fetch teacher data if only ID provided
   const { data: teacherData } = trpc.teachers.getById.useQuery(
@@ -204,6 +207,7 @@ export function AnimatedTeacher({
     analyser.connect(ctx.destination);
 
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    syncWithAudio(audio, text || "", languageCode);
 
     const animate = () => {
       analyser.getByteFrequencyData(dataArray);
@@ -226,15 +230,31 @@ export function AnimatedTeacher({
       setIsPlaying(false);
       setLipSyncActive(false);
       setMouthOpen(0);
+      setAudioViseme(null);
+      stopVisemeSync();
       cancelAnimationFrame(animFrameRef.current);
       onSpeakEnd?.();
+    });
+
+    audio.addEventListener("error", () => {
+      setIsPlaying(false);
+      setLipSyncActive(false);
+      setMouthOpen(0);
+      setAudioViseme(null);
+      stopVisemeSync();
+      cancelAnimationFrame(animFrameRef.current);
     });
 
     audio.play().catch((e) => {
       console.warn("[AnimatedTeacher] Autoplay blocked:", e.message);
       // Mostrar botão de play manual
     });
-  }, [onSpeakEnd]);
+  }, [languageCode, onSpeakEnd, stopVisemeSync, syncWithAudio, text]);
+
+  useEffect(() => () => {
+    cancelAnimationFrame(animFrameRef.current);
+    stopVisemeSync();
+  }, [stopVisemeSync]);
 
   // Quando texto muda e professor está ensinando
   useEffect(() => {
@@ -303,8 +323,13 @@ export function AnimatedTeacher({
     if (amp < 0.75) return { upper: 'M 37 45 Q 44 41 50 40.5 Q 56 41 63 45', lower: 'M 37 45 Q 44 58.5 50 61 Q 56 58.5 63 45', fill: '#0d0101', cavity: 'M 39 48 Q 50 56.5 61 48' };
     return { upper: 'M 37 44 Q 44 40 50 39.5 Q 56 40 63 44', lower: 'M 37 44 Q 44 60 50 62.5 Q 56 60 63 44', fill: '#0a0101', cavity: 'M 39 47.5 Q 50 57 61 47.5' };
   };
-  const lipAmp = Math.max(0, Math.min(1, mouthOpen));
+  const lipAmp = audioViseme
+    ? Math.max(0, Math.min(1, (audioViseme.mouthHeight + audioViseme.jawDrop) / 55))
+    : Math.max(0, Math.min(1, mouthOpen));
   const viseme = getViseme(lipAmp);
+  const mouthScaleX = audioViseme ? Math.max(0.65, audioViseme.mouthWidth / 40) : 1;
+  const mouthScaleY = audioViseme ? Math.max(0.7, 0.85 + (audioViseme.mouthHeight + audioViseme.jawDrop) / 65) : 1;
+  const mouthRoundness = audioViseme ? audioViseme.lipRound / 2.5 : 0;
   const lipColor = teacherGender === "female" ? "#c0607a" : "#8b4513";
   const fallbackPortraitUrl = teacherGender === "female"
     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
@@ -379,12 +404,15 @@ export function AnimatedTeacher({
                 className="absolute inset-0 w-full h-full pointer-events-none"
                 style={{ zIndex: 10 }}
               >
-                {viseme.cavity && <path d={viseme.cavity} fill="#8b2020" opacity={0.5} />}
-                {viseme.fill !== 'none' && (
-                  <path d={`${viseme.upper} ${viseme.lower.replace('M', 'L')}`} fill={viseme.fill} />
-                )}
-                <path d={viseme.upper} fill="none" stroke={lipColor} strokeWidth="1.2" strokeLinecap="round" style={{ transition: 'd 0.04s ease' }} />
-                <path d={viseme.lower} fill="none" stroke={lipColor} strokeWidth="1.2" strokeLinecap="round" style={{ transition: 'd 0.04s ease' }} />
+                <g transform={`translate(50 50) scale(${mouthScaleX} ${mouthScaleY}) translate(-50 -50)`} style={{ transformOrigin: "center", transition: "transform 0.04s ease" }}>
+                  {viseme.cavity && <path d={viseme.cavity} fill="#8b2020" opacity={0.5} />}
+                  {viseme.fill !== 'none' && (
+                    <path d={`${viseme.upper} ${viseme.lower.replace('M', 'L')}`} fill={viseme.fill} />
+                  )}
+                  {audioViseme?.tongueVisible && <ellipse cx="50" cy="54" rx="8" ry="2.5" fill="#d16b76" opacity="0.75" />}
+                  <path d={viseme.upper} fill="none" stroke={lipColor} strokeWidth={1.2 + mouthRoundness / 40} strokeLinecap="round" style={{ transition: 'd 0.04s ease' }} />
+                  <path d={viseme.lower} fill="none" stroke={lipColor} strokeWidth={1.2 + mouthRoundness / 40} strokeLinecap="round" style={{ transition: 'd 0.04s ease' }} />
+                </g>
               </svg>
             )}
           </div>
