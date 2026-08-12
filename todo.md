@@ -159,7 +159,7 @@
 ## 🎯 URGENTE - REMOVER AVATAR CARTOON
 - [x] Remover avatar 3D cartoon ridículo da lição
 - [x] Substituir por avatares fotorrealistas reais (Ricardo, Ingrid, Carlos, Jean)
-- [ ] Integrar professores reais com clipes educacionais
+- [x] Integrar professores reais com clipes educacionais — FamilyVocabularyClips identifica visualmente a Professora Ingrid, com retrato durável e atribuição pedagógica
 - [x] Integrar professores reais com lições interativas
 - [x] Adicionar seletor de professor antes de iniciar lição
 
@@ -244,7 +244,8 @@
 - [ ] Desenvolver primeiro clipe "A Família" com conteúdo original
 - [ ] Integrar TTS com professores fotorrealistas (Ricardo, Ingrid, Carlos, Jean)
 - [x] Criar página de biblioteca de clipes educacionais — rota /clips validada com os cinco registros do banco
-- [ ] Adicionar thumbnails dos professores nos clipes
+- [x] Adicionar thumbnails dos professores nos clipes — a biblioteca /clips agora mostra retrato e nome docente nos cards e no modal; Ingrid foi validada visualmente nos cinco clipes familiares
+- [x] Exibir a Professora Ingrid no player de vocabulário familiar — retrato durável e atribuição pedagógica visíveis no FamilyVocabularyClips
 - [ ] Organizar clipes por tema e nível de dificuldade
 - [ ] Testar sistema completo de clipes originais
 
@@ -351,7 +352,7 @@
 - [ ] Ativar lip-sync durante gravação da lição (conectar isTeaching ao estado de gravação)
 - [ ] Criar página /clips com biblioteca de clipes de 30 minutos
 - [ ] Organizar clipes por tema (família, trabalho, viagens) e nível (beginner, intermediate, advanced)
-- [ ] Adicionar thumbnails dos professores nos cards de clipes
+- [x] Adicionar thumbnails dos professores nos cards de clipes — cards dos cinco clipes familiares exibem retrato e nome da Professora Ingrid
 
 ## 🐛 BUG: GRAVAÇÃO NÃO PARA
 - [x] Corrigir botão "Parar Gravação" que não para a gravação (verificar estado do mediaRecorder + force stop tracks)
@@ -1038,3 +1039,7 @@
 ## 🐛 SELETOR DE PROFESSORES EM INGLÊS — CORREÇÃO VISUAL OBSERVADA
 - [x] Corrigir metadados de gênero dos professores de inglês — a validação de My Family confirmou 1 masculino e 3 femininos
 - [x] Corrigir retratos ausentes no seletor de inglês — Sarah e James agora renderizam retratos profissionais duráveis, sem placeholders
+
+## 🎬 BIBLIOTECA DE CLIPES — ATRIBUIÇÃO DOCENTE
+- [x] Adicionar metadados de professora/professor aos registros de clipes e exibir retrato/nome docente nos cards e modal da página /clips
+- [x] Validar visualmente a biblioteca /clips após mostrar retratos dos professores nos clipes — cinco cards A1 exibiram Professora Ingrid

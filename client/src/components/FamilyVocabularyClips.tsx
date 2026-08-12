@@ -19,6 +19,12 @@ export const FAMILY_CLIPS: FamilyClip[] = [
   { id: "family", word: "family", translation: "família", sentence: "This is a family. Say: family.", caption: "Esta é uma família. Diga: family.", url: "/manus-storage/family-family_15fc45d2.mp4" },
 ];
 
+export const FAMILY_CLIP_INSTRUCTOR = {
+  name: "Professora Ingrid Larsen",
+  role: "Professora de inglês · Pronúncia e conversação",
+  photo: "/manus-storage/teacher-ingrid-english_b938d99a.png",
+};
+
 export default function FamilyVocabularyClips() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -59,7 +65,16 @@ export default function FamilyVocabularyClips() {
           <h3 className="text-xl font-bold text-slate-900">Vocabulário: A Família</h3>
           <p className="text-sm text-slate-600">Assista, ouça e repita cada palavra no contexto de uma cena familiar segura.</p>
         </div>
-        <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">{activeIndex + 1} de {FAMILY_CLIPS.length}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 rounded-2xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-indigo-100">
+            <img src={FAMILY_CLIP_INSTRUCTOR.photo} alt="" className="h-9 w-9 rounded-full object-cover" />
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-slate-800">{FAMILY_CLIP_INSTRUCTOR.name}</p>
+              <p className="truncate text-[11px] text-slate-500">{FAMILY_CLIP_INSTRUCTOR.role}</p>
+            </div>
+          </div>
+          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">{activeIndex + 1} de {FAMILY_CLIPS.length}</span>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl bg-slate-950 shadow-lg">

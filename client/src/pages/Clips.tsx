@@ -146,6 +146,14 @@ export default function Clips() {
                   <div className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-bold ${CEFR_COLORS[clip.cefrLevel] || 'bg-gray-700 text-white'}`}>
                     {clip.cefrLevel}
                   </div>
+                  {clip.instructorName && (
+                    <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 rounded-xl bg-black/70 px-2 py-1.5 backdrop-blur-sm">
+                      {clip.instructorPhotoUrl ? (
+                        <img src={clip.instructorPhotoUrl} alt="" className="h-7 w-7 shrink-0 rounded-full border border-white/50 object-cover" />
+                      ) : null}
+                      <span className="truncate text-[11px] font-semibold text-white">Com {clip.instructorName}</span>
+                    </div>
+                  )}
                 </div>
                 <CardContent className="p-3">
                   <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-2">{clip.title}</h3>
@@ -198,6 +206,17 @@ export default function Clips() {
               <h3 className="text-white font-bold text-lg mb-1">{selectedClipData.title}</h3>
               {selectedClipData.description && (
                 <p className="text-gray-400 text-sm mb-3">{selectedClipData.description}</p>
+              )}
+              {selectedClipData.instructorName && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800/70 p-2">
+                  {selectedClipData.instructorPhotoUrl ? (
+                    <img src={selectedClipData.instructorPhotoUrl} alt="" className="h-9 w-9 rounded-full object-cover" />
+                  ) : null}
+                  <div>
+                    <p className="text-xs text-gray-400">Professor(a) do clipe</p>
+                    <p className="text-sm font-semibold text-white">{selectedClipData.instructorName}</p>
+                  </div>
+                </div>
               )}
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">

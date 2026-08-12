@@ -62,6 +62,8 @@ export const educationalClips = mysqlTable("educational_clips", {
   description: text("description"),
   videoUrl: varchar("videoUrl", { length: 512 }).notNull(),
   thumbnailUrl: varchar("thumbnailUrl", { length: 512 }),
+  instructorName: varchar("instructorName", { length: 120 }),
+  instructorPhotoUrl: varchar("instructorPhotoUrl", { length: 512 }),
   duration: int("duration"), // seconds
   cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1", "C2"]).notNull(),
   category: varchar("category", { length: 100 }), // grammar, vocabulary, pronunciation, culture
@@ -2315,4 +2317,3 @@ export const appUpdatesRead = mysqlTable("app_updates_read", {
 });
 export type AppUpdateRead = typeof appUpdatesRead.$inferSelect;
 export type InsertAppUpdateRead = typeof appUpdatesRead.$inferInsert;
-
