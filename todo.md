@@ -386,6 +386,7 @@
 - [ ] Calibrar posições da boca para todos os 10 professores
 - [ ] isTeaching=true quando professor está falando
 - [ ] Ampliar abertura da boca para maior visibilidade
+- [x] Substituir barras de áudio do TalkingTeacher por boca facial visível — abertura, dentes e língua agora seguem a amplitude da voz neural; regressões de Edge TTS e visemas aprovadas
 
 ### Fase 4: Realidade Aumentada (AR.js)
 - [ ] Criar página ARTeacher (/ar) com AR.js + A-Frame

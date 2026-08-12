@@ -190,21 +190,24 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
           />
         )}
 
-        {/* Lip-sync overlay driven by the live neural-audio amplitude */}
+        {/* Visible facial mouth driven by the live neural-audio amplitude */}
         {(isSpeaking || state === "speaking") && !videoUrl && (
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-2">
-            <div className="flex gap-0.5 items-end">
-              {[1, 2, 3, 4, 3, 2, 1].map((h, i) => (
-                <div
-                  key={i}
-                  className="w-1 rounded-full transition-[height] duration-75"
-                  style={{
-                    height: `${4 + h * (2 + lipAmplitude * 10)}px`,
-                    background: teacher.color,
-                    opacity: 0.4 + lipAmplitude * 0.6,
-                  }}
-                />
-              ))}
+          <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-none">
+            <div
+              className="relative overflow-hidden border-2 border-rose-950/80 bg-rose-950 shadow-[0_1px_3px_rgba(0,0,0,0.65)] transition-[width,height,border-radius] duration-75"
+              style={{
+                width: `${34 + lipAmplitude * 15}px`,
+                height: `${5 + lipAmplitude * 23}px`,
+                borderRadius: `${lipAmplitude > 0.58 ? 45 : 70}%`,
+                transform: `translateY(${lipAmplitude > 0.58 ? 1 : 0}px)`,
+              }}
+            >
+              {lipAmplitude > 0.52 && (
+                <div className="absolute inset-x-1 top-0 h-[32%] rounded-b bg-white/95" />
+              )}
+              {lipAmplitude > 0.76 && (
+                <div className="absolute bottom-0 left-1/2 h-[40%] w-[55%] -translate-x-1/2 rounded-t-full bg-rose-400/90" />
+              )}
             </div>
           </div>
         )}
