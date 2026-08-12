@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Mic, Send, Volume2, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 
 interface DialogueMessage {
   role: "npc" | "user";
@@ -81,8 +82,8 @@ export default function RoleplayPage() {
   // Start recording
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -101,7 +102,7 @@ export default function RoleplayPage() {
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
     } catch (error) {
-      toast.error("Microphone access denied");
+      toast.error(microphoneErrorMessage(error));
     }
   };
 

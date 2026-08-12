@@ -1,4 +1,5 @@
 import { pipeline } from '@xenova/transformers';
+import { createAudioRecorder, requestMicrophoneStream } from './microphoneAccess';
 
 let transcriber: any = null;
 
@@ -139,13 +140,13 @@ export function isWebAudioSupported(): boolean {
 export async function recordAudioFromMicrophone(durationMs: number = 5000): Promise<Blob> {
   return new Promise(async (resolve, reject) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
       const chunks: Blob[] = [];
 
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' });
         stream.getTracks().forEach(track => track.stop());
         resolve(blob);
       };

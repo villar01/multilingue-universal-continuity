@@ -11,6 +11,7 @@ import { useState, useCallback, useRef, useEffect, lazy, Suspense } from "react"
 const SceneLesson = lazy(() => import('./SceneLesson'));
 const SentenceBuilder = lazy(() => import('./SentenceBuilder'));
 import { speakEdgeTTS, stopEdgeTTS, onLipSyncAmplitude } from "@/lib/edgeTTSClient";
+import { createAudioRecorder, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -41,16 +42,10 @@ function levenshteinScore(a: string, b: string): number {
 // Record audio via MediaRecorder (works in all modern browsers)
 async function recordAudioBlob(durationMs = 4000): Promise<Blob | null> {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await requestMicrophoneStream();
     return new Promise((resolve) => {
       const chunks: BlobPart[] = [];
-      // Prefer webm/opus, fallback to whatever is supported
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-        ? 'audio/webm;codecs=opus'
-        : MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : '';
-      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      const recorder = createAudioRecorder(stream);
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
       recorder.onstop = () => {
         stream.getTracks().forEach(t => t.stop());

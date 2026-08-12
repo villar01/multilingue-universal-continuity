@@ -1065,6 +1065,7 @@
 ## 🎙️ MICROFONE — DISPONIBILIDADE NO APLICATIVO
 - [x] Corrigir o estado "microfone não disponível" quando o dispositivo já está configurado no notebook — fluxos principais usam acesso centralizado com HTTPS, permissão, dispositivo ocupado e fallback de codec tratados
 - [ ] Confirmar no navegador do aluno que o microfone inicia a gravação após aceitar a permissão do site
+- [x] Aplicar o acesso centralizado de microfone aos gravadores de pronúncia, lição, demonstração e roleplay que ainda usam a API antiga — varredura confirmou que nenhum gravador de áudio usa `getUserMedia({ audio: true })` diretamente
 
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal

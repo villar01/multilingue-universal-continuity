@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Progress } from "./ui/progress";
 import { Card } from "./ui/card";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 
 interface VoiceRecognitionExerciseProps {
   targetPhrase: string;
@@ -101,7 +102,7 @@ export default function VoiceRecognitionExercise({
 
   const startAudioVisualization = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await requestMicrophoneStream();
       audioContextRef.current = new AudioContext();
       analyserRef.current = audioContextRef.current.createAnalyser();
       const source = audioContextRef.current.createMediaStreamSource(stream);
@@ -123,6 +124,7 @@ export default function VoiceRecognitionExercise({
       updateAudioLevel();
     } catch (error) {
       console.error('Error accessing microphone:', error);
+      toast.error(microphoneErrorMessage(error));
     }
   };
 

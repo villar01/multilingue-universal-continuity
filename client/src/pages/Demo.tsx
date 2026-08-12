@@ -15,6 +15,7 @@ import { trpc } from "@/lib/trpc";
 import { speakEdgeTTS, stopEdgeTTS, onLipSyncAmplitude } from "@/lib/edgeTTSClient";
 import { TEACHERS_57 } from "@/data/teachers57";
 import { toast } from "sonner";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 
 // Lazy load heavy avatar
 const EnhancedTeacherAvatar = lazy(() => import("@/components/EnhancedTeacherAvatar"));
@@ -332,14 +333,13 @@ export default function Demo() {
     setIsRecording(true);
     setPronunciationScore(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await requestMicrophoneStream();
       const chunks: BlobPart[] = [];
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
-      const recorder = new MediaRecorder(stream, { mimeType });
+      const recorder = createAudioRecorder(stream);
       recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
       recorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
-        const blob = new Blob(chunks, { type: mimeType });
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
         const reader = new FileReader();
         reader.onload = async () => {
           try {
@@ -366,9 +366,9 @@ export default function Demo() {
       };
       recorder.start();
       setTimeout(() => recorder.stop(), 3000);
-    } catch {
-      // Mic denied — show friendly message, no error toast
+    } catch (error) {
       setPronunciationScore(-1);
+      toast.error(microphoneErrorMessage(error));
     } finally {
       setIsRecording(false);
     }

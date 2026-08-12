@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { trpc } from "../lib/trpc";
 import { toast } from "sonner";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 
 interface PronunciationExerciseProps {
   vocabulary: string[];
@@ -68,8 +69,8 @@ export default function PronunciationExercise({
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -90,7 +91,7 @@ export default function PronunciationExercise({
       toast.info("Gravando... Fale agora!");
     } catch (error) {
       console.error("Recording error:", error);
-      toast.error("Erro ao acessar microfone");
+      toast.error(microphoneErrorMessage(error));
     }
   };
 

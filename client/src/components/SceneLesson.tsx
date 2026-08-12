@@ -8,6 +8,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
+import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';
 import { IMMERSIVE_SCENES, type Scene, type Hotspot } from '@/pages/ImmersiveScene';
 
 // ── Scene definitions (from ImmersiveScene) ─────────────────────────────────
@@ -202,8 +203,8 @@ export default function SceneLesson({
     setIsRecording(true);
     setPronunciationScore(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const stream = await requestMicrophoneStream();
+      const recorder = createAudioRecorder(stream);
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
       recorder.onstop = () => {

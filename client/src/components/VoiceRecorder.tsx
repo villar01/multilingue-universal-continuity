@@ -10,6 +10,7 @@ import { Mic, MicOff, Loader2, Volume2, CheckCircle2, XCircle } from "lucide-rea
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 
 interface VoiceRecorderProps {
   targetText: string; // Texto que o aluno deve falar
@@ -42,11 +43,8 @@ export default function VoiceRecorder({ targetText, targetLanguage, onSuccess }:
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm'
-      });
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
       
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -75,9 +73,7 @@ export default function VoiceRecorder({ targetText, targetLanguage, onSuccess }:
       });
     } catch (error) {
       console.error("Error accessing microphone:", error);
-      toast.error("Erro ao acessar microfone", {
-        description: "Verifique as permissões do navegador"
-      });
+      toast.error(microphoneErrorMessage(error));
     }
   };
 

@@ -35,6 +35,7 @@ import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
 import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
 import { getLevelByLesson, getLevelConfig, type CEFRLevel } from "@/lib/lesson-levels";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 // Lazy load heavy components
 const ARLearningScene = lazy(() => import("@/components/ARLearningScene").then(m => ({ default: m.ARLearningScene })));
 const VoiceConversation = lazy(() => import("@/components/VoiceConversation"));
@@ -356,8 +357,8 @@ export default function Lesson() {
   // Start recording
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await requestMicrophoneStream();
+      const mediaRecorder = createAudioRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -375,7 +376,7 @@ export default function Lesson() {
       setIsRecording(true);
       toast.info("Gravando...");
     } catch (error) {
-      toast.error("Erro ao acessar microfone");
+      toast.error(microphoneErrorMessage(error));
       console.error(error);
     }
   };
