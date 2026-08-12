@@ -30,7 +30,9 @@ export function useVoiceRecording() {
       setIsRecording(true);
     } catch (error) {
       console.error('Error starting recording:', error);
-      throw new Error('Não foi possível acessar o microfone');
+      // Preserve the native request result so the calling lesson can report and
+      // recover from the actual browser condition instead of a generic blocker.
+      throw error;
     }
   }, []);
 

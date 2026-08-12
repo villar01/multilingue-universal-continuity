@@ -1086,7 +1086,7 @@
 - [x] Substituir orientação de "cadeado" por instruções compatíveis com o ícone de controles do Chrome atual — mensagens atualizadas e varredura confirmou ausência de referência a cadeado
 - [x] Mostrar consentimento explicativo "Ativar microfone" antes do pedido nativo do navegador em fluxos de pronúncia — PolyLesson pergunta antes de abrir o pedido oficial do navegador
 - [x] Corrigir botão de desbloqueio que não reabre a solicitação real de microfone após falha — nova tentativa volta ao pedido nativo após confirmação do aluno
-- [x] Restaurar no PolyLesson o pedido direto de gravação, removendo validações que impedem o navegador de abrir sua autorização nativa — consulta prévia de permissão removida; captura chama getUserMedia diretamente
+- [x] Restaurar no PolyLesson o pedido direto de gravação, removendo validações que impedem o navegador de abrir sua autorização nativa — consulta prévia removida e o gravador preserva o resultado nativo de getUserMedia
 
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
