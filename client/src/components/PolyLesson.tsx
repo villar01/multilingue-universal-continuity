@@ -316,6 +316,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
       'Deseja ativar o microfone para responder ao professor?\n\nO microfone será usado apenas nesta atividade de pronúncia. A gravação começa somente depois da sua confirmação e pode ser interrompida ao final do exercício.',
     );
     if (!approved) return;
+
     setIsRecordingPron(true);
     setPronScore(null);
     setPronHeard('');

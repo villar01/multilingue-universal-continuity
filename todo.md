@@ -1085,6 +1085,8 @@
 - [x] Adicionar detecção ativa de permissão e botão de nova tentativa quando o microfone permanecer indisponível — PolyLesson expõe motivo específico e "Tentar microfone novamente" sem sair da aula
 - [x] Substituir orientação de "cadeado" por instruções compatíveis com o ícone de controles do Chrome atual — mensagens atualizadas e varredura confirmou ausência de referência a cadeado
 - [x] Mostrar consentimento explicativo "Ativar microfone" antes do pedido nativo do navegador em fluxos de pronúncia — PolyLesson pergunta antes de abrir o pedido oficial do navegador
+- [x] Corrigir botão de desbloqueio que não reabre a solicitação real de microfone após falha — nova tentativa volta ao pedido nativo após confirmação do aluno
+- [x] Restaurar no PolyLesson o pedido direto de gravação, removendo validações que impedem o navegador de abrir sua autorização nativa — consulta prévia de permissão removida; captura chama getUserMedia diretamente
 
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
@@ -1095,6 +1097,7 @@
 
 ## 🧑‍🏫 ORGANIZAÇÃO DOCENTE PRÓPRIA
 - [ ] Padronizar a apresentação de professor por idioma, variante regional, origem, especialidade, voz e nível CEFR nas telas prioritárias, mantendo conteúdo e interface originais
+- [ ] Remover fallback global en-US do perfil docente para que dados incompletos nunca criem voz inglesa indevida
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
 - [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB

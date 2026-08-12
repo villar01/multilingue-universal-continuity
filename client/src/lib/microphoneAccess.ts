@@ -18,6 +18,17 @@ export function createAudioRecorder(stream: MediaStream): MediaRecorder {
   return mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
 }
 
+/** Reads the browser's current microphone decision without opening a recorder. */
+export async function getMicrophonePermissionState(): Promise<PermissionState | 'unknown'> {
+  if (typeof navigator === 'undefined' || !navigator.permissions?.query) return 'unknown';
+  try {
+    const status = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+    return status.state;
+  } catch {
+    return 'unknown';
+  }
+}
+
 export async function requestMicrophoneStream(): Promise<MediaStream> {
   if (typeof window === 'undefined' || !window.isSecureContext) {
     throw new MicrophoneAccessError('SECURE_CONTEXT', 'O microfone precisa de uma conexão segura (HTTPS).');
