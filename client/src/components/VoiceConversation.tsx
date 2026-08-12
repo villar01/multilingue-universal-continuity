@@ -6,6 +6,7 @@ import EnhancedTeacherAvatar from "./EnhancedTeacherAvatar";
 import TalkingHeadAvatar from "./TalkingHeadAvatar";
 import { useOfflineSyncDB } from "@/hooks/useOfflineSyncDB";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { canAttachTeacherVideo } from "@/lib/teacherVideoSession";
 import { toast } from "sonner";
 
 interface Message {
@@ -69,6 +70,9 @@ export default function VoiceConversation({
   const animationFrameRef = useRef<number | null>(null);
   const talkingHeadRef = useRef<any>(null);
   const recognitionRef = useRef<any>(null); // Web Speech API
+  const activeSpeechSessionRef = useRef(0);
+  const audioSessionRef = useRef(0);
+  const latestVideoRequestRef = useRef(0);
 
   useEffect(() => {
     void cacheMedia({
@@ -218,6 +222,9 @@ export default function VoiceConversation({
     audioElementRef.current.crossOrigin = "anonymous";
     
     audioElementRef.current.onended = () => {
+      if (audioSessionRef.current === activeSpeechSessionRef.current) {
+        activeSpeechSessionRef.current += 1;
+      }
       setIsSpeaking(false);
       setTeacherEmotion("neutral");
       teacherVideoRef.current?.pause();
@@ -421,35 +428,41 @@ export default function VoiceConversation({
         gender: activeTeacher.gender === "male" ? "MALE" : "FEMALE",
       });
 
-      // HYBRID AVATAR LOGIC
+      const speechSession = activeSpeechSessionRef.current + 1;
+      activeSpeechSessionRef.current = speechSession;
+      audioSessionRef.current = speechSession;
+
+      // HYBRID AVATAR LOGIC. The video is visual-only and may finish after
+      // the neural MP3; in that case it is discarded instead of reappearing
+      // out of sync with a completed teacher response.
       if (isOnline) {
-        // Online: Generate photorealistic video with LivePortrait
         setIsGeneratingVideo(true);
+        latestVideoRequestRef.current = speechSession;
         toast.info("🎬 Gerando avatar fotorrealista...");
-        
-        try {
-          const videoResult = await animateLivePortrait.mutateAsync({
+
+        void animateLivePortrait.mutateAsync({
             audioUrl: ttsResult.audioUrl,
             imageUrl: activeTeacher.imageUrl,
-          });
+          }).then((videoResult) => {
+            const audio = audioElementRef.current;
+            const audioStillPlaying = Boolean(audio && !audio.paused && !audio.ended);
+            if (!canAttachTeacherVideo(speechSession, activeSpeechSessionRef.current, audioStillPlaying)) {
+              return;
+            }
 
-          setAnimatedVideoUrl(videoResult.videoUrl);
-          void cacheMedia({ id: cachedVideoId, url: videoResult.videoUrl, type: "video" });
-          
-          // Play video
-          const videoElement = document.getElementById("photorealistic-video") as HTMLVideoElement;
-          if (videoElement) {
-            videoElement.src = videoResult.videoUrl;
-            videoElement.play();
-          }
-          
-          setIsGeneratingVideo(false);
-          toast.success("✅ Avatar fotorrealista pronto!");
-        } catch (error) {
-          console.error("[VoiceConversation] LivePortrait error:", error);
-          toast.error("Erro ao gerar vídeo. Usando avatar 3D.");
-          setIsOnline(false); // Fallback to offline mode
-        }
+            setAnimatedVideoUrl(videoResult.videoUrl);
+            void cacheMedia({ id: cachedVideoId, url: videoResult.videoUrl, type: "video" });
+            toast.success("✅ Avatar fotorrealista pronto!");
+          }).catch((error) => {
+            if (speechSession === activeSpeechSessionRef.current) {
+              console.error("[VoiceConversation] LivePortrait error:", error);
+              toast.error("Erro ao gerar vídeo. Usando avatar 3D.");
+            }
+          }).finally(() => {
+            if (speechSession === latestVideoRequestRef.current) {
+              setIsGeneratingVideo(false);
+            }
+          });
       }
       
       // O MP3 neural abaixo é a fonte única de áudio em ambos os modos.

@@ -302,7 +302,7 @@
 - [x] Impedir que o vídeo animado e o MP3 neural reproduzam voz ao mesmo tempo no AnimatedTeacher — vídeo é camada visual silenciosa; somente o MP3 neural sincronizado é audível
 - [x] Impedir que o vídeo fotorrealista e o MP3 neural reproduzam voz ao mesmo tempo na VoiceConversation — vídeo e avatar offline são visuais; apenas o MP3 neural é audível
 - [x] Iniciar o vídeo visual da VoiceConversation no mesmo evento `onplay` do MP3 neural — vídeo silencioso inicia, pausa e reinicia junto do ciclo do áudio neural
-- [ ] Descartar vídeo fotorrealista que termine de gerar após o MP3 neural já ter encerrado
+- [x] Descartar vídeo fotorrealista que termine de gerar após o MP3 neural já ter encerrado — VoiceConversation controla sessões de fala, só anexa vídeo durante o MP3 ativo e limpa corretamente o estado de carregamento; TypeScript e 79 testes aprovados
 
 ## 🎬 VÍDEOS EDUCACIONAIS ORIGINAIS (INSPIRADO EM MELHORES PRÁTICAS)
 - [ ] Criar estrutura de vídeos curtos (2-5 min) por conceito
@@ -345,7 +345,7 @@
 - [x] Aguardar carregamento de vozes do browser antes de falar (onvoiceschanged)
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
 - [x] Garantir por teste que uma lição de inglês não pode resolver professor ou voz de português por fallback genérico — `en` feminino resolve Sarah/en-US e rejeita `prof-pt-br`; regressões de catálogo e voz aprovadas
-- [ ] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma
+- [x] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma — `resolveVoice` recusa idioma desconhecido, seletor filtra a mesma família linguística e regressões de contexto validam a rejeição de voz estrangeira
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
 - [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice
