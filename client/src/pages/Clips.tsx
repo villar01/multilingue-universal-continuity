@@ -37,8 +37,18 @@ export default function Clips() {
   const { data: clips, isLoading, error } = trpc.clips.getClips.useQuery({ limit: 50 });
   const [selectedClip, setSelectedClip] = useState<number | null>(null);
   const [likedClips, setLikedClips] = useState<Set<number>>(new Set());
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [levelFilter, setLevelFilter] = useState("all");
 
   const selectedClipData = clips?.find((c) => c.id === selectedClip);
+  const availableCategories = Array.from(new Set((clips || []).map((clip) => clip.category).filter(Boolean))) as string[];
+  const availableLevels = ["A1", "A2", "B1", "B2", "C1", "C2"].filter((level) =>
+    (clips || []).some((clip) => clip.cefrLevel === level)
+  );
+  const visibleClips = (clips || []).filter((clip) =>
+    (categoryFilter === "all" || clip.category === categoryFilter) &&
+    (levelFilter === "all" || clip.cefrLevel === levelFilter)
+  );
 
   const formatDuration = (seconds: number | null) => {
     if (!seconds) return "35 min";
@@ -89,7 +99,7 @@ export default function Clips() {
             </Link>
             <div>
               <h1 className="text-xl font-bold">🎬 Clipes Educacionais</h1>
-              <p className="text-xs text-gray-400">Aprenda com vídeos de 35 minutos</p>
+              <p className="text-xs text-gray-400">Microclipes guiados por conceito e nível</p>
             </div>
           </div>
           <Badge className="bg-purple-600 text-white">{clips?.length || 0} clipes</Badge>
@@ -102,12 +112,31 @@ export default function Clips() {
           <div className="flex items-center gap-3">
             <div className="text-3xl">🥽</div>
             <div>
-              <h2 className="font-bold text-purple-200">Base para Realidade Aumentada</h2>
+              <h2 className="font-bold text-purple-200">Aprendizagem guiada por professora</h2>
               <p className="text-sm text-gray-300">
-                Clipes de 35 minutos com estrutura preparada para AR. Professor virtual integrado em breve.
+                Cada clipe apresenta vocabulário em contexto, nível CEFR e a identificação da professora responsável.
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-gray-800 bg-gray-900/70 p-3">
+          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">Filtrar acervo</span>
+          <label className="flex items-center gap-2 text-sm text-gray-300">
+            Tema
+            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1.5 text-sm text-white outline-none focus:border-purple-500">
+              <option value="all">Todos os temas</option>
+              {availableCategories.map((category) => <option key={category} value={category}>{CATEGORY_LABELS[category] || category}</option>)}
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-300">
+            Nível
+            <select value={levelFilter} onChange={(event) => setLevelFilter(event.target.value)} className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1.5 text-sm text-white outline-none focus:border-purple-500">
+              <option value="all">Todos os níveis</option>
+              {availableLevels.map((level) => <option key={level} value={level}>{level}</option>)}
+            </select>
+          </label>
+          <span className="ml-auto text-sm text-gray-400">{visibleClips.length} de {clips?.length || 0} clipes</span>
         </div>
 
         {/* Clips Grid */}
@@ -118,8 +147,11 @@ export default function Clips() {
             <p className="text-gray-500">Os clipes estão sendo preparados. Volte em breve!</p>
           </div>
         ) : (
+          visibleClips.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-gray-700 py-12 text-center text-gray-400">Nenhum clipe corresponde aos filtros selecionados.</div>
+          ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {clips.map((clip) => (
+            {visibleClips.map((clip) => (
               <Card
                 key={clip.id}
                 className="bg-gray-900 border-gray-700 overflow-hidden hover:border-purple-500 transition-all cursor-pointer group hover:scale-[1.02]"
@@ -170,6 +202,7 @@ export default function Clips() {
               </Card>
             ))}
           </div>
+          )
         )}
       </div>
 

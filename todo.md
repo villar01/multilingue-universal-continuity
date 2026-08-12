@@ -246,7 +246,7 @@
 - [x] Criar página de biblioteca de clipes educacionais — rota /clips validada com os cinco registros do banco
 - [x] Adicionar thumbnails dos professores nos clipes — a biblioteca /clips agora mostra retrato e nome docente nos cards e no modal; Ingrid foi validada visualmente nos cinco clipes familiares
 - [x] Exibir a Professora Ingrid no player de vocabulário familiar — retrato durável e atribuição pedagógica visíveis no FamilyVocabularyClips
-- [ ] Organizar clipes por tema e nível de dificuldade
+- [x] Organizar clipes por tema e nível de dificuldade — biblioteca /clips possui filtros dinâmicos de tema e CEFR, contador de resultados e estado vazio
 - [ ] Testar sistema completo de clipes originais
 
 ## 🎬 AUMENTAR DURAÇÃO DOS CLIPES PARA 35 MINUTOS
@@ -351,7 +351,7 @@
 ## 🎬 LIP-SYNC ATIVO + BIBLIOTECA DE CLIPES 30 MIN
 - [ ] Ativar lip-sync durante gravação da lição (conectar isTeaching ao estado de gravação)
 - [ ] Criar página /clips com biblioteca de clipes de 30 minutos
-- [ ] Organizar clipes por tema (família, trabalho, viagens) e nível (beginner, intermediate, advanced)
+- [x] Organizar clipes por tema (família, trabalho, viagens) e nível (beginner, intermediate, advanced) — filtros da biblioteca são dirigidos pelos temas e níveis existentes no banco
 - [x] Adicionar thumbnails dos professores nos cards de clipes — cards dos cinco clipes familiares exibem retrato e nome da Professora Ingrid
 
 ## 🐛 BUG: GRAVAÇÃO NÃO PARA
@@ -1043,3 +1043,7 @@
 ## 🎬 BIBLIOTECA DE CLIPES — ATRIBUIÇÃO DOCENTE
 - [x] Adicionar metadados de professora/professor aos registros de clipes e exibir retrato/nome docente nos cards e modal da página /clips
 - [x] Validar visualmente a biblioteca /clips após mostrar retratos dos professores nos clipes — cinco cards A1 exibiram Professora Ingrid
+
+## 🐛 BIBLIOTECA DE CLIPES — TEXTOS CONSISTENTES
+- [x] Remover referências fixas a vídeos de 35 minutos da biblioteca enquanto o acervo atual contém microclipes de 8 segundos — validação visual confirmou texto coerente
+- [x] Atualizar o aviso de realidade aumentada para refletir a instrutora já disponível, sem prometer recurso ainda não integrado ao clipe — validação visual concluída
