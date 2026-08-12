@@ -525,9 +525,11 @@ export default function ActivePauseLessonPlayer({
   const [score, setScore] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const teacherAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const generateContentMutation = trpc.ai.generateLessonContent.useMutation();
   const freeChatMutation = trpc.ai.freeChat.useMutation();
+  const googleTtsMutation = trpc.ttsGoogle.generate.useMutation();
 
   // Generate lesson sentences with active pause structure
   useEffect(() => {
@@ -717,12 +719,32 @@ Rules:
   const progress = sentences.length > 0 ? ((currentIdx + 1) / sentences.length) * 100 : 0;
   const totalCompleted = completedSentences.size;
 
-  const speak = useCallback((text: string) => {
+  const speak = useCallback(async (text: string) => {
+    teacherAudioRef.current?.pause();
+    const gender = /ricardo|james|carlos|hans|omar|emre|ivan/i.test(teacherName) ? "MALE" : "FEMALE";
+    try {
+      const result = await googleTtsMutation.mutateAsync({
+        text: text.slice(0, 500),
+        languageCode,
+        gender,
+      });
+      if (result.audioUrl) {
+        const audio = new Audio(result.audioUrl);
+        teacherAudioRef.current = audio;
+        audio.onplay = () => setIsSpeaking(true);
+        audio.onended = () => setIsSpeaking(false);
+        audio.onerror = () => setIsSpeaking(false);
+        await audio.play();
+        return;
+      }
+    } catch {
+      // Browser synthesis remains available when a network TTS provider is unavailable.
+    }
     speakText(text, languageCode, {
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
-  }, [languageCode]);
+  }, [googleTtsMutation, languageCode, teacherName]);
 
   const handleExerciseComplete = (correct: boolean, userAnswer: string) => {
     if (correct) {

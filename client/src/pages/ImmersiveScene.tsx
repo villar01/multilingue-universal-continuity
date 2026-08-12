@@ -11,6 +11,8 @@ import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
+import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
+import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 
 // ─── Teacher map: idioma do aluno → professor ─────────────────────────────────
 const LANG_TEACHERS: Record<string, { name: string; image: string }> = {
@@ -854,6 +856,7 @@ function TeacherAvatar({
   showGreeting,
   isSpeaking,
   spokenText,
+  audioViseme,
   overrideName,
   overrideImage,
 }: {
@@ -862,10 +865,18 @@ function TeacherAvatar({
   showGreeting: boolean;
   isSpeaking?: boolean;
   spokenText?: string;
+  audioViseme?: VisemeData | null;
   overrideName?: string;
   overrideImage?: string;
 }) {
   const { viseme, mouthStyle } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
+  const synchronizedMouthStyle = audioViseme
+    ? {
+        width: `${Math.max(7, audioViseme.mouthWidth * 0.22)}%`,
+        height: `${Math.max(2, audioViseme.mouthHeight * 0.22)}%`,
+        borderRadius: `${Math.max(38, 48 + audioViseme.lipRound * 0.25)}%`,
+      }
+    : mouthStyle;
   return (
     <div
       className="absolute bottom-0 right-4 flex flex-col items-center z-30"
@@ -949,12 +960,12 @@ function TeacherAvatar({
               top: "35%",
               left: "50%",
               transform: "translateX(-50%)",
-              ...mouthStyle,
+              ...synchronizedMouthStyle,
               background: "rgba(139,69,69,0.3)",
               transition: "width 75ms linear, height 75ms linear, border-radius 75ms linear",
               pointerEvents: "none",
             }}
-            aria-label={`Viseme ${viseme}`}
+            aria-label={audioViseme ? "Viseme sincronizado ao áudio" : `Viseme ${viseme}`}
           />
         )}
         {/* Hand gesture overlay — visible when explaining */}
@@ -1170,7 +1181,7 @@ const LANG_LABELS: Record<string, { flag: string; name: string }> = {
 export default function ImmersiveScene() {
   const [, setLocation] = useLocation();
   // ── Single source of truth: LanguageContext ──
-  const { profile, setProfile } = useLanguage();
+  const { profile, setProfile, immersionMode } = useLanguage();
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -1262,7 +1273,31 @@ export default function ImmersiveScene() {
 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
+  const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
+  const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
+  const { syncWithAudio, stop: stopVisemeSync } = useTTSVisemeSync(handleAudioViseme);
+
+  const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, revokeOnEnd = false) => {
+    const audio = new Audio(source);
+    audioRef.current = audio;
+    audio.onplay = () => setIsSpeaking(true);
+    audio.onended = () => {
+      stopVisemeSync();
+      setAudioViseme(null);
+      setIsSpeaking(false);
+      if (revokeOnEnd) URL.revokeObjectURL(source);
+    };
+    audio.onerror = () => {
+      stopVisemeSync();
+      setAudioViseme(null);
+      setIsSpeaking(false);
+      if (revokeOnEnd) URL.revokeObjectURL(source);
+    };
+    syncWithAudio(audio, phrase, language);
+    await audio.play();
+  }, [stopVisemeSync, syncWithAudio]);
 
   // Speak using Microsoft Neural TTS (server) — fallback to browser speech
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female') => {
@@ -1270,17 +1305,24 @@ export default function ImmersiveScene() {
     // Stop any currently playing audio
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     stopEdgeTTS();
+    const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
     try {
-      const r = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female') });
+      const googleAudio = await googleTtsMut.mutateAsync({
+        text: text.slice(0, 500),
+        languageCode: lang,
+        gender: teacherGender === "male" ? "MALE" : "FEMALE",
+      });
+      if (googleAudio.audioUrl) {
+        await playTeacherAudio(googleAudio.audioUrl, text, lang);
+        return;
+      }
+    } catch { /* Preserve the existing neural-TTS fallback. */ }
+    try {
+      const r = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
       if (r.success && r.audioBase64) {
         const bytes = Uint8Array.from(atob(r.audioBase64), c => c.charCodeAt(0));
         const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
-        const audio = new Audio(url);
-        audioRef.current = audio;
-        audio.onplay = () => setIsSpeaking(true);
-        audio.onended = () => { setIsSpeaking(false); URL.revokeObjectURL(url); };
-        audio.onerror = () => { setIsSpeaking(false); URL.revokeObjectURL(url); };
-        await audio.play();
+        await playTeacherAudio(url, text, lang, true);
         return;
       }
     } catch { /* fallback below */ }
@@ -1290,7 +1332,7 @@ export default function ImmersiveScene() {
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
-  }, [ttsMut]);
+  }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, ttsMut]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
@@ -1694,17 +1736,17 @@ export default function ImmersiveScene() {
           </button>
           <div className="flex items-center gap-2 text-white font-bold" style={{ fontSize: "clamp(13px, 1.8vw, 18px)" }}>
             <span>{selectedScene.flag}</span>
-            <span>{selectedScene.name}</span>
+            <span>{immersionMode ? selectedScene.nameEn : selectedScene.name}</span>
           </div>
           <div className="flex items-center gap-2">
-            {/* Idioma nativo: fundo branco, letra azul — confirma que está correto */}
-            <div
+            {/* Idioma nativo: fica oculto durante a imersão total */}
+            {!immersionMode && <div
               style={{ background: "#ffffff", color: "#1d4ed8", border: "1.5px solid #93c5fd", borderRadius: "9999px", padding: "4px 10px", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}
               title={`Idioma nativo: ${nativeLang}`}
             >
               <span>{nativeLangInfo.flag}</span>
               <span style={{ textTransform: "uppercase", letterSpacing: 1 }}>{nativeLang.split("-")[0].toUpperCase()}</span>
-            </div>
+            </div>}
             {/* Language picker button */}
             <div style={{ position: "relative" }}>
               <button
@@ -1755,6 +1797,7 @@ export default function ImmersiveScene() {
               langName={currentLangInfo.name || selectedScene.name}
               compact
             />
+            <ImmersionModeToggle compact />
             <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
             <button
               onClick={() => setParetoOpen(true)}
@@ -1872,6 +1915,7 @@ export default function ImmersiveScene() {
           showGreeting={showGreeting}
           isSpeaking={isSpeaking}
           spokenText={greetingText}
+          audioViseme={audioViseme}
           overrideName={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).name}
           overrideImage={getTeacherForLang(targetLang, { name: selectedScene.teacherName, image: selectedScene.teacherImage }).image}
         />

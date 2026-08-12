@@ -29,9 +29,14 @@ import ReferralWidget from "@/components/ReferralWidget";
 import { SocialShare } from "@/components/SocialShare";
 import NotificationCenter from "@/components/NotificationCenter";
 import { buildLessonProgression } from "@/lib/lessonProgression";
+import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getUIStrings } from "@/lib/i18n";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const { profile, immersionMode } = useLanguage();
+  const targetStrings = getUIStrings(profile.targetCode);
   
   // Buscar estatísticas reais do usuário
   const { data: userStats, isLoading: loadingStats } = trpc.progress.getStats.useQuery(undefined, {
@@ -165,6 +170,7 @@ export default function Dashboard() {
                 <Trophy className="h-5 w-5" />
                 <span className="font-bold">{totalXP} XP</span>
               </div>
+              <ImmersionModeToggle compact />
               <NotificationBell />
               <Button variant="ghost" onClick={logout}>Sair</Button>
             </div>
@@ -176,15 +182,15 @@ export default function Dashboard() {
         {/* Welcome Section with Global Progress */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Olá, {user?.name}! 👋
+            {immersionMode ? `${targetStrings.dashboard}, ${user?.name}!` : `Olá, ${user?.name}! 👋`}
           </h1>
           <p className="text-gray-600 mb-4">
-            Continue sua jornada de aprendizado hoje
+            {immersionMode ? `${targetStrings.continue} ${targetStrings.lessons.toLowerCase()}.` : "Continue sua jornada de aprendizado hoje"}
           </p>
           {/* Global Progress Bar */}
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Progresso do curso</span>
+              <span className="text-sm font-semibold text-gray-700">{immersionMode ? targetStrings.progress : "Progresso do curso"}</span>
               <span className="text-sm font-bold text-indigo-600">
                 {Math.round((lessonsCompleted / Math.max(totalLessons, 1)) * 100)}%
               </span>
@@ -194,8 +200,8 @@ export default function Dashboard() {
               className="h-3"
             />
             <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-              <span>{lessonsCompleted} de {totalLessons} lições completas</span>
-              <span>Nível {level} · {level <= 2 ? 'A1-A2' : level <= 4 ? 'B1-B2' : 'C1-C2'}</span>
+              <span>{immersionMode ? `${lessonsCompleted}/${totalLessons} ${targetStrings.lessons}` : `${lessonsCompleted} de ${totalLessons} lições completas`}</span>
+              <span>{immersionMode ? `${targetStrings.level} ${level}` : `Nível ${level}`} · {level <= 2 ? 'A1-A2' : level <= 4 ? 'B1-B2' : 'C1-C2'}</span>
             </div>
           </div>
           {adaptiveRecommendation && (

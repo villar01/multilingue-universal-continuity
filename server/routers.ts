@@ -2383,6 +2383,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           text: z.string(),
           languageCode: z.string().default("pt-BR"),
           voiceName: z.string().optional(),
+          gender: z.enum(["MALE", "FEMALE", "NEUTRAL"]).optional(),
         })
       )
       .mutation(async ({ input }) => {
@@ -2394,6 +2395,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           text: input.text,
           languageCode: input.languageCode, // ex: "en-US", "pt-BR"
           voiceName: input.voiceName || undefined,
+          voiceGender: input.gender || "NEUTRAL",
         });
         
         return {

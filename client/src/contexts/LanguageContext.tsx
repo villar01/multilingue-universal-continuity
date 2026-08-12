@@ -20,6 +20,8 @@ const DEFAULT_PROFILE: LanguageProfile = {
 interface LanguageContextType {
   profile: LanguageProfile;
   setProfile: (p: LanguageProfile) => void;
+  immersionMode: boolean;
+  setImmersionMode: (enabled: boolean) => void;
   speak: (text: string, lang?: string) => void;
   speakNative: (text: string) => void;
   speakTarget: (text: string) => void;
@@ -71,10 +73,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       return DEFAULT_PROFILE;
     }
   });
+  const [immersionMode, setImmersionModeState] = useState(() => localStorage.getItem("ml_immersion_mode") === "true");
 
   const setProfile = useCallback((p: LanguageProfile) => {
     setProfileState(p);
     localStorage.setItem("ml_lang_profile", JSON.stringify(p));
+  }, []);
+  const setImmersionMode = useCallback((enabled: boolean) => {
+    setImmersionModeState(enabled);
+    localStorage.setItem("ml_immersion_mode", String(enabled));
   }, []);
 
   // Delegates to centralized speakText from useNaturalVoice (full BCP-47 map, best-voice selection)
@@ -86,7 +93,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const speakTarget = useCallback((text: string) => speak(text, profile.targetCode), [speak, profile.targetCode]);
 
   return (
-    <LanguageContext.Provider value={{ profile, setProfile, speak, speakNative, speakTarget }}>
+    <LanguageContext.Provider value={{ profile, setProfile, immersionMode, setImmersionMode, speak, speakNative, speakTarget }}>
       {children}
     </LanguageContext.Provider>
   );

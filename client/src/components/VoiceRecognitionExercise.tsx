@@ -9,7 +9,7 @@ import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 interface VoiceRecognitionExerciseProps {
   targetPhrase: string;
-  targetLanguage: "en-US" | "pt-BR" | "es-ES" | "fr-FR" | "de-DE";
+  targetLanguage: string;
   onComplete: (score: number, correct: boolean) => void;
   difficulty?: "easy" | "medium" | "hard";
 }

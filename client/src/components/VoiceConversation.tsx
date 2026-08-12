@@ -95,7 +95,7 @@ export default function VoiceConversation({
   // Mutations
   const transcribeAudio = trpc.voiceTranscription.transcribe.useMutation();
   const continueConversation = trpc.bilingualConversation.continue.useMutation();
-  const generateTTS = trpc.tts.generate.useMutation();
+  const generateTTS = trpc.ttsGoogle.generate.useMutation();
   const animateLivePortrait = trpc.livePortrait.animate.useMutation();
   const offlineAI = trpc.offlineAI.generate.useMutation();
 
@@ -405,6 +405,7 @@ export default function VoiceConversation({
       const ttsResult = await generateTTS.mutateAsync({
         text: isPortugueseLesson ? portuguese : (english || portuguese),
         languageCode: languageCode,
+        gender: activeTeacher.gender === "male" ? "MALE" : "FEMALE",
       });
 
       // HYBRID AVATAR LOGIC

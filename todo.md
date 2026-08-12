@@ -41,7 +41,7 @@
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
-- [ ] Integração com Google TTS para timing preciso — ttsGoogle router existe mas não integrado nos fluxos de avatar/lip-sync
+- [ ] Integração com Google TTS para timing preciso — ImmersiveScene prioriza Google Neural TTS, preserva gênero e sincroniza visemes pelo áudio; integrar os demais fluxos de avatar/lip-sync ainda pendente
 - [x] Cache de vídeos gerados em S3 — LivePortrait baixa o MP4 concluído, armazena em video-cache/liveportrait no S3 e retorna a URL estável; mantém fallback seguro para a URL do provedor
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 
@@ -92,7 +92,7 @@
 - [ ] Modo competitivo multiplayer
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
-- [ ] Modo imersão total — texto marketing existe mas interface real no idioma-alvo não implementada
+- [ ] Modo imersão total — preferência persistente implementada na LanguageContext e controle ativo na ImmersiveScene (cena em idioma-alvo, rótulo nativo oculto); aplicar o modo em Dashboard e Lesson ainda pendente
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
 - [x] Adicionar "mom" ao vocabulário
@@ -135,7 +135,7 @@
 ## 🎓 MÉTODO APA (ADQUIRIR, PRATICAR, AJUSTAR)
 - [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
-- [ ] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview agora chama análise gramatical por IA e explica cada correção; scoring de pronúncia por áudio ainda pendente
+- [x] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview chama análise gramatical por IA, explica cada correção e inclui exercício de microfone com pontuação de pronúncia
 - [ ] Implementar sistema de adaptação ao nível do usuário — badge e progressão visual ok, mas adaptação real de exercícios por XP/erros do usuário pendente
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
@@ -286,7 +286,7 @@
 - [x] Criar mapeamento phoneme→viseme (A, B, C, D, E, F, G, H, X) — useVisemeSequence converte o texto falado em visemes e muda a forma da boca do professor imersivo
 - [ ] Integrar Web Speech API para análise em tempo real
 - [x] Implementar transições suaves entre visemes (interpolação) — mudanças de largura, altura e curvatura da boca usam transição curta para cada viseme
-- [ ] Sincronizar movimento labial com timestamp do áudio
+- [x] Sincronizar movimento labial com timestamp do áudio — TTSVisemeSync agora usa currentTime do áudio, respeita play/pause/seek e ajusta a linha de visemas à duração real do MP3
 - [ ] Adicionar micro-expressões faciais (piscadas, sobrancelhas)
 
 ## 🎬 VÍDEOS EDUCACIONAIS ORIGINAIS (INSPIRADO EM MELHORES PRÁTICAS)

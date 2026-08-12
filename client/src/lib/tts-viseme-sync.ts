@@ -150,6 +150,8 @@ export class TTSVisemeSync {
   private animationFrame: number | null = null;
   private onVisemeChange: (viseme: VisemeData) => void;
   private isPlaying: boolean = false;
+  private audioElement: HTMLAudioElement | null = null;
+  private audioTimelineScale: number = 1;
   
   constructor(onVisemeChange: (viseme: VisemeData) => void) {
     this.onVisemeChange = onVisemeChange;
@@ -162,6 +164,8 @@ export class TTSVisemeSync {
     this.stop();
     
     this.phonemes = extractPhonemesWithTiming(text, language);
+    this.audioElement = null;
+    this.audioTimelineScale = 1;
     this.startTime = Date.now();
     this.isPlaying = true;
     
@@ -173,6 +177,7 @@ export class TTSVisemeSync {
    */
   stop() {
     this.isPlaying = false;
+    this.audioElement = null;
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
@@ -207,7 +212,9 @@ export class TTSVisemeSync {
   private animate = () => {
     if (!this.isPlaying) return;
     
-    const currentTime = Date.now() - this.startTime;
+    const currentTime = this.audioElement
+      ? this.audioElement.currentTime * 1000 * this.audioTimelineScale
+      : Date.now() - this.startTime;
     
     // Encontrar phoneme atual
     const currentPhoneme = this.phonemes.find(
@@ -266,6 +273,19 @@ export class TTSVisemeSync {
    */
   syncWithAudio(audioElement: HTMLAudioElement, text: string, language: string = "pt-BR") {
     this.phonemes = extractPhonemesWithTiming(text, language);
+    this.audioElement = audioElement;
+    const estimatedTimeline = this.phonemes.reduce(
+      (end, phoneme) => Math.max(end, phoneme.start + phoneme.duration),
+      1,
+    );
+    const updateAudioTimelineScale = () => {
+      const mediaDuration = audioElement.duration * 1000;
+      this.audioTimelineScale = Number.isFinite(mediaDuration) && mediaDuration > 0
+        ? estimatedTimeline / mediaDuration
+        : 1;
+    };
+    audioElement.addEventListener("loadedmetadata", updateAudioTimelineScale, { once: true });
+    updateAudioTimelineScale();
     
     audioElement.addEventListener("play", () => {
       this.startTime = Date.now() - (audioElement.currentTime * 1000);

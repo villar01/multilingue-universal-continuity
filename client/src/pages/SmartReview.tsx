@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Brain, CheckCircle2, XCircle, RefreshCw, Sparkles, Trophy } from "lucide-react";
+import VoiceRecognitionExercise from "@/components/VoiceRecognitionExercise";
 
 type Exercise = {
   type: "multiple_choice" | "fill_blank" | "translation" | "matching";
@@ -23,6 +24,11 @@ type GrammarAnalysis = {
   errors: Array<{ original: string; corrected: string; explanation: string }>;
   correctedText: string;
   feedback: string;
+};
+
+const speechLanguageByTarget: Record<string, string> = {
+  en: "en-US", pt: "pt-BR", es: "es-ES", fr: "fr-FR", de: "de-DE",
+  it: "it-IT", ja: "ja-JP", zh: "zh-CN", ko: "ko-KR", ru: "ru-RU",
 };
 
 export default function SmartReview() {
@@ -277,6 +283,16 @@ export default function SmartReview() {
                       <span className="text-sm font-medium">
                         {isCorrect ? "Correto!" : `Resposta correta: ${currentExercise.correctAnswer}`}
                       </span>
+                    </div>
+                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-3 dark:border-indigo-900 dark:bg-indigo-950/20">
+                      <p className="mb-2 text-sm font-semibold text-indigo-950 dark:text-indigo-100">Ajustar pronúncia com o microfone</p>
+                      <VoiceRecognitionExercise
+                        key={`${currentIndex}-${currentExercise.correctAnswer}`}
+                        targetPhrase={currentExercise.correctAnswer}
+                        targetLanguage={speechLanguageByTarget[targetLanguage] || targetLanguage || "en-US"}
+                        difficulty="easy"
+                        onComplete={() => undefined}
+                      />
                     </div>
                     {!isCorrect && (
                       <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-1">
