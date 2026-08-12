@@ -4,6 +4,7 @@
  */
 import React, { useState, useMemo } from "react";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
+import { getLanguageBase, isTeacherVoiceCompatibleWithTarget } from "@shared/languageContext";
 
 interface TeacherSelectorUniversalProps {
   selectedTeacherId?: string;
@@ -11,6 +12,7 @@ interface TeacherSelectorUniversalProps {
   onClose?: () => void;
   compact?: boolean;
   title?: string;
+  languageCode?: string;
 }
 
 const REGIONS = [
@@ -36,13 +38,17 @@ export const TeacherSelectorUniversal: React.FC<TeacherSelectorUniversalProps> =
   onClose,
   compact = false,
   title = "Escolha seu Professor",
+  languageCode,
 }) => {
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState("all");
   const [gender, setGender] = useState<GenderFilter>("all");
 
   const filtered = useMemo(() => {
-    let list = TEACHERS_57;
+    const hasTargetLanguage = Boolean(getLanguageBase(languageCode));
+    let list = hasTargetLanguage
+      ? TEACHERS_57.filter((teacher) => isTeacherVoiceCompatibleWithTarget(teacher.voiceLang, languageCode))
+      : [];
 
     if (region !== "all") {
       const codes = REGION_MAP[region] || [];
@@ -64,7 +70,7 @@ export const TeacherSelectorUniversal: React.FC<TeacherSelectorUniversalProps> =
     }
 
     return list;
-  }, [search, region, gender]);
+  }, [search, region, gender, languageCode]);
 
   return (
     <div className={`flex flex-col ${compact ? "h-full" : "min-h-screen"} bg-gray-950 text-white`}>
@@ -74,7 +80,7 @@ export const TeacherSelectorUniversal: React.FC<TeacherSelectorUniversalProps> =
         <div>
           <h2 className="text-lg font-bold">{title}</h2>
           <p className="text-xs text-white/50">
-            {filtered.length} de {TEACHERS_57.length} professores disponíveis
+            {languageCode ? `${filtered.length} professores compatíveis disponíveis` : "Selecione primeiro o idioma de estudo"}
           </p>
         </div>
         {onClose && (
@@ -153,7 +159,7 @@ export const TeacherSelectorUniversal: React.FC<TeacherSelectorUniversalProps> =
 
       {/* Footer info */}
       <div className="px-4 py-3 border-t border-white/10 text-center text-xs text-white/40">
-        💡 Você pode trocar de professor a qualquer momento
+        💡 Você pode trocar de professor entre os perfis compatíveis com o idioma de estudo
       </div>
     </div>
   );

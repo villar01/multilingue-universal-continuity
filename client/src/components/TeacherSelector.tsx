@@ -8,6 +8,7 @@ import { matchTeacherCatalog } from "@/lib/teacherCatalogMatch";
 import { getTeacherCardDetails } from "@/lib/teacherCardDetails";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { TEACHERS_57 } from "@/data/teachers57";
+import { getLanguageBase, isTeacherVoiceCompatibleWithTarget } from "@shared/languageContext";
 
 interface TeacherSelectorProps {
   languageCode: string;
@@ -58,8 +59,7 @@ export default function TeacherSelector({
 
   // Extract short language code (e.g., "fr" from "fr-FR" or "fr")
   const lessonLangShort = useMemo(() => {
-    const code = (languageCode || 'en').toLowerCase();
-    return code.split('-')[0];
+    return getLanguageBase(languageCode);
   }, [languageCode]);
 
   // Build merged teacher list: combine DB teachers WITH TEACHERS_57 teachers
@@ -77,9 +77,10 @@ export default function TeacherSelector({
           // O catálogo curado é a fonte visual canônica; evita que URLs legadas
           // indisponíveis do banco substituam retratos profissionais válidos.
           photoUrl: t57?.photo || t.photoUrl || t.photo_url || null,
-          voiceLanguageCode: t.voiceLanguageCode || t.voice_language_code || t57?.voiceLang || languageCode,
+          voiceLanguageCode: t.voiceLanguageCode || t.voice_language_code || t57?.voiceLang || "",
           gender: t.gender || t57?.gender || 'female',
           name: t.name || t57?.name || 'Professor',
+          greeting: t57?.greeting || t.greeting || "",
           personality: t.personality || t57?.personality,
           specialty: t.specialty || t57?.specialty || t.teaching_style || 'Conversação e Gramática',
           origin: t57?.origin || '',
@@ -94,7 +95,7 @@ export default function TeacherSelector({
     // 2. Add TEACHERS_57 teachers that match the LESSON language
     //    This fills in missing teachers (e.g., female English teachers if DB only has male)
     TEACHERS_57.forEach((t57, idx) => {
-      const langShort = t57.langCode.toLowerCase().split('-')[0];
+      const langShort = getLanguageBase(t57.voiceLang);
       // Only add teachers for the LESSON's language (lessonLangShort)
       if (langShort !== lessonLangShort) return;
       // Avoid duplicates: skip if a DB teacher already has the same name
@@ -109,6 +110,7 @@ export default function TeacherSelector({
         photoUrl: t57.photo || null,
         personality: t57.personality,
         specialty: t57.specialty,
+        greeting: t57.greeting,
         origin: t57.origin,
         flag: t57.flag,
         langName: t57.language,
@@ -120,15 +122,13 @@ export default function TeacherSelector({
 
   // FILTER teachers by the lesson's language
   const teachersForLanguage = useMemo(() => {
-    const matched = allTeachers.filter((t: any) => {
-      const teacherLangShort = (t.voiceLanguageCode || '').split('-')[0].toLowerCase();
-      return teacherLangShort === lessonLangShort;
-    });
-    return matched;
-  }, [allTeachers, lessonLangShort]);
+    if (!lessonLangShort) return [];
+    return allTeachers.filter((t: any) => isTeacherVoiceCompatibleWithTarget(t.voiceLanguageCode, languageCode));
+  }, [allTeachers, languageCode, lessonLangShort]);
 
-  // If no teachers match the lesson language, show all (fallback)
-  const teachers = teachersForLanguage.length > 0 ? teachersForLanguage : allTeachers;
+  // Sem fallback global: mostrar um professor de outro idioma destruiria o
+  // contexto da aula e produziria sotaque incorreto.
+  const teachers = teachersForLanguage;
 
   if (isLoading) {
     return (
@@ -143,7 +143,7 @@ export default function TeacherSelector({
   if (!teachers || teachers.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Nenhum professor disponível para este idioma.</p>
+        <p className="text-gray-500">Ainda não há professor e voz compatíveis para este idioma.</p>
       </div>
     );
   }
@@ -297,7 +297,7 @@ export default function TeacherSelector({
                       teacher.voiceId ?? null,
                       teacherLang,
                       teacher.gender,
-                      displayName,
+                      teacher.greeting,
                       () => setPlayingTeacher(null)
                     );
                   }}
@@ -332,48 +332,18 @@ export default function TeacherSelector({
 }
 
 function playVoiceSample(
-  voiceId: string | null,
+  _voiceId: string | null,
   langCode: string,
   gender?: string,
-  teacherName?: string,
+  sampleText?: string,
   onEnd?: () => void
 ) {
-  const sampleTexts: Record<string, string> = {
-    "pt-BR": `Olá! Sou ${teacherName || 'seu professor'} e vou ajudá-lo a aprender. Vamos começar!`,
-    "pt": `Olá! Sou ${teacherName || 'seu professor'} e vou ajudá-lo a aprender. Vamos começar!`,
-    "en-US": `Hello! I'm ${teacherName || 'your teacher'} and I'll help you learn. Let's get started!`,
-    "en": `Hello! I'm ${teacherName || 'your teacher'} and I'll help you learn. Let's get started!`,
-    "en-GB": `Hello! I'm ${teacherName || 'your teacher'} and I'll help you learn. Let's get started!`,
-    "es-ES": `¡Hola! Soy ${teacherName || 'tu profesor'} y te ayudaré a aprender. ¡Empecemos!`,
-    "es": `¡Hola! Soy ${teacherName || 'tu profesor'} y te ayudaré a aprender. ¡Empecemos!`,
-    "fr-FR": `Bonjour! Je suis ${teacherName || 'votre professeur'} et je vais vous aider à apprendre. Commençons!`,
-    "fr": `Bonjour! Je suis ${teacherName || 'votre professeur'} et je vais vous aider à apprendre. Commençons!`,
-    "de-DE": `Hallo! Ich bin ${teacherName || 'Ihr Lehrer'} und helfe Ihnen beim Lernen. Fangen wir an!`,
-    "de": `Hallo! Ich bin ${teacherName || 'Ihr Lehrer'} und helfe Ihnen beim Lernen. Fangen wir an!`,
-    "it-IT": `Ciao! Sono ${teacherName || 'il tuo insegnante'} e ti aiuterò a imparare. Iniziamo!`,
-    "it": `Ciao! Sono ${teacherName || 'il tuo insegnante'} e ti aiuterò a imparare. Iniziamo!`,
-    "ja-JP": `こんにちは！私は${teacherName || 'あなたの先生'}です。一緒に学びましょう！`,
-    "ja": `こんにちは！私は${teacherName || 'あなたの先生'}です。一緒に学びましょう！`,
-    "zh-CN": `你好！我是${teacherName || '你的老师'}，让我们一起学习吧！`,
-    "zh": `你好！我是${teacherName || '你的老师'}，让我们一起学习吧！`,
-    "ko-KR": `안녕하세요! 저는 ${teacherName || '선생님'}이에요. 함께 배워봐요!`,
-    "ko": `안녕하세요! 저는 ${teacherName || '선생님'}이에요. 함께 배워봐요!`,
-    "ru-RU": `Здравствуйте! Я ${teacherName || 'ваш учитель'} и помогу вам учиться. Начнём!`,
-    "ru": `Здравствуйте! Я ${teacherName || 'ваш учитель'} и помогу вам учиться. Начнём!`,
-    "ar-XA": `مرحباً! أنا ${teacherName || 'معلمك'} وسأساعدك على التعلم. لنبدأ!`,
-    "ar": `مرحباً! أنا ${teacherName || 'معلمك'} وسأساعدك على التعلم. لنبدأ!`,
-  };
-
-  const text = sampleTexts[langCode] || sampleTexts[langCode.split('-')[0]] || sampleTexts["en-US"];
-  
-  const langMap: Record<string, string> = {
-    "en": "en-US", "pt": "pt-BR", "es": "es-ES",
-    "fr": "fr-FR", "de": "de-DE", "it": "it-IT",
-    "ja": "ja-JP", "zh": "zh-CN", "ko": "ko-KR",
-    "ru": "ru-RU", "ar": "ar-SA",
-  };
-
-  const voiceLang = langCode.includes('-') ? langCode : (langMap[langCode] || 'en-US');
+  const text = sampleText?.trim();
+  const voiceLang = langCode.trim();
+  if (!text || !voiceLang) {
+    onEnd?.();
+    return;
+  }
   stopEdgeTTS();
   speakNaturalVoice(text, voiceLang, {
     rate: 0.88,

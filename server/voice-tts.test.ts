@@ -76,10 +76,14 @@ describe("🎤 Voice TTS System (Edge TTS)", () => {
       expect(typeof voice).toBe("string");
     });
 
-    it("deve usar voz padrão para idioma desconhecido", () => {
+    it("recusa idioma desconhecido em vez de substituí-lo por inglês", () => {
       const voice = resolveVoice("xx-UNKNOWN");
-      expect(voice).toBeDefined();
-      expect(typeof voice).toBe("string");
+      expect(voice).toBeNull();
+    });
+
+    it("não permite a síntese de idioma sem voz compatível", async () => {
+      await expect(synthesizeEdgeTTS("Teste", "xx-UNKNOWN"))
+        .rejects.toThrow("Nenhuma voz neural compatível");
     });
   });
 

@@ -340,6 +340,7 @@
 - [x] Aguardar carregamento de vozes do browser antes de falar (onvoiceschanged)
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
 - [x] Garantir por teste que uma lição de inglês não pode resolver professor ou voz de português por fallback genérico — `en` feminino resolve Sarah/en-US e rejeita `prof-pt-br`; regressões de catálogo e voz aprovadas
+- [ ] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
 - [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice
@@ -1098,6 +1099,15 @@
 ## 🧑‍🏫 ORGANIZAÇÃO DOCENTE PRÓPRIA
 - [ ] Padronizar a apresentação de professor por idioma, variante regional, origem, especialidade, voz e nível CEFR nas telas prioritárias, mantendo conteúdo e interface originais
 - [x] Remover fallback global en-US do perfil docente para que dados incompletos nunca criem voz inglesa indevida — perfis sem variante preservam locale vazio e regressão aprovada
+- [ ] Mapear e indicar na seleção se cada idioma possui um ou mais professores compatíveis, sem prometer dupla cobertura onde ela não existe
+- [x] Impedir que um idioma disponível prossiga para aula sem perfil de professor e voz da mesma família linguística — seletor não usa fallback entre idiomas, onboarding exige escolha compatível e Edge TTS recusa voz ausente; 68 testes e TypeScript aprovados
+- [x] Preservar o par idioma nativo + idioma de estudo ao trocar de professor, bloqueando qualquer terceiro idioma, voz ou sotaque incompatível — contrato compartilhado e regressões cobrem a troca de língua nativa e a rejeição de voz estrangeira
+
+## 📈 VALOR EDUCACIONAL E PREPARAÇÃO COMERCIAL ORIGINAL
+- [ ] Consolidar uma experiência original de seleção docente, progresso por nível e continuidade de estudo antes de qualquer ativação de cobrança
+- [ ] Definir um núcleo validado PT-BR → inglês americano e britânico e reutilizar somente a estrutura técnica na expansão para outros idiomas, exigindo conteúdo, professor e voz próprios por idioma
+- [ ] Estruturar aulas por módulo do idioma estudado e apresentar a explicação na língua nativa escolhida, sem criar cursos separados para cada combinação de idiomas
+- [ ] Padronizar uma única estrutura visual e pedagógica de aula para todos os idiomas, carregando apenas conteúdo, professor e voz validados do idioma selecionado
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
 - [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB

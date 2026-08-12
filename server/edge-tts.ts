@@ -220,8 +220,10 @@ export const EDGE_TTS_VOICES: Record<string, string> = {
   "ga-IE":  "ga-IE-OrlaNeural",
 };
 
-// Normaliza código de idioma para chave do mapa — com suporte a gênero
-export function resolveVoice(voiceLang: string, gender?: 'male' | 'female'): string {
+// Normaliza código de idioma para chave do mapa — com suporte a gênero.
+// Nunca substitui idioma desconhecido por inglês: a aula deve aguardar uma
+// voz compatível em vez de produzir mistura de idioma ou sotaque.
+export function resolveVoice(voiceLang: string, gender?: 'male' | 'female'): string | null {
   const map = gender === 'male' ? EDGE_TTS_VOICES_MALE : EDGE_TTS_VOICES_FEMALE;
   // Direct match in gender-specific map
   if (map[voiceLang]) return map[voiceLang];
@@ -231,8 +233,7 @@ export function resolveVoice(voiceLang: string, gender?: 'male' | 'female'): str
     k.toLowerCase().startsWith(prefix + "-")
   );
   if (match) return map[match];
-  // Final fallback — always use gender-correct voice
-  return gender === 'male' ? 'en-US-GuyNeural' : 'en-US-JennyNeural';
+  return null;
 }
 
 export interface TTSSynthResult {
@@ -256,6 +257,9 @@ export async function synthesizeEdgeTTS(
   gender?: 'male' | 'female'
 ): Promise<TTSSynthResult> {
   const voice = resolveVoice(voiceLang, gender);
+  if (!voice) {
+    throw new Error(`Nenhuma voz neural compatível está disponível para o idioma ${voiceLang}.`);
+  }
   const cacheKey = `${voice}::${text.slice(0, 120)}`;
 
   if (ttsCache.has(cacheKey)) {

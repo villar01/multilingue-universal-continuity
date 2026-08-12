@@ -100,6 +100,7 @@ export default function Onboarding() {
   };
 
   const handleFinishWithTeacher = async () => {
+    if (!selectedTeacherId || !targetLang) return;
     setSaving(true);
     try {
       const dbLang = languages?.find(l => l.code === (targetLang || '').split('-')[0] || l.code === targetLang);
@@ -309,7 +310,7 @@ export default function Onboarding() {
             </div>
             <div className="max-h-[400px] overflow-y-auto">
               <TeacherSelector
-                languageCode={targetLang || 'en'}
+                languageCode={targetLang || ''}
                 selectedTeacherId={selectedTeacherId ?? undefined}
                 onSelect={(id: number) => setSelectedTeacherId(id)}
               />
@@ -323,7 +324,7 @@ export default function Onboarding() {
               </button>
               <button
                 onClick={handleFinishWithTeacher}
-                disabled={saving}
+                disabled={saving || !selectedTeacherId}
                 className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
               >
                 {saving ? "Salvando..." : "Começar a aprender"}
