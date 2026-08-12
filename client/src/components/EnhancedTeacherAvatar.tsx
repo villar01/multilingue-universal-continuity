@@ -211,6 +211,11 @@ export default function EnhancedTeacherAvatar({
       audio.crossOrigin = "anonymous";
       audio.volume = 1.0;
       audioRef.current = audio;
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onpause = () => {
+        setMO(0.04); setMW(0.5); setLR(0);
+        setIsSpeaking(false);
+      };
 
       // Try AudioContext for real-time amplitude lip-sync
       try {
@@ -304,9 +309,10 @@ export default function EnhancedTeacherAvatar({
       setShowVideo(false);
       return;
     }
-    // Always start phoneme lip-sync immediately from text
+    // When an MP3 exists, its playback/analyser is the source of truth for
+    // facial motion. Text timing is reserved for the offline/no-audio path.
     if (currentText && currentText.trim().length > 0) {
-      runPhonemeLipSync(currentText);
+      if (!audioUrl) runPhonemeLipSync(currentText);
       // If D-ID is configured, generate real video
       if (didStatus?.configured && imageUrl && !showVideo && !isGeneratingVideo) {
         generateDIDVideo(currentText, imageUrl);
@@ -340,7 +346,7 @@ export default function EnhancedTeacherAvatar({
   const mh2 = 10 * positions.mouthScale + mO * 60 * positions.mouthScale;
   const br = lR > 0.4 ? "50%" : `${4 + lR * 8}px ${4 + lR * 8}px ${mh2 * 0.5}px ${mh2 * 0.5}px`;
   const ic = mO > 0.10 ? "#1a0505" : skinTone;
-  const activelySpeaking = isSpeaking || isTeaching;
+  const activelySpeaking = isSpeaking;
   const sizePx = size === "sm" ? 160 : size === "md" ? 220 : 280;
 
   return (
