@@ -294,6 +294,7 @@
 ## 🔊 AVATAR ANIMADO — FONTE ÚNICA DE ÁUDIO
 - [x] Impedir que o vídeo animado e o MP3 neural reproduzam voz ao mesmo tempo no AnimatedTeacher — vídeo é camada visual silenciosa; somente o MP3 neural sincronizado é audível
 - [x] Impedir que o vídeo fotorrealista e o MP3 neural reproduzam voz ao mesmo tempo na VoiceConversation — vídeo e avatar offline são visuais; apenas o MP3 neural é audível
+- [x] Iniciar o vídeo visual da VoiceConversation no mesmo evento `onplay` do MP3 neural — vídeo silencioso inicia, pausa e reinicia junto do ciclo do áudio neural
 
 ## 🎬 VÍDEOS EDUCACIONAIS ORIGINAIS (INSPIRADO EM MELHORES PRÁTICAS)
 - [ ] Criar estrutura de vídeos curtos (2-5 min) por conceito

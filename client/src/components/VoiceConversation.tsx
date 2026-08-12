@@ -63,6 +63,7 @@ export default function VoiceConversation({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const teacherVideoRef = useRef<HTMLVideoElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -219,6 +220,8 @@ export default function VoiceConversation({
     audioElementRef.current.onended = () => {
       setIsSpeaking(false);
       setTeacherEmotion("neutral");
+      teacherVideoRef.current?.pause();
+      if (teacherVideoRef.current) teacherVideoRef.current.currentTime = 0;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -226,6 +229,17 @@ export default function VoiceConversation({
       if (talkingHeadRef.current) {
         talkingHeadRef.current.stopSpeaking();
       }
+    };
+
+    audioElementRef.current.onplay = () => {
+      const video = teacherVideoRef.current;
+      if (!video) return;
+      video.currentTime = 0;
+      void video.play().catch(() => undefined);
+    };
+
+    audioElementRef.current.onpause = () => {
+      teacherVideoRef.current?.pause();
     };
     
     // Inicializar Web Audio API para análise de frequência
@@ -487,14 +501,21 @@ export default function VoiceConversation({
       <div className="relative">
         {playableVideoUrl && !isGeneratingVideo ? (
           <video
+            ref={teacherVideoRef}
             id="photorealistic-video"
             src={playableVideoUrl}
             className="w-full max-w-md mx-auto rounded-lg shadow-lg"
             controls={false}
-            autoPlay
-            loop
             muted
             aria-label="Vídeo visual do professor; a voz é reproduzida pelo áudio neural sincronizado"
+            onLoadedData={() => {
+              const audio = audioElementRef.current;
+              const video = teacherVideoRef.current;
+              if (audio && video && !audio.paused) {
+                video.currentTime = 0;
+                void video.play().catch(() => undefined);
+              }
+            }}
           />
         ) : isGeneratingVideo ? (
           <div className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg">
