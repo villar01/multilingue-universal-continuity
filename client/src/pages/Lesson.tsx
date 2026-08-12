@@ -67,6 +67,7 @@ export default function Lesson() {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [pronunciationResult, setPronunciationResult] = useState<any>(null);
   const [teacherText, setTeacherText] = useState("");
+  const [adaptiveHint, setAdaptiveHint] = useState<string | null>(null);
   const [teacherExpression, setTeacherExpression] = useState<"neutral" | "happy" | "thinking" | "excited" | "encouraging">("neutral");
   const [lessonStartTime] = useState(Date.now());
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -122,6 +123,7 @@ export default function Lesson() {
   
   // Mutation para salvar progresso
   const completeLessonMutation = trpc.progress.completeLesson.useMutation();
+  const recordExerciseAttemptMutation = trpc.progress.recordExerciseAttempt.useMutation();
   
   // Buscar lição real do banco
   const { data: lesson, isLoading: loadingLesson } = trpc.lessons.getById.useQuery(
@@ -301,6 +303,27 @@ export default function Lesson() {
   }
 
   const exercise = exercises[currentExercise];
+
+  const recordExerciseAttempt = (correct: boolean, userAnswer: string) => {
+    const rawType = exercise.type === "speaking"
+      ? "pronunciation"
+      : exercise.type === "writing"
+        ? "grammar"
+        : exercise.type === "listening"
+          ? "comprehension"
+          : "vocabulary";
+
+    recordExerciseAttemptMutation.mutate({
+      exerciseId: Number(exercise.id),
+      isCorrect: correct,
+      userAnswer,
+      expectedAnswer: exercise.correctAnswer || "",
+      timeSpentSeconds: Math.max(0, Math.floor((Date.now() - lessonStartTime) / 1000)),
+      errorType: rawType,
+    }, {
+      onSuccess: (result) => setAdaptiveHint(correct ? null : result.personalizedFocus),
+    });
+  };
   
   // CEFR difficulty adaptation: calculate level for this lesson and show progression info
   const cefrLevel = getLevelByLesson(lesson.orderIndex || 1);
@@ -415,6 +438,7 @@ export default function Lesson() {
     setSelectedAnswer(answerIndex);
     const selectedOption = (shuffledOptions[answerIndex] || '').trim();
     const correct = normalizeAnswer(selectedOption) === normalizeAnswer(exercise.correctAnswer || '');
+    recordExerciseAttempt(correct, selectedOption);
     setIsCorrect(correct);
     setAnswerAnimation(correct ? 'correct' : 'wrong');
     setTimeout(() => setAnswerAnimation(null), 700);
@@ -433,6 +457,7 @@ export default function Lesson() {
             setCurrentExercise(c => c + 1);
             setSelectedAnswer(null);
             setIsCorrect(null);
+            setAdaptiveHint(null);
             setUserTextAnswer('');
             setAudioBlob(null);
             setPronunciationResult(null);
@@ -518,6 +543,7 @@ export default function Lesson() {
     const trimmed = userTextAnswer.trim();
     if (!trimmed) return;
     const correct = trimmed.toLowerCase() === (exercise.correctAnswer || '').trim().toLowerCase();
+    recordExerciseAttempt(correct, trimmed);
     setIsCorrect(correct);
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
@@ -553,6 +579,7 @@ export default function Lesson() {
       setCurrentExercise(currentExercise + 1);
       setSelectedAnswer(null);
       setIsCorrect(null);
+      setAdaptiveHint(null);
       setUserTextAnswer('');
       setAudioBlob(null);
       setPronunciationResult(null);
@@ -1251,6 +1278,12 @@ export default function Lesson() {
                     </button>
                   );
                 })}
+              </div>
+            )}
+
+            {isCorrect === false && adaptiveHint && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                <span className="font-semibold">Plano de reforço: </span>{adaptiveHint}
               </div>
             )}
 

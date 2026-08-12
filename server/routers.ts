@@ -1224,6 +1224,52 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         
         return { success: true };
       }),
+
+    // Registrar tentativas para feedback adaptativo baseado em erros reais.
+    recordExerciseAttempt: protectedProcedure
+      .input(z.object({
+        exerciseId: z.number(),
+        isCorrect: z.boolean(),
+        userAnswer: z.string().max(2000),
+        expectedAnswer: z.string().max(2000),
+        timeSpentSeconds: z.number().min(0).max(7200),
+        errorType: z.enum(["grammar", "vocabulary", "pronunciation", "comprehension"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const inferredErrorType = input.errorType || "vocabulary";
+        await db.recordLearningHistory({
+          userId: ctx.user.id,
+          exerciseId: input.exerciseId,
+          isCorrect: input.isCorrect,
+          userAnswer: input.userAnswer,
+          timeSpentSeconds: input.timeSpentSeconds,
+          errorType: input.isCorrect ? undefined : inferredErrorType,
+          errorDetails: input.isCorrect ? undefined : `Esperado: ${input.expectedAnswer}`,
+        });
+
+        if (!input.isCorrect) {
+          await db.recordErrorPattern({
+            userId: ctx.user.id,
+            errorType: inferredErrorType,
+            errorCategory: "lesson_exercise",
+            severity: 1,
+          });
+        }
+
+        const patterns = input.isCorrect ? [] : await db.getUserErrorPatterns(ctx.user.id);
+        const mostFrequent = patterns[0];
+        const labels: Record<string, string> = {
+          grammar: "gramática",
+          vocabulary: "vocabulário",
+          pronunciation: "pronúncia",
+          comprehension: "compreensão",
+        };
+        const personalizedFocus = mostFrequent && (mostFrequent.frequency || 0) >= 2
+          ? `Você tem repetido erros em ${labels[mostFrequent.errorType] || "este ponto"}. Vamos reforçá-lo nas próximas atividades.`
+          : null;
+
+        return { success: true, personalizedFocus };
+      }),
     
     // Buscar estatísticas do usuário
     getStats: protectedProcedure
@@ -3899,6 +3945,21 @@ Máximo 2 frases por resposta.`,
       .query(async ({ ctx, input }) => {
         const dbInstance = await db.getDb();
         if (!dbInstance) return { type: 'lesson', reason: 'Comece com a primeira lição' };
+        const errorPatterns = await db.getUserErrorPatterns(ctx.user.id);
+        const topError = errorPatterns[0];
+        if (topError && (topError.frequency || 0) >= 2) {
+          const errorLabels: Record<string, string> = {
+            grammar: 'gramática',
+            vocabulary: 'vocabulário',
+            pronunciation: 'pronúncia',
+            comprehension: 'compreensão',
+          };
+          const focus = errorLabels[topError.errorType] || 'uma habilidade específica';
+          return {
+            type: 'practice',
+            reason: `Identificamos repetição de erros em ${focus}. Faça a próxima atividade com foco neste ponto.`,
+          };
+        }
         const { srsProgress, pronunciationHistory } = await import("../drizzle/schema");
         const { eq, and, lte, avg } = await import("drizzle-orm");
         const dueReviews = await dbInstance.select().from(srsProgress)

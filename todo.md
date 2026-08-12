@@ -141,7 +141,7 @@
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
 - [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
-- [ ] Implementar feedback personalizado baseado em erros do usuário — freeChat tem correction field mas rastreamento de erros pendente
+- [ ] Implementar feedback personalizado baseado em erros do usuário — Lesson registra cada tentativa, exibe plano de reforço por erro recorrente e adaptive.getRecommendation orienta o próximo exercício; integração equivalente no freeChat ainda pendente
 - [ ] Criar histórico de conversas com análise de progresso — AIChatbot persiste em localStorage mas análise de progresso (métricas, erros, evolução) pendente
 
 ## 🐛 BUG CRÍTICO
