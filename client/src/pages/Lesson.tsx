@@ -680,6 +680,17 @@ export default function Lesson() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:inline-flex bg-white"
+                onClick={() => {
+                  setSelectedTeacherId(null);
+                  setShowTeacherSelector(true);
+                }}
+              >
+                Trocar professor
+              </Button>
               <ImmersionModeToggle compact />
               <Badge variant="secondary">{lesson.languageCode?.toUpperCase() || 'EN'}</Badge>
             </div>

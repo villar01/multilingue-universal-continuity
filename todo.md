@@ -1056,6 +1056,7 @@
 
 ## 🧭 ESCOLHA DOCENTE TRANSPARENTE
 - [ ] Exibir variante regional, cidade de origem e voz nativa nos cards de professores de inglês para orientar a escolha sem tentativa e erro
+- [x] Adicionar controle para trocar de professor dentro da lição e retornar ao seletor sem perder o progresso — botão visível no cabeçalho da lição
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
-- [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — o enriquecimento de professor da Lesson agora usa o perfil regional canônico; teste confirma retrato masculino, origem London e en-GB
+- [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB

@@ -14,3 +14,4 @@ Data: 2026-08-12
 - A validação visual final confirmou retratos profissionais renderizados para Sarah, James, Ingrid e Emma, sem placeholders.
 - A contagem final permaneceu correta: **1 masculino** e **3 femininos**.
 - A correção regional confirmou que **Teacher James Williams** usa o retrato masculino e a especialidade de literatura/inglês formal; a seleção prioriza `en-GB` antes do fallback genérico de inglês.
+- A validação da lição ativa confirmou o avatar flutuante de **Teacher James Williams** com retrato masculino. O cabeçalho expõe o controle **Trocar professor**, que reabre o seletor sem reiniciar o progresso da lição.
