@@ -136,6 +136,7 @@ export async function speakEdgeTTS(
  * Para o áudio em andamento.
  */
 export function stopEdgeTTS(): void {
+  stopLipSyncAnalysis();
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;

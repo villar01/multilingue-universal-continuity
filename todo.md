@@ -1047,3 +1047,6 @@
 ## 🐛 BIBLIOTECA DE CLIPES — TEXTOS CONSISTENTES
 - [x] Remover referências fixas a vídeos de 35 minutos da biblioteca enquanto o acervo atual contém microclipes de 8 segundos — validação visual confirmou texto coerente
 - [x] Atualizar o aviso de realidade aumentada para refletir a instrutora já disponível, sem prometer recurso ainda não integrado ao clipe — validação visual concluída
+
+## 👄 LIP-SYNC POR ÁUDIO REAL — TALKINGTEACHER
+- [x] Conectar a animação de fallback do TalkingTeacher à amplitude real do áudio neural, sem ciclo visual fixo — o sinal do Edge TTS move o overlay e é zerado ao parar a fala; teste de ciclo de vida aprovado

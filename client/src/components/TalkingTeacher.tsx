@@ -7,7 +7,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
-import { stopEdgeTTS } from "@/lib/edgeTTSClient";
+import { onLipSyncAmplitude, stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 // Fotos fotorrealistas por professor (Unsplash - domínio público)
 const TEACHER_PHOTOS: Record<string, string> = {
@@ -68,11 +68,19 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   const [state, setState] = useState<TeacherState>("idle");
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [lipAmplitude, setLipAmplitude] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const photoUrl = TEACHER_PHOTOS[teacher.id] || DEFAULT_PHOTO;
   const sizes = SIZE_MAP[size];
 
   const generateVideoMutation = trpc.livePortrait.generateTeacherVideo.useMutation();
+
+  // A queda para TTS neural preserva movimento reativo ao áudio real, em vez
+  // de um ciclo visual fixo de fala.
+  useEffect(() => {
+    onLipSyncAmplitude(setLipAmplitude);
+    return () => onLipSyncAmplitude(null);
+  }, []);
 
   // Gerar vídeo D-ID
   const generateVideo = useCallback(async (speechText: string) => {
@@ -105,6 +113,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
     speakNaturalVoice(speechText, teacher.voiceLang || "en-US", {
       rate: 0.9,
       onEnd: () => {
+        setLipAmplitude(0);
         setIsSpeaking(false);
         setState("idle");
       },
@@ -141,6 +150,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
       videoRef.current.currentTime = 0;
     }
     setIsSpeaking(false);
+    setLipAmplitude(0);
     setState("idle");
     setVideoUrl(null);
   };
@@ -180,19 +190,18 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
           />
         )}
 
-        {/* Lip-sync animation overlay */}
+        {/* Lip-sync overlay driven by the live neural-audio amplitude */}
         {(isSpeaking || state === "speaking") && !videoUrl && (
           <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-2">
             <div className="flex gap-0.5 items-end">
               {[1, 2, 3, 4, 3, 2, 1].map((h, i) => (
                 <div
                   key={i}
-                  className="w-1 rounded-full animate-bounce"
+                  className="w-1 rounded-full transition-[height] duration-75"
                   style={{
-                    height: `${h * 4}px`,
+                    height: `${4 + h * (2 + lipAmplitude * 10)}px`,
                     background: teacher.color,
-                    animationDelay: `${i * 80}ms`,
-                    animationDuration: "400ms",
+                    opacity: 0.4 + lipAmplitude * 0.6,
                   }}
                 />
               ))}
