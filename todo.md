@@ -223,6 +223,7 @@
 - [ ] Permitir apenas autorização parental temporária por PIN para conteúdo etariamente inadequado e não ilegal; manter bloqueio absoluto para risco grave ou conteúdo ilegal
 - [ ] Aplicar a política de bloqueio e alerta parental diretamente às entradas e saídas das conversas de IA e professor
 - [ ] Remover contexto adulto padrão e rota pública desprotegida das conversas de IA, exigindo perfil etário e consentimento aplicáveis
+- [x] Aplicar guarda de perfil etário, consentimento infantil e bloqueio de conteúdo ao chat de lição e à conversa bilíngue — entradas e saídas usam filtro determinístico e moderação, com auditoria e regressões aprovadas; 104 testes no total
 
 ## 📘 GUIA DE USO E SEGURANÇA
 - [x] Criar guia simples para alunos e responsáveis sobre acesso, idiomas, professores, microfone, cenas, exercícios, voz, alertas e controle parental — UserGuide ampliado com ciclo Pareto, uso de microfone, alertas etários, PIN, painel parental e dever contínuo de acompanhamento; acesso confirmado no painel parental

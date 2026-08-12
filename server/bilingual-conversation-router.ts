@@ -9,6 +9,7 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
+import { assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
 
 export const bilingualConversationRouter = router({
   /**
@@ -24,6 +25,7 @@ export const bilingualConversationRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
       const prompt = `You are a language teacher. Start a conversation about a lesson topic in ${input.targetLanguage}.
 
 CRITICAL RULES:
@@ -44,15 +46,20 @@ Start the conversation now:`;
         ],
       });
 
-      const question = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "Hello! How are you today?";
+      const rawQuestion = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "Hello! How are you today?";
+      const outputSafety = await assessConversationText(ctx.user.id, rawQuestion, input.targetLanguage);
+      const question = outputSafety.allowed
+        ? rawQuestion
+        : "[PT] Vamos continuar com uma pergunta segura da lição. [EN] Let us continue with a safe lesson question.";
 
       return {
         question,
-        suggestions: [
+        suggestions: outputSafety.allowed ? [
           "I'm fine, thank you!",
           "I'm learning English.",
           "Can you help me?",
-        ],
+        ] : ["Hello", "Thank you", "Please help me"],
+        blocked: !outputSafety.allowed,
       };
     }),
 
@@ -83,6 +90,16 @@ Start the conversation now:`;
           nativeLanguage: input.nativeLanguage,
         });
         throw new Error("targetLanguage and nativeLanguage are required");
+      }
+      const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "";
+      const inputSafety = await assessConversationText(ctx.user.id, lastUserMessage, input.targetLanguage);
+      if (!inputSafety.allowed) {
+        return {
+          response: "[PT] Essa mensagem não pode ser usada neste perfil. Escolha uma frase segura da lição.\n[EN] This message cannot be used in this profile. Choose a safe lesson phrase.",
+          suggestions: ["Hello", "Thank you", "I am learning"],
+          blocked: true,
+          flaggedContent: inputSafety.flaggedContent,
+        };
       }
       
       const systemPrompt = `You are a supportive language teacher teaching ${input.targetLanguage} to native ${input.nativeLanguage} speakers.
@@ -135,7 +152,7 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
       // Content filter: sanitize AI response
       aiResponse = await sanitizeContent(aiResponse, input.targetLanguage) || aiResponse;
       
-      const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "(empty history)";
+      const loggedUserMessage = lastUserMessage || "(empty history)";
       
       // Log teacher-student interaction for parental monitoring
       logInteraction({
@@ -143,11 +160,11 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
         childProfileId: null,
         teacherId: null,
         interactionType: 'bilingual_conversation',
-        content: lastUserMessage,
+        content: loggedUserMessage,
         teacherResponse: aiResponse,
         languageCode: input.targetLanguage,
       }).catch(() => {}); // Non-blocking
-      console.log("[Bilingual Conversation] User message:", lastUserMessage);
+      console.log("[Bilingual Conversation] User message:", loggedUserMessage);
       console.log("[Bilingual Conversation] AI response (raw):", aiResponse);
 
       // Fallback: Se resposta não tem formato bilíngue, traduzir e formatar
@@ -173,6 +190,11 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
         // Formatar como bilíngue
         aiResponse = `[PT] ${portugueseVersion}\n[EN] ${aiResponse}`;
         console.log("[Bilingual Conversation] Formatted response:", aiResponse);
+      }
+
+      const outputSafety = await assessConversationText(ctx.user.id, aiResponse, input.targetLanguage);
+      if (!outputSafety.allowed) {
+        aiResponse = "[PT] Vamos continuar com uma frase segura da lição.\n[EN] Let us continue with a safe lesson sentence.";
       }
 
       // Gerar sugestões de resposta
@@ -228,7 +250,7 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
   /**
    * Editor de frases com sugestões
    */
-  editPhrase: publicProcedure
+  editPhrase: protectedProcedure
     .input(
       z.object({
         originalPhrase: z.string(),
@@ -238,7 +260,16 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
         wordToModify: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const safety = await assessConversationText(ctx.user.id, input.originalPhrase, input.targetLanguage);
+      if (!safety.allowed) {
+        return {
+          suggestions: "[PT] Escolha uma frase segura da lição para praticar.\n[EN] Choose a safe lesson phrase to practise.",
+          originalPhrase: input.originalPhrase,
+          editType: input.editType,
+          blocked: true,
+        };
+      }
       let prompt = "";
 
       switch (input.editType) {
