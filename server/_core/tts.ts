@@ -92,6 +92,12 @@ export interface TTSResult {
   cached: boolean;
 }
 
+export interface ResolvedGoogleVoice {
+  languageCode: string;
+  name?: string;
+  ssmlGender: "MALE" | "FEMALE" | "NEUTRAL";
+}
+
 /**
  * Gera hash único para cache de áudio
  */
@@ -119,6 +125,33 @@ function getVoiceConfig(languageCode: string) {
 }
 
 /**
+ * Quando não há uma voz específica do professor, o Google deve escolher uma voz
+ * do gênero solicitado no locale correto. Isso evita combinar, por exemplo,
+ * uma Neural2-F com um pedido de professor masculino.
+ */
+export function resolveGoogleVoiceRequest(
+  languageCode: string,
+  voiceGender: "MALE" | "FEMALE" | "NEUTRAL",
+  voiceName?: string,
+): ResolvedGoogleVoice {
+  if (voiceName) {
+    const parts = voiceName.split("-");
+    return {
+      languageCode: parts.length >= 2 ? `${parts[0]}-${parts[1]}` : languageCode,
+      name: voiceName,
+      ssmlGender: "NEUTRAL",
+    };
+  }
+
+  const voiceConfig = getVoiceConfig(languageCode);
+  if (voiceGender === "NEUTRAL") {
+    return { languageCode: voiceConfig.languageCode, name: voiceConfig.name, ssmlGender: "NEUTRAL" };
+  }
+
+  return { languageCode: voiceConfig.languageCode, ssmlGender: voiceGender };
+}
+
+/**
  * Converte texto em áudio usando Google Cloud TTS
  * Implementa cache automático para performance
  */
@@ -132,25 +165,13 @@ export async function textToSpeech(options: TTSOptions): Promise<TTSResult> {
     pitch = 0,
   } = options;
 
-  // Gerar hash para cache — inclui voiceName para diferenciar vozes
-  const cacheKey = voiceName ? `${text}-${voiceName}` : `${text}-${languageCode}`;
+  // Inclui gênero para não reutilizar áudio feminino em uma fala masculina, ou vice-versa.
+  const cacheKey = `${text}-${voiceName || languageCode}-${voiceGender}`;
   const audioHash = generateAudioHash(cacheKey, languageCode);
   const audioKey = `audio/tts/${audioHash}.mp3`;
 
   try {
-    // Se voiceName específico fornecido (do professor), usa diretamente
-    // Extrai languageCode do voiceName (ex: pt-BR-Wavenet-B → pt-BR)
-    let finalLanguageCode: string;
-    let finalVoiceName: string;
-    if (voiceName) {
-      const parts = voiceName.split('-');
-      finalLanguageCode = parts.length >= 2 ? `${parts[0]}-${parts[1]}` : languageCode;
-      finalVoiceName = voiceName;
-    } else {
-      const voiceConfig = getVoiceConfig(languageCode);
-      finalLanguageCode = voiceConfig.languageCode;
-      finalVoiceName = voiceConfig.name;
-    }
+    const resolvedVoice = resolveGoogleVoiceRequest(languageCode, voiceGender, voiceName);
 
     // Chamar API Google Cloud TTS
     const response = await axios.post(
@@ -158,9 +179,9 @@ export async function textToSpeech(options: TTSOptions): Promise<TTSResult> {
       {
         input: { text },
         voice: {
-          languageCode: finalLanguageCode,
-          name: finalVoiceName,
-          ssmlGender: voiceGender,
+          languageCode: resolvedVoice.languageCode,
+          ...(resolvedVoice.name ? { name: resolvedVoice.name } : {}),
+          ssmlGender: resolvedVoice.ssmlGender,
         },
         audioConfig: {
           audioEncoding: "MP3",

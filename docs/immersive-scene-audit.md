@@ -29,3 +29,5 @@ Substituir coordenadas livres por um registro de hotspot validado por cena, com 
 - **Deserto:** areia, sol e duna estão presentes. O grupo de camelos está claramente visível à direita; o antigo ponto de camelo e o de oásis serão ajustados para a caravana e as pegadas visíveis, sem reintroduzir objeto inexistente.
 - **Fazenda:** os seis hotspots correspondem à vaca, celeiro, feno, trator, galinha e céu visíveis na imagem; a professora Maja e o polonês estão coerentes.
 - **Museu:** quadro, escultura, moldura, visitante, galeria e luz correspondem aos objetos do corredor; Giulia e o italiano estão coerentes.
+- **Sala de aula:** quadro, carteiras, livro, lápis, janela e relógio estão ancorados nos respectivos elementos visíveis; James e o inglês são coerentes.
+- **Praia após correção:** os quatro hotspots permanecem coerentes com palmeira, oceano, onda e areia; a grade visual não reaparece.
