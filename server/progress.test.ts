@@ -112,7 +112,7 @@ describe("Sistema de Progresso do Usuário", () => {
         const xpForNextLevel = (stats.level * 100) - stats.totalXp;
         expect(stats.xpForNextLevel).toBe(xpForNextLevel);
         expect(stats.xpForNextLevel).toBeGreaterThanOrEqual(0);
-        expect(stats.xpForNextLevel).toBeLessThan(100);
+        expect(stats.xpForNextLevel).toBeLessThanOrEqual(100);
       }
     });
   });

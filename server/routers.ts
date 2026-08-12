@@ -4088,7 +4088,7 @@ Máximo 2 frases por resposta.`,
       .mutation(async ({ ctx, input }) => {
         const dbInstance = await db.getDb();
         if (!dbInstance) return { exercises: [] };
-        const { srsProgress } = await import("../drizzle/schema");
+        const { srsProgress, users } = await import("../drizzle/schema");
         const { eq, and } = await import("drizzle-orm");
         const userVocab = await dbInstance.select().from(srsProgress)
           .where(and(eq(srsProgress.userId, ctx.user.id), eq(srsProgress.targetLanguage, input.targetLanguage)))
@@ -4098,13 +4098,23 @@ Máximo 2 frases por resposta.`,
         }
         const errorPatterns = await db.getUserErrorPatterns(ctx.user.id);
         const focusError = errorPatterns.find((pattern) => (pattern.frequency || 0) >= 2);
+        const statsRows = await dbInstance.select({ totalXp: users.totalXp })
+          .from(users)
+          .where(eq(users.id, ctx.user.id))
+          .limit(1);
+        const totalXp = Number(statsRows[0]?.totalXp || 0);
+        const adaptation = totalXp < 100
+          ? { label: 'Fundamentos', exerciseCount: 3, detail: 'Sessão curta para consolidar a base.' }
+          : totalXp < 500
+            ? { label: 'Em desenvolvimento', exerciseCount: 5, detail: 'Sessão completa com reforço dos erros recorrentes.' }
+            : { label: 'Desafio', exerciseCount: 7, detail: 'Sessão ampliada para fortalecer autonomia e precisão.' };
         const rankedVocab = [...userVocab].sort((a, b) => {
           const aNeed = (a.totalWrong || 0) - (a.totalCorrect || 0);
           const bNeed = (b.totalWrong || 0) - (b.totalCorrect || 0);
           return bNeed - aNeed;
         });
         const exercises: any[] = [];
-        for (const item of rankedVocab.slice(0, 5)) {
+        for (const item of rankedVocab.slice(0, adaptation.exerciseCount)) {
           if (input.exerciseType === 'multiple_choice') {
             const distractors = userVocab.filter(v => v.word !== item.word)
               .sort(() => Math.random() - 0.5).slice(0, 3).map(v => v.translation);
@@ -4122,9 +4132,11 @@ Máximo 2 frases por resposta.`,
           exercises,
           source: 'local',
           focus: focusError?.errorType || null,
+          adaptation,
+          totalXp,
           message: focusError
-            ? `Revisão adaptada: vamos reforçar ${focusError.errorType === 'grammar' ? 'gramática' : focusError.errorType === 'pronunciation' ? 'pronúncia' : focusError.errorType === 'comprehension' ? 'compreensão' : 'vocabulário'}.`
-            : 'Revisão organizada pelo seu histórico de respostas.',
+            ? `Revisão ${adaptation.label.toLowerCase()}: vamos reforçar ${focusError.errorType === 'grammar' ? 'gramática' : focusError.errorType === 'pronunciation' ? 'pronúncia' : focusError.errorType === 'comprehension' ? 'compreensão' : 'vocabulário'}.`
+            : `Revisão ${adaptation.label.toLowerCase()}: ${adaptation.detail}`,
         };
       }),
     submitAnswer: protectedProcedure

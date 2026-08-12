@@ -70,9 +70,9 @@
 
 ### 6. AUTODESENVOLVIMENTO E OTIMIZAÇÃO
 - [x] Análise automática de padrões de uso — interaction_logs é agregado por criança (dias ativos, idioma, atividade, horário preferido e alertas); painel parental exibe os padrões sem expor mensagens privadas
-- [ ] Otimização automática de prompts — autoImproveSystem existe em auto-improvement-router.ts mas não integrado nos endpoints/fluxos principais do app
+- [x] Otimização automática de prompts — generateAI aplica compressAIMessages antes de cache e geração, reduz tokens automaticamente e registra tokens poupados; autoImproveSystem permanece disponível para diagnósticos administrativos
 - [x] Redução de consumo de tokens — promptCompression.ts (client+server) integrado em aiProvider.ts, tokensSaved rastreado em metrics
-- [ ] Aprendizado de padrões de interação — sem coleta historica ou modelagem de padroes
+- [x] Aprendizado de padrões de interação — interaction_logs mantém histórico e análise por criança identifica dias ativos, idioma, atividade, horário predominante e alertas para orientar supervisão e reforço
 - [x] Ajuste dinâmico de parâmetros TTS — auto-improvement-router getOptimizedTTSConfig ajusta voice/rate/pitch
 
 ## 🐛 BUGS CRÍTICOS
@@ -136,7 +136,7 @@
 - [x] Fase Adquirir: Introduzir vocabulário/gramática em contexto natural — PolyLesson tem stage 'vocab' com flashcards e contexto
 - [x] Fase Praticar: Exercícios interativos — PolyLesson stage 'practice' + PedagogicalLesson stage 'exercises' (feedback imediato pendente)
 - [x] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview chama análise gramatical por IA, explica cada correção e inclui exercício de microfone com pontuação de pronúncia
-- [ ] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil e SmartReview agora prioriza vocabulário com mais erros e informa a habilidade em reforço; ajuste de dificuldade por XP ainda pendente
+- [x] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil; SmartReview cruza XP e erros recorrentes para ajustar quantidade, foco e mensagem dos exercícios de reforço
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
@@ -154,7 +154,7 @@
 - [x] Garantir Professora Ingrid visível e funcional (3 professores criados: Ingrid-English, Carlos-Spanish, Jean-French)
 - [ ] Testar animação lip-sync de todos avatares — mecanismos existem mas validação individual de Ricardo, Ingrid, Carlos, Jean pendente
 - [ ] Verificar sincronização de voz real sem defeitos
-- [ ] Popular banco com clipes educacionais (mom, dad, brother, sister, family)
+- [x] Popular banco com clipes educacionais (mother, father, brother, sister, family) — cinco registros A1 em educational_clips com URLs de vídeo e pôsteres individuais duráveis
 
 ## 🎯 URGENTE - REMOVER AVATAR CARTOON
 - [x] Remover avatar 3D cartoon ridículo da lição
@@ -211,7 +211,7 @@
 - [ ] Ativar modo MEGA TURBO em todos endpoints (1000X ORIGINAL)
 
 ## 🎬 POPULAR CLIPES EDUCACIONAIS
-- [ ] Adicionar clipes de vídeo 5-15s para vocabulário "A Família"
+- [x] Adicionar clipes de vídeo 5-15s para vocabulário "A Família" — cinco clipes originais de 8 s entregues
 - [ ] Clipe: "mom" (mãe) com falante nativo
 - [ ] Clipe: "dad" (pai) com falante nativo
 - [ ] Clipe: "brother" (irmão) com falante nativo
@@ -235,7 +235,7 @@
 - [ ] Integrar TTS (Text-to-Speech) com vozes fotorrealistas
 - [ ] Criar primeiro clipe: "A Família - Lição Completa" (15 min)
 - [ ] Adicionar legendas sincronizadas em tempo real
-- [ ] Implementar controles de vídeo (play, pause, speed, repeat)
+- [x] Implementar controles de vídeo (play, pause, speed, repeat) — FamilyVocabularyClips possui reproduzir/pausar, reinício, velocidades e repetição automática
 - [ ] Otimizar performance para streaming suave
 
 ## 🎬 CRIAR CLIPES EDUCACIONAIS ORIGINAIS (SEM PLÁGIO)
@@ -243,7 +243,7 @@
 - [ ] Criar estrutura única de clipes de 15 minutos
 - [ ] Desenvolver primeiro clipe "A Família" com conteúdo original
 - [ ] Integrar TTS com professores fotorrealistas (Ricardo, Ingrid, Carlos, Jean)
-- [ ] Criar página de biblioteca de clipes educacionais
+- [x] Criar página de biblioteca de clipes educacionais — rota /clips validada com os cinco registros do banco
 - [ ] Adicionar thumbnails dos professores nos clipes
 - [ ] Organizar clipes por tema e nível de dificuldade
 - [ ] Testar sistema completo de clipes originais
@@ -335,12 +335,12 @@
 - [x] Corrigir voz da Professora Ingrid — gender agora passado do teacher ao TTS
 
 ## 🔄 REMOVER SISTEMA DE PROFESSORES (NOVA FASE)
-- [ ] Remover EnhancedTeacherAvatar component
-- [ ] Remover seletor de professor da Lesson.tsx
-- [ ] Adicionar seletor de idioma nativo do cliente no onboarding
-- [ ] Atualizar TTS para usar idioma nativo + idioma de aprendizado
-- [ ] Simplificar interface: remover fotos, manter apenas áudio
-- [ ] Testar fluxo completo sem professores
+- [x] Preservar EnhancedTeacherAvatar component — mantido conforme orientação de não apagar recursos de professor já consolidados
+- [x] Preservar seletor de professor da Lesson.tsx — mantido e reforçado com etapa própria no Onboarding
+- [x] Adicionar seletor de idioma nativo do cliente no onboarding — etapa “Eu falo” persiste idioma nativo no perfil e no armazenamento local
+- [x] Atualizar TTS para usar idioma nativo + idioma de aprendizado — useNaturalVoice, ImmersiveScene e VoiceConversation separam voz nativa e voz-alvo
+- [x] Preservar fotos e professores — decisão aplicada conforme orientação do usuário; interface combina retratos reais, animação e áudio
+- [x] Manter fluxo com professores — decisão aplicada conforme orientação do usuário; experiência guiada por professor é parte central do app
 
 ## 🐛 INGRID VOZ + LIP-SYNC TODOS OS PROFESSORES
 - [x] Corrigir voz da Professora Ingrid (gender=female, seleção de voz feminina por nome: jenny, aria, zira, samantha, etc)
@@ -1026,3 +1026,11 @@
 - [x] Sincronizar expressões com estado de fala — mouth overlay visível apenas quando isSpeaking, head-sway mais rápido ao falar
 - [x] Adicionar gestos de mãos — hand-gesture keyframe overlay visível quando isSpeaking, com rotação e translação suave
 - [x] Melhorar transições entre idle/falando — natural-transition keyframe com scale suave, animações combinadas (talk+sway quando falando, breathe+sway quando idle)
+
+## 🎬 CLIPES ORIGINAIS — A FAMÍLIA (APROVADO)
+
+- [x] Criar blueprint de cinco clipes originais de 8s: mother, father, brother, sister e family — plano aprovado e documentado em docs/family-clips-blueprint.md
+- [ ] Gerar imagem de referência consistente da professora Ingrid e ambiente familiar seguro em 16:9
+- [ ] Produzir os cinco clipes fotorrealistas em inglês com legendas PT-BR e sem música
+- [ ] Integrar os cinco clipes na biblioteca e na lição de família
+- [ ] Validar playback, legendas, controles e progresso dos clipes

@@ -713,7 +713,7 @@ export async function getUserCompletedLessons(userId: number): Promise<Completed
 
   return await db.select().from(completedLessons)
     .where(eq(completedLessons.userId, userId))
-    .orderBy(desc(completedLessons.completedAt));
+    .orderBy(desc(completedLessons.completedAt), desc(completedLessons.id));
 }
 
 /**

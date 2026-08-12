@@ -21,6 +21,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { ClickableText } from "@/components/ClickableWord";
 import VocabularySection from "@/components/VocabularySection";
+import FamilyVocabularyClips from "@/components/FamilyVocabularyClips";
 import LessonDictionary from "@/components/LessonDictionary";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import AIChatbot from "@/components/AIChatbot";
@@ -1031,6 +1032,11 @@ export default function Lesson() {
                   nativeLanguage="pt-BR"
                   targetLanguage="en-US"
                 />
+                {lesson.languageCode?.toLowerCase().startsWith("en") && /family|mother|father|brother|sister/i.test(`${lesson.title} ${lesson.description || ""}`) && (
+                  <div className="mt-5">
+                    <FamilyVocabularyClips />
+                  </div>
+                )}
               </div>
             )}
 
