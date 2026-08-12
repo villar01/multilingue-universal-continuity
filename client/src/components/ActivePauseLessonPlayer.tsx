@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { ADVANCED_VISEME_MAP, type VisemeData, useTTSVisemeSync } from "@/lib/tts-viseme-sync";
 import {
   BookOpen, Mic, MicOff, Volume2, VolumeX, ChevronRight,
   ChevronLeft, RotateCcw, CheckCircle, XCircle, Lightbulb,
@@ -72,11 +73,13 @@ function TeacherAvatar({
   photo,
   name,
   isSpeaking,
+  viseme = ADVANCED_VISEME_MAP.NEUTRAL,
   expression = "neutral",
 }: {
   photo?: string;
   name: string;
   isSpeaking: boolean;
+  viseme?: VisemeData;
   expression?: "neutral" | "happy" | "thinking" | "question" | "encouraging";
 }) {
   const expressionEmoji: Record<string, string> = {
@@ -103,21 +106,24 @@ function TeacherAvatar({
             👨‍🏫
           </div>
         )}
-        {/* Lip-sync animation overlay */}
+        {/* Facial mouth driven by the exact neural-audio viseme clock */}
         {isSpeaking && (
-          <div className="absolute bottom-0 left-0 right-0 h-1/3 flex items-end justify-center pb-1">
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 2, 1].map((h, i) => (
-                <div
-                  key={i}
-                  className="w-1.5 bg-white rounded-full opacity-80"
-                  style={{
-                    height: `${h * 4}px`,
-                    animation: `lipSync 0.${2 + i}s ease-in-out infinite alternate`,
-                    animationDelay: `${i * 0.05}s`,
-                  }}
-                />
-              ))}
+          <div className="absolute bottom-[22%] left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+            <div
+              className="relative overflow-hidden border border-rose-950/70 bg-rose-950/90 shadow-[0_1px_2px_rgba(0,0,0,0.55)] transition-[width,height,border-radius] duration-75"
+              style={{
+                width: `${Math.max(16, viseme.mouthWidth * 0.56)}px`,
+                height: `${Math.max(3, viseme.mouthHeight * 0.42)}px`,
+                borderRadius: `${Math.max(4, 18 - viseme.lipRound * 0.12)}px ${Math.max(4, 18 - viseme.lipRound * 0.12)}px ${Math.max(8, 20 + viseme.lipRound * 0.08)}px ${Math.max(8, 20 + viseme.lipRound * 0.08)}px`,
+                transform: `translateY(${viseme.jawDrop * 0.12}px) scaleX(${1 - viseme.lipRound * 0.0025})`,
+              }}
+            >
+              {viseme.mouthHeight > 18 && (
+                <div className="absolute inset-x-1 top-0 h-[28%] rounded-b bg-white/90" />
+              )}
+              {viseme.tongueVisible && (
+                <div className="absolute inset-x-[20%] bottom-0 h-[38%] rounded-t-full bg-rose-400/90" />
+              )}
             </div>
           </div>
         )}
@@ -126,12 +132,6 @@ function TeacherAvatar({
         <p className="text-xs font-semibold text-gray-700">{name}</p>
         <span className="text-lg">{expressionEmoji[expression]}</span>
       </div>
-      <style>{`
-        @keyframes lipSync {
-          from { transform: scaleY(0.3); }
-          to { transform: scaleY(1); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -526,6 +526,8 @@ export default function ActivePauseLessonPlayer({
   const [autoPlay, setAutoPlay] = useState(false);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const teacherAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [teacherViseme, setTeacherViseme] = useState<VisemeData>(ADVANCED_VISEME_MAP.NEUTRAL);
+  const { syncWithAudio, start: startVisemes, stop: stopVisemes } = useTTSVisemeSync(setTeacherViseme);
 
   const generateContentMutation = trpc.ai.generateLessonContent.useMutation();
   const freeChatMutation = trpc.ai.freeChat.useMutation();
@@ -721,6 +723,7 @@ Rules:
 
   const speak = useCallback(async (text: string) => {
     teacherAudioRef.current?.pause();
+    stopVisemes();
     const gender = /ricardo|james|carlos|hans|omar|emre|ivan/i.test(teacherName) ? "MALE" : "FEMALE";
     try {
       const result = await googleTtsMutation.mutateAsync({
@@ -732,8 +735,16 @@ Rules:
         const audio = new Audio(result.audioUrl);
         teacherAudioRef.current = audio;
         audio.onplay = () => setIsSpeaking(true);
-        audio.onended = () => setIsSpeaking(false);
-        audio.onerror = () => setIsSpeaking(false);
+        audio.onpause = () => setIsSpeaking(false);
+        audio.onended = () => {
+          setIsSpeaking(false);
+          stopVisemes();
+        };
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          stopVisemes();
+        };
+        syncWithAudio(audio, text, languageCode);
         await audio.play();
         return;
       }
@@ -741,10 +752,16 @@ Rules:
       // Browser synthesis remains available when a network TTS provider is unavailable.
     }
     speakText(text, languageCode, {
-      onStart: () => setIsSpeaking(true),
-      onEnd: () => setIsSpeaking(false),
+      onStart: () => {
+        setIsSpeaking(true);
+        startVisemes(text, languageCode);
+      },
+      onEnd: () => {
+        setIsSpeaking(false);
+        stopVisemes();
+      },
     });
-  }, [googleTtsMutation, languageCode, teacherName]);
+  }, [googleTtsMutation, languageCode, teacherName, startVisemes, stopVisemes, syncWithAudio]);
 
   const handleExerciseComplete = (correct: boolean, userAnswer: string) => {
     if (correct) {
@@ -814,6 +831,7 @@ Rules:
             photo={teacherPhoto}
             name={teacherName}
             isSpeaking={isSpeaking}
+            viseme={teacherViseme}
             expression={teacherExpression}
           />
           <div>
