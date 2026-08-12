@@ -17,4 +17,10 @@ describe('regional teacher catalog matching', () => {
     const sarah = matchTeacherCatalog(TEACHERS_57, { voiceLanguageCode: 'en-US', gender: 'female' });
     expect(sarah).toMatchObject({ id: 'prof-en-us', name: 'Teacher Sarah Mitchell', gender: 'female' });
   });
+
+  it('never resolves a Portuguese teacher when an English lesson provides only the generic en code', () => {
+    const englishTeacher = matchTeacherCatalog(TEACHERS_57, { voiceLanguageCode: 'en', gender: 'female' });
+    expect(englishTeacher).toMatchObject({ id: 'prof-en-us', voiceLang: 'en-US', gender: 'female' });
+    expect(englishTeacher?.id).not.toBe('prof-pt-br');
+  });
 });

@@ -297,6 +297,7 @@
 - [x] Impedir que o vídeo animado e o MP3 neural reproduzam voz ao mesmo tempo no AnimatedTeacher — vídeo é camada visual silenciosa; somente o MP3 neural sincronizado é audível
 - [x] Impedir que o vídeo fotorrealista e o MP3 neural reproduzam voz ao mesmo tempo na VoiceConversation — vídeo e avatar offline são visuais; apenas o MP3 neural é audível
 - [x] Iniciar o vídeo visual da VoiceConversation no mesmo evento `onplay` do MP3 neural — vídeo silencioso inicia, pausa e reinicia junto do ciclo do áudio neural
+- [ ] Descartar vídeo fotorrealista que termine de gerar após o MP3 neural já ter encerrado
 
 ## 🎬 VÍDEOS EDUCACIONAIS ORIGINAIS (INSPIRADO EM MELHORES PRÁTICAS)
 - [ ] Criar estrutura de vídeos curtos (2-5 min) por conceito
@@ -338,6 +339,7 @@
 - [x] Mapear códigos curtos (en, pt, es, fr, de, it, ja, zh, ko, ru, ar) para BCP-47 completos
 - [x] Aguardar carregamento de vozes do browser antes de falar (onvoiceschanged)
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
+- [x] Garantir por teste que uma lição de inglês não pode resolver professor ou voz de português por fallback genérico — `en` feminino resolve Sarah/en-US e rejeita `prof-pt-br`; regressões de catálogo e voz aprovadas
 
 ## 🐛 BUG: PROFESSORA INGRID NÃO FALA
 - [x] Diagnosticar por que Teacher Ingrid (id=150002) não fala — gender não era passado ao speakNaturalVoice
@@ -1090,6 +1092,9 @@
 ## 🧭 ESCOLHA DOCENTE TRANSPARENTE
 - [x] Exibir variante regional, cidade de origem e voz nativa nos cards de professores de inglês para orientar a escolha sem tentativa e erro — cards mostram variante, origem e voz; testes diferenciam James en-GB/masculina e Sarah en-US/feminina
 - [x] Adicionar controle para trocar de professor dentro da lição e retornar ao seletor sem perder o progresso — botão visível no cabeçalho da lição
+
+## 🧑‍🏫 ORGANIZAÇÃO DOCENTE PRÓPRIA
+- [ ] Padronizar a apresentação de professor por idioma, variante regional, origem, especialidade, voz e nível CEFR nas telas prioritárias, mantendo conteúdo e interface originais
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
 - [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB
