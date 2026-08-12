@@ -8,7 +8,7 @@ describe('microphone access guidance', () => {
   });
 
   it('gives a distinct actionable message for each recoverable access state', () => {
-    expect(microphoneErrorMessage({ code: 'DENIED' })).toContain('cadeado');
+    expect(microphoneErrorMessage({ code: 'DENIED' })).toContain('controles deslizantes');
     expect(microphoneErrorMessage({ code: 'NOT_FOUND' })).toContain('Nenhum microfone');
     expect(microphoneErrorMessage({ code: 'BUSY' })).toContain('outro aplicativo');
   });

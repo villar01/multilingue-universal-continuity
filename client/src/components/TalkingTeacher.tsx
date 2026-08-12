@@ -8,6 +8,7 @@ import { trpc } from "@/lib/trpc";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { onLipSyncAmplitude, stopEdgeTTS } from "@/lib/edgeTTSClient";
+import { ADVANCED_VISEME_MAP, useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 
 // Fotos fotorrealistas por professor (Unsplash - domínio público)
 const TEACHER_PHOTOS: Record<string, string> = {
@@ -39,6 +40,7 @@ interface TalkingTeacherProps {
   teacher: Teacher57;
   text?: string;
   autoPlay?: boolean;
+  externalAudioUrl?: string | null;
   size?: "sm" | "md" | "lg" | "xl";
   showName?: boolean;
   showControls?: boolean;
@@ -59,6 +61,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   teacher,
   text,
   autoPlay = false,
+  externalAudioUrl = null,
   size = "md",
   showName = true,
   showControls = true,
@@ -69,11 +72,14 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lipAmplitude, setLipAmplitude] = useState(0);
+  const [audioViseme, setAudioViseme] = useState<VisemeData>(ADVANCED_VISEME_MAP.X);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const externalAudioRef = useRef<HTMLAudioElement | null>(null);
   const photoUrl = TEACHER_PHOTOS[teacher.id] || DEFAULT_PHOTO;
   const sizes = SIZE_MAP[size];
 
   const generateVideoMutation = trpc.livePortrait.generateTeacherVideo.useMutation();
+  const audioVisemeSync = useTTSVisemeSync(setAudioViseme);
 
   // A queda para TTS neural preserva movimento reativo ao áudio real, em vez
   // de um ciclo visual fixo de fala.
@@ -81,6 +87,33 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
     onLipSyncAmplitude(setLipAmplitude);
     return () => onLipSyncAmplitude(null);
   }, []);
+
+  useEffect(() => {
+    if (!externalAudioUrl) return;
+    stopEdgeTTS();
+    const audio = new Audio(externalAudioUrl);
+    externalAudioRef.current = audio;
+    const finish = () => {
+      audioVisemeSync.stop();
+      setAudioViseme(ADVANCED_VISEME_MAP.X);
+      setIsSpeaking(false);
+      setState("idle");
+    };
+    audio.onplay = () => {
+      setIsSpeaking(true);
+      setState("speaking");
+      audioVisemeSync.syncWithAudio(audio, text || teacher.greeting, teacher.voiceLang || "en-US");
+    };
+    audio.onended = finish;
+    audio.onerror = finish;
+    audio.play().catch(finish);
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioVisemeSync.stop();
+      if (externalAudioRef.current === audio) externalAudioRef.current = null;
+    };
+  }, [externalAudioUrl, text, teacher.greeting, teacher.voiceLang]);
 
   // Gerar vídeo D-ID
   const generateVideo = useCallback(async (speechText: string) => {
@@ -122,10 +155,10 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
 
   // Auto-play quando text muda
   useEffect(() => {
-    if (autoPlay && text) {
+    if (!externalAudioUrl && autoPlay && text) {
       generateVideo(text);
     }
-  }, [autoPlay, text]);
+  }, [autoPlay, externalAudioUrl, text]);
 
   // Reproduzir vídeo quando URL disponível
   useEffect(() => {
@@ -145,6 +178,10 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
 
   const handleStop = () => {
     stopEdgeTTS();
+    externalAudioRef.current?.pause();
+    externalAudioRef.current = null;
+    audioVisemeSync.stop();
+    setAudioViseme(ADVANCED_VISEME_MAP.X);
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -196,16 +233,16 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
             <div
               className="relative overflow-hidden border-2 border-rose-950/80 bg-rose-950 shadow-[0_1px_3px_rgba(0,0,0,0.65)] transition-[width,height,border-radius] duration-75"
               style={{
-                width: `${34 + lipAmplitude * 15}px`,
-                height: `${5 + lipAmplitude * 23}px`,
-                borderRadius: `${lipAmplitude > 0.58 ? 45 : 70}%`,
-                transform: `translateY(${lipAmplitude > 0.58 ? 1 : 0}px)`,
+                width: externalAudioUrl ? `${18 + audioViseme.mouthWidth * 0.42}px` : `${34 + lipAmplitude * 15}px`,
+                height: externalAudioUrl ? `${4 + audioViseme.mouthHeight * 1.1}px` : `${5 + lipAmplitude * 23}px`,
+                borderRadius: `${externalAudioUrl ? (audioViseme.lipRound > 0.35 ? 45 : 70) : (lipAmplitude > 0.58 ? 45 : 70)}%`,
+                transform: `translateY(${externalAudioUrl ? (audioViseme.jawDrop > 5 ? 1 : 0) : (lipAmplitude > 0.58 ? 1 : 0)}px)`,
               }}
             >
-              {lipAmplitude > 0.52 && (
+              {(externalAudioUrl ? audioViseme.mouthHeight > 13 : lipAmplitude > 0.52) && (
                 <div className="absolute inset-x-1 top-0 h-[32%] rounded-b bg-white/95" />
               )}
-              {lipAmplitude > 0.76 && (
+              {(externalAudioUrl ? audioViseme.tongueVisible : lipAmplitude > 0.76) && (
                 <div className="absolute bottom-0 left-1/2 h-[40%] w-[55%] -translate-x-1/2 rounded-t-full bg-rose-400/90" />
               )}
             </div>

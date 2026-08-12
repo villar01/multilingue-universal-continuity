@@ -59,7 +59,7 @@ export function microphoneErrorMessage(error: Pick<MicrophoneAccessError, 'code'
   switch (code) {
     case 'SECURE_CONTEXT': return 'Abra o aplicativo pela conexão segura (HTTPS) para usar o microfone.';
     case 'UNSUPPORTED': return 'Este navegador não disponibiliza microfone. Use uma versão atual do Chrome, Edge ou Firefox.';
-    case 'DENIED': return 'Permissão de microfone bloqueada. Clique no cadeado ao lado do endereço e permita o microfone para este site.';
+    case 'DENIED': return 'Permissão de microfone bloqueada. Clique no ícone de controles deslizantes à esquerda do endereço, abra Permissões e escolha Permitir para Microfone.';
     case 'NOT_FOUND': return 'Nenhum microfone foi encontrado pelo navegador. Selecione o dispositivo correto nas permissões do site.';
     case 'BUSY': return 'O microfone está sendo usado por outro aplicativo. Feche chamadas ou gravações e tente novamente.';
     default: return 'Não foi possível acessar o microfone. Verifique a permissão do site e tente novamente.';

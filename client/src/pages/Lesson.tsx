@@ -208,8 +208,6 @@ export default function Lesson() {
       // Reproduzir áudio base64 diretamente
       try {
         const audioData = `data:audio/mp3;base64,${result.audioBase64}`;
-        const audio = new Audio(audioData);
-        audio.play().catch(() => {});
         setTeacherAudioUrl(audioData);
       } catch (e) {
         console.log('Teacher audio play error:', e);
@@ -1167,7 +1165,8 @@ export default function Lesson() {
                       <TalkingTeacher
                         teacher={t57 as any}
                         text={teacherText || exercise.question || t57Base.greeting}
-                        autoPlay={!!teacherText}
+                        autoPlay={false}
+                        externalAudioUrl={teacherAudioUrl}
                         size="xl"
                         showName={true}
                         showControls={true}

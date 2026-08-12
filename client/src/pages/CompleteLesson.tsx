@@ -146,7 +146,7 @@ export default function CompleteLesson() {
       } catch (error: any) {
         console.error("[handleVoiceInput] Erro ao acessar microfone:", error);
         if (error.name === 'NotAllowedError' || error.message.includes('permission')) {
-          toast.error("❌ Permissão de microfone negada! Clique no ícone de cadeado na barra de endereço e permita o acesso ao microfone.");
+          toast.error("❌ Permissão de microfone negada! Clique no ícone de controles deslizantes à esquerda do endereço, abra Permissões e permita o Microfone.");
         } else if (error.name === 'NotFoundError') {
           toast.error("❌ Nenhum microfone encontrado! Conecte um microfone e tente novamente.");
         } else {

@@ -1068,6 +1068,7 @@
 - [ ] Confirmar no navegador do aluno que o microfone inicia a gravação após aceitar a permissão do site
 - [x] Aplicar o acesso centralizado de microfone aos gravadores de pronúncia, lição, demonstração e roleplay que ainda usam a API antiga — varredura confirmou que nenhum gravador de áudio usa `getUserMedia({ audio: true })` diretamente
 - [x] Adicionar detecção ativa de permissão e botão de nova tentativa quando o microfone permanecer indisponível — PolyLesson expõe motivo específico e "Tentar microfone novamente" sem sair da aula
+- [x] Substituir orientação de "cadeado" por instruções compatíveis com o ícone de controles do Chrome atual — mensagens atualizadas e varredura confirmou ausência de referência a cadeado
 
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
