@@ -1054,6 +1054,7 @@
 
 ## 🏝️ CENA IMERSIVA — SINCRONIZAÇÃO AUDIOVISUAL
 - [x] Verificar e reforçar a sincronização entre voz neural, visemas e animação do professor em Tropical Beach após iniciar o diálogo — Google Neural TTS usa o relógio real do áudio; interrupções agora zeram visemas e estado de fala imediatamente
+- [x] Sincronizar o aparecimento das palavras do diálogo imersivo com o relógio do áudio neural do professor — palavras progridem por `currentTime/duration` do mesmo MP3 usado para voz e visemas; fallback usa temporizador apenas sem arquivo de áudio
 
 ## 📱 AVISO DE IA LOCAL — CELULAR
 - [x] Compactar o aviso de IA Local no celular para que não cubra professor, diálogo ou controles da cena imersiva — largura segura, conteúdo resumido e fechar imediato adicionados

@@ -1336,6 +1336,8 @@ export default function ImmersiveScene() {
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const activeDialogLineRef = useRef<string | null>(null);
+  const activeDialogWordCountRef = useRef(0);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { syncWithAudio, stop: stopVisemeSync } = useTTSVisemeSync(handleAudioViseme);
@@ -1356,8 +1358,24 @@ export default function ImmersiveScene() {
   const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, revokeOnEnd = false) => {
     const audio = new Audio(source);
     audioRef.current = audio;
-    audio.onplay = () => setIsSpeaking(true);
+    const updatesActiveDialog = () => activeDialogLineRef.current === phrase && activeDialogWordCountRef.current > 0;
+    const updateDialogWordsFromAudio = () => {
+      if (!updatesActiveDialog() || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      const wordCount = activeDialogWordCountRef.current;
+      const nextWord = Math.min(wordCount, Math.floor((audio.currentTime / audio.duration) * wordCount));
+      setDlgWordIdx((current) => Math.max(current, nextWord));
+    };
+    audio.onplay = () => {
+      setIsSpeaking(true);
+      if (updatesActiveDialog()) setDlgAudioClock(true);
+    };
+    audio.onloadedmetadata = updateDialogWordsFromAudio;
+    audio.ontimeupdate = updateDialogWordsFromAudio;
     audio.onended = () => {
+      if (updatesActiveDialog()) {
+        setDlgWordIdx(activeDialogWordCountRef.current);
+        setDlgAudioClock(false);
+      }
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
@@ -1365,6 +1383,7 @@ export default function ImmersiveScene() {
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     audio.onerror = () => {
+      if (updatesActiveDialog()) setDlgAudioClock(false);
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
@@ -1403,6 +1422,7 @@ export default function ImmersiveScene() {
       }
     } catch { /* fallback below */ }
     // Fallback: browser speech
+    if (activeDialogLineRef.current === text) setDlgAudioClock(false);
     speakWithPreference(text, lang, {
       rate: 0.85,
       onStart: () => setIsSpeaking(true),
@@ -1470,6 +1490,7 @@ export default function ImmersiveScene() {
   const [dlgStep, setDlgStep] = useState(0);
   const [dlgWords, setDlgWords] = useState<string[]>([]);
   const [dlgWordIdx, setDlgWordIdx] = useState(0);
+  const [dlgAudioClock, setDlgAudioClock] = useState(false);
   const [dlgAnswer, setDlgAnswer] = useState<number | null>(null);
   const dlgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const greetingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1483,6 +1504,9 @@ export default function ImmersiveScene() {
     setDlgStep(0);
     setDlgWords([]);
     setDlgWordIdx(0);
+    setDlgAudioClock(false);
+    activeDialogLineRef.current = null;
+    activeDialogWordCountRef.current = 0;
     setDlgAnswer(null);
     setActiveHotspot(null);
     setLearnedWords(new Set());
@@ -1503,25 +1527,47 @@ export default function ImmersiveScene() {
     if (line?.speaker === 'teacher') {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
+      activeDialogLineRef.current = line.text;
+      activeDialogWordCountRef.current = words.length;
+      setDlgAudioClock(true);
       speak(line.text, scene.teacherLang);
-    } else { setDlgWords([]); setDlgWordIdx(0); }
+    } else {
+      activeDialogLineRef.current = null;
+      activeDialogWordCountRef.current = 0;
+      setDlgAudioClock(false);
+      setDlgWords([]); setDlgWordIdx(0);
+    }
   }, [speak]);
   useEffect(() => {
-    if (!dlgOpen || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
+    if (!dlgOpen || dlgAudioClock || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
     dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), 300);
     return () => { if (dlgTimerRef.current) clearTimeout(dlgTimerRef.current); };
-  }, [dlgOpen, dlgWords, dlgWordIdx]);
+  }, [dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
   const dlgNext = useCallback(() => {
     if (!selectedScene) return;
     const next = dlgStep + 1;
-    if (next >= selectedScene.dialog.length) { setDlgOpen(false); return; }
+    if (next >= selectedScene.dialog.length) {
+      activeDialogLineRef.current = null;
+      activeDialogWordCountRef.current = 0;
+      setDlgAudioClock(false);
+      setDlgOpen(false);
+      return;
+    }
     setDlgStep(next); setDlgAnswer(null);
     const line = selectedScene.dialog[next];
     if (line.speaker === 'teacher') {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
+      activeDialogLineRef.current = line.text;
+      activeDialogWordCountRef.current = words.length;
+      setDlgAudioClock(true);
       speak(line.text, selectedScene.teacherLang);
-    } else { setDlgWords([]); setDlgWordIdx(0); }
+    } else {
+      activeDialogLineRef.current = null;
+      activeDialogWordCountRef.current = 0;
+      setDlgAudioClock(false);
+      setDlgWords([]); setDlgWordIdx(0);
+    }
   }, [dlgStep, selectedScene, speak]);
   const handleAddParetoToNotebook = useCallback((word: ParetoWord) => {
     addToNotebook({
