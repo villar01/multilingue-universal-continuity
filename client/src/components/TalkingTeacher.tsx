@@ -229,7 +229,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
 
         {/* Visible facial mouth driven by the live neural-audio amplitude */}
         {(isSpeaking || state === "speaking") && !videoUrl && (
-          <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-none">
+          <div className="absolute bottom-[28%] left-1/2 -translate-x-1/2 pointer-events-none">
             <div
               className="relative overflow-hidden border-2 border-rose-950/80 bg-rose-950 shadow-[0_1px_3px_rgba(0,0,0,0.65)] transition-[width,height,border-radius] duration-75"
               style={{

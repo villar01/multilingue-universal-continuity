@@ -312,6 +312,10 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
 
   const handlePronunciationCheck = useCallback(async (word: string) => {
     if (isRecordingPron) return;
+    const approved = window.confirm(
+      'Deseja ativar o microfone para responder ao professor?\n\nO microfone será usado apenas nesta atividade de pronúncia. A gravação começa somente depois da sua confirmação e pode ser interrompida ao final do exercício.',
+    );
+    if (!approved) return;
     setIsRecordingPron(true);
     setPronScore(null);
     setPronHeard('');
@@ -335,8 +339,8 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
       }
     } catch (err: any) {
       const msg = err?.message || '';
-      if (msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied')) {
-        toast.error('Permissão de microfone negada — clique no ícone 🔒 na barra do navegador');
+      if (msg.includes('Permission') || msg.includes('NotAllowed') || msg.includes('denied') || msg.includes('Permissão')) {
+        toast.error('Permissão de microfone negada — use o ícone de controles deslizantes à esquerda do endereço e permita o Microfone.');
       } else {
         toast.error('Erro ao avaliar pronúncia — tente novamente');
       }
