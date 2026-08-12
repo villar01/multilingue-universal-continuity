@@ -15,6 +15,7 @@ import React, {
   useRef, useState, useCallback, useEffect, forwardRef, useImperativeHandle,
 } from "react";
 import { trpc } from "@/lib/trpc";
+import { ADVANCED_VISEME_MAP, type VisemeData, useTTSVisemeSync } from "@/lib/tts-viseme-sync";
 
 // ─── Fotos reais dos professores (Unsplash, domínio público) ──────────────────
 export const TEACHER_PHOTOS: Record<string, string> = {
@@ -92,8 +93,10 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
     const [isLoading, setIsLoading] = useState(false);
     const [didVideoUrl, setDidVideoUrl] = useState<string | null>(null);
     const [useDIDVideo, setUseDIDVideo] = useState(false);
+    const [audioViseme, setAudioViseme] = useState<VisemeData>(ADVANCED_VISEME_MAP.NEUTRAL);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const { syncWithAudio, stop: stopVisemes } = useTTSVisemeSync(setAudioViseme);
 
     const photo = photoUrl || TEACHER_PHOTOS[teacherId] || TEACHER_PHOTOS["default"];
 
@@ -109,6 +112,7 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
       if (videoRef.current) {
         videoRef.current.pause();
       }
+      stopVisemes();
       setIsSpeaking(false);
       setUseDIDVideo(false);
       onSpeakEnd?.();
@@ -147,18 +151,27 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
             setIsLoading(false);
             onSpeakStart?.();
           };
+          audio.onpause = () => {
+            setIsSpeaking(false);
+            stopVisemes();
+            videoRef.current?.pause();
+          };
           audio.onended = () => {
             setIsSpeaking(false);
+            stopVisemes();
             setUseDIDVideo(false);
+            videoRef.current?.pause();
             onSpeakEnd?.();
             URL.revokeObjectURL(audioUrl);
           };
           audio.onerror = () => {
             setIsSpeaking(false);
             setIsLoading(false);
+            stopVisemes();
             setUseDIDVideo(false);
           };
 
+          syncWithAudio(audio, text, voiceLang);
           await audio.play();
 
           // 4. Tentar gerar vídeo D-ID em paralelo (lip-sync fotorrealista)
@@ -176,6 +189,8 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
                 setUseDIDVideo(true);
                 if (videoRef.current) {
                   videoRef.current.src = didResult.videoUrl;
+                  videoRef.current.muted = true;
+                  videoRef.current.currentTime = audio.currentTime;
                   videoRef.current.play().catch(() => {});
                 }
               }
@@ -189,7 +204,7 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
           setIsSpeaking(false);
         }
       },
-      [voiceLang, photo, ttsMutation, didMutation, stopSpeaking, onSpeakStart, onSpeakEnd]
+      [voiceLang, photo, ttsMutation, didMutation, stopSpeaking, onSpeakStart, onSpeakEnd, stopVisemes, syncWithAudio]
     );
 
     useImperativeHandle(ref, () => ({ speak, stop: stopSpeaking }), [speak, stopSpeaking]);
@@ -228,7 +243,7 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
               src={didVideoUrl}
               autoPlay
               playsInline
-              muted={false}
+              muted
               loop={false}
               className="w-full h-full object-cover"
               style={{ borderRadius: "50%" }}
@@ -253,21 +268,29 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
                 }}
               />
 
-              {/* Overlay de boca animada durante fala */}
+              {/* Boca facial na região inferior do rosto, guiada pelo relógio do MP3 neural */}
               {isSpeaking && (
                 <div
-                  className="absolute bottom-0 left-0 right-0 flex justify-center pb-3"
-                  style={{ pointerEvents: "none" }}
+                  className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  style={{ bottom: `${size * 0.27}px` }}
+                  aria-hidden="true"
                 >
                   <div
                     style={{
-                      width: size * 0.22,
-                      height: size * 0.1,
-                      background: "rgba(0,0,0,0.6)",
-                      borderRadius: "0 0 50% 50%",
-                      animation: "mouthOpen 0.12s ease-in-out infinite alternate",
+                      width: Math.max(size * 0.12, audioViseme.mouthWidth * 0.55),
+                      height: Math.max(4, audioViseme.mouthHeight * 0.78),
+                      background: "rgba(45,5,10,0.92)",
+                      border: "1px solid rgba(90,15,25,0.8)",
+                      borderRadius: `${Math.max(5, 20 - audioViseme.lipRound * 0.12)}px ${Math.max(5, 20 - audioViseme.lipRound * 0.12)}px ${Math.max(8, 22 + audioViseme.lipRound * 0.08)}px ${Math.max(8, 22 + audioViseme.lipRound * 0.08)}px`,
+                      transform: `translateY(${audioViseme.jawDrop * 0.16}px) scaleX(${1 - audioViseme.lipRound * 0.0025})`,
+                      transition: "width 70ms linear, height 70ms linear, transform 70ms linear, border-radius 70ms linear",
+                      overflow: "hidden",
+                      position: "relative",
                     }}
-                  />
+                  >
+                    {audioViseme.mouthHeight > 18 && <span className="absolute inset-x-1 top-0 h-[28%] rounded-b bg-white/90" />}
+                    {audioViseme.tongueVisible && <span className="absolute bottom-0 left-[20%] h-[38%] w-[60%] rounded-t-full bg-rose-400/90" />}
+                  </div>
                 </div>
               )}
             </>
@@ -313,22 +336,7 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
             >
               {teacherName}
             </p>
-            {isSpeaking && (
-              <div className="flex items-center justify-center gap-1 mt-1">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="rounded-full"
-                    style={{
-                      width: 3,
-                      height: 3 + Math.random() * 12,
-                      background: accentColor,
-                      animation: `soundBar 0.6s ease-in-out ${i * 0.1}s infinite alternate`,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            {isSpeaking && <p className="mt-1 text-[10px]" style={{ color: accentColor }}>Fala sincronizada</p>}
           </div>
         )}
 
@@ -338,17 +346,9 @@ const PhotoAvatarTeacher = forwardRef<PhotoAvatarTeacherHandle, Props>(
             from { transform: scale(1.0) translateY(0px); }
             to   { transform: scale(1.01) translateY(-1px); }
           }
-          @keyframes mouthOpen {
-            from { height: 4px; }
-            to   { height: 14px; }
-          }
           @keyframes ripple {
             0%   { transform: scale(1);   opacity: 0.6; }
             100% { transform: scale(1.6); opacity: 0; }
-          }
-          @keyframes soundBar {
-            from { transform: scaleY(0.4); }
-            to   { transform: scaleY(1.6); }
           }
           @keyframes spin {
             to { transform: rotate(360deg); }

@@ -291,6 +291,7 @@
 - [x] Sincronizar movimento labial com timestamp do áudio — TTSVisemeSync agora usa currentTime do áudio, respeita play/pause/seek e ajusta a linha de visemas à duração real do MP3
 - [x] Adicionar micro-expressões faciais (piscadas, sobrancelhas) — professor imersivo combina piscadas, sobrancelhas atentas e rubor suave das bochechas com o estado de fala
 - [x] Substituir barras genéricas do ActivePauseLessonPlayer por boca facial vinculada ao áudio neural da frase — boca mostra abertura, arredondamento, dentes e língua pelo relógio do MP3 neural
+- [x] Substituir barras da PhotoAvatarTeacher por boca facial no rosto — visor imersivo usa visemas do MP3, dentes/língua e posição inferior da face; vídeo visual é silencioso
 
 ## 🔊 AVATAR ANIMADO — FONTE ÚNICA DE ÁUDIO
 - [x] Impedir que o vídeo animado e o MP3 neural reproduzam voz ao mesmo tempo no AnimatedTeacher — vídeo é camada visual silenciosa; somente o MP3 neural sincronizado é audível
