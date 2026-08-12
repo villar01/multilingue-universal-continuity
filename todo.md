@@ -1030,7 +1030,11 @@
 ## 🎬 CLIPES ORIGINAIS — A FAMÍLIA (APROVADO)
 
 - [x] Criar blueprint de cinco clipes originais de 8s: mother, father, brother, sister e family — plano aprovado e documentado em docs/family-clips-blueprint.md
-- [ ] Gerar imagem de referência consistente da professora Ingrid e ambiente familiar seguro em 16:9
-- [ ] Produzir os cinco clipes fotorrealistas em inglês com legendas PT-BR e sem música
-- [ ] Integrar os cinco clipes na biblioteca e na lição de família
+- [x] Gerar imagem de referência consistente da professora Ingrid e ambiente familiar seguro em 16:9 — asset primário durável registrado
+- [x] Produzir os cinco clipes fotorrealistas em inglês com legendas PT-BR e sem música — cinco MP4s de 8 s armazenados de forma durável
+- [x] Integrar os cinco clipes na biblioteca e na lição de família — biblioteca /clips e lição My Family (id 2) conectadas
 - [ ] Validar playback, legendas, controles e progresso dos clipes
+
+## 🐛 SELETOR DE PROFESSORES EM INGLÊS — CORREÇÃO VISUAL OBSERVADA
+- [x] Corrigir metadados de gênero dos professores de inglês — a validação de My Family confirmou 1 masculino e 3 femininos
+- [x] Corrigir retratos ausentes no seletor de inglês — Sarah e James agora renderizam retratos profissionais duráveis, sem placeholders

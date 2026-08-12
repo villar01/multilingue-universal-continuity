@@ -75,7 +75,9 @@ export default function TeacherSelector({
         });
         merged.push({
           ...t,
-          photoUrl: t.photoUrl || t.photo_url || t57?.photo || null,
+          // O catálogo curado é a fonte visual canônica; evita que URLs legadas
+          // indisponíveis do banco substituam retratos profissionais válidos.
+          photoUrl: t57?.photo || t.photoUrl || t.photo_url || null,
           voiceLanguageCode: t.voiceLanguageCode || t.voice_language_code || t57?.voiceLang || languageCode,
           gender: t.gender || t57?.gender || 'female',
           name: t.name || t57?.name || 'Professor',

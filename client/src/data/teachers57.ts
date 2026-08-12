@@ -67,12 +67,13 @@ export const TEACHERS_57: Teacher57[] = [
     voiceLang: 'en-US',
     flag: '🇺🇸',
     avatar: '👩🏼‍🏫',
-    photo: '/manus-storage/f_caucasian_07bc1dc5.jpg',
+    photo: '/manus-storage/teacher-sarah-mitchell_91c289f4.png',
     color: '#3C3B6E',
     greeting: 'Hello! Ready to learn English?',
     origin: 'New York, USA',
     specialty: 'Business English & pronunciation',
     personality: 'Energetic and encouraging',
+    gender: 'female',
   },
   // 4. Inglês Britânico
   {
@@ -84,12 +85,13 @@ export const TEACHERS_57: Teacher57[] = [
     voiceLang: 'en-GB',
     flag: '🇬🇧',
     avatar: '👨🏻‍🏫',
-    photo: '/manus-storage/teacher_james_d7c5c676.jpg',
+    photo: '/manus-storage/teacher-james-williams-v2_6511d727.png',
     color: '#012169',
     greeting: 'Good day! Shall we begin?',
     origin: 'London, UK',
     specialty: 'Literature & formal English',
     personality: 'Refined and articulate',
+    gender: 'male',
   },
   // 5. Espanhol (Espanha)
   {
