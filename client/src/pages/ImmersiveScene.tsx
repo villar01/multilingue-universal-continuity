@@ -1472,6 +1472,31 @@ export default function ImmersiveScene() {
   const [dlgWordIdx, setDlgWordIdx] = useState(0);
   const [dlgAnswer, setDlgAnswer] = useState<number | null>(null);
   const dlgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const greetingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Scene selection is the sole boundary for a teaching session. Reset every
+  // coupled visual/audio state together so no prior scene can bleed into it.
+  useEffect(() => {
+    if (!selectedScene) return;
+    stopTeacherAudio();
+    setDlgOpen(false);
+    setDlgStep(0);
+    setDlgWords([]);
+    setDlgWordIdx(0);
+    setDlgAnswer(null);
+    setActiveHotspot(null);
+    setLearnedWords(new Set());
+    setQuizIndex(0);
+    setQuizFeedback(null);
+    setGreetingText(selectedScene.greetingPt);
+    setShowGreeting(true);
+    if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
+    greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
+    return () => {
+      if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
+    };
+  }, [selectedScene?.id, stopTeacherAudio]);
+
   const startDialog = useCallback((scene: Scene) => {
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null);
     const line = scene.dialog[0];
@@ -1515,11 +1540,7 @@ export default function ImmersiveScene() {
 
   const handleEnterScene = useCallback((scene: Scene) => {
     setSelectedScene(scene);
-    setActiveHotspot(null);
-    setShowGreeting(true);
-    setGreetingText(scene.greetingPt);
     setParticles(false);
-    setTimeout(() => setShowGreeting(false), 6000);
   }, []);
 
   const handleHotspotClick = useCallback((hotspot: Hotspot) => {
@@ -2211,11 +2232,6 @@ export default function ImmersiveScene() {
               const next = IMMERSIVE_SCENES[(idx + 1) % IMMERSIVE_SCENES.length];
               console.log('[Próxima] clicked. current:', selectedScene.id, 'idx:', idx, 'next:', next.id);
               setSelectedScene(next);
-              setActiveHotspot(null);
-              setLearnedWords(new Set());
-              setShowGreeting(true);
-              setGreetingText(next.greetingPt);
-              setTimeout(() => setShowGreeting(false), 6000);
             }}
             className="flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full btn-press"
             style={{ background: "rgba(99,102,241,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(99,102,241,0.5)", fontSize: "clamp(11px, 1.3vw, 14px)" }}

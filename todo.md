@@ -1059,6 +1059,9 @@
 - [x] Diferenciar visualmente boca aberta, arredondada, sorriso, dentes e fechamento labial durante a fala real do professor — poses por visema usam abertura, arredondamento, mandíbula, dentes e língua; regressão validada
 - [ ] Confirmar visualmente no navegador a boca facial durante o diálogo iniciado pelo aluno em Tropical Beach
 
+## 🐛 CENA IMERSIVA — INICIALIZAÇÃO INCONSISTENTE
+- [x] Corrigir a saudação Tropical Beach exibida sobre o cenário Nova York e impedir que o diálogo inicial fique preso — troca de cena agora reinicia juntos diálogo, áudio, visemas, saudação, hotspots e progresso local; estado inicial validado visualmente
+
 ## 🐛 PROFESSOR JAMES — IDENTIDADE VISUAL
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
 
