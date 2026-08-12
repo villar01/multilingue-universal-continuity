@@ -7,6 +7,7 @@ import TalkingHeadAvatar from "./TalkingHeadAvatar";
 import { useOfflineSyncDB } from "@/hooks/useOfflineSyncDB";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { canAttachTeacherVideo } from "@/lib/teacherVideoSession";
+import { resolveVoiceConversationTeacher, type VoiceConversationTeacherInput } from "@/lib/voiceConversationTeacher";
 import { toast } from "sonner";
 
 interface Message {
@@ -19,12 +20,14 @@ interface VoiceConversationProps {
   lessonId: number;
   vocabularyContext?: string[];
   languageCode?: string;
+  teacher?: VoiceConversationTeacherInput;
 }
 
 export default function VoiceConversation({
   lessonId,
   vocabularyContext = [],
   languageCode = "en-US",
+  teacher: selectedTeacher,
 }: VoiceConversationProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,7 +47,9 @@ export default function VoiceConversation({
   const { cacheMedia, getCachedMediaUrl } = offlineDB;
   const conversationId = `lesson-${lessonId}-${languageCode}`;
   const isPortugueseLesson = languageCode.toLowerCase().startsWith("pt");
-  const activeTeacher = isPortugueseLesson
+  const isEnglishLesson = languageCode.toLowerCase().startsWith("en");
+  const selectedCompatibleTeacher = resolveVoiceConversationTeacher(selectedTeacher, languageCode);
+  const fallbackTeacher = isPortugueseLesson
     ? {
         avatarId: "professor-ricardo",
         name: "Professor Ricardo",
@@ -52,13 +57,19 @@ export default function VoiceConversation({
         fallbackLanguage: "pt-BR" as const,
         imageUrl: "/manus-storage/teacher-ricardo-portuguese_5a5c9de8.png",
       }
-    : {
+    : isEnglishLesson ? {
         avatarId: "professora-ingrid",
         name: "Professora Ingrid",
         gender: "female" as const,
         fallbackLanguage: "en-US" as const,
         imageUrl: "/manus-storage/teacher-ingrid-english_b938d99a.png",
+      } : {
+        avatarId: `teacher-${languageCode.toLowerCase()}`,
+        name: "Professor do idioma selecionado",
+        gender: "female" as const,
+        fallbackLanguage: languageCode,
       };
+  const activeTeacher = selectedCompatibleTeacher ?? fallbackTeacher;
   const cachedVideoId = `lesson-video-${lessonId}-${languageCode}`;
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -75,6 +86,7 @@ export default function VoiceConversation({
   const latestVideoRequestRef = useRef(0);
 
   useEffect(() => {
+    if (!activeTeacher.imageUrl) return;
     void cacheMedia({
       id: `teacher-portrait-${activeTeacher.avatarId}`,
       url: activeTeacher.imageUrl,
@@ -424,7 +436,7 @@ export default function VoiceConversation({
       // Generate TTS audio
       const ttsResult = await generateTTS.mutateAsync({
         text: isPortugueseLesson ? portuguese : (english || portuguese),
-        languageCode: languageCode,
+        languageCode: activeTeacher.fallbackLanguage,
         gender: activeTeacher.gender === "male" ? "MALE" : "FEMALE",
       });
 
@@ -435,7 +447,7 @@ export default function VoiceConversation({
       // HYBRID AVATAR LOGIC. The video is visual-only and may finish after
       // the neural MP3; in that case it is discarded instead of reappearing
       // out of sync with a completed teacher response.
-      if (isOnline) {
+      if (isOnline && activeTeacher.imageUrl) {
         setIsGeneratingVideo(true);
         latestVideoRequestRef.current = speechSession;
         toast.info("🎬 Gerando avatar fotorrealista...");
@@ -547,7 +559,9 @@ export default function VoiceConversation({
             <TalkingHeadAvatar
               ref={talkingHeadRef}
               avatarId={activeTeacher.avatarId}
-              language={activeTeacher.fallbackLanguage}
+              // TalkingHead uses this only for its local visual lip-sync module;
+              // the audible source remains the compatible neural MP3 above.
+              language={activeTeacher.fallbackLanguage.toLowerCase().startsWith("pt") ? "pt-BR" : "en-US"}
               gender={activeTeacher.gender}
             />
           )

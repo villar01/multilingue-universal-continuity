@@ -358,6 +358,7 @@
 - [x] Atualizar TTS para usar idioma nativo + idioma de aprendizado — useNaturalVoice, ImmersiveScene e VoiceConversation separam voz nativa e voz-alvo
 - [x] Preservar fotos e professores — decisão aplicada conforme orientação do usuário; interface combina retratos reais, animação e áudio
 - [x] Manter fluxo com professores — decisão aplicada conforme orientação do usuário; experiência guiada por professor é parte central do app
+- [x] Fazer a conversa por voz manter o professor compatível escolhido na lição, em vez de substituir o retrato, gênero ou voz por um perfil fixo — Lesson repassa perfil selecionado, VoiceConversation preserva retrato/gênero/locale nativo compatível e rejeita perfil estrangeiro; TypeScript e 81 testes aprovados
 
 ## 🐛 INGRID VOZ + LIP-SYNC TODOS OS PROFESSORES
 - [x] Corrigir voz da Professora Ingrid (gender=female, seleção de voz feminina por nome: jenny, aria, zira, samantha, etc)

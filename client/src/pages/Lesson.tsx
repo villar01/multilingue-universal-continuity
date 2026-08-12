@@ -1126,6 +1126,13 @@ export default function Lesson() {
                   lessonId={parseInt(lessonId || '1')}
                   vocabularyContext={lesson.vocabularyDetailed.map((v: any) => v.word)}
                   languageCode={lesson.languageCode || 'en-US'}
+                  teacher={teacher ? {
+                    id: teacher.id,
+                    name: teacher.name,
+                    gender: (teacher as any).gender,
+                    photoUrl: (teacher as any).photoUrl || (teacher as any).photo_url,
+                    voiceLanguageCode: (teacher as any).voiceLanguageCode || (teacher as any).voice_language_code,
+                  } : undefined}
                 />
               </div>
             )}
