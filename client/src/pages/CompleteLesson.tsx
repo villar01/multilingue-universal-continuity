@@ -260,7 +260,6 @@ export default function CompleteLesson() {
   };
 
   const speakText = async (text: string) => {
-    setIsAISpeaking(true);
     try {
       const result = await generateAudio.mutateAsync({
         text,
@@ -270,8 +269,12 @@ export default function CompleteLesson() {
       });
 
       const audio = new Audio(result.audioUrl);
-      audio.onended = () => setIsAISpeaking(false);
-      audio.play();
+      const stopAvatarSpeech = () => setIsAISpeaking(false);
+      audio.onplay = () => setIsAISpeaking(true);
+      audio.onended = stopAvatarSpeech;
+      audio.onpause = stopAvatarSpeech;
+      audio.onerror = stopAvatarSpeech;
+      audio.play().catch(stopAvatarSpeech);
     } catch (error) {
       console.error("Error generating audio:", error);
       setIsAISpeaking(false);
@@ -400,7 +403,7 @@ export default function CompleteLesson() {
                   <h3 className="text-lg font-semibold mb-4">Your Teacher</h3>
                   <EnhancedTeacherAvatar
                     teacherId={1}
-                    isTeaching={true}
+                    isTeaching={isAISpeaking}
                     currentText={lesson.storyText || ""}
                     emotion="happy"
                   />

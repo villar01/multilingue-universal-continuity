@@ -424,7 +424,7 @@
 
 ### Correções de Avatar
 - [x] EnhancedTeacherAvatar: needsFetch só ativa quando não há props diretas
-- [x] Lesson.tsx: isTeaching=true permanente durante exercício
+- [x] CompleteLesson: substituir isTeaching=true permanente por estado de fala ligado ao áudio real — avatar inicia em onplay e encerra em ended/pause/error do MP3 neural
 - [x] Lip-sync fonema com timeline melhorada (vogais 110ms, consoantes 60ms, espaços 70ms)
 
 ### Pendentes
