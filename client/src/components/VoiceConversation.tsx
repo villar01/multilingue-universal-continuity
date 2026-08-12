@@ -438,12 +438,8 @@ export default function VoiceConversation({
         }
       }
       
-      if (!isOnline) {
-        // Offline: Use TalkingHead 3D avatar
-        if (talkingHeadRef.current) {
-          talkingHeadRef.current.speakWithAudio(ttsResult.audioUrl);
-        }
-      }
+      // O MP3 neural abaixo é a fonte única de áudio em ambos os modos.
+      // O avatar offline continua visível, mas não inicia uma segunda reprodução.
 
       // Play audio
       if (audioElementRef.current) {
@@ -497,7 +493,8 @@ export default function VoiceConversation({
             controls={false}
             autoPlay
             loop
-            muted={false}
+            muted
+            aria-label="Vídeo visual do professor; a voz é reproduzida pelo áudio neural sincronizado"
           />
         ) : isGeneratingVideo ? (
           <div className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg">
