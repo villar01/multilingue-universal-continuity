@@ -1055,7 +1055,7 @@
 - [x] Corrigir a foto feminina e a especialidade equivocada exibidas no card do Professor James no seletor de inglês — validação visual confirmou retrato masculino e especialidade de literatura/inglês formal
 
 ## 🧭 ESCOLHA DOCENTE TRANSPARENTE
-- [ ] Exibir variante regional, cidade de origem e voz nativa nos cards de professores de inglês para orientar a escolha sem tentativa e erro
+- [x] Exibir variante regional, cidade de origem e voz nativa nos cards de professores de inglês para orientar a escolha sem tentativa e erro — cards mostram variante, origem e voz; testes diferenciam James en-GB/masculina e Sarah en-US/feminina
 - [x] Adicionar controle para trocar de professor dentro da lição e retornar ao seletor sem perder o progresso — botão visível no cabeçalho da lição
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL

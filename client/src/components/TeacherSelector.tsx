@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { getTeacherDisplayName } from "@/lib/teacherNames";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { matchTeacherCatalog } from "@/lib/teacherCatalogMatch";
+import { getTeacherCardDetails } from "@/lib/teacherCardDetails";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { TEACHERS_57 } from "@/data/teachers57";
 
@@ -199,17 +200,12 @@ export default function TeacherSelector({
           const isPlaying = playingTeacher === teacher.id;
           const displayName = teacher.name || getTeacherDisplayName(teacher.id, languageCode).name;
           const tags = getTagsForTeacher(teacher.personality);
-          const teacherLang = teacher.voiceLanguageCode || languageCode;
-          const regionalLabel = teacherLang === "en-US"
-            ? "Inglês americano"
-            : teacherLang === "en-GB"
-              ? "Inglês britânico"
-              : teacher.langName || getLangName(teacherLang);
-          const nativeVoiceLabel = teacher.gender === "male"
-            ? "Voz masculina nativa"
-            : teacher.gender === "female"
-              ? "Voz feminina nativa"
-              : "Voz neural nativa";
+          const teacherDetails = getTeacherCardDetails(teacher, languageCode);
+          const teacherLang = teacherDetails.voiceLanguageCode;
+          const regionalLabel = teacherDetails.regionalLabel === teacherLang
+            ? getLangName(teacherLang)
+            : teacherDetails.regionalLabel;
+          const nativeVoiceLabel = teacherDetails.nativeVoiceLabel;
           const rawPhoto = teacher.photoUrl || teacher.photo_url || null;
           const photoUrl = rawPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&size=200&background=4f46e5&color=fff&bold=true`;
           const isRecommended = idx === 0 && teachersForLanguage.length > 0; // first native teacher
