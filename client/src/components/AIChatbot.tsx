@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { CEFRLevel } from '@/lib/lesson-levels';
+import { microphoneErrorMessage, requestMicrophoneStream } from '@/lib/microphoneAccess';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -66,6 +67,8 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+  const microphoneStreamRef = useRef<MediaStream | null>(null);
 
   const conversationStats = useMemo(() => {
     const learnerMessages = messages.filter((message) => message.role === 'user');
@@ -115,6 +118,12 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => () => {
+    recognitionRef.current?.stop?.();
+    microphoneStreamRef.current?.getTracks().forEach((track) => track.stop());
+    microphoneStreamRef.current = null;
+  }, []);
+
   const handleSend = async () => {
     if (!input.trim() || chatMutation.isPending) return;
 
@@ -159,9 +168,59 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
     speakNaturalVoice(text, targetLanguage, { rate: 0.9 });
   };
 
-  const startRecording = () => {
-    // Implementar gravação de voz (Web Speech API)
-    toast.info('Gravação de voz em desenvolvimento');
+  const stopRecording = () => {
+    recognitionRef.current?.stop?.();
+    recognitionRef.current = null;
+    microphoneStreamRef.current?.getTracks().forEach((track) => track.stop());
+    microphoneStreamRef.current = null;
+    setIsRecording(false);
+  };
+
+  const startRecording = async () => {
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('A transcrição por voz não é compatível com este navegador. Digite sua resposta ou use o botão de voz da conversa guiada.');
+      return;
+    }
+
+    try {
+      // Esta chamada ocorre apenas pelo clique do aluno, preservando o pedido de permissão nativo do navegador.
+      const stream = await requestMicrophoneStream();
+      microphoneStreamRef.current = stream;
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = targetLanguage;
+      recognition.onresult = (event: any) => {
+        let transcript = '';
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          transcript += event.results[index][0].transcript;
+        }
+        setInput(transcript.trim());
+      };
+      recognition.onerror = (event: any) => {
+        if (event.error !== 'aborted') toast.error(`Não foi possível transcrever a fala: ${event.error}.`);
+      };
+      recognition.onend = () => {
+        microphoneStreamRef.current?.getTracks().forEach((track) => track.stop());
+        microphoneStreamRef.current = null;
+        recognitionRef.current = null;
+        setIsRecording(false);
+      };
+      recognition.start();
+      setIsRecording(true);
+      toast.info('Microfone ativo. Fale no idioma estudado e toque novamente para encerrar.');
+    } catch (error) {
+      console.error('[AIChatbot] Microphone error:', error);
+      stopRecording();
+      toast.error(microphoneErrorMessage(error));
+    }
   };
 
   return (
@@ -299,8 +358,10 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
             />
             <button
               onClick={startRecording}
+              disabled={chatMutation.isPending}
               className="absolute right-3 bottom-3 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-              title="Gravar voz"
+              title={isRecording ? 'Encerrar microfone' : 'Falar resposta'}
+              aria-pressed={isRecording}
             >
               <Mic className={`h-4 w-4 ${isRecording ? 'text-red-500' : 'text-gray-600'}`} />
             </button>
