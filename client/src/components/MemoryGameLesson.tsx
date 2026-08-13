@@ -6,13 +6,15 @@
  * 2. Match Pairs: combinar palavra com tradução em uma grade
  * 3. Fill-in-the-blank: completar a frase com a palavra correta
  */
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { speakText } from "@/hooks/useNaturalVoice";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
   Brain, RotateCcw, CheckCircle, XCircle, Volume2,
@@ -31,10 +33,11 @@ interface MemoryGameLessonProps {
   vocabulary: VocabItem[];
   languageCode: string;
   nativeLanguage?: string;
+  level?: "beginner" | "intermediate" | "advanced";
   onComplete?: (score: number, total: number) => void;
 }
 
-type GameMode = "flashcards" | "match-pairs" | "fill-blank";
+type GameMode = "flashcards" | "match-pairs" | "fill-blank" | "pareto";
 
 // ─── Flashcards Mode ────────────────────────────────────────────────────────
 
@@ -387,10 +390,14 @@ export default function MemoryGameLesson({
   vocabulary,
   languageCode,
   nativeLanguage = "pt",
+  level = "beginner",
   onComplete,
 }: MemoryGameLessonProps) {
   const [mode, setMode] = useState<GameMode | null>(null);
   const [totalScore, setTotalScore] = useState(0);
+  const [paretoIndex, setParetoIndex] = useState(0);
+  const paretoAudioRef = useRef<HTMLAudioElement | null>(null);
+  const paretoTtsMut = trpc.tts.speak.useMutation();
 
   const handleProgress = (correct: number) => {
     setTotalScore(totalScore + correct);
@@ -409,6 +416,26 @@ export default function MemoryGameLesson({
     onComplete?.(correct, Math.min(vocabulary.length, 8));
   };
 
+  const speakPareto = async (text: string) => {
+    if (!text.trim()) return;
+    if (paretoAudioRef.current) {
+      paretoAudioRef.current.pause();
+      paretoAudioRef.current = null;
+    }
+    try {
+      const result = await paretoTtsMut.mutateAsync({ text: text.slice(0, 400), voiceLang: languageCode });
+      if (!result.success || !result.audioBase64) return;
+      const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const audio = new Audio(url);
+      paretoAudioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play();
+    } catch {
+      // The visual recall and writing flow stays usable when audio is unavailable.
+    }
+  };
+
   if (!mode) {
     return (
       <div className="space-y-6">
@@ -420,7 +447,7 @@ export default function MemoryGameLesson({
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <button
             onClick={() => setMode("flashcards")}
             className="group rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 p-6 text-white text-left shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
@@ -447,6 +474,15 @@ export default function MemoryGameLesson({
             <h4 className="font-bold text-lg mb-1">Complete a Frase</h4>
             <p className="text-sm opacity-80">Preencha a lacuna com a palavra certa</p>
           </button>
+
+          <button
+            onClick={() => { setParetoIndex(0); setMode("pareto"); }}
+            className="group rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 p-6 text-slate-950 text-left shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+          >
+            <Sparkles className="h-8 w-8 mb-3 opacity-80" />
+            <h4 className="font-bold text-lg mb-1">Ciclo Pareto</h4>
+            <p className="text-sm opacity-80">Lembre, escreva e crie uma nova frase</p>
+          </button>
         </div>
 
         {totalScore > 0 && (
@@ -471,6 +507,7 @@ export default function MemoryGameLesson({
           {mode === "flashcards" && "Flashcards"}
           {mode === "match-pairs" && "Combinar Pares"}
           {mode === "fill-blank" && "Complete a Frase"}
+          {mode === "pareto" && "Ciclo Pareto"}
         </Badge>
       </div>
 
@@ -482,6 +519,31 @@ export default function MemoryGameLesson({
       )}
       {mode === "fill-blank" && (
         <FillBlankMode vocab={vocabulary} languageCode={languageCode} onProgress={handleProgress} />
+      )}
+      {mode === "pareto" && vocabulary[paretoIndex] && (
+        <div className="space-y-3">
+          <ParetoPracticeCycle
+            term={{
+              word: vocabulary[paretoIndex].word,
+              translation: vocabulary[paretoIndex].translation,
+              example: vocabulary[paretoIndex].example,
+            }}
+            onClose={() => setMode(null)}
+            onSpeak={speakPareto}
+            embedded
+            level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}
+          />
+          {vocabulary.length > 1 && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setParetoIndex((index) => (index + 1) % vocabulary.length)}
+            >
+              Próxima palavra Pareto
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );
