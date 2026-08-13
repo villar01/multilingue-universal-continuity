@@ -51,13 +51,24 @@ export default function CompleteLesson() {
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [userMessage, setUserMessage] = useState("");
   const [isAISpeaking, setIsAISpeaking] = useState(false);
+  const [activeTeacherSpeechText, setActiveTeacherSpeechText] = useState("");
   const [lessonStartedAt] = useState(() => Date.now());
+  const [targetLanguageCode] = useState(() => localStorage.getItem("ml_target_lang") || "en-US");
+  const [nativeLanguageCode] = useState(() => localStorage.getItem("ml_native_lang") || "pt-BR");
+  const [selectedTeacherId] = useState(() => Number(localStorage.getItem("ml_selected_teacher")) || undefined);
   const { isRecording, audioBlob, startRecording, stopRecording, reset: resetRecording } = useVoiceRecording();
   const [isTranscribing, setIsTranscribing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Queries
   const { data: lesson, isLoading } = trpc.lessons.getById.useQuery({ lessonId: lessonId }) as { data: Lesson | undefined, isLoading: boolean };
+  const { data: selectedTeacher } = trpc.teachers.getById.useQuery(
+    { teacherId: selectedTeacherId! },
+    { enabled: Boolean(selectedTeacherId) }
+  );
+  const lessonTeacher = selectedTeacher as any;
+  const teacherVoiceLanguage = lessonTeacher?.voiceLang || lessonTeacher?.voice_lang || targetLanguageCode;
+  const teacherVoiceGender = lessonTeacher?.gender === "male" ? "MALE" : "FEMALE";
   
   // Mutations
   const startConversation = trpc.conversationAI.start.useMutation();
@@ -110,8 +121,8 @@ export default function CompleteLesson() {
       const result = await startConversation.mutateAsync({
         lessonId: lesson.id,
         userLevel: "A1",
-        targetLanguage: "English",
-        nativeLanguage: "Portuguese",
+        targetLanguage: targetLanguageCode,
+        nativeLanguage: nativeLanguageCode,
       });
 
       const aiMessage: ConversationMessage = {
@@ -214,8 +225,8 @@ export default function CompleteLesson() {
       const result = await continueConversation.mutateAsync({
         lessonId: lesson.id,
         userLevel: "A1",
-        targetLanguage: "English",
-        nativeLanguage: "Portuguese",
+        targetLanguage: targetLanguageCode,
+        nativeLanguage: nativeLanguageCode,
         history: conversationHistory.concat(userMsg).map(msg => ({
           role: msg.role,
           content: msg.content,
@@ -263,14 +274,20 @@ export default function CompleteLesson() {
     try {
       const result = await generateAudio.mutateAsync({
         text,
-        languageCode: "en-US",
-        voiceGender: "FEMALE",
+        languageCode: teacherVoiceLanguage,
+        voiceGender: teacherVoiceGender,
         speakingRate: 1.0,
       });
 
       const audio = new Audio(result.audioUrl);
-      const stopAvatarSpeech = () => setIsAISpeaking(false);
-      audio.onplay = () => setIsAISpeaking(true);
+      const stopAvatarSpeech = () => {
+        setIsAISpeaking(false);
+        setActiveTeacherSpeechText("");
+      };
+      audio.onplay = () => {
+        setActiveTeacherSpeechText(text);
+        setIsAISpeaking(true);
+      };
       audio.onended = stopAvatarSpeech;
       audio.onpause = stopAvatarSpeech;
       audio.onerror = stopAvatarSpeech;
@@ -402,9 +419,13 @@ export default function CompleteLesson() {
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold mb-4">Your Teacher</h3>
                   <EnhancedTeacherAvatar
-                    teacherId={1}
+                    teacherId={selectedTeacherId}
+                    imageUrl={lessonTeacher?.photoUrl || lessonTeacher?.photo_url}
+                    teacherName={lessonTeacher?.name}
+                    gender={lessonTeacher?.gender}
                     isTeaching={isAISpeaking}
-                    currentText={lesson.storyText || ""}
+                    currentText={activeTeacherSpeechText || lesson.storyText || ""}
+                    languageCode={teacherVoiceLanguage}
                     emotion="happy"
                   />
                 </Card>
@@ -611,9 +632,13 @@ export default function CompleteLesson() {
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Your Teacher</h3>
                 <EnhancedTeacherAvatar
-                  teacherId={1}
+                  teacherId={selectedTeacherId}
+                  imageUrl={lessonTeacher?.photoUrl || lessonTeacher?.photo_url}
+                  teacherName={lessonTeacher?.name}
+                  gender={lessonTeacher?.gender}
                   isTeaching={isAISpeaking}
-                  currentText={conversationHistory[conversationHistory.length - 1]?.content || "Hello! Let's practice English together!"}
+                  currentText={activeTeacherSpeechText || conversationHistory[conversationHistory.length - 1]?.content || ""}
+                  languageCode={teacherVoiceLanguage}
                   emotion={isAISpeaking ? "encouraging" : "neutral"}
                 />
                 {isAISpeaking && (

@@ -182,7 +182,7 @@
 - [ ] Testar animação lip-sync de todos avatares — mecanismos existem mas validação individual de Ricardo, Ingrid, Carlos, Jean pendente
 - [ ] Verificar sincronização de voz real sem defeitos
 - [x] Passar retrato, texto e URL do áudio neural do professor selecionado ao avatar ativo da VoiceConversation, eliminando fallback visual genérico sem sincronia — avatar ativo recebe retrato, nome, gênero, locale, estado e o mesmo texto enviado ao MP3 neural; ciclo limpa a fala ao pausar/terminar; TypeScript e 174 testes aprovados
-- [ ] Remover o professor fixo e a voz inglesa genérica dos pontos de conversa da CompleteLesson, preservando identidade regional compatível
+- [x] Remover o professor fixo e a voz inglesa genérica dos pontos de conversa da CompleteLesson, preservando identidade regional compatível — início, continuidade, TTS e os dois avatares agora usam professor, foto, idioma-alvo, idioma nativo e gênero selecionados; TypeScript e 176 testes aprovados, tela validada
 - [x] Popular banco com clipes educacionais (mother, father, brother, sister, family) — cinco registros A1 em educational_clips com URLs de vídeo e pôsteres individuais duráveis
 
 ## 🎯 URGENTE - REMOVER AVATAR CARTOON
