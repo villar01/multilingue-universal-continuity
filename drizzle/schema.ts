@@ -1,4 +1,4 @@
-import { bigint, int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date } from "drizzle-orm/mysql-core";
+import { bigint, int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date, uniqueIndex } from "drizzle-orm/mysql-core";
 
 /**
  * MULTILINGUE UNIVERSAL - DATABASE SCHEMA
@@ -697,17 +697,35 @@ export const achievements = mysqlTable("achievements", {
 export type Achievement = typeof achievements.$inferSelect;
 export type InsertAchievement = typeof achievements.$inferInsert;
 
+// Estatísticas consolidadas usadas pelo painel de gamificação e pelo catálogo de conquistas.
+export const userStats = mysqlTable("user_stats", {
+  userId: int("user_id").primaryKey(),
+  totalXp: int("total_xp").notNull().default(0),
+  currentLevel: int("current_level").notNull().default(1),
+  streakDays: int("streak_days").notNull().default(0),
+  lastActivityDate: date("last_activity_date"),
+  lessonsCompleted: int("lessons_completed").notNull().default(0),
+  exercisesCompleted: int("exercises_completed").notNull().default(0),
+  wordsLearned: int("words_learned").notNull().default(0),
+  pronunciationAvgScore: float("pronunciation_avg_score").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+export type UserStats = typeof userStats.$inferSelect;
+
 // ============================================================
 // USER ACHIEVEMENTS (Conquistas do usuário)
 // ============================================================
 
-export const userAchievements = mysqlTable("userAchievements", {
+export const userAchievements = mysqlTable("user_achievements", {
   id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
-  achievementId: int("achievementId").notNull(),
+  userId: int("user_id").notNull(),
+  achievementId: int("achievement_id").notNull(),
   
-  unlockedAt: timestamp("unlockedAt").defaultNow().notNull(),
-});
+  unlockedAt: timestamp("unlocked_at").defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("user_achievements_user_achievement_unique").on(table.userId, table.achievementId),
+]);
 
 export type UserAchievement = typeof userAchievements.$inferSelect;
 export type InsertUserAchievement = typeof userAchievements.$inferInsert;

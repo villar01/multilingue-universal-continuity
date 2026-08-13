@@ -1,278 +1,135 @@
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Trophy, Star, Zap, Globe, Mic, BookOpen, Flame, Target, Award } from 'lucide-react';
+import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { trpc } from "@/lib/trpc";
+import { Award, BookOpen, Flame, Globe, Mic, Star, Target, Trophy, Zap } from "lucide-react";
 
-interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  xp: number;
-  unlocked: boolean;
-  progress: number;
-  target: number;
-  category: 'lições' | 'vocabulário' | 'pronúncia' | 'streak' | 'social' | 'idiomas';
-  rarity: 'comum' | 'raro' | 'épico' | 'lendário';
+type AchievementRecord = {
+  id: number;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  category: string | null;
+  requirement_type?: string;
+  requirementType?: string;
+  requirement_value?: number;
+  requirementValue?: number;
+  xp_reward?: number;
+  pointsReward?: number;
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  lessons: "lições",
+  exercises: "exercícios",
+  streak: "sequência",
+  words: "vocabulário",
+  pronunciation: "pronúncia",
+  points: "XP",
+};
+
+function requirementType(achievement: AchievementRecord) {
+  return achievement.requirement_type || achievement.requirementType || achievement.category || "other";
 }
 
-const ACHIEVEMENTS: Achievement[] = [
-  {
-    id: 'first-lesson',
-    title: 'Primeira Lição',
-    description: 'Complete sua primeira lição',
-    icon: <BookOpen className="w-8 h-8" />,
-    xp: 50,
-    unlocked: true,
-    progress: 1,
-    target: 1,
-    category: 'lições',
-    rarity: 'comum',
-  },
-  {
-    id: 'lesson-10',
-    title: 'Estudante Dedicado',
-    description: 'Complete 10 lições',
-    icon: <Star className="w-8 h-8" />,
-    xp: 150,
-    unlocked: true,
-    progress: 10,
-    target: 10,
-    category: 'lições',
-    rarity: 'comum',
-  },
-  {
-    id: 'lesson-50',
-    title: 'Mestre das Lições',
-    description: 'Complete 50 lições',
-    icon: <Trophy className="w-8 h-8" />,
-    xp: 500,
-    unlocked: false,
-    progress: 23,
-    target: 50,
-    category: 'lições',
-    rarity: 'raro',
-  },
-  {
-    id: 'lesson-100',
-    title: 'Lendário',
-    description: 'Complete 100 lições',
-    icon: <Award className="w-8 h-8" />,
-    xp: 1000,
-    unlocked: false,
-    progress: 23,
-    target: 100,
-    category: 'lições',
-    rarity: 'lendário',
-  },
-  {
-    id: 'vocab-100',
-    title: 'Vocabulário Inicial',
-    description: 'Aprenda 100 palavras',
-    icon: <BookOpen className="w-8 h-8" />,
-    xp: 200,
-    unlocked: true,
-    progress: 100,
-    target: 100,
-    category: 'vocabulário',
-    rarity: 'comum',
-  },
-  {
-    id: 'vocab-500',
-    title: 'Vocabulário Avançado',
-    description: 'Aprenda 500 palavras',
-    icon: <Globe className="w-8 h-8" />,
-    xp: 600,
-    unlocked: false,
-    progress: 247,
-    target: 500,
-    category: 'vocabulário',
-    rarity: 'raro',
-  },
-  {
-    id: 'streak-7',
-    title: 'Semana Perfeita',
-    description: 'Estude 7 dias seguidos',
-    icon: <Flame className="w-8 h-8" />,
-    xp: 300,
-    unlocked: true,
-    progress: 7,
-    target: 7,
-    category: 'streak',
-    rarity: 'raro',
-  },
-  {
-    id: 'streak-30',
-    title: 'Mês de Dedicação',
-    description: 'Estude 30 dias seguidos',
-    icon: <Flame className="w-8 h-8" />,
-    xp: 1000,
-    unlocked: false,
-    progress: 12,
-    target: 30,
-    category: 'streak',
-    rarity: 'épico',
-  },
-  {
-    id: 'pronunciation-perfect',
-    title: 'Pronúncia Perfeita',
-    description: 'Obtenha 100% em 10 exercícios de pronúncia',
-    icon: <Mic className="w-8 h-8" />,
-    xp: 400,
-    unlocked: false,
-    progress: 4,
-    target: 10,
-    category: 'pronúncia',
-    rarity: 'épico',
-  },
-  {
-    id: 'multilingual',
-    title: 'Multilíngue',
-    description: 'Estude 3 idiomas diferentes',
-    icon: <Globe className="w-8 h-8" />,
-    xp: 800,
-    unlocked: false,
-    progress: 1,
-    target: 3,
-    category: 'idiomas',
-    rarity: 'épico',
-  },
-  {
-    id: 'speed-learner',
-    title: 'Aprendiz Veloz',
-    description: 'Complete 5 lições em um dia',
-    icon: <Zap className="w-8 h-8" />,
-    xp: 250,
-    unlocked: false,
-    progress: 2,
-    target: 5,
-    category: 'lições',
-    rarity: 'raro',
-  },
-  {
-    id: 'social-referral',
-    title: 'Embaixador',
-    description: 'Convide 5 amigos',
-    icon: <Target className="w-8 h-8" />,
-    xp: 500,
-    unlocked: false,
-    progress: 2,
-    target: 5,
-    category: 'social',
-    rarity: 'épico',
-  },
-];
+function requirementValue(achievement: AchievementRecord) {
+  return achievement.requirement_value ?? achievement.requirementValue ?? 0;
+}
 
-const RARITY_COLORS: Record<string, string> = {
-  comum: 'bg-gray-100 border-gray-300 text-gray-700',
-  raro: 'bg-blue-50 border-blue-300 text-blue-700',
-  épico: 'bg-purple-50 border-purple-300 text-purple-700',
-  lendário: 'bg-yellow-50 border-yellow-400 text-yellow-700',
-};
+function reward(achievement: AchievementRecord) {
+  return achievement.xp_reward ?? achievement.pointsReward ?? 0;
+}
 
-const RARITY_BADGE: Record<string, string> = {
-  comum: 'bg-gray-200 text-gray-700',
-  raro: 'bg-blue-200 text-blue-700',
-  épico: 'bg-purple-200 text-purple-700',
-  lendário: 'bg-yellow-200 text-yellow-700',
-};
+function iconFor(type: string) {
+  const className = "w-7 h-7";
+  if (type === "lessons") return <BookOpen className={className} />;
+  if (type === "exercises") return <Target className={className} />;
+  if (type === "streak") return <Flame className={className} />;
+  if (type === "words") return <Globe className={className} />;
+  if (type === "pronunciation") return <Mic className={className} />;
+  if (type === "points") return <Zap className={className} />;
+  return <Award className={className} />;
+}
+
+function metricFor(type: string, stats: Record<string, number>) {
+  if (type === "lessons") return stats.lessons_completed || 0;
+  if (type === "exercises") return stats.exercises_completed || 0;
+  if (type === "streak") return stats.streak_days || 0;
+  if (type === "words") return stats.words_learned || 0;
+  if (type === "pronunciation") return stats.pronunciation_avg_score || 0;
+  if (type === "points") return stats.total_xp || 0;
+  return 0;
+}
 
 export default function Achievements() {
-  const [filter, setFilter] = useState<string>('todos');
+  const { user, loading: authLoading } = useAuth();
+  const [filter, setFilter] = useState("todos");
+  const enabled = !!user;
+  const { data: catalogue, isLoading: catalogueLoading, isError: catalogueError } = trpc.gamification.listAchievements.useQuery(undefined, { enabled });
+  const { data: unlocked, isLoading: unlockedLoading, isError: unlockedError } = trpc.gamification.getUserAchievements.useQuery(undefined, { enabled });
+  const { data: stats, isLoading: statsLoading, isError: statsError } = trpc.gamification.getStats.useQuery(undefined, { enabled });
 
-  const categories = ['todos', 'lições', 'vocabulário', 'pronúncia', 'streak', 'social', 'idiomas'];
-  const filtered = filter === 'todos' ? ACHIEVEMENTS : ACHIEVEMENTS.filter(a => a.category === filter);
-  const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
-  const totalXP = ACHIEVEMENTS.filter(a => a.unlocked).reduce((sum, a) => sum + a.xp, 0);
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" /></div>;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white p-6 flex items-center justify-center">
+        <Card className="max-w-md p-8 text-center space-y-4">
+          <Trophy className="w-10 h-10 text-yellow-500 mx-auto" />
+          <h1 className="text-2xl font-bold">Entre para ver suas conquistas</h1>
+          <p className="text-sm text-gray-600">Conquistas e progresso são exibidos somente a partir das atividades registradas na sua conta.</p>
+          <Button asChild><a href={getLoginUrl()}>Entrar</a></Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (catalogueLoading || unlockedLoading || statsLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" /></div>;
+  if (catalogueError || unlockedError || statsError || !catalogue || !unlocked || !stats) return <div className="min-h-screen flex items-center justify-center p-6 text-center text-gray-600">Não foi possível carregar as conquistas agora. Tente novamente em instantes.</div>;
+
+  const achievements = catalogue as unknown as AchievementRecord[];
+  const unlockedIds = new Set((unlocked as unknown as AchievementRecord[]).map((achievement) => achievement.id));
+  const statistics = stats as unknown as Record<string, number>;
+  const categories = ["todos", ...Array.from(new Set(achievements.map((achievement) => requirementType(achievement))))];
+  const filtered = filter === "todos" ? achievements : achievements.filter((achievement) => requirementType(achievement) === filter);
+  const unlockedCount = achievements.filter((achievement) => unlockedIds.has(achievement.id)).length;
+  const completion = achievements.length ? Math.round((unlockedCount / achievements.length) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white p-6">
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">🏆 Conquistas</h1>
-          <p className="text-gray-600">Desbloqueie badges e ganhe XP completando desafios</p>
-        </div>
+        <div className="text-center"><h1 className="text-4xl font-bold mb-2">🏆 Conquistas</h1><p className="text-gray-600">Progresso calculado somente com atividades registradas na sua conta.</p></div>
 
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="p-4 text-center bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-            <div className="text-3xl font-bold text-yellow-600">{unlockedCount}/{ACHIEVEMENTS.length}</div>
-            <div className="text-sm text-gray-600">Conquistas</div>
-          </Card>
-          <Card className="p-4 text-center bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
-            <div className="text-3xl font-bold text-blue-600">{totalXP}</div>
-            <div className="text-sm text-gray-600">XP Total</div>
-          </Card>
-          <Card className="p-4 text-center bg-gradient-to-br from-green-50 to-teal-50 border-green-200">
-            <div className="text-3xl font-bold text-green-600">
-              {Math.round((unlockedCount / ACHIEVEMENTS.length) * 100)}%
+          <Card className="p-4 text-center bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200"><div className="text-3xl font-bold text-yellow-600">{unlockedCount}/{achievements.length}</div><div className="text-sm text-gray-600">Desbloqueadas</div></Card>
+          <Card className="p-4 text-center bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200"><div className="text-3xl font-bold text-blue-600">{statistics.total_xp || 0}</div><div className="text-sm text-gray-600">XP registrado</div></Card>
+          <Card className="p-4 text-center bg-gradient-to-br from-green-50 to-teal-50 border-green-200"><div className="text-3xl font-bold text-green-600">{completion}%</div><div className="text-sm text-gray-600">Catálogo concluído</div></Card>
+        </div>
+
+        {achievements.length === 0 ? (
+          <Card className="p-8 text-center"><Trophy className="w-10 h-10 text-gray-400 mx-auto mb-3" /><h2 className="font-bold text-lg">Nenhuma conquista disponível ainda</h2><p className="text-sm text-gray-600 mt-2">O catálogo será exibido aqui quando as conquistas forem configuradas pelo sistema.</p></Card>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2">{categories.map((category) => <Button key={category} variant={filter === category ? "default" : "outline"} size="sm" onClick={() => setFilter(category)}>{category === "todos" ? "todas" : CATEGORY_LABELS[category] || category}</Button>)}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filtered.map((achievement) => {
+                const type = requirementType(achievement);
+                const target = requirementValue(achievement);
+                const progress = Math.min(metricFor(type, statistics), target || 0);
+                const isUnlocked = unlockedIds.has(achievement.id);
+                const progressPercent = target ? Math.min((progress / target) * 100, 100) : 0;
+                return (
+                  <Card key={achievement.id} className={`p-4 border-2 transition-all ${isUnlocked ? "bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300" : "bg-gray-50 border-gray-200"}`}>
+                    <div className="space-y-3"><div className="flex items-start justify-between"><div className={isUnlocked ? "text-yellow-600" : "text-gray-400"}>{achievement.icon || iconFor(type)}</div><div className="flex flex-col items-end gap-1"><Badge variant="secondary">{CATEGORY_LABELS[type] || type}</Badge>{reward(achievement) > 0 && <span className="text-sm font-bold text-orange-500">+{reward(achievement)} XP</span>}</div></div><div><h3 className={`font-bold ${isUnlocked ? "" : "text-gray-500"}`}>{isUnlocked ? "✅ " : "🔒 "}{achievement.name}</h3><p className="text-sm text-gray-600">{achievement.description || "Conquista registrada pelo seu progresso."}</p></div>{!isUnlocked && target > 0 && <div className="space-y-1"><div className="flex justify-between text-xs text-gray-500"><span>Progresso</span><span>{progress}/{target}</span></div><Progress value={progressPercent} className="h-2" /></div>}</div>
+                  </Card>
+                );
+              })}
             </div>
-            <div className="text-sm text-gray-600">Completo</div>
-          </Card>
-        </div>
-
-        {/* Filter */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map(cat => (
-            <Button
-              key={cat}
-              variant={filter === cat ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter(cat)}
-              className="capitalize"
-            >
-              {cat}
-            </Button>
-          ))}
-        </div>
-
-        {/* Achievements Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((achievement) => (
-            <Card
-              key={achievement.id}
-              className={`p-4 border-2 transition-all ${
-                achievement.unlocked
-                  ? RARITY_COLORS[achievement.rarity]
-                  : 'bg-gray-50 border-gray-200 opacity-70'
-              }`}
-            >
-              <div className="space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className={`p-2 rounded-lg ${achievement.unlocked ? 'text-current' : 'text-gray-400'}`}>
-                    {achievement.icon}
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <Badge className={`text-xs ${RARITY_BADGE[achievement.rarity]}`}>
-                      {achievement.rarity}
-                    </Badge>
-                    <span className="text-sm font-bold text-orange-500">+{achievement.xp} XP</span>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className={`font-bold ${achievement.unlocked ? '' : 'text-gray-500'}`}>
-                    {achievement.unlocked ? '✅ ' : '🔒 '}{achievement.title}
-                  </h3>
-                  <p className="text-sm text-gray-600">{achievement.description}</p>
-                </div>
-
-                {!achievement.unlocked && (
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Progresso</span>
-                      <span>{achievement.progress}/{achievement.target}</span>
-                    </div>
-                    <Progress value={(achievement.progress / achievement.target) * 100} className="h-2" />
-                  </div>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
