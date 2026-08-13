@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 import {
   BookOpen,
   ChevronDown,
@@ -25,7 +26,7 @@ interface LessonBookProps {
   lessonTitle: string;
   languageCode: string;
   nativeLanguage?: string;
-  level?: string;
+  level?: CEFRLevel;
   topic?: string;
   teacherName?: string;
 }
@@ -163,7 +164,7 @@ export default function LessonBook({
   lessonTitle,
   languageCode,
   nativeLanguage = "pt",
-  level = "beginner",
+  level = "A1",
   topic,
   teacherName = "Professor",
 }: LessonBookProps) {

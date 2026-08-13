@@ -851,7 +851,7 @@ export default function Lesson() {
                 lessonTitle={lesson.title}
                 languageCode={lesson.languageCode || 'en-US'}
                 nativeLanguage="pt"
-                level={(lesson as any).courseLevel || 'beginner'}
+                level={cefrLevel}
                 topic={lesson.title}
                 teacherName={teacher?.name || 'Professor'}
               />

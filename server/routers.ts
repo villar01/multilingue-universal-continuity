@@ -938,7 +938,7 @@ Rules:
           lessonTitle: z.string(),
           languageCode: z.string(),
           nativeLanguage: z.string().default('pt'),
-          level: z.string().default('beginner'),
+          level: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']).default('A1'),
           topic: z.string().optional(),
         })
       )
@@ -952,7 +952,14 @@ Rules:
           };
           const targetLang = langName[input.languageCode] || input.languageCode;
           const nativeLang = langName[input.nativeLanguage] || 'Portuguese';
-          const levelLabel = input.level === 'beginner' ? 'Básico' : input.level === 'intermediate' ? 'Intermediário' : input.level === 'slang' ? 'Gírias e Expressões' : 'Avançado';
+          const levelLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
+            A1: 'A1 — vocabulário concreto e frases essenciais de até seis palavras',
+            A2: 'A2 — comunicação cotidiana simples com rotinas e situações familiares',
+            B1: 'B1 — comunicação conectada sobre experiências e tópicos familiares',
+            B2: 'B2 — exposição estruturada de temas abstratos, técnicos e comparativos',
+            C1: 'C1 — expressão precisa com registro, coesão e nuance',
+            C2: 'C2 — domínio refinado, especializado e culturalmente contextualizado',
+          };
 
           const prompt = `You are an expert language teacher creating a comprehensive lesson textbook chapter.
 
@@ -960,14 +967,15 @@ Create a COMPLETE LESSON BOOK for:
 - Lesson: "${input.lessonTitle}"
 - Target Language: ${targetLang}
 - Student's Native Language: ${nativeLang}
-- Level: ${levelLabel}
+- CEFR Level: ${input.level}
+- Level constraints: ${levelLabel[input.level]}
 - Lesson ID: ${input.lessonId}
 
 Return a JSON object with this EXACT structure:
 {
   "title": "Lesson title",
   "subtitle": "Brief lesson description",
-  "level": "${levelLabel}",
+  "level": "${input.level}",
   "objectives": ["objective 1", "objective 2", "objective 3"],
   "introduction": "2-3 paragraph introduction in ${nativeLang} explaining what this lesson covers and why it matters",
   "grammarRules": [
