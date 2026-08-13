@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Brain, CheckCircle2, XCircle, RefreshCw, Sparkles, Trophy } from "lucide-react";
 import VoiceRecognitionExercise from "@/components/VoiceRecognitionExercise";
+import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 
 type Exercise = {
   type: "multiple_choice" | "fill_blank" | "translation" | "matching";
@@ -34,6 +35,7 @@ const speechLanguageByTarget: Record<string, string> = {
 export default function SmartReview() {
   const { user } = useAuth();
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
+  const [cefrLevel, setCefrLevel] = useState<CEFRLevel>(() => resolvePracticeCEFRLevel(localStorage.getItem("ml_free_talk_level") || "A1"));
   const [exerciseType, setExerciseType] = useState<"multiple_choice" | "fill_blank" | "translation" | "matching">("multiple_choice");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -73,8 +75,10 @@ export default function SmartReview() {
   }, []);
 
   const handleGenerate = () => {
-    generateMutation.mutate({ targetLanguage, exerciseType });
+    generateMutation.mutate({ targetLanguage, exerciseType, cefrLevel });
   };
+
+  const pronunciationDifficulty = cefrLevel === "A1" || cefrLevel === "A2" ? "easy" : cefrLevel === "B1" || cefrLevel === "B2" ? "medium" : "hard";
 
   const currentExercise = exercises[currentIndex];
 
@@ -195,6 +199,16 @@ export default function SmartReview() {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Nível CEFR</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["A1", "A2", "B1", "B2", "C1", "C2"] as CEFRLevel[]).map((level) => (
+                    <Button key={level} variant={cefrLevel === level ? "default" : "outline"} onClick={() => setCefrLevel(level)}>
+                      {level}
+                    </Button>
+                  ))}
+                </div>
+              </div>
               <Button onClick={handleGenerate} className="w-full" size="lg">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Gerar Exercícios com IA
@@ -219,7 +233,7 @@ export default function SmartReview() {
             {/* Progress */}
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Exercício {currentIndex + 1} de {exercises.length}</span>
-              <Badge variant="secondary">Acertos: {score}</Badge>
+              <div className="flex items-center gap-2"><Badge variant="outline">{cefrLevel}</Badge><Badge variant="secondary">Acertos: {score}</Badge></div>
             </div>
             {adaptationFocus && (
               <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950/30 dark:text-indigo-100">
@@ -298,7 +312,7 @@ export default function SmartReview() {
                         key={`${currentIndex}-${currentExercise.correctAnswer}`}
                         targetPhrase={currentExercise.correctAnswer}
                         targetLanguage={speechLanguageByTarget[targetLanguage] || targetLanguage || "en-US"}
-                        difficulty="easy"
+                        difficulty={pronunciationDifficulty}
                         onComplete={() => undefined}
                       />
                     </div>

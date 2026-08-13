@@ -4208,6 +4208,7 @@ Máximo 2 frases por resposta.`,
       .input(z.object({
         targetLanguage: z.string(),
         exerciseType: z.enum(['multiple_choice', 'fill_blank', 'translation', 'matching']).default('multiple_choice'),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']).default('A1'),
       }))
       .mutation(async ({ ctx, input }) => {
         const dbInstance = await db.getDb();
@@ -4227,11 +4228,17 @@ Máximo 2 frases por resposta.`,
           .where(eq(users.id, ctx.user.id))
           .limit(1);
         const totalXp = Number(statsRows[0]?.totalXp || 0);
-        const adaptation = totalXp < 100
+        const xpAdaptation = totalXp < 100
           ? { label: 'Fundamentos', exerciseCount: 3, detail: 'Sessão curta para consolidar a base.' }
           : totalXp < 500
             ? { label: 'Em desenvolvimento', exerciseCount: 5, detail: 'Sessão completa com reforço dos erros recorrentes.' }
             : { label: 'Desafio', exerciseCount: 7, detail: 'Sessão ampliada para fortalecer autonomia e precisão.' };
+        const cefrCap: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', number> = { A1: 3, A2: 4, B1: 5, B2: 6, C1: 7, C2: 7 };
+        const adaptation = {
+          ...xpAdaptation,
+          exerciseCount: Math.min(xpAdaptation.exerciseCount, cefrCap[input.cefrLevel]),
+          detail: `${xpAdaptation.detail} Nível CEFR ${input.cefrLevel}.`,
+        };
         const rankedVocab = [...userVocab].sort((a, b) => {
           const aNeed = (a.totalWrong || 0) - (a.totalCorrect || 0);
           const bNeed = (b.totalWrong || 0) - (b.totalCorrect || 0);
@@ -4257,6 +4264,7 @@ Máximo 2 frases por resposta.`,
           source: 'local',
           focus: focusError?.errorType || null,
           adaptation,
+          cefrLevel: input.cefrLevel,
           totalXp,
           message: focusError
             ? `Revisão ${adaptation.label.toLowerCase()}: vamos reforçar ${focusError.errorType === 'grammar' ? 'gramática' : focusError.errorType === 'pronunciation' ? 'pronúncia' : focusError.errorType === 'comprehension' ? 'compreensão' : 'vocabulário'}.`
