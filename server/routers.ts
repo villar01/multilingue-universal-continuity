@@ -2698,7 +2698,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         return { translation };
       }),
 
-    chatWithCharacter: publicProcedure
+    chatWithCharacter: protectedProcedure
       .input(
         z.object({
           characterName: z.string(),
@@ -2713,6 +2713,10 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         })
       )
       .mutation(async ({ input, ctx }) => {
+        const safeFallback = { response: "Let's continue with a safe language-practice sentence." };
+        await ensureConversationAccess(ctx.user.id);
+        const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, "en");
+        if (!inputSafety.allowed) return safeFallback;
         const { invokeLLM } = await import("./_core/llm");
         const { moderateAIResponse, createUserSafetyProfile } = await import("./content-moderation");
         
@@ -2746,6 +2750,8 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
 
         const response = await invokeLLM({ messages });
         const aiResponse = (response.choices[0].message.content as string ?? "")?.trim() || "";
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.userMessage, aiResponse, "en");
+        if (!outputSafety.allowed) return safeFallback;
         
         // MODERAÇÃO: Validar resposta antes de enviar
         if (ctx.user) {

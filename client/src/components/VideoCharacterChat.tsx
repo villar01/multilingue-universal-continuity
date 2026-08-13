@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -21,6 +22,7 @@ export default function VideoCharacterChat({
   videoTitle,
   videoContext,
 }: VideoCharacterChatProps) {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
@@ -34,7 +36,7 @@ export default function VideoCharacterChat({
   });
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !isAuthenticated || authLoading) return;
 
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -108,11 +110,11 @@ export default function VideoCharacterChat({
           }}
           placeholder={`Converse com ${characterName}...`}
           className="min-h-[60px]"
-          disabled={chatMutation.isPending}
+          disabled={chatMutation.isPending || !isAuthenticated || authLoading}
         />
         <Button
           onClick={handleSend}
-          disabled={!input.trim() || chatMutation.isPending}
+          disabled={!input.trim() || chatMutation.isPending || !isAuthenticated || authLoading}
           size="icon"
           className="h-[60px] w-[60px]"
         >
@@ -123,6 +125,9 @@ export default function VideoCharacterChat({
           )}
         </Button>
       </div>
+      {!authLoading && !isAuthenticated && (
+        <p className="mt-2 text-sm text-muted-foreground">Entre para iniciar uma conversa segura com o personagem.</p>
+      )}
     </Card>
   );
 }
