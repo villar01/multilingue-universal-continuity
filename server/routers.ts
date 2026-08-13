@@ -931,7 +931,7 @@ Rules:
       }),
 
     // Gerar Livro da Disciplina para uma lição
-    generateLessonBook: publicProcedure
+    generateLessonBook: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
@@ -1073,7 +1073,7 @@ IMPORTANT: For ALL "phonetic" fields, write how the word SOUNDS in Portuguese le
       }),
 
     // Gerar palavras do dia para memorização
-    getDailyWords: publicProcedure
+    getDailyWords: protectedProcedure
       .input(
         z.object({
           languageCode: z.string(),

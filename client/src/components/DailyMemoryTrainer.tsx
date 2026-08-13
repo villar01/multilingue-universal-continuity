@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { selectBestVoice, normalizeLang, speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -740,6 +741,7 @@ export default function DailyMemoryTrainer({
   topic,
   onClose,
 }: DailyMemoryTrainerProps) {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<TrainMode>("flip");
   const [cardIdx, setCardIdx] = useState(0);
   const [cards, setCards] = useState<WordCard[]>([]);
@@ -754,7 +756,7 @@ export default function DailyMemoryTrainer({
 
   const wordsQuery = trpc.ai.getDailyWords.useQuery(
     { languageCode, nativeLanguage, level, count: 15, topic },
-    { staleTime: 1000 * 60 * 20 }
+    { staleTime: 1000 * 60 * 20, enabled: isAuthenticated && !authLoading }
   );
 
   useEffect(() => {
@@ -772,6 +774,16 @@ export default function DailyMemoryTrainer({
       setShowComplete(false);
     }
   }, [wordsQuery.data]);
+
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="py-12 text-center">
+        <BookOpen className="mx-auto mb-3 h-10 w-10 text-blue-500" />
+        <p className="font-semibold text-slate-800">Entre para iniciar o treino diário.</p>
+        <p className="mt-1 text-sm text-slate-500">A geração de vocabulário é liberada somente na sua sessão de estudo.</p>
+      </div>
+    );
+  }
 
   const currentCard = cards[cardIdx];
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNaturalVoice } from "@/hooks/useNaturalVoice";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -168,13 +169,14 @@ export default function LessonBook({
   topic,
   teacherName = "Professor",
 }: LessonBookProps) {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<string, boolean | null>>({});
   const printRef = useRef<HTMLDivElement>(null);
 
   const bookQuery = trpc.ai.generateLessonBook.useQuery(
     { lessonId, lessonTitle, languageCode, nativeLanguage, level, topic },
-    { staleTime: 1000 * 60 * 30 } // cache 30 min — same lesson = same book
+    { staleTime: 1000 * 60 * 30, enabled: isAuthenticated && !authLoading } // cache 30 min — same lesson = same book
   );
 
   const { speak, speakNative } = useNaturalVoice();
@@ -188,6 +190,16 @@ export default function LessonBook({
     window.print();
     toast.success("Abrindo janela de impressão...");
   };
+
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <BookOpen className="h-12 w-12 text-gray-300" />
+        <p className="font-medium text-gray-600">Entre para abrir o livro desta lição.</p>
+        <p className="text-sm text-gray-500">A geração do material personalizado ocorre somente na sua sessão de estudo.</p>
+      </div>
+    );
+  }
 
   if (bookQuery.isLoading) {
     return (
