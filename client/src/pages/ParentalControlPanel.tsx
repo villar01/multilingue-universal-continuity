@@ -805,6 +805,25 @@ function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: a
 
   const canReviewAlert = (alert: any) => alert.alertType === 'age_content_review';
   const absoluteBlockAlertTypes = ['inappropriate_content', 'child_safety', 'content_blocked'];
+  const safeAlertReason: Record<string, { title: string; detail: string }> = {
+    age_content_review: { title: 'Conteúdo incompatível com a faixa etária', detail: 'A proteção do perfil pediu uma decisão do responsável. Nenhum texto da interação é exibido.' },
+    inappropriate_content: { title: 'Conteúdo bloqueado pela proteção infantil', detail: 'O bloqueio permanece obrigatório para este tipo de risco. Nenhum texto da interação é exibido.' },
+    child_safety: { title: 'Proteção infantil acionada', detail: 'Foi identificado um risco que exige bloqueio. Nenhum texto da interação é exibido.' },
+    content_blocked: { title: 'Interação bloqueada pelo filtro de proteção', detail: 'A mensagem ou resposta foi interrompida com segurança. Nenhum texto da interação é exibido.' },
+    country_compliance_blocked: { title: 'Interação bloqueada pela proteção regional', detail: 'A regra aplicável ao perfil bloqueou a interação. Nenhum texto da interação é exibido.' },
+    daily_time_limit_reached: { title: 'Limite diário de uso atingido', detail: 'A conversa foi pausada conforme o limite definido pelo responsável. Nenhum conteúdo foi armazenado.' },
+    adult_content: { title: 'Conteúdo adulto sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    violence: { title: 'Conteúdo sensível sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    drugs: { title: 'Conteúdo sensível sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    cyberbullying: { title: 'Risco de convivência inadequada sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    phishing: { title: 'Pedido de dado sensível sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    grooming: { title: 'Comportamento de contato de risco sinalizado', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+    cyber_threat: { title: 'Alerta de segurança cibernética', detail: 'A categoria requer atenção do responsável. Nenhum texto da interação é exibido.' },
+  };
+  const getSafeAlertReason = (alertType: string) => safeAlertReason[alertType] || {
+    title: 'Alerta de proteção registrado',
+    detail: 'O sistema registrou a categoria de proteção sem exibir ou armazenar o texto da interação neste painel.',
+  };
 
   const submitDecision = (decision: 'allow_temporarily' | 'keep_blocked') => {
     if (!selectedAlert) return;
@@ -884,12 +903,15 @@ function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: a
       </Dialog>
       {alerts.map(alert => (
         <Alert key={alert.id} className={`bg-slate-900/50 border-slate-800 ${!alert.isRead ? 'border-l-4 border-l-blue-500' : ''}`}>
+          {(() => {
+            const safeReason = getSafeAlertReason(alert.alertType);
+            return (
           <div className="flex items-start gap-3">
             <span className="text-2xl">{alert.icon}</span>
             <div className="flex-1">
-              <AlertTitle className="text-sm font-semibold">{alert.title}</AlertTitle>
+              <AlertTitle className="text-sm font-semibold">{safeReason.title}</AlertTitle>
               <AlertDescription className="text-xs text-slate-400 mt-1">
-                {alert.detail || ''}
+                {safeReason.detail}
               </AlertDescription>
               <p className="text-xs text-slate-500 mt-1">
                 {new Date(alert.createdAt).toLocaleString('pt-BR')}
@@ -909,6 +931,8 @@ function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: a
               <Badge variant="outline" className="border-red-500/40 text-red-300">Bloqueio obrigatório</Badge>
             )}
           </div>
+            );
+          })()}
         </Alert>
       ))}
       {decisions && decisions.length > 0 && (

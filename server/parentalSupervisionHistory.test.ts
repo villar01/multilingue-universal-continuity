@@ -22,4 +22,19 @@ describe("histórico parental supervisionável", () => {
     expect(panelSource).not.toContain("interaction.content");
     expect(panelSource).not.toContain("interaction.teacherResponse");
   });
+
+  it("retorna alertas como metadados e deriva motivos seguros no painel", () => {
+    expect(routerSource).toContain("alertType: parentalAlerts.alertType");
+    expect(routerSource).toContain("createdAt: parentalAlerts.createdAt");
+    expect(routerSource).not.toContain("const alerts = await database.select().from(parentalAlerts)");
+    expect(panelSource).toContain("const safeAlertReason");
+    expect(panelSource).toContain("getSafeAlertReason(alert.alertType)");
+    expect(panelSource).not.toContain("{alert.title}");
+    expect(panelSource).not.toContain("{alert.detail || ''}");
+  });
+
+  it("não expõe conteúdo bruto pelo procedimento legado de logs parentais", () => {
+    expect(routerSource).toContain("listInteractionLogs: protectedProcedure");
+    expect(routerSource).not.toContain("SELECT * FROM interaction_logs WHERE user_id = ${ctx.user.id}");
+  });
 });
