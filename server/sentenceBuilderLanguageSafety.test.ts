@@ -12,7 +12,9 @@ describe('Construtor de Frases multilíngue e protegido', () => {
     expect(section).toMatch(/structureTraining:\s*protectedProcedure/);
     expect(section).toMatch(/structureChat:\s*protectedProcedure/);
     expect(section).toContain("cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])");
+    expect(section).toContain('await ensureConversationAccess(ctx.user.id)');
     expect(section).toContain('assessConversationText(ctx.user.id');
+    expect(section).toContain('assessConversationOutput(');
   });
 
   it('propaga idioma nativo, CEFR e vocabulário real sem rótulo PT-BR fixo', () => {

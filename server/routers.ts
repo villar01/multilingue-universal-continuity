@@ -3677,7 +3677,8 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
         vocabulary: z.array(z.string()).optional(),
         lessonTitle: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const phaseLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
           A1: 'concreto e introdutório', A2: 'cotidiano elementar', B1: 'independente em situações comuns',
@@ -3731,6 +3732,7 @@ Retorne APENAS o JSON, sem markdown.`;
         history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const inputSafety = await assessConversationText(ctx.user.id, [input.sentence, input.studentMessage].join('\n'), input.targetLanguage);
         if (!inputSafety.allowed) return { reply: '', blocked: true };
@@ -3750,7 +3752,12 @@ Máximo 2 frases por resposta.`,
         const content = typeof response.choices[0].message.content === 'string'
           ? response.choices[0].message.content
           : JSON.stringify(response.choices[0].message.content);
-        const outputSafety = await assessConversationText(ctx.user.id, content, input.targetLanguage);
+        const outputSafety = await assessConversationOutput(
+          ctx.user.id,
+          [input.sentence, input.studentMessage].join('\n'),
+          content,
+          input.targetLanguage,
+        );
         return outputSafety.allowed ? { reply: content, blocked: false } : { reply: '', blocked: true };
       }),
     // ── Cenas com Professor (professor dentro da ilustração) ─────────────────
