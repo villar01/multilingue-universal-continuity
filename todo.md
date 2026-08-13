@@ -147,6 +147,7 @@
 - [x] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil; SmartReview cruza XP e erros recorrentes para ajustar quantidade, foco e mensagem dos exercícios de reforço
 - [ ] Aplicar progressão CEFR gradual e coerente às cenas, lições, exercícios, conversas e revisões, do vocabulário concreto inicial à prática avançada
 - [ ] Integrar ciclo Pareto em todo o app: vocabulário útil, recuperação ativa, escrita, memorização e criação de novas frases por nível
+- [x] Integrar o ciclo Pareto de recuperação, escrita e nova frase na lição guiada, reutilizando o componente já validado nas cenas — lição oferece prática por palavra, mantém a voz regional do professor e exige frase de dificuldade proporcional ao CEFR; TypeScript e 112 testes aprovados
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha

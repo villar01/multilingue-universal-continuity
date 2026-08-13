@@ -37,6 +37,7 @@ import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
 import { getLevelByLesson, getLevelConfig, type CEFRLevel } from "@/lib/lesson-levels";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { resolveTeacherSpeechVoice } from "@/lib/voiceConversationTeacher";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 // Lazy load heavy components
 const ARLearningScene = lazy(() => import("@/components/ARLearningScene").then(m => ({ default: m.ARLearningScene })));
 const VoiceConversation = lazy(() => import("@/components/VoiceConversation"));
@@ -79,6 +80,7 @@ export default function Lesson() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [teacherAudioUrl, setTeacherAudioUrl] = useState<string | null>(null);
   const [selectedTeacherId, setSelectedTeacherId] = useState<number | null>(null);
+  const [paretoTerm, setParetoTerm] = useState<{ word: string; translation: string; example?: string } | null>(null);
   const [showTeacherSelector, setShowTeacherSelector] = useState(true);
   const [userTextAnswer, setUserTextAnswer] = useState('');
   // SEMPRE usar Google Neural2 TTS do servidor (voz natural de alta qualidade)
@@ -1055,8 +1057,39 @@ export default function Lesson() {
                 <VocabularySection
                   vocabulary={lesson.vocabularyDetailed}
                   nativeLanguage="pt-BR"
-                  targetLanguage="en-US"
+                  targetLanguage={lesson.languageCode || "en-US"}
                 />
+                <Card className="mt-4 border-amber-200 bg-amber-50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base text-amber-950">Memorize e crie frases</CardTitle>
+                    <p className="text-sm text-amber-900">Escolha uma palavra útil para lembrar sem olhar, escrever e usar em uma nova frase.</p>
+                  </CardHeader>
+                  <CardContent className="flex flex-wrap gap-2">
+                    {lesson.vocabularyDetailed.slice(0, 5).map((item: any) => (
+                      <Button
+                        key={item.word}
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="border-amber-300 bg-white text-amber-950 hover:bg-amber-100"
+                        onClick={() => setParetoTerm({ word: item.word, translation: item.translation, example: item.example })}
+                      >
+                        Praticar {item.word}
+                      </Button>
+                    ))}
+                  </CardContent>
+                </Card>
+                {paretoTerm && (
+                  <div className="mt-4">
+                    <ParetoPracticeCycle
+                      embedded
+                      term={paretoTerm}
+                      level={cefrLevel}
+                      onClose={() => setParetoTerm(null)}
+                      onSpeak={(text) => generateTeacherAudio.mutate({ text, voiceLang: teacherVoice.voiceLang, gender: teacherVoice.gender })}
+                    />
+                  </div>
+                )}
               </div>
             )}
 

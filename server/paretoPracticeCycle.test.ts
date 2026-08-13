@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   checkParetoRecall,
   checkParetoSentence,
+  getParetoLevelRequirement,
   nextParetoStep,
 } from "../client/src/lib/paretoPracticeCycle";
 
@@ -24,5 +25,13 @@ describe("Pareto practice cycle", () => {
     expect(nextParetoStep("recall")).toBe("write");
     expect(nextParetoStep("write")).toBe("create");
     expect(nextParetoStep("create")).toBeNull();
+  });
+
+  it("raises sentence depth gradually for CEFR levels while keeping an upper boundary", () => {
+    const a1 = getParetoLevelRequirement("A1");
+    const b2 = getParetoLevelRequirement("B2");
+    expect(a1.minSentenceWords).toBeLessThan(b2.minSentenceWords);
+    expect(checkParetoSentence("My water is clean", term, b2).correct).toBe(false);
+    expect(checkParetoSentence("My water is clean because I always use a reusable bottle at school", term, b2).correct).toBe(true);
   });
 });
