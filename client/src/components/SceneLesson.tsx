@@ -118,7 +118,7 @@ export default function SceneLesson({
     setTestScore(null);
     setChatHistory([{
       role: 'assistant',
-      content: scene.teacherGreeting + ' / ' + scene.greetingPt,
+      content: scene.teacherGreeting,
     }]);
     // Generate exercises for this scene
     exerciseMutation.mutate(
