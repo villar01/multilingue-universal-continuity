@@ -1125,7 +1125,7 @@
 - [x] Criar componente CybersecurityAlert.tsx (níveis de ameaça, aviso de desligar notebook, detecção em tempo real)
 - [x] Integrar CybersecurityAlert no Painel de Controle Parental (aba Segurança)
 - [x] Criar securityMiddleware.ts (rate limiting, SQL injection, XSS, DDoS, headers de segurança)
-- [ ] Criar backupRestore.ts com snapshots reais de DB, armazenamento durável, backup automático confiável e restauração verificável — snapshots cifrados AES-256-GCM, checksum, ponto de retorno e restauração confirmada/transacional estão implementados e a agenda está ativa; falta teste ponta a ponta de restauração sob confirmação explícita
+- [x] Criar backupRestore.ts com snapshots reais de DB, armazenamento durável, backup automático confiável e restauração verificável — snapshots cifrados AES-256-GCM, checksum, ponto de retorno e restauração confirmada/transacional estão implementados; teste ponta a ponta em memória verifica backup, confirmação explícita, restauração transacional e ponto de retorno sem tocar nos dados reais; TypeScript sem erros e 344 testes aprovados
 - [x] Substituir o agendamento de backup em processo por Heartbeat idempotente e persistir snapshots criptografados em armazenamento durável antes de expor restauração — `setInterval` foi removido, callback cron exige/pesquisa `taskUid`, snapshot real de 52 lições/39.204 bytes foi verificado e a agenda `database-backup-six-hour` está ativa a cada 6h (próxima execução 06:00 UTC)
 - [x] Verificar snapshot cifrado real no armazenamento durável — backup de lições criou registro `completed`, checksum, chave S3 e 52 registros preservados sem modificar as lições ativas
 - [x] Aviso de ataque cibernético com instrução de desligar notebook
