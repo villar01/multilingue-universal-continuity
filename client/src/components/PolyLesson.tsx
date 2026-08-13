@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import type { CEFRLevel } from '@/lib/lesson-levels';
 
 // Levenshtein similarity (0-100)
 function levenshteinScore(a: string, b: string): number {
@@ -176,6 +177,8 @@ interface Props {
   lesson: LessonData;
   languageCode: string;
   teacher?: Teacher;
+  nativeLanguage?: string;
+  cefrLevel?: CEFRLevel;
   onComplete?: (score: number, xp: number) => void;
 }
 
@@ -220,11 +223,14 @@ const ENVIRONMENTS = [
   { id: 'park', label: 'Parque', emoji: '\u{1F333}', labelEn: 'park' },
 ];
 
-export default function PolyLesson({ lesson, languageCode, teacher, onComplete }: Props) {
+export default function PolyLesson({ lesson, languageCode, teacher, nativeLanguage, cefrLevel, onComplete }: Props) {
   const phase = (lesson.phase || 'infancia') as LifePhase;
   const phaseColor = PHASE_COLORS[phase] || '#6C5CE7';
   const vocab = lesson.vocabulary || [];
   const exercises = lesson.exercises || [];
+  const selectedNativeLanguage = nativeLanguage || (typeof window !== 'undefined' ? localStorage.getItem('ml_native_lang') : null) || 'pt-BR';
+  const lessonCefr = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(lesson.cefr || '') ? lesson.cefr as CEFRLevel : undefined;
+  const selectedCefrLevel: CEFRLevel = lessonCefr || cefrLevel || (phase === 'infancia' ? 'A1' : phase === 'crianca' ? 'A2' : phase === 'adolescencia' ? 'B1' : phase === 'adulto' ? 'B2' : 'C1');
 
   // Stage control
   const [stage, setStage] = useState<Stage>('intro');
@@ -1780,6 +1786,8 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
           <SentenceBuilder
             targetLanguage={lesson.title?.split(' - ')[0] || languageCode}
             languageCode={languageCode}
+            nativeLanguage={selectedNativeLanguage}
+            cefrLevel={selectedCefrLevel}
             phase={phase}
             lessonTitle={lesson.title}
             vocabulary={(vocab || []).map(v => ({ word: v.word, translation: v.translation }))}

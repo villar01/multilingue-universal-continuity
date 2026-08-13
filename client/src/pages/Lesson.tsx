@@ -89,6 +89,7 @@ export default function Lesson() {
   const [lessonMode, setLessonMode] = useState<'exercises' | 'active-pause' | 'book' | 'notebook' | 'pedagogical' | 'poly'>('poly'); // Modo de aula — padrão: pedagógico
   const [pedagogicalContent, setPedagogicalContent] = useState<any>(null);
   const [pedagogicalLoading, setPedagogicalLoading] = useState(false);
+  const [selectedNativeLanguage] = useState(() => localStorage.getItem('ml_native_lang') || 'pt-BR');
   const generateLessonContentMutation = trpc.ai.generateLessonContent.useMutation();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -897,6 +898,8 @@ export default function Lesson() {
                 <PolyLesson
                   lesson={pedagogicalContent}
                   languageCode={lesson.languageCode || 'en-US'}
+                  nativeLanguage={selectedNativeLanguage}
+                  cefrLevel={cefrLevel}
                   teacher={teacher ? {
                     name: teacher.name,
                     gender: (teacher as any).gender === 'male' ? 'male' : 'female',

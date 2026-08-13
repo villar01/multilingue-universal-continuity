@@ -3668,55 +3668,42 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
       }),
 
     // ── Treinamento de Estrutura Frasal (como nativos aprendem) ──────────────
-    structureTraining: publicProcedure
+    structureTraining: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
-        nativeLanguage: z.string().default('pt-BR'),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string(),
         vocabulary: z.array(z.string()).optional(),
         lessonTitle: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const { invokeLLM } = await import('./_core/llm');
-        const phaseLabel = input.phase === 'infancia' ? 'iniciante (nível jardim de infância)'
-          : input.phase === 'crianca' ? 'elementar (nível criança)'
-          : input.phase === 'adolescencia' ? 'intermediário'
-          : input.phase === 'adulto' ? 'avançado'
-          : 'intermediário';
+        const phaseLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
+          A1: 'concreto e introdutório', A2: 'cotidiano elementar', B1: 'independente em situações comuns',
+          B2: 'independente com ideias mais complexas', C1: 'avançado e preciso', C2: 'domínio muito avançado',
+        };
         const vocabHint = input.vocabulary && input.vocabulary.length > 0
           ? 'Use estas palavras do vocabulário da aula: ' + input.vocabulary.slice(0, 8).join(', ') + '.'
           : '';
         const prompt = `Você é um professor de ${input.targetLanguage} ensinando nativos de ${input.nativeLanguage}.
-Nível: ${phaseLabel}. Lição: ${input.lessonTitle || 'vocabulário geral'}.
+Nível CEFR: ${input.cefrLevel} (${phaseLabel[input.cefrLevel]}). Lição: ${input.lessonTitle || 'vocabulário geral'}.
 ${vocabHint}
 
 Crie um módulo de ESTRUTURA FRASAL como nativos aprendem: observação → substituição → criação.
 Retorne JSON com esta estrutura exata:
 {
-  "teacherIntro": "frase curta do professor introduzindo o exercício em português",
-  "modelSentences": [
+  "patterns": [
     {
-      "sentence": "frase modelo em ${input.targetLanguage}",
-      "translation": "tradução em português",
-      "structure": "rótulo da estrutura (ex: Sujeito + Verbo + Objeto)",
-      "highlight": "palavra ou grupo de palavras em destaque",
+      "pattern": "rótulo curto da estrutura em ${input.nativeLanguage}",
+      "example": "frase modelo em ${input.targetLanguage}",
+      "exampleTranslation": "tradução em ${input.nativeLanguage}",
       "slots": [
-        { "position": 0, "label": "Sujeito", "options": ["The cat", "A dog", "My sister", "The boy"] },
-        { "position": 1, "label": "Verbo", "options": ["eats", "drinks", "sees", "likes"] },
-        { "position": 2, "label": "Objeto", "options": ["fish", "water", "the ball", "music"] }
+        { "role": "rótulo em ${input.nativeLanguage}", "options": [{ "word": "termo em ${input.targetLanguage}", "translation": "sentido em ${input.nativeLanguage}" }] }
       ],
-      "teacherQuestion": "pergunta do professor sobre a frase em português",
-      "nativeNote": "nota explicando diferença de estrutura PT vs ${input.targetLanguage} (1 linha)"
+      "chunks": [{ "chunk": "expressão em ${input.targetLanguage}", "meaning": "sentido em ${input.nativeLanguage}", "note": "observação curta em ${input.nativeLanguage}" }]
     }
-  ],
-  "chunkPairs": [
-    { "chunk": "expressão ou grupo de palavras em ${input.targetLanguage}", "meaning": "significado em português", "example": "frase de exemplo" }
-  ],
-  "substitutionDrill": {
-    "base": "frase base em ${input.targetLanguage}",
-    "baseTranslation": "tradução",
-    "slots": [{ "word": "palavra original", "alternatives": ["opção1", "opção2", "opção3"] }]
-  }
+  ]
 }
 Retorne APENAS o JSON, sem markdown.`;
         try {
@@ -3729,53 +3716,30 @@ Retorne APENAS o JSON, sem markdown.`;
             : JSON.stringify(response.choices[0].message.content);
           return JSON.parse(content);
         } catch {
-          return {
-            teacherIntro: 'Vamos praticar como montar frases em ' + input.targetLanguage + '!',
-            modelSentences: [
-              {
-                sentence: 'The cat eats fish.',
-                translation: 'O gato come peixe.',
-                structure: 'Sujeito + Verbo + Objeto',
-                highlight: 'eats',
-                slots: [
-                  { position: 0, label: 'Sujeito', options: ['The cat', 'A dog', 'My sister', 'The boy'] },
-                  { position: 1, label: 'Verbo', options: ['eats', 'drinks', 'sees', 'likes'] },
-                  { position: 2, label: 'Objeto', options: ['fish', 'water', 'the ball', 'music'] },
-                ],
-                teacherQuestion: 'Quem come o peixe nesta frase?',
-                nativeNote: 'Em inglês: Sujeito + Verbo + Objeto (igual ao português na ordem básica)',
-              },
-            ],
-            chunkPairs: [
-              { chunk: 'give up', meaning: 'desistir', example: 'Don\'t give up!' },
-              { chunk: 'make a decision', meaning: 'tomar uma decisão', example: 'I need to make a decision.' },
-            ],
-            substitutionDrill: {
-              base: 'I eat an apple every day.',
-              baseTranslation: 'Eu como uma maçã todo dia.',
-              slots: [{ word: 'apple', alternatives: ['banana', 'sandwich', 'salad'] }],
-            },
-          };
+          return { patterns: [] };
         }
       }),
 
     // ── Conversa sobre estrutura frasal (professor responde dúvidas) ──────────
-    structureChat: publicProcedure
+    structureChat: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
-        nativeLanguage: z.string().default('pt-BR'),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         sentence: z.string(),
         studentMessage: z.string(),
         history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
+        const inputSafety = await assessConversationText(ctx.user.id, [input.sentence, input.studentMessage].join('\n'), input.targetLanguage);
+        if (!inputSafety.allowed) return { reply: '', blocked: true };
         const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
           {
             role: 'system',
-            content: `Você é um professor de ${input.targetLanguage} para falantes de ${input.nativeLanguage}.
+            content: `Você é um professor de ${input.targetLanguage} para falantes de ${input.nativeLanguage}, no nível CEFR ${input.cefrLevel}.
 Estamos estudando a frase: "${input.sentence}"
-Responda em português, de forma simples e encorajadora, como um professor de jardim de infância.
+Responda em ${input.nativeLanguage}, de forma simples e encorajadora para o nível ${input.cefrLevel}.
 Se o aluno errar a estrutura, corrija gentilmente e dê um exemplo novo.
 Máximo 2 frases por resposta.`,
           },
@@ -3786,7 +3750,8 @@ Máximo 2 frases por resposta.`,
         const content = typeof response.choices[0].message.content === 'string'
           ? response.choices[0].message.content
           : JSON.stringify(response.choices[0].message.content);
-        return { reply: content };
+        const outputSafety = await assessConversationText(ctx.user.id, content, input.targetLanguage);
+        return outputSafety.allowed ? { reply: content, blocked: false } : { reply: '', blocked: true };
       }),
     // ── Cenas com Professor (professor dentro da ilustração) ─────────────────
     sceneLesson: protectedProcedure

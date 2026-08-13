@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
+import { useAuth } from '@/_core/hooks/useAuth';
+import type { CEFRLevel } from '@/lib/lesson-levels';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface SentencePattern {
@@ -23,6 +25,8 @@ interface ChatMessage {
 interface SentenceBuilderProps {
   targetLanguage: string;
   languageCode: string;
+  nativeLanguage: string;
+  cefrLevel: CEFRLevel;
   phase: string;
   lessonTitle?: string;
   vocabulary?: Array<{ word: string; translation: string }>;
@@ -31,6 +35,19 @@ interface SentenceBuilderProps {
   phaseColor?: string;
   onComplete?: (xp: number) => void;
   onBack?: () => void;
+}
+
+function buildVocabularyPatterns(vocabulary: Array<{ word: string; translation: string }>): SentencePattern[] {
+  const items = vocabulary.filter((item) => item.word.trim() && item.translation.trim()).slice(0, 6);
+  if (items.length === 0) return [];
+  const primary = items[0];
+  return [{
+    pattern: 'Vocabulário da lição',
+    example: primary.word,
+    exampleTranslation: primary.translation,
+    slots: [{ role: 'Vocabulário', options: items.map(({ word, translation }) => ({ word, translation })), current: 0 }],
+    chunks: items.map(({ word, translation }) => ({ chunk: word, meaning: translation, note: 'Termo prioritário da lição' })),
+  }];
 }
 
 // ── Hardcoded patterns by phase (fallback when API is slow) ────────────────
@@ -93,6 +110,8 @@ const FALLBACK_PATTERNS: Record<string, SentencePattern[]> = {
 export default function SentenceBuilder({
   targetLanguage,
   languageCode,
+  nativeLanguage,
+  cefrLevel,
   phase,
   lessonTitle,
   vocabulary = [],
@@ -102,12 +121,13 @@ export default function SentenceBuilder({
   onComplete,
   onBack,
 }: SentenceBuilderProps) {
+  const { user } = useAuth();
   const phaseKey = phase.includes('infan') ? 'infancia'
     : phase.includes('crian') ? 'crianca'
     : phase.includes('adoles') ? 'adolescencia'
     : 'adulto';
 
-  const [patterns, setPatterns] = useState<SentencePattern[]>(FALLBACK_PATTERNS[phaseKey] || FALLBACK_PATTERNS.crianca);
+  const [patterns, setPatterns] = useState<SentencePattern[]>(() => buildVocabularyPatterns(vocabulary));
   const [patternIdx, setPatternIdx] = useState(0);
   const [slots, setSlots] = useState<SentencePattern['slots']>([]);
   const [tab, setTab] = useState<'observe' | 'build' | 'chunks' | 'chat'>('observe');
@@ -129,7 +149,7 @@ export default function SentenceBuilder({
       setShowAnswer(false);
       setChatHistory([{
         role: 'assistant',
-        content: 'Observe esta estrutura: "' + currentPattern.example + '" — ' + currentPattern.exampleTranslation + '. Agora vamos praticar substituindo as palavras! 🔄',
+        content: currentPattern.exampleTranslation,
       }]);
     }
   }, [patternIdx, patterns]);
@@ -139,8 +159,9 @@ export default function SentenceBuilder({
 
   // Load AI patterns
   useEffect(() => {
+    if (!user) return;
     structureMutation.mutate(
-      { targetLanguage, phase, lessonTitle, vocabulary: vocabulary.slice(0, 8).map(v => v.word) },
+      { targetLanguage, nativeLanguage, cefrLevel, phase, lessonTitle, vocabulary: vocabulary.slice(0, 8).map(v => v.word) },
       {
         onSuccess: (data) => {
           if (data?.patterns?.length) {
@@ -150,8 +171,7 @@ export default function SentenceBuilder({
         },
       }
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cefrLevel, lessonTitle, nativeLanguage, phase, structureMutation, targetLanguage, user, vocabulary]);
 
   const speakText = (text: string) => {
     speakNaturalVoice(text, languageCode, { rate: 0.85 });
@@ -176,7 +196,7 @@ export default function SentenceBuilder({
   };
 
   const handleSendChat = () => {
-    if (!chatInput.trim() || chatMutation.isPending) return;
+    if (!user || !chatInput.trim() || chatMutation.isPending) return;
     const msg = chatInput.trim();
     setChatInput('');
     const newHistory: ChatMessage[] = [...chatHistory, { role: 'user', content: msg }];
@@ -184,6 +204,8 @@ export default function SentenceBuilder({
     chatMutation.mutate(
       {
         targetLanguage,
+        nativeLanguage,
+        cefrLevel,
         sentence: currentPattern.example,
         studentMessage: msg,
         history: newHistory.slice(-6).map(m => ({ role: m.role, content: m.content })),
@@ -386,7 +408,7 @@ export default function SentenceBuilder({
               <div style={{ fontSize: 11, color: phaseColor, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>🔄 PT × {targetLanguage}:</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px' }}>
-                  <div style={{ fontSize: 10, color: '#888', marginBottom: 4, fontWeight: 700 }}>🇧🇷 PORTUGUÊS</div>
+                  <div style={{ fontSize: 10, color: '#888', marginBottom: 4, fontWeight: 700 }}>🌐 {nativeLanguage.toUpperCase()}</div>
                   <div style={{ fontSize: 13, color: '#fff' }}>{currentPattern.exampleTranslation}</div>
                 </div>
                 <div style={{ background: `${phaseColor}10`, borderRadius: 10, padding: '10px', border: `1px solid ${phaseColor}30` }}>
@@ -446,13 +468,14 @@ export default function SentenceBuilder({
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSendChat()}
-                placeholder="Pergunte sobre a estrutura..."
+                placeholder={user ? "Pergunte sobre a estrutura..." : "🔒"}
+                disabled={!user}
                 style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${phaseColor}40`, borderRadius: 12, padding: '10px 14px', color: '#fff', fontSize: 13, outline: 'none' }}
               />
               <button
                 onClick={handleSendChat}
-                disabled={!chatInput.trim() || chatMutation.isPending}
-                style={{ background: phaseColor, border: 'none', borderRadius: 12, width: 44, height: 44, fontSize: 18, cursor: 'pointer', opacity: !chatInput.trim() ? 0.5 : 1 }}
+                disabled={!user || !chatInput.trim() || chatMutation.isPending}
+                style={{ background: phaseColor, border: 'none', borderRadius: 12, width: 44, height: 44, fontSize: 18, cursor: 'pointer', opacity: !user || !chatInput.trim() ? 0.5 : 1 }}
               >
                 ➤
               </button>
