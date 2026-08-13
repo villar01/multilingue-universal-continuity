@@ -47,6 +47,9 @@ export default function ParentalControlPanel() {
   const [newChildName, setNewChildName] = useState('');
   const [newChildEmoji, setNewChildEmoji] = useState('👧');
   const [newChildLevel, setNewChildLevel] = useState<'infantil' | 'adolescente' | 'adulto'>('infantil');
+  const [newChildPin, setNewChildPin] = useState('');
+  const [confirmChildPin, setConfirmChildPin] = useState('');
+  const [newChildPinError, setNewChildPinError] = useState('');
   const [pinInput, setPinInput] = useState('');
   const [pinVerified, setPinVerified] = useState(false);
   const [pinError, setPinError] = useState('');
@@ -99,14 +102,26 @@ export default function ParentalControlPanel() {
 
   const handleAddChild = useCallback(async () => {
     if (!newChildName.trim()) return;
+    if (!/^\d{4}$/.test(newChildPin)) {
+      setNewChildPinError('Defina um PIN numérico de 4 dígitos.');
+      return;
+    }
+    if (newChildPin !== confirmChildPin) {
+      setNewChildPinError('Os PINs não coincidem.');
+      return;
+    }
     await createChild.mutateAsync({
       name: newChildName,
       emoji: newChildEmoji,
       level: newChildLevel,
+      pin: newChildPin,
     });
     setNewChildName('');
+    setNewChildPin('');
+    setConfirmChildPin('');
+    setNewChildPinError('');
     setShowAddChild(false);
-  }, [newChildName, newChildEmoji, newChildLevel, createChild]);
+  }, [newChildName, newChildEmoji, newChildLevel, newChildPin, confirmChildPin, createChild]);
 
   const handleVerifyPin = useCallback(async () => {
     if (!selectedChildId) return;
@@ -195,10 +210,21 @@ export default function ParentalControlPanel() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="child-pin">PIN do responsável</Label>
+                    <Input id="child-pin" type="password" inputMode="numeric" maxLength={4} value={newChildPin} onChange={(e) => { setNewChildPin(e.target.value.replace(/\D/g, '')); setNewChildPinError(''); }} placeholder="4 dígitos" />
+                  </div>
+                  <div>
+                    <Label htmlFor="child-pin-confirm">Confirmar PIN</Label>
+                    <Input id="child-pin-confirm" type="password" inputMode="numeric" maxLength={4} value={confirmChildPin} onChange={(e) => { setConfirmChildPin(e.target.value.replace(/\D/g, '')); setNewChildPinError(''); }} placeholder="Repita o PIN" />
+                  </div>
+                </div>
+                {newChildPinError ? <p className="text-sm text-red-400">{newChildPinError}</p> : null}
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddChild(false)}>Cancelar</Button>
-                <Button onClick={handleAddChild} disabled={!newChildName.trim() || createChild.isPending}>
+                <Button onClick={handleAddChild} disabled={!newChildName.trim() || newChildPin.length !== 4 || confirmChildPin.length !== 4 || createChild.isPending}>
                   {createChild.isPending ? 'Criando...' : 'Criar Perfil'}
                 </Button>
               </DialogFooter>

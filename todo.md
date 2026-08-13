@@ -237,6 +237,7 @@
 
 ## 🛡️ PROTEÇÃO DE MENORES, ECA DIGITAL E CONTEÚDO POR PAÍS
 - [ ] Auditar o consentimento inicial, controle parental, registro de interações e filtros de conteúdo à luz do ECA Digital, LGPD e regras aplicáveis
+- [x] Remover o PIN parental previsível `1234` e exigir criação/confirmacão de PIN pelo responsável ao adicionar um perfil infantil — servidor exige quatro dígitos recebidos na criação e não persiste padrão; painel exige confirmação antes do envio; TypeScript e 180 testes aprovados, painel validado
 - [ ] Exigir perfil etário, responsável e consentimento verificável antes de liberar conversas de menores
 - [ ] Aplicar classificação etária e bloqueio de tema por país em todas as conversas com professor e IA
 - [ ] Exibir para responsáveis histórico supervisionável, alertas e motivos de bloqueio sem expor mais dados do que o necessário

@@ -53,6 +53,7 @@ export const parentalControlRouter = router({
       emoji: z.string().max(10).default('👧'),
       level: z.enum(['infantil', 'adolescente', 'adulto']).default('infantil'),
       birthDate: z.string().optional(),
+      pin: z.string().regex(/^\d{4}$/, 'PIN deve conter 4 dígitos'),
     }))
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
@@ -67,7 +68,7 @@ export const parentalControlRouter = router({
       // Create default settings
       await database.insert(parentalSettings).values({
         childId: child.id,
-        pinCode: '1234',
+        pinCode: input.pin,
         timeLimitMinutes: 60,
         allowedDays: [true, true, true, true, true, false, false],
         levelsAllowed: ['beginner'],
