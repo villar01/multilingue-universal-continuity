@@ -30,6 +30,7 @@ export function PracticeClips() {
   // Query todos os clipes (filtros aplicados localmente)
   const { data: clipsData, isLoading } = trpc.precisionClips.list.useQuery({
     limit: 50,
+    category: selectedCategory === "all" ? undefined : selectedCategory as "daily" | "travel" | "business" | "academic" | "social",
   });
 
   const normalizeClipCefr = (difficulty?: string): CEFRLevel | undefined => {
@@ -55,7 +56,7 @@ export function PracticeClips() {
     const matchesDifficulty = selectedDifficulty === "all" || 
       clipCefr === selectedDifficulty;
     
-    const matchesCategory = selectedCategory === "all";
+    const matchesCategory = selectedCategory === "all" || clip.category === selectedCategory;
     
     return matchesSearch && matchesLanguage && matchesDifficulty && matchesCategory;
   }) || [];
@@ -173,6 +174,7 @@ export function PracticeClips() {
                 <Badge variant="outline">
                   {normalizeClipCefr(clip.difficulty) || clip.difficulty}
                 </Badge>
+                {clip.category && <Badge variant="secondary">{clip.category}</Badge>}
 
               </div>
 

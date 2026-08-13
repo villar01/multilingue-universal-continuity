@@ -5,6 +5,8 @@
 
 import { invokeBlackboxAI } from "./blackbox-ai";
 
+export type ClipCategory = "daily" | "travel" | "business" | "academic" | "social";
+
 export interface PrecisionClip {
   id: string;
   title: string;
@@ -12,6 +14,7 @@ export interface PrecisionClip {
   targetLanguage: string;
   nativeLanguage: string;
   difficulty: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  category: ClipCategory;
   duration: number; // segundos
   script: ClipScript;
   subtitles: BilingualSubtitle[];
@@ -92,8 +95,10 @@ export async function generatePrecisionClip(params: {
   difficulty: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
   duration: number; // segundos desejados
   accentVariation?: string; // ex: "en-us-general", "en-gb-rp"
+  category?: ClipCategory;
 }): Promise<PrecisionClip> {
   const { topic, targetLanguage, nativeLanguage, difficulty, duration, accentVariation } = params;
+  const category = params.category ?? inferClipCategory(topic);
 
   console.log(`[Precision Clip] Gerando clipe: ${topic} (${difficulty}, ${duration}s)`);
 
@@ -104,6 +109,7 @@ export async function generatePrecisionClip(params: {
 
 **REQUISITOS OBRIGATÓRIOS:**
 - Tópico: ${topic}
+- Categoria curricular: ${category}
 - Idioma alvo: ${targetLanguage}
 - Idioma nativo: ${targetLanguage === "en" ? "português brasileiro" : "inglês"}
 - Nível CEFR: ${difficulty}
@@ -246,6 +252,7 @@ export async function generatePrecisionClip(params: {
     targetLanguage,
     nativeLanguage,
     difficulty,
+    category,
     duration,
     script: clipData.script,
     subtitles,
@@ -257,6 +264,15 @@ export async function generatePrecisionClip(params: {
   };
 
   return precisionClip;
+}
+
+function inferClipCategory(topic: string): ClipCategory {
+  const normalized = topic.toLowerCase();
+  if (/(airport|customs|car|tour|train|hotel|taxi|beach|museum|trip|travel|tourist|souvenir)/.test(normalized)) return "travel";
+  if (/(job|email|presentation|negotiat|meeting|network|project|client|marketing|financial|salary|business|deadline)/.test(normalized)) return "business";
+  if (/(class|essay|speech|library|exam|academic|research|thesis|study|scholarship|graduate|citation)/.test(normalized)) return "academic";
+  if (/(small talk|compliment|gratitude|suggestion|advice|news|gossip|celebration|humor|sarcasm|slang|dating|friendship|social)/.test(normalized)) return "social";
+  return "daily";
 }
 
 /**
@@ -344,6 +360,7 @@ export async function savePrecisionClip(clip: PrecisionClip): Promise<any> {
     targetLanguage: clip.targetLanguage,
     nativeLanguage: clip.nativeLanguage,
     difficulty: clip.difficulty,
+    category: clip.category,
     duration: clip.duration,
     scriptData: JSON.stringify(clip.script),
     subtitlesData: JSON.stringify(clip.subtitles),
@@ -420,12 +437,14 @@ export async function generatePrecisionClipLibrary(params: {
 
   for (let i = 0; i < Math.min(count, topics.length); i++) {
     try {
+      const category: ClipCategory = i < 20 ? "daily" : i < 40 ? "travel" : i < 60 ? "business" : i < 80 ? "academic" : "social";
       const clip = await generatePrecisionClip({
         topic: topics[i],
         targetLanguage,
         nativeLanguage,
         difficulty,
         duration: 60 + Math.random() * 30, // 60-90s
+        category,
       });
 
       await savePrecisionClip(clip);

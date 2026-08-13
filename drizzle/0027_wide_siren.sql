@@ -1,0 +1,1 @@
+ALTER TABLE `video_clips` ADD `category` enum('daily','travel','business','academic','social');

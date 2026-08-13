@@ -1763,7 +1763,9 @@ export const videoClips = mysqlTable("video_clips", {
   
   // Nível CEFR
   difficulty: mysqlEnum("difficulty", ["A1", "A2", "B1", "B2", "C1", "C2"]).notNull(),
-  
+  // Categoria curricular — nula somente em registros legados sem metadado suficiente.
+  category: mysqlEnum("category", ["daily", "travel", "business", "academic", "social"]),
+
   // Duração
   duration: int("duration").notNull(), // segundos
   

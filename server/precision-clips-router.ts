@@ -21,6 +21,7 @@ export const precisionClipsRouter = router({
         difficulty: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
         duration: z.number().min(30).max(180), // 30-180 segundos
         accentVariation: z.string().optional(),
+        category: z.enum(["daily", "travel", "business", "academic", "social"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -73,15 +74,22 @@ export const precisionClipsRouter = router({
       z.object({
         targetLanguage: z.string().optional(),
         difficulty: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).optional(),
+        category: z.enum(["daily", "travel", "business", "academic", "social"]).optional(),
         limit: z.number().min(1).max(100).default(20),
       })
     )
     .query(async ({ input }) => {
       const clips = await dbFunctions.getAllVideoClips();
 
+      const filteredClips = clips.filter((clip) =>
+        (!input.targetLanguage || clip.targetLanguage === input.targetLanguage)
+        && (!input.difficulty || clip.difficulty === input.difficulty)
+        && (!input.category || clip.category === input.category)
+      );
+
       return {
-        clips: clips.slice(0, input.limit),
-        total: clips.length,
+        clips: filteredClips.slice(0, input.limit),
+        total: filteredClips.length,
       };
     }),
 
