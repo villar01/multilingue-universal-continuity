@@ -444,6 +444,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
 
       // Suspicious patterns: adult content, violence, drugs, cyberbullying, phishing, grooming, cyber threats
       const suspiciousPatterns = [
@@ -477,9 +478,14 @@ export const parentalControlRouter = router({
         : 'cyber_threat';
 
       const now = Date.now();
-      const description = `Conteudo suspeito detectado (${alertType}): ${input.content.substring(0, 200)}...`;
-
-      await database.execute(sql`INSERT INTO parental_alerts (child_id, alert_type, severity, description, is_read, created_at) VALUES (${input.childId}, ${alertType}, ${severity}, ${description}, FALSE, ${now})`);
+      const description = `Conteúdo sinalizado pela categoria ${alertType}. O texto não foi armazenado no alerta.`;
+      await database.insert(parentalAlerts).values({
+        childId: input.childId,
+        alertType,
+        title: 'Conteúdo sinalizado para revisão',
+        detail: description,
+        icon: severity === 'critical' || severity === 'high' ? '🛡️' : '⚠️',
+      });
 
       // Also log as cybersecurity threat if it's a cyber threat type
       if (alertType === 'cyber_threat' || alertType === 'phishing') {

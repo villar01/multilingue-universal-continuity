@@ -32,8 +32,17 @@ export default function Onboarding() {
   const [activeCategory, setActiveCategory] = useState<LangCategory>("all");
   const [showAllLanguages, setShowAllLanguages] = useState(false);
   const [selectedTeacherId, setSelectedTeacherId] = useState<number | null>(null);
+  const [pairingCode, setPairingCode] = useState('');
+  const [pairingMessage, setPairingMessage] = useState('');
 
   const updateProfile = trpc.auth.updateProfile.useMutation();
+  const claimChildProfile = trpc.parentalControl.claimChildProfile.useMutation({
+    onSuccess: () => {
+      setPairingCode('');
+      setPairingMessage('Perfil protegido vinculado. As configurações do responsável serão aplicadas a esta conta.');
+    },
+    onError: (error) => setPairingMessage(error.message),
+  });
   const { data: languages } = trpc.languages.list.useQuery();
   const availableTargetCodes = useMemo(
     () => LANGUAGES_57.filter((language) => language.available).map((language) => language.code),
@@ -177,6 +186,28 @@ export default function Onboarding() {
               <p className="text-gray-500 text-sm mb-6">
                 Usaremos este idioma para todas as traduções e explicações
               </p>
+              <div className="mb-5 rounded-xl border border-blue-100 bg-blue-50 p-3">
+                <p className="text-sm font-medium text-blue-950">Conta supervisionada?</p>
+                <p className="mt-1 text-xs text-blue-800">Peça ao responsável o código de vínculo de 8 caracteres. Ele expira em 10 minutos e só pode ser usado uma vez.</p>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={pairingCode}
+                    onChange={(event) => { setPairingCode(event.target.value.toUpperCase().replace(/[^A-F0-9]/g, '').slice(0, 8)); setPairingMessage(''); }}
+                    placeholder="CÓDIGO"
+                    maxLength={8}
+                    className="min-w-0 flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 font-mono text-sm tracking-widest text-gray-900 outline-none focus:border-blue-500"
+                  />
+                  <button
+                    type="button"
+                    disabled={pairingCode.length !== 8 || claimChildProfile.isPending}
+                    onClick={() => claimChildProfile.mutate({ code: pairingCode })}
+                    className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {claimChildProfile.isPending ? 'Vinculando...' : 'Vincular'}
+                  </button>
+                </div>
+                {pairingMessage ? <p className="mt-2 text-xs text-blue-900" role="status">{pairingMessage}</p> : null}
+              </div>
             </>
           )}
           {step === STEP_TARGET && (

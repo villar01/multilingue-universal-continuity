@@ -852,6 +852,14 @@ function SecurityTab({
     onSuccess: () => utils.parentalControl.getSettings.invalidate({ childId }),
   });
   const [newPin, setNewPin] = useState('');
+  const [pairingCode, setPairingCode] = useState('');
+  const [pairingExpiresAt, setPairingExpiresAt] = useState<Date | null>(null);
+  const createChildLinkCode = trpc.parentalControl.createChildLinkCode.useMutation({
+    onSuccess: (result) => {
+      setPairingCode(result.code);
+      setPairingExpiresAt(new Date(result.expiresAt));
+    },
+  });
 
   return (
     <div className="space-y-4">
@@ -918,6 +926,36 @@ function SecurityTab({
               >
                 {updateSettings.isPending ? 'Atualizando...' : 'Atualizar PIN'}
               </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-blue-950/30 border-blue-800/50">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2 text-blue-200">
+                <Shield className="w-5 h-5 text-blue-300" /> Vincular conta do menor
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-slate-300">
+                Gere um código único para o menor vincular sua conta a este perfil. O código exige este PIN, expira em 10 minutos e só pode ser usado uma vez.
+              </p>
+              {pairingCode ? (
+                <div className="rounded-lg border border-blue-500/40 bg-slate-950/60 p-3">
+                  <p className="text-center font-mono text-2xl font-bold tracking-[0.3em] text-blue-200">{pairingCode}</p>
+                  <p className="mt-2 text-center text-xs text-slate-400">
+                    Válido até {pairingExpiresAt?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. Compartilhe somente com o menor sob sua responsabilidade.
+                  </p>
+                </div>
+              ) : null}
+              <Button
+                variant="outline"
+                className="w-full border-blue-500/40 text-blue-100 hover:bg-blue-900/40"
+                disabled={pinInput.length !== 4 || createChildLinkCode.isPending}
+                onClick={() => createChildLinkCode.mutate({ childId, pin: pinInput })}
+              >
+                {createChildLinkCode.isPending ? 'Gerando código...' : pairingCode ? 'Gerar novo código' : 'Gerar código de vínculo'}
+              </Button>
+              {createChildLinkCode.error ? <p className="text-sm text-red-300">{createChildLinkCode.error.message}</p> : null}
             </CardContent>
           </Card>
 
