@@ -8,6 +8,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Camera, X, Volume2, ChevronLeft, ChevronRight, Maximize2, ZoomIn } from "lucide-react";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 
 interface VocabItem {
   word: string;
@@ -43,6 +44,7 @@ export default function ARVocabulary({ vocabulary, languageCode = "en", teacherN
   const [activeWord, setActiveWord] = useState<number>(0);
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [paretoOpen, setParetoOpen] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -254,6 +256,14 @@ export default function ARVocabulary({ vocabulary, languageCode = "en", teacherN
               >
                 <ChevronRight className="w-3 h-3 text-white" />
               </button>
+              <button
+                type="button"
+                onClick={() => setParetoOpen(true)}
+                className="rounded-lg bg-amber-400/85 p-1.5 text-slate-950 hover:bg-amber-300"
+                title="Praticar ciclo Pareto"
+              >
+                <ZoomIn className="h-3 w-3" />
+              </button>
             </div>
           </div>
         )}
@@ -270,6 +280,17 @@ export default function ARVocabulary({ vocabulary, languageCode = "en", teacherN
           ))}
         </div>
       </div>
+
+      {currentWord && paretoOpen && (
+        <div className="absolute inset-x-3 bottom-3 z-40">
+          <ParetoPracticeCycle
+            term={{ word: currentWord.word, translation: currentWord.translation, example: currentWord.examples?.[0]?.en }}
+            onClose={() => setParetoOpen(false)}
+            onSpeak={(text) => onSpeak?.(text)}
+            level="A1"
+          />
+        </div>
+      )}
 
       {/* ── Header — Controles ─────────────────────────────────────────────── */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">

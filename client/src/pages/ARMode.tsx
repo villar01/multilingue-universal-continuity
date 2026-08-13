@@ -222,7 +222,7 @@ export default function ARMode() {
 
   const handleSpeak = useCallback(async (text: string) => {
     try {
-      const result = await ttsMutation.mutateAsync({ text, voiceLang: "en-US" });
+      const result = await ttsMutation.mutateAsync({ text, voiceLang: targetLangCode });
       if (result.success && result.audioBase64) {
         if (audioRef.current) audioRef.current.pause();
         const audio = new Audio(`data:${result.mimeType};base64,${result.audioBase64}`);
@@ -230,7 +230,7 @@ export default function ARMode() {
         audio.play().catch(() => null);
       }
     } catch { /* silencioso */ }
-  }, [ttsMutation]);
+  }, [ttsMutation, targetLangCode]);
 
   // ─── Tela interna de um modo AR ───────────────────────────────────────────
   if (activeInternal) {
@@ -260,7 +260,7 @@ export default function ARMode() {
             </div>
           }>
             {activeInternal === "ar-vocab" && (
-              <ARVocabulary vocabulary={vocabulary} languageCode={languageCode} onSpeak={handleSpeak} />
+              <ARVocabulary vocabulary={vocabulary} languageCode={targetLangCode} onSpeak={handleSpeak} />
             )}
             {activeInternal === "camera-translate" && (
               <CameraTranslator targetLanguage="English" nativeLanguage="Português" />
