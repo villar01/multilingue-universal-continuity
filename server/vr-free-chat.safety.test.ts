@@ -27,7 +27,7 @@ describe("vrConversation.freeChat safety", () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
 
     const result = await createCaller().vrConversation.freeChat({
-      targetLanguage: "en-US", nativeLanguage: "pt-BR", level: "beginner", history: [], userMessage: "unsafe message",
+      targetLanguage: "en-US", nativeLanguage: "pt-BR", level: "A1", history: [], userMessage: "unsafe message",
     });
 
     expect(mocks.invokeLLM).not.toHaveBeenCalled();
@@ -40,7 +40,7 @@ describe("vrConversation.freeChat safety", () => {
     mocks.invokeLLM.mockResolvedValue({ choices: [{ message: { content: JSON.stringify({ text: "unsafe output", suggestions: ["unsafe suggestion"] }) } }] });
 
     const result = await createCaller().vrConversation.freeChat({
-      targetLanguage: "en-US", nativeLanguage: "pt-BR", level: "beginner", history: [], userMessage: "Hello",
+      targetLanguage: "en-US", nativeLanguage: "pt-BR", level: "A1", history: [], userMessage: "Hello",
     });
 
     expect(mocks.assessConversationOutput).toHaveBeenCalledWith(7, "Hello", expect.stringContaining("unsafe output"), "en-US");

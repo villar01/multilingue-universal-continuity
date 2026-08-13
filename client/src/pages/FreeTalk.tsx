@@ -5,19 +5,17 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Streamdown } from "streamdown";
 import { useI18n } from "@/lib/i18n";
+import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 
 import { ArrowLeft, Send, Mic, MicOff, Volume2, BookOpen, Star, ChevronDown } from "lucide-react";
 
-type LevelId = "beginner" | "elementary" | "intermediate" | "advanced" | "proficient" | "scientific";
-
-// Níveis de aprendizado
-const LEVELS: { id: LevelId; label: string; color: string }[] = [
-  { id: "beginner", label: "A1 - Iniciante", color: "bg-green-500" },
-  { id: "elementary", label: "A2 - Básico", color: "bg-emerald-500" },
-  { id: "intermediate", label: "B1/B2 - Intermediário", color: "bg-blue-500" },
-  { id: "advanced", label: "C1 - Avançado", color: "bg-purple-500" },
-  { id: "proficient", label: "C2 - Proficiente", color: "bg-rose-500" },
-  { id: "scientific", label: "S1 - Científico", color: "bg-amber-500" },
+const LEVELS: { id: CEFRLevel; label: string; color: string }[] = [
+  { id: "A1", label: "A1 - Iniciante", color: "bg-green-500" },
+  { id: "A2", label: "A2 - Básico", color: "bg-emerald-500" },
+  { id: "B1", label: "B1 - Intermediário", color: "bg-blue-500" },
+  { id: "B2", label: "B2 - Intermediário avançado", color: "bg-sky-500" },
+  { id: "C1", label: "C1 - Avançado", color: "bg-purple-500" },
+  { id: "C2", label: "C2 - Proficiente", color: "bg-rose-500" },
 ];
 
 // Tópicos sugeridos por categoria
@@ -47,7 +45,7 @@ export default function FreeTalk() {
   const targetLang = localStorage.getItem("ml_target_lang") || "en-US";
   const targetLangName = localStorage.getItem("ml_target_lang_name") || "English";
 
-  const [level, setLevel] = useState<LevelId>((localStorage.getItem("ml_free_talk_level") as LevelId) || "intermediate");
+  const [level, setLevel] = useState<CEFRLevel>(() => resolvePracticeCEFRLevel(localStorage.getItem("ml_free_talk_level") || "B1"));
   const [topic, setTopic] = useState("");
   const [customTopic, setCustomTopic] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -75,7 +73,7 @@ export default function FreeTalk() {
 
     const welcomeMsg: Message = {
       role: "assistant",
-      content: `Olá! Vamos conversar sobre **${finalTopic}** no nível **${level}**. Pode começar quando quiser — não há limite de palavras ou turnos. Vou corrigir gentilmente quando necessário e apresentar vocabulário novo conforme conversamos. 🎯`,
+      content: `Olá! Vamos conversar sobre **${finalTopic}** no nível **${selectedLevel.label}**. Pode começar quando quiser. Vou corrigir gentilmente quando necessário e apresentar vocabulário novo conforme conversamos.`,
       timestamp: Date.now(),
     };
     setMessages([welcomeMsg]);

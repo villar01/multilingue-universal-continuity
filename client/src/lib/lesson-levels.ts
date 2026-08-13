@@ -535,6 +535,7 @@ export function resolvePracticeCEFRLevel(level?: string): CEFRLevel {
   if (normalized === 'UPPER_INTERMEDIATE' || normalized === 'B2') return 'B2';
   if (normalized === 'ADVANCED' || normalized === 'C1') return 'C1';
   if (normalized === 'PROFICIENT' || normalized === 'C2') return 'C2';
+  if (normalized === 'SCIENTIFIC') return 'C2'; // compatibilidade com preferência antiga, sem criar nível fora do CEFR
   return 'A1';
 }
 

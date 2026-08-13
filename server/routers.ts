@@ -3046,7 +3046,7 @@ Rules:
       .input(z.object({
         targetLanguage: z.string().default("en-US"),
         nativeLanguage: z.string().default("pt-BR"),
-        level: z.enum(["beginner", "elementary", "intermediate", "advanced", "proficient", "scientific"]).default("beginner"),
+        level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).default("A1"),
         topic: z.string().optional(),
         history: z.array(z.object({
           role: z.enum(["user", "assistant"]),
@@ -3092,15 +3092,15 @@ Rules:
         };
         const targetLang = langMap[input.targetLanguage] || "English";
         const nativeLang = nativeLangMap[input.nativeLanguage] || "Brazilian Portuguese";
-        const levelGuide: Record<string, string> = {
-          beginner: "Use very simple words (A1-A2). Short sentences. Basic everyday vocabulary only.",
-          elementary: "Use simple words (A2-B1). Common vocabulary. Avoid complex idioms.",
-          intermediate: "Use natural conversational language (B1-B2). Include some idioms and phrasal verbs.",
-          advanced: "Use rich vocabulary (C1). Include idioms, phrasal verbs, nuanced expressions freely.",
-          proficient: "Use sophisticated language (C2). Literary expressions, complex structures, subtle nuances.",
-          scientific: "Use academic/scientific register. Technical vocabulary, formal structures, research-level language.",
+        const levelGuide: Record<"A1" | "A2" | "B1" | "B2" | "C1" | "C2", string> = {
+          A1: "Use concrete everyday vocabulary only. Maximum 6 words per sentence and 2 short sentences in total. Ask simple yes/no or object-identification questions. These limits override later open-ended language guidance.",
+          A2: "Use common daily vocabulary. Maximum 10 words per sentence and 2 sentences in total. Use simple descriptions, routines, directions, or fill-in-style prompts. These limits override later open-ended language guidance.",
+          B1: "Use familiar travel, work, and personal-experience topics. Maximum 18 words per sentence and 3 sentences in total. Invite a simple description or comparison. These limits override later open-ended language guidance.",
+          B2: "Use abstract and technical everyday themes. Maximum 25 words per sentence and 3 sentences in total. Allow comparisons, error correction, and supported opinions. These limits override later open-ended language guidance.",
+          C1: "Use nuanced academic or professional vocabulary. Maximum 35 words per sentence and 3 sentences in total. Invite paraphrase, argument, or open discussion. These limits override later open-ended language guidance.",
+          C2: "Use precise, culturally nuanced language. Maximum 50 words per sentence and 4 sentences in total. Permit debate, rhetorical style, and sophisticated reformulation. These limits override later open-ended language guidance.",
         };
-        const levelInstruction = levelGuide[input.level] || levelGuide.beginner;
+        const levelInstruction = levelGuide[input.level];
         const topicContext = input.topic ? `The conversation topic is: ${input.topic}.` : "The topic is completely open — follow the user's lead naturally, like a real conversation.";
         const systemPrompt = `You are a native ${targetLang} speaker having a real, unlimited, natural conversation with a ${nativeLang} learner.\n\nLevel: ${input.level.toUpperCase()} \u2014 ${levelInstruction}\n${topicContext}\n\nCore rules:\n- Speak as a real person, NOT as a teacher giving exercises\n- Match the user's level but naturally introduce 1-2 new words per response\n- This conversation has NO turn limit \u2014 continue naturally as long as the user wants\n- If user makes an error, weave a gentle correction INTO your response naturally (don't lecture)\n- Extract vocabulary organically from the conversation context\n- Respond in ${targetLang} naturally, with no artificial length constraints\n\nReturn JSON with these exact keys:\n- text: your natural response in ${targetLang} (no word limit)\n- translation: ${nativeLang} translation\n- phonetic: pronunciation guide for ${nativeLang} speakers (stress syllables in CAPS)\n- feedback: brief encouraging note in ${nativeLang} (max 10 words)\n- score: integer 0-100 for naturalness/grammar\n- correction: corrected version of user's sentence if needed, else null\n- errorType: grammar, vocabulary, pronunciation, comprehension, or null when no correction is needed\n- newWords: array of 1-3 vocabulary objects {word, translation, phonetic, example} from this response\n- suggestions: array of 3 natural follow-up responses in ${targetLang} the user could say\n- levelUp: boolean \u2014 true if user seems ready for the next level`;
         const messages: any[] = [
