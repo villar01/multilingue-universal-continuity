@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 import {
   BookOpen,
   PenLine,
@@ -60,7 +61,7 @@ interface NotebookLessonProps {
   lessonTitle: string;
   languageCode: string;
   nativeLanguage?: string;
-  level?: string;
+  level?: CEFRLevel;
   topic?: string;
   /** Pre-built phrases from the lesson content (optional — will generate offline if not provided) */
   phrases?: LessonPhrase[];
@@ -71,7 +72,7 @@ interface NotebookLessonProps {
 function generateOfflinePhrases(
   topic: string,
   lang: string,
-  level: string
+  level: CEFRLevel
 ): LessonPhrase[] {
   // Structured phrase templates for common topics — 100% offline
   const templates: Record<string, LessonPhrase[]> = {
@@ -105,14 +106,24 @@ function generateOfflinePhrases(
     ],
   };
 
+  const practiceCountByLevel: Record<CEFRLevel, number> = {
+    A1: 2,
+    A2: 3,
+    B1: 4,
+    B2: 5,
+    C1: 5,
+    C2: 5,
+  };
+  const practiceCount = practiceCountByLevel[level];
+
   // Try to match topic
   const topicLower = (topic || "").toLowerCase();
   for (const key of Object.keys(templates)) {
-    if (topicLower.includes(key)) return templates[key];
+    if (topicLower.includes(key)) return templates[key].slice(0, practiceCount);
   }
 
   // Default: return greetings as fallback
-  return templates.greetings;
+  return templates.greetings.slice(0, practiceCount);
 }
 
 // ── Notebook storage helpers ──────────────────────────────────────────────────
@@ -147,7 +158,7 @@ export default function NotebookLesson({
   lessonTitle,
   languageCode,
   nativeLanguage = "Português",
-  level = "beginner",
+  level = "A1",
   topic = "greetings",
   phrases: propPhrases,
 }: NotebookLessonProps) {

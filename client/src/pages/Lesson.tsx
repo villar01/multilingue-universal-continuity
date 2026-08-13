@@ -872,7 +872,7 @@ export default function Lesson() {
                 lessonTitle={lesson.title}
                 languageCode={lesson.languageCode || 'en-US'}
                 nativeLanguage="Português"
-                level={(lesson as any).courseLevel || 'beginner'}
+                level={cefrLevel}
                 topic={lesson.title}
               />
             </Suspense>
