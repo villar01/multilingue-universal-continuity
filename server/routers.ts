@@ -42,6 +42,7 @@ import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
+import { assessConversationOutput, assessConversationText } from './conversationSafetyGate';
 
 
 export const appRouter = router({
@@ -4009,7 +4010,7 @@ Máximo 2 frases por resposta.`,
 
   // ── Free Talk com IA Local ──────────────────────────────────────────────
   freeTalk: router({
-    chat: publicProcedure
+    chat: protectedProcedure
       .input(z.object({
         message: z.string(),
         targetLanguage: z.string(),
@@ -4018,7 +4019,24 @@ Máximo 2 frases por resposta.`,
         countryCode: z.string().optional(),
         history: z.array(z.object({ role: z.string(), content: z.string() })).default([]),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const historyText = input.history.map((item) => item.content).join("\n");
+        const requestSafety = await assessConversationText(
+          ctx.user.id,
+          `${historyText}\n${input.message}`.trim(),
+          input.targetLanguage,
+        );
+        if (!requestSafety.allowed) {
+          return { reply: "Este assunto não está disponível aqui. Vamos praticar uma frase segura de idioma.", source: "safety" as const, blocked: true };
+        }
+
+        const safeReply = async (reply: string, source: "local" | "remote" | "none") => {
+          const responseSafety = await assessConversationOutput(ctx.user.id, input.message, reply, input.targetLanguage);
+          if (!responseSafety.allowed) {
+            return { reply: "Vamos continuar com uma prática segura de idioma.", source: "safety" as const, blocked: true };
+          }
+          return { reply, source, blocked: false };
+        };
         // ── Censura e moderação por país ──
         const countryNorms: Record<string, string> = {
           'BR': 'Respeite a moral brasileira. Sem palavrões, conteúdo sexual, drogas ou violência.',
@@ -4055,17 +4073,18 @@ Máximo 2 frases por resposta.`,
               { role: 'user' as const, content: input.message },
             ];
             const result = await generateWithOllama({ messages, max_tokens: 500 });
-            if (result.content) return { reply: result.content, source: 'local' as const };
+            if (result.content) return safeReply(result.content, 'local');
           }
         } catch (e) { /* fall through */ }
         try {
           const { invokeLLM } = await import('./_core/llm');
           const systemPrompt = `You are a friendly language teacher. The student is learning ${input.targetLanguage} and speaks ${input.nativeLanguage}.\nScenario: ${input.scenario || 'casual conversation'}\nRespond in ${input.targetLanguage}. Keep responses short (1-3 sentences). Be encouraging. If the student makes a mistake, gently correct it in parentheses.${censorshipPrompt}`;
           const result = await invokeLLM({ messages: [{ role: 'user', content: systemPrompt + '\n\nStudent: ' + input.message }], maxTokens: 200 });
-          const replyText = result.choices[0]?.message?.content || '';
-          return { reply: replyText || 'Desculpe, não consegui responder agora.', source: 'remote' as const };
+          const replyContent = result.choices[0]?.message?.content;
+          const replyText = typeof replyContent === 'string' ? replyContent : '';
+          return safeReply(replyText || 'Desculpe, não consegui responder agora.', 'remote');
         } catch (e) {
-          return { reply: 'IA não disponível no momento. Tente novamente.', source: 'none' as const };
+          return safeReply('IA não disponível no momento. Tente novamente.', 'none');
         }
       }),
   }),

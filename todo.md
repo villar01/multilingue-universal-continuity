@@ -109,6 +109,10 @@
 - [x] Opção de escolha entre Professor Ricardo e Professora Ingrid para exercícios
 - [ ] Ajustar palavras de inglês dos hotspots ao nível CEFR e ao vocabulário frequente já consolidado nas lições
 - [ ] Fazer hotspots de inglês usarem a voz neural natural regional do professor, sem degradação para síntese do navegador
+- [ ] Corrigir clique de hotspot sem resposta, sotaque português em inglês e ausência de sincronização da foto do professor com a fala na cena imersiva
+- [ ] Separar instruções e traduções na voz neural nativa do aluno da pronúncia de objeto na voz neural regional do idioma estudado
+- [ ] Oferecer diálogo com fala e interação no idioma estudado, além de ajuda falada e tradução separadas na língua nativa
+- [ ] Adicionar perguntas do professor e respostas do aluno por escolha, escrita e microfone no diálogo inferior da cena
 
 ## 🎬 NOVOS RECURSOS DO BACKUP
 - [x] ReelsPage - Clipes educacionais estilo TikTok/Instagram com falantes nativos
@@ -228,6 +232,7 @@
 - [ ] Aplicar a política de bloqueio e alerta parental diretamente às entradas e saídas das conversas de IA e professor
 - [ ] Remover contexto adulto padrão e rota pública desprotegida das conversas de IA, exigindo perfil etário e consentimento aplicáveis
 - [x] Aplicar guarda de perfil etário, consentimento infantil e bloqueio de conteúdo ao chat de lição e à conversa bilíngue — entradas e saídas usam filtro determinístico e moderação, com auditoria e regressões aprovadas; 104 testes no total
+- [ ] Aplicar a mesma guarda etária, consentimento e alerta parental aos fluxos restantes de conversa livre, roleplay e geração de frases
 - [x] Criar alerta parental auditável quando a conversa de um menor for bloqueada ou entrar em revisão etária, sem registrar o texto sensível — alertas são emitidos apenas para perfil infantil vinculado, registram categoria segura e nunca a mensagem original; regressões aprovadas
 - [x] Vincular a conta autenticada do menor ao perfil infantil e ao responsável antes de emitir alertas automáticos de conversa — responsável gera código aleatório sob PIN, hash expira em 10 minutos e o menor reivindica uma única vez no onboarding; vínculo é único e auditável
 - [x] Exigir verificação de titularidade do responsável em toda operação parental que receba `childId`, `alertId` ou `sessionId` — rotas de perfil, configurações, uso, sessões, alertas e detecção manual centralizam validação de responsável; TypeScript e 111 testes aprovados
