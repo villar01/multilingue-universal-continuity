@@ -1,0 +1,1 @@
+ALTER TABLE `battle_rooms` ADD `cefr_level` enum('A1','A2','B1','B2','C1','C2') DEFAULT 'A1' NOT NULL;

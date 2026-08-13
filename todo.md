@@ -107,7 +107,10 @@
 
 ## 📋 PRÓXIMAS FEATURES
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo
-- [ ] Modo competitivo multiplayer
+ - [x] Modo competitivo multiplayer — criação e entrada por código, placar, polling, CEFR A1–C2 persistido e quiz único por sala estão implementados; TypeScript sem erros e 339 testes aprovados
+ - [x] Sincronizar idioma-alvo, categoria e CEFR da configuração real da sala para o convidado, impedindo que o estado local altere a partida após a entrada — a sala retorna a configuração persistida e o cliente sincroniza idioma, categoria e CEFR antes de iniciar
+ - [x] Persistir um conjunto de perguntas ou semente de batalha no servidor para que anfitrião e convidado recebam o mesmo quiz da sala — criação gera uma vez e armazena `quiz_data`; os dois participantes recebem o mesmo conjunto, protegido por sessão e participação
+ - [x] Cobrir a entrada do convidado e a igualdade do quiz compartilhado com regressões de integração — regressões verificam configuração persistida, quiz único, ausência de geração local e bloqueio de não participantes; TypeScript sem erros e 339 testes aprovados
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
 - [ ] Modo imersão total — preferência persistente e controle presentes em Dashboard, ImmersiveScene e Lesson; ocultação/tradução integral dos textos auxiliares de todos os subcomponentes ainda pendente

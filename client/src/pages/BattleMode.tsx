@@ -31,6 +31,17 @@ const CATEGORIES = [
   { id: "colors", label: "🎨 Cores" },
 ];
 
+const CEFR_LEVELS = [
+  { id: "A1", label: "A1 · Iniciante" },
+  { id: "A2", label: "A2 · Elementar" },
+  { id: "B1", label: "B1 · Intermediário" },
+  { id: "B2", label: "B2 · Independente" },
+  { id: "C1", label: "C1 · Avançado" },
+  { id: "C2", label: "C2 · Proficiente" },
+] as const;
+
+type BattleCefrLevel = (typeof CEFR_LEVELS)[number]["id"];
+
 const QUESTION_TIME = 15; // seconds per question
 
 export default function BattleMode() {
@@ -39,6 +50,7 @@ export default function BattleMode() {
   const [phase, setPhase] = useState<Phase>("lobby");
   const [lang, setLang] = useState<Language>(LANGUAGES_57[0]);
   const [category, setCategory] = useState("animals");
+  const [cefrLevel, setCefrLevel] = useState<BattleCefrLevel>("A1");
   const [roomCode, setRoomCode] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -53,7 +65,6 @@ export default function BattleMode() {
 
   const createRoom = trpc.battle.create.useMutation();
   const joinRoom = trpc.battle.join.useMutation();
-  const generateQuiz = trpc.battle.generateQuiz.useMutation();
   const submitScore = trpc.battle.submitScore.useMutation();
   const { data: roomData, refetch: refetchRoom } = trpc.battle.getRoom.useQuery(
     { roomCode },
@@ -77,6 +88,14 @@ export default function BattleMode() {
     }
   }, [roomData?.status]);
 
+  useEffect(() => {
+    if (!roomData) return;
+    const roomLanguage = LANGUAGES_57.find((language) => language.code === roomData.targetLanguage);
+    if (roomLanguage) setLang(roomLanguage);
+    setCategory(roomData.category);
+    setCefrLevel(roomData.cefrLevel as BattleCefrLevel);
+  }, [roomData?.id, roomData?.targetLanguage, roomData?.category, roomData?.cefrLevel]);
+
   // Countdown timer per question
   useEffect(() => {
     if (phase !== "quiz" || answered) return;
@@ -88,7 +107,12 @@ export default function BattleMode() {
   const handleCreateRoom = async () => {
     if (!user) { toast.error("Faça login para jogar"); return; }
     try {
-      const res = await createRoom.mutateAsync({ targetLanguage: lang.code, category });
+      const res = await createRoom.mutateAsync({
+        targetLanguage: lang.code,
+        nativeLanguage: profile.nativeCode,
+        category,
+        cefrLevel,
+      });
       setRoomCode(res.roomCode);
       setIsHost(true);
       setPhase("waiting");
@@ -109,23 +133,15 @@ export default function BattleMode() {
   };
 
   const startQuiz = async () => {
-    if (!user) { toast.error("Faça login para gerar perguntas"); return; }
-    try {
-      const qs = await generateQuiz.mutateAsync({
-        targetLanguage: lang.code,
-        nativeLanguage: profile.nativeCode,
-        category,
-        count: 10,
-      });
-      setQuestions(qs);
-      setCurrentQ(0);
-      setScore(0);
-      setWordsCorrect(0);
-      setTimeLeft(QUESTION_TIME);
-      setAnswered(false);
-      setSelected(null);
-      setPhase("quiz");
-    } catch { toast.error("Erro ao gerar perguntas"); }
+    if (!roomData?.quizData?.length) { toast.error("O quiz compartilhado ainda não está disponível"); return; }
+    setQuestions(roomData.quizData);
+    setCurrentQ(0);
+    setScore(0);
+    setWordsCorrect(0);
+    setTimeLeft(QUESTION_TIME);
+    setAnswered(false);
+    setSelected(null);
+    setPhase("quiz");
   };
 
   const handleAnswer = useCallback((optionIndex: number) => {
@@ -226,6 +242,24 @@ export default function BattleMode() {
                     ))}
                   </div>
                 </div>
+                <div>
+                  <label className="text-slate-400 text-sm block mb-2">Nível da batalha</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {CEFR_LEVELS.map(level => (
+                      <button
+                        key={level.id}
+                        onClick={() => setCefrLevel(level.id)}
+                        className={`text-xs px-2 py-2 rounded-lg border transition-all ${
+                          cefrLevel === level.id
+                            ? "bg-red-600 border-red-500 text-white"
+                            : "bg-slate-700 border-slate-600 text-slate-300 hover:border-red-500"
+                        }`}
+                      >
+                        {level.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <Button
                   onClick={handleCreateRoom}
                   disabled={createRoom.isPending}
@@ -317,16 +351,21 @@ export default function BattleMode() {
             <div className={`w-3 h-3 rounded-full ${roomData?.guestId ? "bg-green-500" : "bg-slate-500 animate-pulse"}`} />
             <span>{roomData?.guestId ? "Adversário — conectado!" : "Aguardando adversário..."}</span>
           </div>
+          {roomData && (
+            <p className="text-slate-500 text-sm mb-4">
+              {roomData.targetLanguage} · {roomData.category} · {roomData.cefrLevel}
+            </p>
+          )}
           {isHost && !roomData?.guestId && (
             <p className="text-slate-500 text-sm mb-4">A batalha inicia automaticamente quando o adversário entrar</p>
           )}
           {isHost && (
             <Button
               onClick={startQuiz}
-              disabled={generateQuiz.isPending}
+              disabled={!roomData?.quizData?.length}
               className="w-full bg-red-600 hover:bg-red-700 mb-3"
             >
-              {generateQuiz.isPending ? "Gerando perguntas..." : "🚀 Iniciar Solo (sem adversário)"}
+              {!roomData?.quizData?.length ? "Preparando quiz..." : "🚀 Iniciar Solo (sem adversário)"}
             </Button>
           )}
           <Button variant="outline" onClick={resetGame} className="w-full border-slate-600 text-slate-300">

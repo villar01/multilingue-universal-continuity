@@ -176,6 +176,20 @@
       "when": 1786612059665,
       "tag": "0024_peaceful_mockingbird",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1786619942717,
+      "tag": "0025_small_clea",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1786620411749,
+      "tag": "0026_broken_tenebrous",
+      "breakpoints": true
     }
   ]
 }

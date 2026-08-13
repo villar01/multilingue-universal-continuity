@@ -51,6 +51,30 @@ const financeAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
   return next();
 });
 
+type BattleQuizQuestion = { question: string; options: string[]; correct: number; word: string };
+
+async function createBattleQuiz(input: {
+  targetLanguage: string;
+  nativeLanguage: string;
+  cefrLevel: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  category: string;
+  count: number;
+}): Promise<BattleQuizQuestion[]> {
+  const { invokeLLM } = await import("./_core/llm");
+  const res = await invokeLLM({
+    messages: [
+      { role: "system", content: "You are a language quiz generator. Return JSON only." },
+      { role: "user", content: `Generate ${input.count} multiple-choice vocabulary quiz questions for CEFR ${input.cefrLevel} learners of ${input.targetLanguage}, category: ${input.category}. Write the question in ${input.nativeLanguage}; keep the target-language word and answer options in ${input.targetLanguage}. Return JSON array: [{question, options:[4 strings], correct:0-3, word}]` }
+    ],
+    response_format: { type: "json_schema", json_schema: { name: "quiz", strict: true, schema: { type: "object", properties: { questions: { type: "array", items: { type: "object", properties: { question: {type:"string"}, options: {type:"array", items:{type:"string"}}, correct: {type:"integer"}, word: {type:"string"} }, required:["question","options","correct","word"], additionalProperties: false } } }, required: ["questions"], additionalProperties: false } } }
+  });
+  const parsed = JSON.parse(typeof res.choices[0].message.content === "string" ? res.choices[0].message.content : "{}");
+  const questions = Array.isArray(parsed.questions) ? parsed.questions as BattleQuizQuestion[] : [];
+  if (questions.length !== input.count) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Não foi possível preparar perguntas suficientes para a sala" });
+  }
+  return questions;
+}
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -3893,15 +3917,17 @@ Máximo 2 frases por resposta.`,
   // ── Modo Batalha ──────────────────────────────────────────────────────────────
   battle: router({
     create: protectedProcedure
-      .input(z.object({ targetLanguage: z.string(), category: z.string() }))
+      .input(z.object({ targetLanguage: z.string().min(2), nativeLanguage: z.string().min(2), category: z.string().min(1), cefrLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]) }))
       .mutation(async ({ ctx, input }) => {
         const dbInstance = await db.getDb();
         if (!dbInstance) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
         const { battleRooms } = await import("../drizzle/schema");
+        const quizData = await createBattleQuiz({ ...input, count: 10 });
         const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
         await dbInstance.insert(battleRooms).values({
           roomCode, hostId: ctx.user.id,
-          targetLanguage: input.targetLanguage, category: input.category, status: "waiting"
+          targetLanguage: input.targetLanguage, nativeLanguage: input.nativeLanguage, category: input.category,
+          cefrLevel: input.cefrLevel, quizData, status: "waiting"
         });
         return { roomCode };
       }),
@@ -3915,8 +3941,10 @@ Máximo 2 frases por resposta.`,
         const rooms = await dbInstance.select().from(battleRooms).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
         if (!rooms[0]) throw new TRPCError({ code: "NOT_FOUND", message: "Sala não encontrada" });
         if (rooms[0].status !== "waiting") throw new TRPCError({ code: "BAD_REQUEST", message: "Sala já iniciada" });
+        if (rooms[0].hostId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "O anfitrião não pode entrar na própria sala" });
+        if (rooms[0].guestId) throw new TRPCError({ code: "CONFLICT", message: "Sala já está completa" });
         await dbInstance.update(battleRooms).set({ guestId: ctx.user.id, status: "active" }).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
-        return { room: rooms[0] };
+        return { room: { ...rooms[0], guestId: ctx.user.id, status: "active" } };
       }),
     getRoom: protectedProcedure
       .input(z.object({ roomCode: z.string() }))
@@ -3926,7 +3954,12 @@ Máximo 2 frases por resposta.`,
         const { battleRooms } = await import("../drizzle/schema");
         const { eq } = await import("drizzle-orm");
         const rooms = await dbInstance.select().from(battleRooms).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
-        return rooms[0] || null;
+        const room = rooms[0];
+        if (!room) return null;
+        if (room.hostId !== ctx.user.id && room.guestId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Apenas participantes podem acessar esta sala" });
+        }
+        return room;
       }),
     submitScore: protectedProcedure
       .input(z.object({ roomCode: z.string(), score: z.number(), wordsCorrect: z.number() }))
@@ -3938,6 +3971,7 @@ Máximo 2 frases por resposta.`,
         const rooms = await dbInstance.select().from(battleRooms).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
         if (!rooms[0]) throw new TRPCError({ code: "NOT_FOUND" });
         const isHost = rooms[0].hostId === ctx.user.id;
+        if (!isHost && rooms[0].guestId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Apenas participantes podem enviar pontuação" });
         const updateData: Record<string, any> = isHost
           ? { hostScore: input.score, hostWords: input.wordsCorrect }
           : { guestScore: input.score, guestWords: input.wordsCorrect };
@@ -3947,18 +3981,20 @@ Máximo 2 frases por resposta.`,
         return { done: bothDone };
       }),
     generateQuiz: protectedProcedure
-      .input(z.object({ targetLanguage: z.string().min(2), nativeLanguage: z.string().min(2), category: z.string().min(1), count: z.number().min(1).max(20).default(10) }))
-      .mutation(async ({ input }) => {
-        const { invokeLLM } = await import("./_core/llm");
-        const res = await invokeLLM({
-          messages: [
-            { role: "system", content: "You are a language quiz generator. Return JSON only." },
-            { role: "user", content: `Generate ${input.count} multiple-choice vocabulary quiz questions for learning ${input.targetLanguage}, category: ${input.category}. Write the question in ${input.nativeLanguage}; keep the target-language word and answer options in ${input.targetLanguage}. Return JSON array: [{question, options:[4 strings], correct:0-3, word}]` }
-          ],
-          response_format: { type: "json_schema", json_schema: { name: "quiz", strict: true, schema: { type: "object", properties: { questions: { type: "array", items: { type: "object", properties: { question: {type:"string"}, options: {type:"array", items:{type:"string"}}, correct: {type:"integer"}, word: {type:"string"} }, required:["question","options","correct","word"], additionalProperties: false } } }, required: ["questions"], additionalProperties: false } } }
-        });
-        const parsed = JSON.parse(typeof res.choices[0].message.content === "string" ? res.choices[0].message.content : "{}");
-        return parsed.questions || [];
+      .input(z.object({ roomCode: z.string().min(6).max(8) }))
+      .query(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        const { battleRooms } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        const rooms = await dbInstance.select().from(battleRooms).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
+        const room = rooms[0];
+        if (!room) throw new TRPCError({ code: "NOT_FOUND", message: "Sala não encontrada" });
+        if (room.hostId !== ctx.user.id && room.guestId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Apenas participantes podem acessar o quiz" });
+        }
+        if (!room.quizData?.length) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Quiz da sala indisponível" });
+        return room.quizData;
       }),
   }),
 
