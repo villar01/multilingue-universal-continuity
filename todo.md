@@ -516,7 +516,7 @@
 - [x] TeacherSelector não mostra mais 94 professores misturados sem filtrar
 
 ### Fase 3: Corrigir Lip-Sync
-- [ ] Calibrar posições da boca para todos os 10 professores
+- [x] Calibrar posições da boca para os retratos ativos do avatar aprimorado — onze perfis de posição agora ajustam boca, olhos, escala e tom por foto antes do fallback genérico; Ricardo continua sem animação; TypeScript e 306 testes aprovados
 - [x] Remover a falsa barra de boca do seletor Meu Professor — a prévia usa medidor de reprodução de voz neural, sem simular movimento facial em retrato estático; TypeScript e 300 testes aprovados
 - [x] Remover a boca artificial da Aula Imersiva — a foto estática mostra somente o indicador de áudio neural vinculado à amplitude real, sem fingir sincronização facial; TypeScript e 302 testes aprovados
 - [x] EnhancedTeacherAvatar: estado de fala ligado ao áudio real — a animação não é mais permanente; MP3 controla início, pausa e fim, com fallback fonético somente sem áudio

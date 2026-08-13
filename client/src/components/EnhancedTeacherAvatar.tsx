@@ -53,6 +53,17 @@ const PHOTO_POSITIONS: Record<string, PhotoPos> = {
   "photo-1472099645785-5658abf4ff4e": { mouthX: 50, mouthY: 73, mouthScale: 0.95, leftEyeX: 36, leftEyeY: 38, rightEyeX: 64, rightEyeY: 38, skinTone: "#c8956a" },
   "teacher-asian-female": { mouthX: 50, mouthY: 68, mouthScale: 0.88, leftEyeX: 38, leftEyeY: 38, rightEyeX: 62, rightEyeY: 38, skinTone: "#e8c8a0" },
   "teacher-asian-male":   { mouthX: 50, mouthY: 67, mouthScale: 1.0,  leftEyeX: 37, leftEyeY: 40, rightEyeX: 63, rightEyeY: 40, skinTone: "#d4a878" },
+  "teacher-portrait-sophie_": { mouthX: 49, mouthY: 48, mouthScale: 0.82, leftEyeX: 38, leftEyeY: 31, rightEyeX: 61, rightEyeY: 31, skinTone: "#e8c4a0" },
+  "teacher-portrait-james_":  { mouthX: 50, mouthY: 50, mouthScale: 0.86, leftEyeX: 38, leftEyeY: 33, rightEyeX: 62, rightEyeY: 33, skinTone: "#c8956a" },
+  "teacher-portrait-priya_":  { mouthX: 50, mouthY: 47, mouthScale: 0.83, leftEyeX: 38, leftEyeY: 30, rightEyeX: 62, rightEyeY: 30, skinTone: "#8f563f" },
+  "teacher-portrait-hans_":   { mouthX: 50, mouthY: 47, mouthScale: 0.87, leftEyeX: 38, leftEyeY: 30, rightEyeX: 62, rightEyeY: 30, skinTone: "#e2b38f" },
+  "teacher-portrait-yuki_":   { mouthX: 50, mouthY: 52, mouthScale: 0.77, leftEyeX: 39, leftEyeY: 35, rightEyeX: 61, rightEyeY: 35, skinTone: "#e8c8a0" },
+  "teacher-portrait-carlos_": { mouthX: 50, mouthY: 49, mouthScale: 0.86, leftEyeX: 38, leftEyeY: 31, rightEyeX: 62, rightEyeY: 31, skinTone: "#bf7b58" },
+  "teacher-portrait-giulia_": { mouthX: 50, mouthY: 49, mouthScale: 0.81, leftEyeX: 38, leftEyeY: 31, rightEyeX: 62, rightEyeY: 31, skinTone: "#e8c4a0" },
+  "teacher-portrait-omar_":   { mouthX: 50, mouthY: 46, mouthScale: 0.88, leftEyeX: 38, leftEyeY: 29, rightEyeX: 62, rightEyeY: 29, skinTone: "#c8956a" },
+  "teacher-portrait-maja_":   { mouthX: 50, mouthY: 47, mouthScale: 0.83, leftEyeX: 38, leftEyeY: 30, rightEyeX: 62, rightEyeY: 30, skinTone: "#e2b38f" },
+  "teacher-portrait-emre_":   { mouthX: 50, mouthY: 48, mouthScale: 0.84, leftEyeX: 38, leftEyeY: 31, rightEyeX: 62, rightEyeY: 31, skinTone: "#b87956" },
+  "teacher-portrait-verified-b_": { mouthX: 50, mouthY: 45, mouthScale: 0.86, leftEyeX: 38, leftEyeY: 28, rightEyeX: 62, rightEyeY: 28, skinTone: "#c8956a" },
 };
 const DEFAULT_POS: PhotoPos = { mouthX: 50, mouthY: 73, mouthScale: 0.92, leftEyeX: 37, leftEyeY: 38, rightEyeX: 63, rightEyeY: 38, skinTone: "#d4956a" };
 
