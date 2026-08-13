@@ -14,6 +14,12 @@ describe("child safety policy", () => {
     expect(assessment.canParentOverride).toBe(true);
   });
 
+  it("recognizes the age-review alert category used by the parental decision screen", () => {
+    const assessment = assessChildSafety("age_content_review", null);
+    expect(assessment.decision).toBe("parental_review");
+    expect(assessment.canParentOverride).toBe(true);
+  });
+
   it("does not create an override flow for ordinary safe content", () => {
     expect(assessChildSafety(null, null).decision).toBe("allow");
   });

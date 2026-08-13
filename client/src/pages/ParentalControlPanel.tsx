@@ -344,7 +344,7 @@ export default function ParentalControlPanel() {
 
                   {/* Alerts Tab */}
                   <TabsContent value="alerts" className="mt-4 space-y-4">
-                    <AlertsTab alerts={alerts?.filter((a: any) => a.childId === selectedChild.id) || []} onMarkRead={(id) => markAlertRead.mutate({ alertId: id })} />
+                    <AlertsTab childId={selectedChild.id} alerts={alerts?.filter((a: any) => a.childId === selectedChild.id) || []} onMarkRead={(id) => markAlertRead.mutate({ alertId: id })} />
                   </TabsContent>
 
                   {/* Security Tab */}
@@ -664,9 +664,24 @@ function LimitsTab({ childId }: { childId: number }) {
 }
 
 // ── Alerts Tab ───────────────────────────────────────────────
-function AlertsTab({ alerts, onMarkRead }: { alerts: any[]; onMarkRead: (id: number) => void }) {
+function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: any[]; onMarkRead: (id: number) => void }) {
   const [soundEnabled, setSoundEnabled] = useState(false);
   const soundedAlertIds = useRef(new Set<number>());
+  const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
+  const [decisionPin, setDecisionPin] = useState('');
+  const [decisionError, setDecisionError] = useState('');
+  const utils = trpc.useUtils();
+  const { data: decisions } = trpc.parentalControl.listContentDecisions.useQuery({ childId });
+  const decideContentAlert = trpc.parentalControl.decideContentAlert.useMutation({
+    onSuccess: () => {
+      utils.parentalControl.listAlerts.invalidate();
+      utils.parentalControl.listContentDecisions.invalidate({ childId });
+      setSelectedAlert(null);
+      setDecisionPin('');
+      setDecisionError('');
+    },
+    onError: (error) => setDecisionError(error.message),
+  });
   useEffect(() => {
     if (!soundEnabled || !hasAudibleParentalAlert(alerts)) return;
     const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && ["inappropriate_content", "age_content_review", "child_safety", "content_blocked"].includes(alert.alertType));
@@ -688,6 +703,24 @@ function AlertsTab({ alerts, onMarkRead }: { alerts: any[]; onMarkRead: (id: num
     </Alert>
   );
 
+  const canReviewAlert = (alert: any) => alert.alertType === 'age_content_review';
+  const absoluteBlockAlertTypes = ['inappropriate_content', 'child_safety', 'content_blocked'];
+
+  const submitDecision = (decision: 'allow_temporarily' | 'keep_blocked') => {
+    if (!selectedAlert) return;
+    if (decisionPin.length !== 4) {
+      setDecisionError('Digite o PIN de 4 dígitos do responsável.');
+      return;
+    }
+    decideContentAlert.mutate({
+      childId,
+      alertId: selectedAlert.id,
+      pin: decisionPin,
+      decision,
+      durationMinutes: 15,
+    });
+  };
+
   if (!alerts || alerts.length === 0) {
     return (
       <div className="space-y-3">
@@ -705,6 +738,50 @@ function AlertsTab({ alerts, onMarkRead }: { alerts: any[]; onMarkRead: (id: num
   return (
     <div className="space-y-3">
       {soundControl}
+      <Dialog open={!!selectedAlert} onOpenChange={(open) => {
+        if (!open && !decideContentAlert.isPending) {
+          setSelectedAlert(null);
+          setDecisionPin('');
+          setDecisionError('');
+        }
+      }}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-slate-100">
+          <DialogHeader>
+            <DialogTitle>Decisão supervisionada do responsável</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <Alert className="border-amber-500/40 bg-amber-950/30">
+              <AlertCircle className="h-4 w-4 text-amber-300" />
+              <AlertTitle className="text-amber-200">Autorização limitada</AlertTitle>
+              <AlertDescription className="text-amber-50/90">
+                Esta opção é oferecida apenas para conteúdo incompatível com a faixa etária, mas não ilegal. A liberação dura 15 minutos e fica registrada. Conteúdo ilegal ou de alto risco continua bloqueado.
+              </AlertDescription>
+            </Alert>
+            <div>
+              <Label htmlFor="content-decision-pin">PIN do responsável</Label>
+              <Input
+                id="content-decision-pin"
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={decisionPin}
+                onChange={(event) => setDecisionPin(event.target.value.replace(/\D/g, ''))}
+                placeholder="••••"
+                className="mt-2 text-center text-2xl tracking-widest"
+              />
+            </div>
+            {decisionError && <p className="text-sm text-red-300">{decisionError}</p>}
+          </div>
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button variant="outline" onClick={() => submitDecision('keep_blocked')} disabled={decideContentAlert.isPending}>
+              Manter bloqueio
+            </Button>
+            <Button className="bg-amber-600 hover:bg-amber-700" onClick={() => submitDecision('allow_temporarily')} disabled={decideContentAlert.isPending}>
+              Liberar por 15 min
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {alerts.map(alert => (
         <Alert key={alert.id} className={`bg-slate-900/50 border-slate-800 ${!alert.isRead ? 'border-l-4 border-l-blue-500' : ''}`}>
           <div className="flex items-start gap-3">
@@ -723,9 +800,30 @@ function AlertsTab({ alerts, onMarkRead }: { alerts: any[]; onMarkRead: (id: num
                 Marcar lida
               </Button>
             )}
+            {canReviewAlert(alert) && (
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={() => setSelectedAlert(alert)}>
+                Decidir com PIN
+              </Button>
+            )}
+            {absoluteBlockAlertTypes.includes(alert.alertType) && (
+              <Badge variant="outline" className="border-red-500/40 text-red-300">Bloqueio obrigatório</Badge>
+            )}
           </div>
         </Alert>
       ))}
+      {decisions && decisions.length > 0 && (
+        <Card className="bg-slate-900/50 border-slate-800">
+          <CardHeader><CardTitle className="text-base">Decisões registradas</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            {decisions.slice(0, 5).map((decision: any) => (
+              <div key={decision.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-800/50 p-3 text-sm">
+                <span>{decision.decision === 'allow_temporarily' ? 'Liberação temporária' : 'Bloqueio mantido'}</span>
+                <span className="text-xs text-slate-400">{new Date(decision.createdAt).toLocaleString('pt-BR')}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
