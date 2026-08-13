@@ -6,6 +6,7 @@ import { detectNativeLang } from "@/lib/detect-native-lang";
 import { LANGUAGES_57, AVAILABLE_LANGUAGES, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
 import { Globe, ChevronRight, Search, Sparkles, Clock, Check } from 'lucide-react';
 import TeacherSelector from '@/components/TeacherSelector';
+import UserGuide from '@/components/UserGuide';
 
 const STEP_NATIVE = 1;
 const STEP_TARGET = 2;
@@ -164,6 +165,7 @@ export default function Onboarding() {
       <div className="flex items-center gap-2 mb-6">
         <Globe className="h-7 w-7 text-purple-400" />
         <span className="text-xl font-bold text-white tracking-tight">MultiLingue Universal</span>
+        <UserGuide nativeLang={nativeLang || 'pt-BR'} compact triggerClassName="ml-2 rounded-lg border border-white/20 bg-white/10 px-2 py-1 text-xs font-medium text-white hover:bg-white/20" />
       </div>
 
       {/* Main Card */}

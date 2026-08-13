@@ -234,7 +234,7 @@
 
 ## 📘 GUIA DE USO E SEGURANÇA
 - [x] Criar guia simples para alunos e responsáveis sobre acesso, idiomas, professores, microfone, cenas, exercícios, voz, alertas e controle parental — UserGuide ampliado com ciclo Pareto, uso de microfone, alertas etários, PIN, painel parental e dever contínuo de acompanhamento; acesso confirmado no painel parental
-- [ ] Exibir atalhos contextuais para o guia nos fluxos iniciais, de conversa e de controle parental
+- [x] Exibir atalhos contextuais para o guia nos fluxos iniciais, de conversa e de controle parental — botão compacto validado no onboarding, adicionado à conversa por voz e já disponível no painel parental; TypeScript aprovado
 
 ## 🚀🚀🚀 AUMENTAR VELOCIDADE E PRECISÃO DA IA EM MAIS 10X (TOTAL 1000X)
 - [ ] Reduzir cache de 0.02s para 0.002s (mais 10x = 1000x total)

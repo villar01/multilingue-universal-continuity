@@ -8,6 +8,7 @@ import { useOfflineSyncDB } from "@/hooks/useOfflineSyncDB";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { canAttachTeacherVideo } from "@/lib/teacherVideoSession";
 import { resolveVoiceConversationTeacher, type VoiceConversationTeacherInput } from "@/lib/voiceConversationTeacher";
+import UserGuide from "@/components/UserGuide";
 import { toast } from "sonner";
 
 interface Message {
@@ -514,12 +515,13 @@ export default function VoiceConversation({
   return (
     <div className="space-y-6">
       {/* Connection Status */}
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex items-center justify-between gap-2 text-sm">
         {isOnline ? (
           <><Wifi className="w-4 h-4 text-green-500" /> <span className="text-green-600">Online - Avatar Fotorrealista</span></>
         ) : (
           <><WifiOff className="w-4 h-4 text-orange-500" /> <span className="text-orange-600">Offline - Avatar 3D</span></>
         )}
+        <UserGuide nativeLang="pt-BR" compact triggerClassName="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" />
       </div>
 
       {/* Avatar Display */}
