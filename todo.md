@@ -87,8 +87,11 @@
 - [x] "Michael Johnson" → "Professor Ricardo"
 - [x] Avatar fotorrealista não move a boca (video src corrigido)
 - [x] Professora Ingrid criada com foto profissional
-- [ ] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso
-- [ ] Separar limites de navegação/ativos e API sensível, validando que a cena não recebe 429 enquanto excesso de API continua bloqueado
+- [x] Corrigir limite de requisições que bloqueia o carregamento legítimo de cenas imersivas sem enfraquecer a proteção contra abuso — limite global original foi preservado, navegação/ativos foram separados da API e a defesa DDoS foi coberta por regressão
+- [x] Separar limites de navegação/ativos e API sensível, validando que a cena não recebe 429 enquanto excesso de API continua bloqueado — regressão reproduz consulta agrupada, health e estado da cena; API bloqueia a 301ª chamada e autenticação a 31ª
+- [x] Validar no navegador e na rede uma cena imersiva completa após o novo rate limit, confirmando ausência de 429 nas requisições reais — praia abriu sem 429, com três chamadas de API e zero `lessons.getExercises` indevidos
+- [x] Medir e testar o volume real de chamadas `/api/...` das cenas imersivas e simular burst legítimo sem liberar excesso abusivo — medição real registrou três chamadas e zero exercícios indevidos; teste reproduz o burst observado e mantém excesso bloqueado
+- [x] Adicionar regressão do burst real da cena imersiva e validar que a defesa global/DDoS continua bloqueando excesso após os novos limites — `securityMiddleware.test.ts` cobre burst da cena, API, autenticação e o limite global; 108 testes aprovados
 
 ## 📋 PRÓXIMAS FEATURES
 - [x] Sistema de revisão espaçada (Anki-style) - página /smart-review com SM-2 adaptativo - SmartReview com SM-2 adaptativo

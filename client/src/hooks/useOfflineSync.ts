@@ -22,6 +22,10 @@ export interface OfflineSyncStatus {
   syncError: string | null;
 }
 
+export function shouldSyncAllExercises(includeExercises: boolean): boolean {
+  return includeExercises;
+}
+
 export function useOfflineSync() {
   const [status, setStatus] = useState<OfflineSyncStatus>({
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
@@ -37,7 +41,7 @@ export function useOfflineSync() {
   const { data: languages } = trpc.languages.list.useQuery();
 
   // Sincronizar dados ao conectar
-  const syncData = useCallback(async () => {
+  const syncData = useCallback(async ({ includeExercises = false }: { includeExercises?: boolean } = {}) => {
     if (!status.isOnline) return;
 
     setStatus(prev => ({ ...prev, isSyncing: true, syncError: null }));
@@ -61,8 +65,9 @@ export function useOfflineSync() {
         })));
       }
 
-      // Buscar exercícios para cada lição
-      if (lessons) {
+      // Exercícios são potencialmente numerosos. Só devem ser baixados após uma
+      // escolha explícita de pacote offline, nunca ao abrir uma cena ou página.
+      if (lessons && shouldSyncAllExercises(includeExercises)) {
         for (const lesson of lessons) {
           try {
             const exercisesResponse = await fetch(
@@ -148,6 +153,7 @@ export function useOfflineSync() {
   return {
     status,
     syncData,
+    syncFullOfflinePack: () => syncData({ includeExercises: true }),
     getLessonsOffline: getLessonsFromCache,
     getExercisesOffline: getExercisesFromCache,
     getLanguagesOffline: getLanguagesFromCache,

@@ -3,9 +3,8 @@ import type { Request, Response, NextFunction } from 'express';
 // ── Rate Limiting ─────────────────────────────────────────────
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
-// Uma página de aula carrega vários recursos e chamadas tRPC. O limite continua
-// estrito contra abuso, mas comporta uma navegação legítima por trás de proxies.
-const RATE_LIMIT_MAX = 300;
+const API_RATE_LIMIT_MAX = 300;
+const AUTH_RATE_LIMIT_MAX = 30;
 
 // ── DDoS Protection ───────────────────────────────────────────
 const globalRequestCounts = { count: 0, resetTime: Date.now() + RATE_LIMIT_WINDOW };
@@ -68,6 +67,13 @@ function isSuspiciousUserAgent(ua: string): boolean {
   return SUSPICIOUS_UA_PATTERNS.some(pattern => pattern.test(ua));
 }
 
+function getRateLimitBucket(req: Request): { key: string; max: number } | null {
+  const path = req.path || req.originalUrl || "";
+  if (!path.startsWith("/api/")) return null;
+  const isAuthRoute = /\/api\/(oauth|auth|login|register|password)/i.test(path);
+  return { key: isAuthRoute ? "auth" : "api", max: isAuthRoute ? AUTH_RATE_LIMIT_MAX : API_RATE_LIMIT_MAX };
+}
+
 // ── Main Security Middleware ───────────────────────────────────
 export function securityMiddleware(req: Request, res: Response, next: NextFunction): void {
   const clientIp = getClientIp(req);
@@ -85,15 +91,20 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  // Per-IP Rate Limiting
-  const ipData = requestCounts.get(clientIp);
-  if (!ipData || now > ipData.resetTime) {
-    requestCounts.set(clientIp, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-  } else {
-    ipData.count++;
-    if (ipData.count > RATE_LIMIT_MAX) {
-      res.status(429).json({ error: 'Limite de requisicoes excedido.' });
-      return;
+  // Recursos estáticos e navegação usam apenas a proteção global; o limite por
+  // IP fica reservado às chamadas de API, com proteção mais estrita no login.
+  const bucket = getRateLimitBucket(req);
+  if (bucket) {
+    const rateKey = `${clientIp}:${bucket.key}`;
+    const ipData = requestCounts.get(rateKey);
+    if (!ipData || now > ipData.resetTime) {
+      requestCounts.set(rateKey, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    } else {
+      ipData.count++;
+      if (ipData.count > bucket.max) {
+        res.status(429).json({ error: 'Limite de requisicoes excedido.' });
+        return;
+      }
     }
   }
 
@@ -144,7 +155,7 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=(self)');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
   next();
