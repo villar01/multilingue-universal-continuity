@@ -2453,7 +2453,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   }),
 
   // Voice Transcription (para VoiceRecorder)
-  voiceTranscription: router({ transcribe: publicProcedure
+  voiceTranscription: router({ transcribe: protectedProcedure
       .input(
         z.object({
           audioData: z.string(), // Base64 audio data

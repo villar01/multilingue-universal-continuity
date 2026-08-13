@@ -262,6 +262,7 @@
 - [x] Ativar modo HYPER TURBO em todos endpoints (100X ORIGINAL)
 
 ## 🛡️ PROTEÇÃO DE MENORES, ECA DIGITAL E CONTEÚDO POR PAÍS
+- [x] Exigir sessão para a transcrição que envia áudio ao armazenamento temporário e ao reconhecimento de voz, impedindo uso anônimo de recursos externos — a rota `voiceTranscription.transcribe` agora é protegida e rejeita visitante antes de armazenar áudio ou chamar STT; TypeScript e regressão de autorização aprovados
 - [ ] Auditar o consentimento inicial, controle parental, registro de interações e filtros de conteúdo à luz do ECA Digital, LGPD e regras aplicáveis
 - [x] Remover o PIN parental previsível `1234` e exigir criação/confirmacão de PIN pelo responsável ao adicionar um perfil infantil — servidor e painel exigem PIN explícito e confirmação; schema e banco ativo perderam o default legado sem alterar perfis existentes; TypeScript e 180 testes aprovados, DDL verificado
 - [x] Proteger PINs parentais em repouso com hash criptográfico e atualizar valores legados de modo seguro após confirmação válida — novos PINs usam scrypt com sal, valores legados só são migrados após validação correta, comparações são seguras e `getSettings` não retorna material de PIN; coluna expandida no banco sem perda; TypeScript e 182 testes aprovados
