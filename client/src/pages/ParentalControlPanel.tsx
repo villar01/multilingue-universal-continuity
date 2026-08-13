@@ -65,16 +65,10 @@ export default function ParentalControlPanel() {
     }
   }, [children, selectedChildId]);
 
-  // Check if PIN needs to be set up (default is '1234' — force change on first access)
   const { data: settings } = trpc.parentalControl.getSettings.useQuery(
     { childId: selectedChildId || 0 },
     { enabled: !!selectedChildId }
   );
-  useEffect(() => {
-    if (settings && settings.pinCode === '1234') {
-      setShowPinSetup(true);
-    }
-  }, [settings]);
 
   const handleSetupPin = useCallback(async () => {
     if (!selectedChildId) return;

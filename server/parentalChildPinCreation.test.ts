@@ -8,7 +8,7 @@ describe("PIN inicial de perfil infantil", () => {
   it("exige um PIN numérico definido pelo responsável ao criar um perfil", () => {
     const createChildSegment = routerSource.slice(routerSource.indexOf("createChild:"), routerSource.indexOf("updateChild:"));
     expect(createChildSegment).toContain("pin: z.string().regex(/^\\d{4}$/");
-    expect(createChildSegment).toContain("pinCode: input.pin");
+    expect(createChildSegment).toContain("pinCode: hashParentPin(input.pin)");
     expect(createChildSegment).not.toContain("pinCode: '1234'");
   });
 

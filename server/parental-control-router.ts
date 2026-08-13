@@ -7,6 +7,16 @@ import { childProfiles, parentalSettings, usageSessions, parentalAlerts, parenta
 import { eq, desc, and, gte, gt, sql } from 'drizzle-orm';
 import { getUsagePatterns } from './contentFilter';
 import { assessChildSafety } from './childSafetyPolicy';
+import { hashParentPin, isHashedParentPin, verifyStoredParentPin } from './parentalPinSecurity';
+
+async function verifyAndUpgradeParentPin(database: any, childId: number, storedPin: string, candidatePin: string): Promise<boolean> {
+  const valid = verifyStoredParentPin(storedPin, candidatePin);
+  if (valid && !isHashedParentPin(storedPin)) {
+    await database.update(parentalSettings).set({ pinCode: hashParentPin(candidatePin) })
+      .where(eq(parentalSettings.childId, childId));
+  }
+  return valid;
+}
 
 async function requireChildOwnership(database: any, childId: number, parentId: number) {
   const [child] = await database.select().from(childProfiles)
@@ -68,7 +78,7 @@ export const parentalControlRouter = router({
       // Create default settings
       await database.insert(parentalSettings).values({
         childId: child.id,
-        pinCode: input.pin,
+        pinCode: hashParentPin(input.pin),
         timeLimitMinutes: 60,
         allowedDays: [true, true, true, true, true, false, false],
         levelsAllowed: ['beginner'],
@@ -115,7 +125,7 @@ export const parentalControlRouter = router({
       await requireChildOwnership(database, input.childId, ctx.user.id);
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
-      if (!settings || settings.pinCode !== input.pin) {
+      if (!settings || !(await verifyAndUpgradeParentPin(database, input.childId, settings.pinCode, input.pin))) {
         throw new TRPCError({ code: 'FORBIDDEN', message: 'PIN do responsável inválido' });
       }
       const code = randomBytes(4).toString('hex').toUpperCase();
@@ -152,7 +162,9 @@ export const parentalControlRouter = router({
       await requireChildOwnership(database, input.childId, ctx.user.id);
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
-      return settings || null;
+      if (!settings) return null;
+      const { pinCode: _pinCode, ...safeSettings } = settings;
+      return safeSettings;
     }),
 
   updateSettings: protectedProcedure
@@ -168,7 +180,7 @@ export const parentalControlRouter = router({
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
       await requireChildOwnership(database, input.childId, ctx.user.id);
       const updateData: Record<string, unknown> = {};
-      if (input.pinCode) updateData.pinCode = input.pinCode;
+      if (input.pinCode) updateData.pinCode = hashParentPin(input.pinCode);
       if (input.timeLimitMinutes) updateData.timeLimitMinutes = input.timeLimitMinutes;
       if (input.allowedDays) updateData.allowedDays = input.allowedDays;
       if (input.levelsAllowed) updateData.levelsAllowed = input.levelsAllowed;
@@ -186,7 +198,7 @@ export const parentalControlRouter = router({
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
       if (!settings) return { valid: false };
-      return { valid: settings.pinCode === input.pin };
+      return { valid: await verifyAndUpgradeParentPin(database, input.childId, settings.pinCode, input.pin) };
     }),
 
   // ── USAGE SESSIONS (real-time tracking) ─────────────────────
@@ -362,7 +374,7 @@ export const parentalControlRouter = router({
 
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
-      if (!settings || settings.pinCode !== input.pin) {
+      if (!settings || !(await verifyAndUpgradeParentPin(database, input.childId, settings.pinCode, input.pin))) {
         throw new TRPCError({ code: 'FORBIDDEN', message: 'PIN do responsável inválido' });
       }
 
