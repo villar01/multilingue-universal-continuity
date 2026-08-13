@@ -1,216 +1,243 @@
-import { getDb } from './db';
-import { sql } from 'drizzle-orm';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
+import { getDb } from "./db";
+import { storageGet, storagePut } from "./storage";
+import { ENV } from "./_core/env";
 
-// ── Backup System ──────────────────────────────────────────────
-// Provides real backup and restore for the platform database
-// without disrupting client operations
+export type BackupType = "full" | "config" | "lessons" | "users";
 
-interface BackupInfo {
+export interface BackupInfo {
   id: string;
-  type: 'full' | 'config' | 'lessons' | 'users';
+  type: BackupType;
   size: number;
   tables: string[];
   createdAt: number;
-  status: 'completed' | 'failed' | 'restoring';
+  status: "completed" | "failed" | "restoring";
 }
 
-const BACKUP_TABLES = [
-  'users', 'child_profiles', 'parental_settings', 'usage_sessions',
-  'parental_alerts', 'cybersecurity_threats', 'interaction_logs',
-  'blocked_words', 'lessons', 'lesson_progress', 'daily_words',
-  'conversation_history', 'voice_sessions',
-];
+type SnapshotPayload = {
+  version: 1;
+  createdAt: number;
+  type: BackupType;
+  tables: Array<{ name: string; rows: Record<string, unknown>[] }>;
+};
 
-// ── Create a full database backup snapshot ────────────────────
-export async function createBackup(type: 'full' | 'config' | 'lessons' | 'users' = 'full'): Promise<BackupInfo> {
-  const backupId = `backup_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+const TABLE_NAME = /^[A-Za-z0-9_]+$/;
+const EXCLUDED_TABLES = new Set(["backup_history", "backup_snapshots"]);
+const TYPE_TABLES: Record<Exclude<BackupType, "full">, string[]> = {
+  users: ["users", "child_profiles", "parental_settings", "user_safety_profile"],
+  lessons: ["lessons", "lesson_progress", "daily_words", "lesson_exercise_attempts"],
+  config: ["parental_settings", "blocked_words", "content_moderation_rules", "blocked_content"],
+};
+
+function quoteIdentifier(value: string): string {
+  if (!TABLE_NAME.test(value)) throw new Error("Invalid backup table identifier");
+  return `\`${value}\``;
+}
+
+async function executeQuery(database: any, query: string, values: unknown[] = []): Promise<any> {
+  return (database as any).$client.promise().execute(query, values);
+}
+
+function getEncryptionKey(): Buffer {
+  if (!ENV.cookieSecret) throw new Error("Backup encryption key is unavailable");
+  return createHash("sha256").update(`multilingue-backup-v1:${ENV.cookieSecret}`).digest();
+}
+
+function encryptSnapshot(plain: Buffer): Buffer {
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", getEncryptionKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(plain), cipher.final()]);
+  return Buffer.concat([Buffer.from("MLB1"), iv, cipher.getAuthTag(), encrypted]);
+}
+
+function decryptSnapshot(payload: Buffer): Buffer {
+  if (payload.subarray(0, 4).toString() !== "MLB1") throw new Error("Unsupported backup format");
+  const iv = payload.subarray(4, 16);
+  const authTag = payload.subarray(16, 32);
+  const encrypted = payload.subarray(32);
+  const decipher = createDecipheriv("aes-256-gcm", getEncryptionKey(), iv);
+  decipher.setAuthTag(authTag);
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]);
+}
+
+async function getExistingTables(database: any): Promise<string[]> {
+  const result = await executeQuery(database, "SHOW TABLES");
+  const rows = (result[0] ?? result) as Array<Record<string, unknown>>;
+  return rows
+    .map((row) => String(Object.values(row)[0] ?? ""))
+    .filter((table) => TABLE_NAME.test(table) && !EXCLUDED_TABLES.has(table));
+}
+
+function selectBackupTables(type: BackupType, allTables: string[]): string[] {
+  if (type === "full") return allTables;
+  const allowed = new Set(TYPE_TABLES[type]);
+  return allTables.filter((table) => allowed.has(table));
+}
+
+async function ensureSnapshotTable(database: any): Promise<void> {
+  await executeQuery(database, `CREATE TABLE IF NOT EXISTS backup_snapshots (
+    id VARCHAR(100) PRIMARY KEY,
+    backup_type VARCHAR(20) NOT NULL,
+    storage_key VARCHAR(512) NOT NULL,
+    checksum VARCHAR(64) NOT NULL,
+    encryption_version VARCHAR(20) NOT NULL,
+    tables_backed_up JSON NOT NULL,
+    total_records INT NOT NULL DEFAULT 0,
+    file_size_bytes INT NOT NULL DEFAULT 0,
+    status VARCHAR(20) NOT NULL DEFAULT 'completed',
+    schedule_bucket VARCHAR(32) UNIQUE,
+    created_at BIGINT NOT NULL,
+    completed_at BIGINT NULL
+  )`);
+}
+
+export async function createBackup(
+  type: BackupType = "full",
+  options?: { id?: string; scheduleBucket?: string }
+): Promise<BackupInfo> {
   const now = Date.now();
-  let totalSize = 0;
-  const tablesToBackup = type === 'full' ? BACKUP_TABLES : BACKUP_TABLES.filter(t => {
-    if (type === 'users') return ['users', 'child_profiles', 'parental_settings'].includes(t);
-    if (type === 'lessons') return ['lessons', 'lesson_progress', 'daily_words'].includes(t);
-    if (type === 'config') return ['parental_settings', 'blocked_words'].includes(t);
-    return true;
-  });
-
+  const backupId = options?.id ?? `backup_${now}_${randomBytes(4).toString("hex")}`;
+  let tables: string[] = [];
   try {
     const database = await getDb();
-    if (!database) throw new Error('Database unavailable');
+    if (!database) throw new Error("Database unavailable");
+    await ensureSnapshotTable(database);
 
-    // Create backup metadata table if not exists
-    await database.execute(sql`CREATE TABLE IF NOT EXISTS backup_history (
-      id VARCHAR(100) PRIMARY KEY,
-      backup_type VARCHAR(50) NOT NULL DEFAULT 'full',
-      tables_backed_up TEXT,
-      total_records INT DEFAULT 0,
-      file_size_bytes BIGINT DEFAULT 0,
-      status VARCHAR(20) DEFAULT 'completed',
-      created_at BIGINT NOT NULL,
-      completed_at BIGINT
-    )`);
-
-    // Count total records across tables
-    let totalRecords = 0;
-    for (const table of tablesToBackup) {
-      try {
-        const countResult = await database.execute(sql.raw(`SELECT COUNT(*) as count FROM ${table}`));
-        const count = (countResult[0] as unknown as Array<{ count: number }>)?.[0]?.count || 0;
-        totalRecords += count;
-      } catch {
-        // Table might not exist, skip
+    if (options?.scheduleBucket) {
+      const existing = await executeQuery(database,
+        "SELECT id, backup_type, tables_backed_up, file_size_bytes, created_at, status FROM backup_snapshots WHERE schedule_bucket = ? LIMIT 1",
+        [options.scheduleBucket]
+      );
+      const row = ((existing[0] ?? existing) as unknown as Array<Record<string, unknown>>)[0];
+      if (row?.id && row.status === "completed") {
+        return {
+          id: String(row.id),
+          type: String(row.backup_type) as BackupType,
+          size: Number(row.file_size_bytes ?? 0),
+          tables: Array.isArray(row.tables_backed_up) ? row.tables_backed_up as string[] : JSON.parse(String(row.tables_backed_up ?? "[]")),
+          createdAt: Number(row.created_at ?? now),
+          status: "completed",
+        };
       }
     }
 
-    totalSize = totalRecords * 512; // Estimate ~512 bytes per record
-
-    // Record backup in history
-    await database.execute(sql`INSERT INTO backup_history (id, backup_type, tables_backed_up, total_records, file_size_bytes, status, created_at, completed_at) VALUES (${backupId}, ${type}, ${tablesToBackup.join(',')}, ${totalRecords}, ${totalSize}, 'completed', ${now}, ${Date.now()})`);
-
-    return {
-      id: backupId,
-      type,
-      size: totalSize,
-      tables: tablesToBackup,
-      createdAt: now,
-      status: 'completed',
-    };
-  } catch (error) {
-    console.error('[BACKUP] Failed:', error);
-    return {
-      id: backupId,
-      type,
-      size: 0,
-      tables: tablesToBackup,
-      createdAt: now,
-      status: 'failed',
-    };
-  }
-}
-
-// ── List all backups ───────────────────────────────────────────
-export async function listBackups(): Promise<BackupInfo[]> {
-  try {
-    const database = await getDb();
-    if (!database) throw new Error('Database unavailable');
-
-    const result = await database.execute(sql`SELECT * FROM backup_history ORDER BY created_at DESC LIMIT 50`);
-    const rows = (result[0] as unknown as Array<Record<string, unknown>>) || [];
-
-    return rows.map((row) => ({
-      id: String(row.id || ''),
-      type: String(row.backup_type || 'full') as 'full' | 'config' | 'lessons' | 'users',
-      size: Number(row.file_size_bytes || 0),
-      tables: String(row.tables_backed_up || '').split(',').filter(Boolean),
-      createdAt: Number(row.created_at || 0),
-      status: String(row.status || 'completed') as 'completed' | 'failed' | 'restoring',
-    }));
-  } catch {
-    return [];
-  }
-}
-
-// ── Restore from a backup ──────────────────────────────────────
-export async function restoreFromBackup(backupId: string): Promise<{ success: boolean; message: string }> {
-  try {
-    const database = await getDb();
-    if (!database) throw new Error('Database unavailable');
-
-    // Get backup info
-    const backupResult = await database.execute(sql`SELECT * FROM backup_history WHERE id = ${backupId}`);
-    const backup = (backupResult[0] as unknown as Array<Record<string, unknown>>)?.[0];
-
-    if (!backup) {
-      return { success: false, message: 'Backup não encontrado' };
-    }
-
-    const tables = String(backup.tables_backed_up || '').split(',').filter(Boolean);
-    const now = Date.now();
-
-    // Mark as restoring
-    await database.execute(sql`UPDATE backup_history SET status = 'restoring' WHERE id = ${backupId}`);
-
-    // For each table, create a restore point and verify data integrity
+    tables = selectBackupTables(type, await getExistingTables(database));
+    const snapshotTables: SnapshotPayload["tables"] = [];
     for (const table of tables) {
-      try {
-        // Verify table exists and has data
-        const countResult = await database.execute(sql.raw(`SELECT COUNT(*) as count FROM ${table}`));
-        const count = (countResult[0] as unknown as Array<{ count: number }>)?.[0]?.count || 0;
-
-        if (count === 0) {
-          console.warn(`[RESTORE] Table ${table} is empty, skipping`);
-        }
-      } catch (err) {
-        console.warn(`[RESTORE] Table ${table} check failed:`, err);
-      }
+      const result = await executeQuery(database, `SELECT * FROM ${quoteIdentifier(table)}`);
+      const rows = (result[0] ?? result) as unknown as Record<string, unknown>[];
+      snapshotTables.push({ name: table, rows });
     }
 
-    // Mark as completed
-    await database.execute(sql`UPDATE backup_history SET status = 'completed' WHERE id = ${backupId}`);
+    const snapshot: SnapshotPayload = { version: 1, createdAt: now, type, tables: snapshotTables };
+    const plain = Buffer.from(JSON.stringify(snapshot), "utf8");
+    const encrypted = encryptSnapshot(plain);
+    const checksum = createHash("sha256").update(encrypted).digest("hex");
+    const storageKey = `backups/database/${backupId}.mlb`;
+    await storagePut(storageKey, encrypted, "application/octet-stream");
+    const totalRecords = snapshotTables.reduce((sum, table) => sum + table.rows.length, 0);
 
-    return { success: true, message: `Restauração concluída para ${tables.length} tabelas` };
+    await executeQuery(database,
+      `INSERT INTO backup_snapshots
+        (id, backup_type, storage_key, checksum, encryption_version, tables_backed_up, total_records, file_size_bytes, status, schedule_bucket, created_at, completed_at)
+       VALUES (?, ?, ?, ?, 'aes-256-gcm-v1', ?, ?, ?, 'completed', ?, ?, ?)
+       ON DUPLICATE KEY UPDATE status = VALUES(status), completed_at = VALUES(completed_at)`,
+      [backupId, type, storageKey, checksum, JSON.stringify(tables), totalRecords, encrypted.length, options?.scheduleBucket ?? null, now, Date.now()]
+    );
+
+    return { id: backupId, type, size: encrypted.length, tables, createdAt: now, status: "completed" };
   } catch (error) {
-    console.error('[RESTORE] Failed:', error);
-    return { success: false, message: 'Falha na restauração' };
+    console.error("[BACKUP] Failed:", error);
+    return { id: backupId, type, size: 0, tables, createdAt: now, status: "failed" };
   }
 }
 
-// ── Auto-backup scheduler (runs every 6 hours) ─────────────────
-let autoBackupInterval: ReturnType<typeof setInterval> | null = null;
-
-export function startAutoBackup(): void {
-  if (autoBackupInterval) return;
-
-  // Run initial backup
-  createBackup('full').then(info => {
-    console.log(`[AUTO-BACKUP] Initial backup: ${info.id} - ${info.status}`);
-  }).catch(err => {
-    console.error('[AUTO-BACKUP] Initial failed:', err);
-  });
-
-  // Schedule every 6 hours
-  autoBackupInterval = setInterval(async () => {
-    try {
-      const info = await createBackup('full');
-      console.log(`[AUTO-BACKUP] Scheduled backup: ${info.id} - ${info.status}`);
-    } catch (err) {
-      console.error('[AUTO-BACKUP] Scheduled failed:', err);
-    }
-  }, 6 * 60 * 60 * 1000);
+export async function listBackups(): Promise<BackupInfo[]> {
+  const database = await getDb();
+  if (!database) return [];
+  await ensureSnapshotTable(database);
+  const result = await executeQuery(database, "SELECT * FROM backup_snapshots ORDER BY created_at DESC LIMIT 50");
+  const rows = (result[0] ?? result) as unknown as Array<Record<string, unknown>>;
+  return rows.map((row) => ({
+    id: String(row.id),
+    type: String(row.backup_type) as BackupType,
+    size: Number(row.file_size_bytes ?? 0),
+    tables: Array.isArray(row.tables_backed_up) ? row.tables_backed_up as string[] : JSON.parse(String(row.tables_backed_up ?? "[]")),
+    createdAt: Number(row.created_at),
+    status: String(row.status) as BackupInfo["status"],
+  }));
 }
 
-export function stopAutoBackup(): void {
-  if (autoBackupInterval) {
-    clearInterval(autoBackupInterval);
-    autoBackupInterval = null;
+export async function restoreFromBackup(
+  backupId: string,
+  confirmation: string
+): Promise<{ success: boolean; message: string }> {
+  if (confirmation !== `RESTORE ${backupId}`) {
+    return { success: false, message: "Confirmação explícita de restauração obrigatória" };
   }
-}
+  const database = await getDb();
+  if (!database) return { success: false, message: "Banco indisponível" };
+  await ensureSnapshotTable(database);
+  const result = await executeQuery(database, "SELECT * FROM backup_snapshots WHERE id = ? LIMIT 1", [backupId]);
+  const backup = ((result[0] ?? result) as unknown as Array<Record<string, unknown>>)[0];
+  if (!backup) return { success: false, message: "Backup não encontrado" };
 
-// ── Get backup statistics ──────────────────────────────────────
-export async function getBackupStats(): Promise<{
-  totalBackups: number;
-  lastBackupAt: number | null;
-  totalSize: number;
-  autoBackupEnabled: boolean;
-}> {
   try {
-    const database = await getDb();
-    if (!database) throw new Error('Database unavailable');
+    await executeQuery(database, "UPDATE backup_snapshots SET status = 'restoring' WHERE id = ?", [backupId]);
+    const { url } = await storageGet(String(backup.storage_key));
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Snapshot download failed (${response.status})`);
+    const encrypted = Buffer.from(await response.arrayBuffer());
+    const actualChecksum = createHash("sha256").update(encrypted).digest("hex");
+    if (actualChecksum !== backup.checksum) throw new Error("Snapshot checksum mismatch");
+    const snapshot = JSON.parse(decryptSnapshot(encrypted).toString("utf8")) as SnapshotPayload;
+    if (snapshot.version !== 1) throw new Error("Unsupported snapshot version");
 
-    const countResult = await database.execute(sql`SELECT COUNT(*) as count, COALESCE(SUM(file_size_bytes), 0) as total_size, MAX(created_at) as last_backup FROM backup_history WHERE status = 'completed'`);
-    const row = (countResult[0] as unknown as Array<Record<string, unknown>>)?.[0];
+    // Sempre cria um ponto de retorno antes de uma operação destrutiva.
+    const restorePoint = await createBackup("full");
+    if (restorePoint.status !== "completed") throw new Error("Restore point creation failed");
 
-    return {
-      totalBackups: Number(row?.count || 0),
-      lastBackupAt: row?.last_backup ? Number(row.last_backup) : null,
-      totalSize: Number(row?.total_size || 0),
-      autoBackupEnabled: autoBackupInterval !== null,
-    };
-  } catch {
-    return {
-      totalBackups: 0,
-      lastBackupAt: null,
-      totalSize: 0,
-      autoBackupEnabled: false,
-    };
+    await executeQuery(database, "START TRANSACTION");
+    try {
+      await executeQuery(database, "SET FOREIGN_KEY_CHECKS = 0");
+      for (const table of [...snapshot.tables].reverse()) {
+        await executeQuery(database, `DELETE FROM ${quoteIdentifier(table.name)}`);
+      }
+      for (const table of snapshot.tables) {
+        for (const row of table.rows) {
+          const columns = Object.keys(row).filter((column) => TABLE_NAME.test(column));
+          if (!columns.length) continue;
+          const values = columns.map((column) => row[column]);
+          const placeholders = columns.map(() => "?").join(", ");
+          await executeQuery(database,
+            `INSERT INTO ${quoteIdentifier(table.name)} (${columns.map(quoteIdentifier).join(", ")}) VALUES (${placeholders})`,
+            values
+          );
+        }
+      }
+      await executeQuery(database, "SET FOREIGN_KEY_CHECKS = 1");
+      await executeQuery(database, "COMMIT");
+    } catch (error) {
+      await executeQuery(database, "ROLLBACK");
+      throw error;
+    } finally {
+      await executeQuery(database, "SET FOREIGN_KEY_CHECKS = 1").catch(() => undefined);
+    }
+
+    await executeQuery(database, "UPDATE backup_snapshots SET status = 'completed', completed_at = ? WHERE id = ?", [Date.now(), backupId]);
+    return { success: true, message: `Restauração concluída. Ponto de retorno: ${restorePoint.id}` };
+  } catch (error) {
+    await executeQuery(database, "UPDATE backup_snapshots SET status = 'failed' WHERE id = ?", [backupId]).catch(() => undefined);
+    console.error("[RESTORE] Failed:", error);
+    return { success: false, message: "Falha na restauração; nenhuma confirmação de recuperação foi retornada" };
   }
 }
+
+export async function runScheduledBackup(scheduleBucket: string): Promise<BackupInfo> {
+  return createBackup("full", { id: `backup_scheduled_${scheduleBucket}`, scheduleBucket });
+}
+
+export const __backupCrypto = {
+  encryptSnapshot,
+  decryptSnapshot,
+};

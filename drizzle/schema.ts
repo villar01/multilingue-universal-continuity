@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date } from "drizzle-orm/mysql-core";
+import { bigint, int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date } from "drizzle-orm/mysql-core";
 
 /**
  * MULTILINGUE UNIVERSAL - DATABASE SCHEMA
@@ -1958,6 +1958,26 @@ export const globalRanking = mysqlTable("global_ranking", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow(),
 });
 export type GlobalRanking = typeof globalRanking.$inferSelect;
+
+// ============================================================
+// BACKUP SNAPSHOTS (dados de recuperação duráveis)
+// ============================================================
+export const backupSnapshots = mysqlTable("backup_snapshots", {
+  id: varchar("id", { length: 100 }).primaryKey(),
+  backupType: mysqlEnum("backup_type", ["full", "config", "lessons", "users"]).notNull().default("full"),
+  storageKey: varchar("storage_key", { length: 512 }).notNull(),
+  checksum: varchar("checksum", { length: 64 }).notNull(),
+  encryptionVersion: varchar("encryption_version", { length: 20 }).notNull().default("aes-256-gcm-v1"),
+  tablesBackedUp: json("tables_backed_up").$type<string[]>().notNull(),
+  totalRecords: int("total_records").notNull().default(0),
+  fileSizeBytes: int("file_size_bytes").notNull().default(0),
+  status: mysqlEnum("status", ["completed", "failed", "restoring"]).notNull().default("completed"),
+  scheduleBucket: varchar("schedule_bucket", { length: 32 }).unique(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  completedAt: bigint("completed_at", { mode: "number" }),
+});
+
+export type BackupSnapshot = typeof backupSnapshots.$inferSelect;
 
 // ── Desafio Diário ────────────────────────────────────────────────────────────
 export const dailyChallenges = mysqlTable("daily_challenges", {

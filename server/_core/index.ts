@@ -11,7 +11,6 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
-import { startAutoBackup } from "../backupRestore";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -42,9 +41,6 @@ async function startServer() {
   // Middleware de segurança cibernética: rate limiting, SQL injection, XSS, DDoS, headers
   app.use(securityMiddleware);
 
-  // Iniciar sistema de backup automático (a cada 6 horas)
-  startAutoBackup();
-
   // Enable gzip compression for all responses (70% size reduction)
   app.use(compression({ level: 6 }));
   
@@ -58,6 +54,8 @@ async function startServer() {
   // Scheduled: expansão diária de vocabulário Pareto (+200 palavras/dia via IA)
   const { handleVocabExpand } = await import("../scheduled/vocab-expand");
   app.post("/api/scheduled/vocab-expand", handleVocabExpand);
+  const { handleScheduledBackup } = await import("../scheduled/backup");
+  app.post("/api/scheduled/backup", handleScheduledBackup);
 
   // Telemetria + Error reporting — salva no banco para IA de autoaperfeiçoamento
   app.post("/api/error-report", async (req, res) => {
