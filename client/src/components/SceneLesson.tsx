@@ -535,7 +535,9 @@ export default function SceneLesson({
                     lineHeight: 1.5,
                   }}>
                     <div>{line.text}</div>
-                    <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{line.textPt}</div>
+                    {profile.nativeCode?.startsWith('pt') && (
+                      <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{line.textPt}</div>
+                    )}
                     {line.speaker === 'teacher' && (
                       <button onClick={() => speakWord(line.text)} style={{ marginTop: 4, background: 'none', border: 'none', color: phaseColor, fontSize: 11, cursor: 'pointer', padding: 0 }}>🔊 Ouvir</button>
                     )}
