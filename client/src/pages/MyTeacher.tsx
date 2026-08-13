@@ -13,14 +13,14 @@ import { Badge } from "@/components/ui/badge";
 import { Check, ArrowLeft, Volume2, Star, Users, Globe } from "lucide-react";
 import { ALL_TEACHERS, getStoredTeacherId, storeTeacherId, type TeacherProfile } from "@/lib/teachers-data";
 
-// ── Lip-sync animation using AudioContext ──────────────────────────────────────
-function useLipSync() {
+// ── Medidor da prévia de áudio neural ──────────────────────────────────────────
+function useAudioPreviewMeter() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number>(0);
   const [mouthOpen, setMouthOpen] = useState(0); // 0-1
 
-  const startLipSync = (audioBuffer: ArrayBuffer) => {
+  const startAudioPreviewMeter = (audioBuffer: ArrayBuffer) => {
     if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
     const ctx = audioCtxRef.current;
     ctx.decodeAudioData(audioBuffer.slice(0), (decoded) => {
@@ -47,12 +47,12 @@ function useLipSync() {
     });
   };
 
-  const stopLipSync = () => {
+  const stopAudioPreviewMeter = () => {
     cancelAnimationFrame(animFrameRef.current);
     setMouthOpen(0);
   };
 
-  return { mouthOpen, startLipSync, stopLipSync };
+  return { mouthOpen, startAudioPreviewMeter, stopAudioPreviewMeter };
 }
 
 // ── Teacher Card ───────────────────────────────────────────────────────────────
@@ -71,8 +71,6 @@ function TeacherCard({
   onSelect: () => void;
   onPreview: () => void;
 }) {
-  const openPx = Math.round(mouthOpen * 14); // 0-14px mouth opening
-
   return (
     <div
       onClick={onSelect}
@@ -96,7 +94,7 @@ function TeacherCard({
         </div>
       )}
 
-      {/* Teacher photo with lip-sync overlay */}
+      {/* Teacher photo with an audio-preview indicator */}
       <div className="relative" style={{ height: 200 }}>
         <img
           src={teacher.photo}
@@ -105,27 +103,14 @@ function TeacherCard({
           style={{ filter: isSelected ? "brightness(1.05)" : "brightness(0.9)" }}
         />
 
-        {/* Lip-sync mouth overlay */}
+        {/* Indicador de reprodução, sem simular movimento de boca na foto estática */}
         {isPlaying && (
           <div
-            className="absolute"
-            style={{
-              bottom: "22%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 28,
-              height: Math.max(3, openPx),
-              background: "rgba(220,50,50,0.85)",
-              borderRadius: openPx > 4 ? "50%" : "4px",
-              transition: "height 0.04s ease-out",
-              boxShadow: "0 0 8px rgba(220,50,50,0.5)",
-            }}
-          />
-        )}
-
-        {/* Speaking indicator */}
-        {isPlaying && (
-          <div className="absolute bottom-2 left-2 flex gap-1 items-end">
+            className="absolute bottom-2 left-2 flex gap-1 items-end rounded-md px-2 py-1"
+            style={{ background: "rgba(15,12,41,0.72)" }}
+            aria-label="Prévia de voz em reprodução"
+          >
+            <span className="mr-1 text-[10px] font-semibold text-white">Voz neural</span>
             {[0.5, 1, 0.7, 0.9, 0.6].map((h, i) => (
               <div
                 key={i}
@@ -199,7 +184,7 @@ export default function MyTeacher() {
   const [selectedId, setSelectedId] = useState<string>(() => getStoredTeacherId());
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const { mouthOpen, startLipSync, stopLipSync } = useLipSync();
+  const { mouthOpen, startAudioPreviewMeter, stopAudioPreviewMeter } = useAudioPreviewMeter();
 
   const saveAvatarMutation = trpc.auth.saveAvatar.useMutation({
     onSuccess: () => {
@@ -216,11 +201,11 @@ export default function MyTeacher() {
         const binary = atob(data.audioBase64);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        startLipSync(bytes.buffer);
+        startAudioPreviewMeter(bytes.buffer);
       }
     },
     onSettled: () => {
-      setTimeout(() => { setPlayingId(null); stopLipSync(); }, 4000);
+      setTimeout(() => { setPlayingId(null); stopAudioPreviewMeter(); }, 4000);
     },
   });
 
@@ -311,22 +296,6 @@ export default function MyTeacher() {
               alt={selectedTeacher.name}
               className="w-16 h-16 rounded-full object-cover object-top border-2 border-purple-400"
             />
-            {/* Lip-sync on banner when playing */}
-            {playingId === selectedTeacher.id && (
-              <div
-                className="absolute"
-                style={{
-                  bottom: "8px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 14,
-                  height: Math.max(2, Math.round(mouthOpen * 8)),
-                  background: "rgba(220,50,50,0.9)",
-                  borderRadius: mouthOpen > 0.3 ? "50%" : "3px",
-                  transition: "height 0.04s ease-out",
-                }}
-              />
-            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">

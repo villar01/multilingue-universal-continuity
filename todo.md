@@ -517,6 +517,7 @@
 
 ### Fase 3: Corrigir Lip-Sync
 - [ ] Calibrar posições da boca para todos os 10 professores
+- [x] Remover a falsa barra de boca do seletor Meu Professor — a prévia usa medidor de reprodução de voz neural, sem simular movimento facial em retrato estático; TypeScript e 300 testes aprovados
 - [x] EnhancedTeacherAvatar: estado de fala ligado ao áudio real — a animação não é mais permanente; MP3 controla início, pausa e fim, com fallback fonético somente sem áudio
 - [ ] Ampliar abertura da boca para maior visibilidade
 - [x] Substituir barras de áudio do TalkingTeacher por boca facial visível — abertura, dentes e língua agora seguem a amplitude da voz neural; regressões de Edge TTS e visemas aprovadas
