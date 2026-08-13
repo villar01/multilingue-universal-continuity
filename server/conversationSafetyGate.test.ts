@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   getUserSafetyContext: vi.fn(),
   moderateAIResponse: vi.fn(),
   checkContent: vi.fn(),
+  recordConversationSafetyAlert: vi.fn(),
 }));
 
 vi.mock("./content-moderation", () => ({
@@ -11,6 +12,9 @@ vi.mock("./content-moderation", () => ({
   moderateAIResponse: mocks.moderateAIResponse,
 }));
 vi.mock("./contentFilter", () => ({ checkContent: mocks.checkContent }));
+vi.mock("./parentalConversationAlert", () => ({
+  recordConversationSafetyAlert: mocks.recordConversationSafetyAlert,
+}));
 
 import { assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
 
@@ -43,6 +47,7 @@ describe("conversation safety gate", () => {
       flaggedContent: ["padrão proibido"],
     });
     expect(mocks.moderateAIResponse).not.toHaveBeenCalled();
+    expect(mocks.recordConversationSafetyAlert).toHaveBeenCalledWith(7, "blocked_input");
   });
 
   it("permite texto seguro para perfil com consentimento", async () => {

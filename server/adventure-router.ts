@@ -3,9 +3,10 @@
  * Inspirado em Duolingo Adventures: cenários gamificados com NPC em idioma alvo
  */
 import { z } from "zod";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { generateRoleplayFollowUps } from "./roleplayFollowUps";
+import { assessConversationOutput, assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
 
 const SCENARIO_CONTEXTS: Record<string, { npcName: string; npcRole: string; setting: string }> = {
   restaurant: {
@@ -47,7 +48,7 @@ const MessageSchema = z.object({
 });
 
 export const adventureRouter = router({
-  chat: publicProcedure
+  chat: protectedProcedure
     .input(
       z.object({
         scenarioId: z.string(),
@@ -57,11 +58,26 @@ export const adventureRouter = router({
         history: z.array(MessageSchema).optional().default([]),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx: requestContext }) => {
       const ctx = SCENARIO_CONTEXTS[input.scenarioId] || SCENARIO_CONTEXTS.restaurant;
       const isStart = input.userMessage === "__START__";
       const turnCount = input.history.length;
       const isComplete = turnCount >= 8; // Completar após 4 trocas (8 mensagens)
+
+      await ensureConversationAccess(requestContext.user.id);
+      if (!isStart) {
+        const inputSafety = await assessConversationText(requestContext.user.id, input.userMessage, input.languageCode);
+        if (!inputSafety.allowed) {
+          return {
+            npcMessage: "Let us continue with a safe language-practice sentence.",
+            translation: "Vamos continuar com uma frase segura de prática do idioma.",
+            options: ["Can we practice a safe phrase?", "Please repeat that.", "Thank you."],
+            progress: Math.min(100, Math.round((turnCount / 8) * 100)),
+            isComplete: false,
+            npcName: ctx.npcName,
+          };
+        }
+      }
 
       const systemPrompt = `You are ${ctx.npcName}, a ${ctx.npcRole}.
 Setting: ${ctx.setting}
@@ -91,6 +107,23 @@ ${isComplete ? "This is the final exchange. Wrap up the conversation naturally a
       const npcMessage = typeof rawNpcMessage === "string" && rawNpcMessage.trim()
         ? rawNpcMessage.trim()
         : "Hello! Welcome. How can I help you today?";
+
+      const outputSafety = await assessConversationOutput(
+        requestContext.user.id,
+        isStart ? "Start a safe language-practice conversation." : input.userMessage,
+        npcMessage,
+        input.languageCode,
+      );
+      if (!outputSafety.allowed) {
+        return {
+          npcMessage: "Let us continue with a safe language-practice sentence.",
+          translation: "Vamos continuar com uma frase segura de prática do idioma.",
+          options: ["Can we practice a safe phrase?", "Please repeat that.", "Thank you."],
+          progress: Math.min(100, Math.round((turnCount / 8) * 100)),
+          isComplete: false,
+          npcName: ctx.npcName,
+        };
+      }
 
       const { translation, optionsContent } = await generateRoleplayFollowUps({
         npcMessage,

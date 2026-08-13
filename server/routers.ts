@@ -42,7 +42,7 @@ import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
-import { assessConversationOutput, assessConversationText } from './conversationSafetyGate';
+import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
 
 
 export const appRouter = router({
@@ -859,7 +859,7 @@ Rules:
       }),
 
     // Chat livre com professor (sem histórico de conversa, mais flexível)
-    freeChat: publicProcedure
+    freeChat: protectedProcedure
       .input(
         z.object({
           messages: z.array(z.object({
@@ -868,17 +868,25 @@ Rules:
           })),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import("./_core/llm");
+        const safeFallback = { content: "Vamos continuar com uma frase segura de prática do idioma." };
+        const userText = input.messages
+          .filter((message) => message.role === "user")
+          .map((message) => message.content)
+          .join("\n");
+        const inputSafety = await assessConversationText(ctx.user.id, userText || "Conversa livre de idioma.", "pt-BR");
+        if (!inputSafety.allowed) return safeFallback;
         try {
           const response = await invokeLLM({ messages: input.messages as any[] });
           let content = response.choices[0]?.message?.content as string || 'Desculpe, não consegui processar sua mensagem.';
           // Content filter: sanitize chat response
           content = await sanitizeContent(content, 'all') || content;
-          return { content };
+          const outputSafety = await assessConversationOutput(ctx.user.id, userText || "Conversa livre de idioma.", content, "pt-BR");
+          return outputSafety.allowed ? { content } : safeFallback;
         } catch (err) {
           console.error('freeChat error:', err);
-          return { content: 'Hmm, tive um problema técnico. Tente novamente!' };
+          return safeFallback;
         }
       }),
 
@@ -2336,7 +2344,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         catch { return { translation: input.text, wordByWord: [] }; }
       }),
     // Editar frase com IA
-    editPhrase: publicProcedure
+    editPhrase: protectedProcedure
       .input(z.object({
         originalPhrase: z.string(),
         targetLanguage: z.string(),
@@ -2344,8 +2352,11 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         editType: z.enum(['modify_word', 'add_word', 'improve']),
         wordToModify: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
+        const safeFallback = { suggestions: "Vamos praticar uma frase segura da lição." };
+        const inputSafety = await assessConversationText(ctx.user.id, input.originalPhrase, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
         const result = await invokeLLM({
           messages: [
             { role: 'system', content: `You are a ${input.targetLanguage} language teacher.` },
@@ -2355,7 +2366,8 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         let suggestions = result.choices[0].message.content as string;
         // Content filter: sanitize suggestions
         suggestions = await sanitizeContent(suggestions, input.targetLanguage) || suggestions;
-        return { suggestions };
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.originalPhrase, suggestions, input.targetLanguage);
+        return outputSafety.allowed ? { suggestions } : safeFallback;
       }),
     // Adicionar palavra ao vocabulário
     addToVocabulary: protectedProcedure
@@ -2954,7 +2966,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // ── VR Conversation: Diálogo Imersivo Multi-turno ──────────────────────
   vrConversation: router({
     // Gera resposta do avatar + avalia fala do usuário
-    respond: publicProcedure
+    respond: protectedProcedure
       .input(z.object({
         scenario: z.string(),
         avatarName: z.string(),
@@ -2966,8 +2978,20 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         })),
         userMessage: z.string(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import("./_core/llm");
+        const safeFallback = {
+          text: "Let us continue with a safe language-practice sentence.",
+          response: "Let us continue with a safe language-practice sentence.",
+          translation: "Vamos continuar com uma frase segura de prática do idioma.",
+          phonetic: "lets con-TÍ-niu uíth a sêif LÉN-gwidj PRÁK-tis SÉN-tens.",
+          feedback: "Vamos praticar de forma segura.",
+          score: 0,
+          correction: null,
+          suggestions: ["Can we practice a safe phrase?", "Please repeat that.", "Thank you."],
+        };
+        const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
         const langMap: Record<string, string> = {
           "en-US": "English", "es-ES": "Spanish", "fr-FR": "French",
           "de-DE": "German", "it-IT": "Italian", "ja-JP": "Japanese",
@@ -3009,23 +3033,16 @@ Rules:
             correction: parsed.correction || null,
             suggestions: parsed.suggestions || ["Thank you", "I understand", "Can you repeat?"],
           };
-          return result;
+          const outputText = [result.text, result.translation, result.feedback, ...result.suggestions].join("\n");
+          const outputSafety = await assessConversationOutput(ctx.user.id, input.userMessage, outputText, input.targetLanguage);
+          return outputSafety.allowed ? result : safeFallback;
         } catch {
-          return {
-            text: "I see! Please continue.",
-            response: "I see! Please continue.",
-            translation: "Entendo! Por favor, continue.",
-            phonetic: "ai síi! plíiz con-TÍ-niu.",
-            feedback: "Boa tentativa! Continue praticando.",
-            score: 70,
-            correction: null,
-            suggestions: ["Thank you", "I understand", "Can you repeat?"],
-          };
+          return safeFallback;
         }
       }),
 
     // Conversação Livre Ilimitada — sem roteiro, todos os níveis, vocabulário orgânico
-    freeChat: publicProcedure
+    freeChat: protectedProcedure
       .input(z.object({
         targetLanguage: z.string().default("en-US"),
         nativeLanguage: z.string().default("pt-BR"),
@@ -3037,8 +3054,26 @@ Rules:
         })),
         userMessage: z.string(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import("./_core/llm");
+        const safeFallback = {
+          text: "Let us continue with a safe language-practice sentence.",
+          translation: "Vamos continuar com uma frase segura de prática do idioma.",
+          phonetic: "lets con-TÍ-niu uíth a sêif LÉN-gwidj PRÁK-tis SÉN-tens.",
+          feedback: "Vamos praticar de forma segura.",
+          score: 0,
+          correction: null,
+          errorType: null,
+          newWords: [],
+          suggestions: ["Can we practice a safe phrase?", "Please repeat that.", "Thank you."],
+          levelUp: false,
+        };
+        const inputSafety = await assessConversationText(
+          ctx.user.id,
+          [input.topic, input.userMessage].filter(Boolean).join("\n"),
+          input.targetLanguage,
+        );
+        if (!inputSafety.allowed) return safeFallback;
         const langMap: Record<string, string> = {
           "en-US": "English", "en-GB": "British English", "es-ES": "Spanish", "es-MX": "Mexican Spanish",
           "fr-FR": "French", "de-DE": "German", "it-IT": "Italian", "ja-JP": "Japanese",
@@ -3076,32 +3111,33 @@ Rules:
         const response = await invokeLLM({ messages, response_format: { type: "json_object" } });
         try {
           const content = (response.choices[0]?.message?.content as string) || "{}";
-          return JSON.parse(content);
+          const parsed = JSON.parse(content);
+          const outputText = [parsed.text, parsed.translation, parsed.feedback, ...(Array.isArray(parsed.suggestions) ? parsed.suggestions : [])]
+            .filter((value): value is string => typeof value === "string")
+            .join("\n");
+          const outputSafety = await assessConversationOutput(ctx.user.id, input.userMessage, outputText, input.targetLanguage);
+          return outputSafety.allowed ? parsed : safeFallback;
         } catch {
-          return {
-            text: "That's interesting! Tell me more.",
-            translation: "Que interessante! Me conte mais.",
-            phonetic: "d\u00eats in-T\u00ca-res-ting! t\u00e9l mi m\u00f4r.",
-            feedback: "\u00d3tima tentativa! Continue assim.",
-            score: 75,
-            correction: null,
-            errorType: null,
-            newWords: [],
-            suggestions: ["Really?", "I agree!", "Can you explain more?"],
-            levelUp: false,
-          };
+          return safeFallback;
         }
       }),
 
     // Inicia conversa — primeira fala do avatar
-    start: publicProcedure
+    start: protectedProcedure
       .input(z.object({
         scenario: z.string(),
         avatarName: z.string(),
         avatarRole: z.string(),
         targetLanguage: z.string().default("en-US"),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const safeFallback = {
+          text: "Hello! Let us practice a safe phrase.",
+          translation: "Olá! Vamos praticar uma frase segura.",
+          phonetic: "rrê-lóu! lets PRÁK-tis a sêif frêiz.",
+          suggestions: ["Can we practice a safe phrase?", "Please repeat that.", "Thank you."],
+        };
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import("./_core/llm");
         const langMap: Record<string, string> = {
           "en-US": "English", "es-ES": "Spanish", "fr-FR": "French",
@@ -3120,19 +3156,21 @@ Rules:
           const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/) || raw.match(/({[\s\S]*})/);
           const content = jsonMatch ? jsonMatch[1] || jsonMatch[0] : raw;
           const parsed = JSON.parse(content.trim());
-          return {
+          const result = {
             text: parsed.text || `Hello! Welcome. How can I help you?`,
             translation: parsed.translation || "Olá! Bem-vindo(a). Como posso ajudá-lo(a)?",
             phonetic: parsed.phonetic || "RRÊ-lóu! UÉL-cam.",
             suggestions: parsed.suggestions || ["I need help", "I have a question", "Nice to meet you"],
           };
+          const outputSafety = await assessConversationOutput(
+            ctx.user.id,
+            "Start a safe language-practice conversation.",
+            [result.text, result.translation, ...result.suggestions].join("\n"),
+            input.targetLanguage,
+          );
+          return outputSafety.allowed ? result : safeFallback;
         } catch {
-          return {
-            text: `Hello! Welcome. How can I help you?`,
-            translation: "Olá! Bem-vindo(a). Como posso ajudá-lo(a)?",
-            phonetic: "RRÊ-lóu! UÉL-cam. RRÁu kên ai rréllp iu?",
-            suggestions: ["I need help", "I have a question", "Nice to meet you"],
-          };
+          return safeFallback;
         }
       }),
   }),
@@ -3306,7 +3344,7 @@ Return JSON object: {"vocabulary": [{"word": "word in ${targetName}", "translati
   // ── PolyLesson: Professor fala, explica, conversa ────────────────────────
   polyLesson: router({
     // Professor responde ao aluno em conversa natural durante a aula
-    teacherChat: publicProcedure
+    teacherChat: protectedProcedure
       .input(z.object({
         message: z.string(),
         targetLanguage: z.string(),
@@ -3318,8 +3356,11 @@ Return JSON object: {"vocabulary": [{"word": "word in ${targetName}", "translati
         lessonTitle: z.string().optional(),
         history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
+        const safeFallback = { reply: "Vamos continuar com uma frase segura da lição.", teacherName: input.teacherName };
+        const inputSafety = await assessConversationText(ctx.user.id, input.message, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
         const phaseLabels: Record<string, string> = {
           infancia: 'Infância A1 — vocabulário básico, frases simples',
           crianca: 'Criança A2 — frases cotidianas, perguntas simples',
@@ -3351,7 +3392,8 @@ Seu estilo de ensino:
         ];
         const response = await invokeLLM({ messages });
         const reply = (response.choices[0]?.message?.content as string) || 'Vamos continuar aprendendo juntos! 😊';
-        return { reply, teacherName: input.teacherName };
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.message, reply, input.targetLanguage);
+        return outputSafety.allowed ? { reply, teacherName: input.teacherName } : safeFallback;
       }),
     // Gerar frase de apresentação inicial do professor para cada palavra
     wordIntro: publicProcedure
@@ -3709,7 +3751,7 @@ Máximo 2 frases por resposta.`,
       }),
 
     // ── Chat livre sobre a cena ───────────────────────────────────────────────
-    sceneChat: publicProcedure
+    sceneChat: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
         nativeLanguage: z.string().default('pt-BR'),
@@ -3718,8 +3760,15 @@ Máximo 2 frases por resposta.`,
         studentMessage: z.string(),
         history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
+        const safeFallback = { reply: "Vamos continuar com uma frase segura sobre os objetos da cena." };
+        const inputSafety = await assessConversationText(
+          ctx.user.id,
+          [input.sceneDescription, input.studentMessage].join("\n"),
+          input.targetLanguage,
+        );
+        if (!inputSafety.allowed) return safeFallback;
         const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
           {
             role: 'system',
@@ -3732,7 +3781,8 @@ Máximo 2 frases por resposta.`,
         const content = typeof response.choices[0].message.content === 'string'
           ? response.choices[0].message.content
           : JSON.stringify(response.choices[0].message.content);
-        return { reply: content };
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.studentMessage, content, input.targetLanguage);
+        return outputSafety.allowed ? { reply: content } : safeFallback;
       }),
   }),
   // ── SRS Progress ─────────────────────────────────────────────────────────
