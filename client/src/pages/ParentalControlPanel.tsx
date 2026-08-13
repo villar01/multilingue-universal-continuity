@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,6 @@ export default function ParentalControlPanel() {
 
   // Queries
   const { data: children, isLoading: childrenLoading } = trpc.parentalControl.listChildren.useQuery();
-  const { data: alerts } = trpc.parentalControl.listAlerts.useQuery({ childId: 0 });
 
   // Mutations
   const createChild = trpc.parentalControl.createChild.useMutation({
@@ -57,6 +56,14 @@ export default function ParentalControlPanel() {
   const [newSetupPin, setNewSetupPin] = useState('');
   const [confirmSetupPin, setConfirmSetupPin] = useState('');
   const [setupError, setSetupError] = useState('');
+  const selectedChildAlertsInput = useMemo(
+    () => selectedChildId ? { childId: selectedChildId } : {},
+    [selectedChildId],
+  );
+  const { data: alerts } = trpc.parentalControl.listAlerts.useQuery(
+    selectedChildAlertsInput,
+    { enabled: !!selectedChildId },
+  );
 
   // Auto-select first child
   useEffect(() => {
@@ -364,7 +371,7 @@ export default function ParentalControlPanel() {
 
                   {/* Alerts Tab */}
                   <TabsContent value="alerts" className="mt-4 space-y-4">
-                    <AlertsTab childId={selectedChild.id} alerts={alerts?.filter((a: any) => a.childId === selectedChild.id) || []} onMarkRead={(id) => markAlertRead.mutate({ alertId: id })} />
+                    <AlertsTab childId={selectedChild.id} alerts={alerts || []} onMarkRead={(id) => markAlertRead.mutate({ alertId: id })} />
                   </TabsContent>
 
                   {/* Security Tab */}
