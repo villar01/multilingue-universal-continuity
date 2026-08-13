@@ -3,7 +3,7 @@
  */
 
 import { z } from "zod";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { adminProcedure, publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { generatePrecisionClip, generatePrecisionClipLibrary, savePrecisionClip } from "./precision-clip-generator";
 import * as dbFunctions from "./db";
 import { videoClips } from "../drizzle/schema";
@@ -12,7 +12,7 @@ export const precisionClipsRouter = router({
   /**
    * Gerar um único clipe de precisão
    */
-  generateSingle: protectedProcedure
+  generateSingle: adminProcedure
     .input(
       z.object({
         topic: z.string().min(1),
@@ -44,7 +44,7 @@ export const precisionClipsRouter = router({
   /**
    * Gerar biblioteca massiva de clipes (100+)
    */
-  generateLibrary: protectedProcedure
+  generateLibrary: adminProcedure
     .input(
       z.object({
         targetLanguage: z.string(),
