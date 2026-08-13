@@ -3311,7 +3311,7 @@ Return JSON object: {"vocabulary": [{"word": "word in ${targetName}", "translati
       }),
 
     // Frase do dia por situação
-    phraseOfTheDay: publicProcedure
+    phraseOfTheDay: protectedProcedure
       .input(z.object({
         targetLanguage: z.string().default("en-US"),
         nativeLanguage: z.string().default("pt-BR"),
