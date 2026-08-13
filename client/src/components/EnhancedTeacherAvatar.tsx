@@ -128,6 +128,7 @@ export default function EnhancedTeacherAvatar({
   const teacherName = propTeacherName || teacherData?.name || "Professor";
   const specialty = (teacherData as any)?.title || "";
   const skinTone = positions.skinTone;
+  const allowsMouthAnimation = !/^\s*(prof\.?\s*)?ricardo\b/i.test(teacherName);
 
   // ─── Auto-blink ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -169,6 +170,11 @@ export default function EnhancedTeacherAvatar({
 
   // ─── Phoneme lip-sync from text ───────────────────────────────────────────
   const runPhonemeLipSync = useCallback((text: string) => {
+    if (!allowsMouthAnimation) {
+      setMO(0.04); setMW(0.5); setLR(0);
+      setIsSpeaking(true);
+      return;
+    }
     if (!text || text.trim().length === 0) return;
     clearTimeouts();
     if (speakLoopRef.current) { clearInterval(speakLoopRef.current); speakLoopRef.current = null; }
@@ -199,7 +205,7 @@ export default function EnhancedTeacherAvatar({
       }
     }, last.t + 200);
     timeoutsRef.current.push(endTid);
-  }, [clearTimeouts, isTeaching]);
+  }, [allowsMouthAnimation, clearTimeouts, isTeaching]);
 
   // ─── Play audio with autoplay unlock ─────────────────────────────────────
   const playAudio = useCallback(async (url: string) => {
@@ -223,7 +229,7 @@ export default function EnhancedTeacherAvatar({
       // Try AudioContext for real-time amplitude lip-sync
       try {
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        if (AudioCtx) {
+        if (AudioCtx && allowsMouthAnimation) {
           const ctx = new AudioCtx();
           if (ctx.state === "suspended") await ctx.resume();
           const analyser = ctx.createAnalyser();
@@ -268,7 +274,7 @@ export default function EnhancedTeacherAvatar({
       // Autoplay blocked — show manual play button
       setPendingAudioUrl(url);
     }
-  }, [clearTimeouts]);
+  }, [allowsMouthAnimation, clearTimeouts]);
 
   // ─── Manual play button handler ───────────────────────────────────────────
   const handleManualPlay = useCallback(async () => {
@@ -314,7 +320,10 @@ export default function EnhancedTeacherAvatar({
     }
     // Start text timing as a resilient fallback. When the MP3 analyser is
     // available it clears this schedule and becomes the source of truth.
-    if (currentText && currentText.trim().length > 0) {
+    if (!allowsMouthAnimation) {
+      setMO(0.04); setMW(0.5); setLR(0);
+      setIsSpeaking(true);
+    } else if (currentText && currentText.trim().length > 0) {
       runPhonemeLipSync(currentText);
       // If D-ID is configured, generate real video
       if (didStatus?.configured && imageUrl && !showVideo && !isGeneratingVideo) {
@@ -342,7 +351,7 @@ export default function EnhancedTeacherAvatar({
       clearTimeouts();
       if (speakLoopRef.current) { clearInterval(speakLoopRef.current); speakLoopRef.current = null; }
     };
-  }, [audioUrl, isTeaching, currentText]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [audioUrl, isTeaching, currentText, allowsMouthAnimation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Render calculations ──────────────────────────────────────────────────
   const mw2 = 64 * positions.mouthScale + mW * 28 * positions.mouthScale;
