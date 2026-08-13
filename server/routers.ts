@@ -3946,14 +3946,14 @@ Máximo 2 frases por resposta.`,
         await dbInstance.update(battleRooms).set(updateData).where(eq(battleRooms.roomCode, input.roomCode.toUpperCase()));
         return { done: bothDone };
       }),
-    generateQuiz: publicProcedure
-      .input(z.object({ targetLanguage: z.string(), category: z.string(), count: z.number().default(10) }))
+    generateQuiz: protectedProcedure
+      .input(z.object({ targetLanguage: z.string().min(2), nativeLanguage: z.string().min(2), category: z.string().min(1), count: z.number().min(1).max(20).default(10) }))
       .mutation(async ({ input }) => {
         const { invokeLLM } = await import("./_core/llm");
         const res = await invokeLLM({
           messages: [
             { role: "system", content: "You are a language quiz generator. Return JSON only." },
-            { role: "user", content: `Generate ${input.count} multiple-choice vocabulary quiz questions for learning ${input.targetLanguage}, category: ${input.category}. Return JSON array: [{question, options:[4 strings], correct:0-3, word}]` }
+            { role: "user", content: `Generate ${input.count} multiple-choice vocabulary quiz questions for learning ${input.targetLanguage}, category: ${input.category}. Write the question in ${input.nativeLanguage}; keep the target-language word and answer options in ${input.targetLanguage}. Return JSON array: [{question, options:[4 strings], correct:0-3, word}]` }
           ],
           response_format: { type: "json_schema", json_schema: { name: "quiz", strict: true, schema: { type: "object", properties: { questions: { type: "array", items: { type: "object", properties: { question: {type:"string"}, options: {type:"array", items:{type:"string"}}, correct: {type:"integer"}, word: {type:"string"} }, required:["question","options","correct","word"], additionalProperties: false } } }, required: ["questions"], additionalProperties: false } } }
         });

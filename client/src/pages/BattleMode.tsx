@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { LANGUAGES_57, type Language } from "@/lib/languages";
 import LanguageSelector from "@/components/LanguageSelector";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Phase = "lobby" | "waiting" | "quiz" | "results";
 
@@ -34,6 +35,7 @@ const QUESTION_TIME = 15; // seconds per question
 
 export default function BattleMode() {
   const { user } = useAuth();
+  const { profile } = useLanguage();
   const [phase, setPhase] = useState<Phase>("lobby");
   const [lang, setLang] = useState<Language>(LANGUAGES_57[0]);
   const [category, setCategory] = useState("animals");
@@ -107,8 +109,14 @@ export default function BattleMode() {
   };
 
   const startQuiz = async () => {
+    if (!user) { toast.error("Faça login para gerar perguntas"); return; }
     try {
-      const qs = await generateQuiz.mutateAsync({ targetLanguage: lang.code, category, count: 10 });
+      const qs = await generateQuiz.mutateAsync({
+        targetLanguage: lang.code,
+        nativeLanguage: profile.nativeCode,
+        category,
+        count: 10,
+      });
       setQuestions(qs);
       setCurrentQ(0);
       setScore(0);
