@@ -3831,7 +3831,7 @@ Máximo 2 frases por resposta.`,
       }))
       .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
-        const safeFallback = { reply: "Vamos continuar com uma frase segura sobre os objetos da cena." };
+        const safeFallback = { reply: "", blocked: true };
         const inputSafety = await assessConversationText(
           ctx.user.id,
           [input.sceneDescription, input.studentMessage].join("\n"),
@@ -3841,17 +3841,21 @@ Máximo 2 frases por resposta.`,
         const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
           {
             role: 'system',
-            content: 'Você é um professor de ' + input.targetLanguage + ' dentro de uma cena de ' + input.sceneId.replace('_', ' ') + '.\nCena: ' + input.sceneDescription + '\nVocê está apontando para objetos e conversando com o aluno sobre o que ele vê.\nResponda em português quando o aluno não entender, mas sempre inclua a expressão em ' + input.targetLanguage + '.\nSe o aluno errar, corrija gentilmente e repita a forma correta.\nFaça perguntas sobre a cena para manter a conversa.\nMáximo 3 frases por resposta.',
+            content: 'Você é um professor de ' + input.targetLanguage + ' dentro de uma cena de ' + input.sceneId.replace('_', ' ') + '.\nCena: ' + input.sceneDescription + '\nVocê está apontando para objetos e conversando com o aluno sobre o que ele vê.\nApresente sempre a expressão em ' + input.targetLanguage + ' e explique somente em ' + input.nativeLanguage + '. Não use um terceiro idioma.\nSe o aluno errar, corrija gentilmente e repita a forma correta.\nFaça perguntas sobre a cena para manter a conversa.\nMáximo 3 frases por resposta.',
           },
           ...(input.history || []),
           { role: 'user', content: input.studentMessage },
         ];
-        const response = await invokeLLM({ messages });
-        const content = typeof response.choices[0].message.content === 'string'
-          ? response.choices[0].message.content
-          : JSON.stringify(response.choices[0].message.content);
-        const outputSafety = await assessConversationOutput(ctx.user.id, input.studentMessage, content, input.targetLanguage);
-        return outputSafety.allowed ? { reply: content } : safeFallback;
+        try {
+          const response = await invokeLLM({ messages });
+          const content = typeof response.choices[0].message.content === 'string'
+            ? response.choices[0].message.content
+            : JSON.stringify(response.choices[0].message.content);
+          const outputSafety = await assessConversationOutput(ctx.user.id, input.studentMessage, content, input.targetLanguage);
+          return outputSafety.allowed ? { reply: content } : safeFallback;
+        } catch {
+          return safeFallback;
+        }
       }),
   }),
   // ── SRS Progress ─────────────────────────────────────────────────────────

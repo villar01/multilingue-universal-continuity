@@ -31,7 +31,7 @@ describe("polyLesson.sceneChat safety", () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
     const result = await createCaller().polyLesson.sceneChat({ ...input, studentMessage: "unsafe" });
     expect(mocks.invokeLLM).not.toHaveBeenCalled();
-    expect(result.reply).toContain("frase segura");
+    expect(result).toMatchObject({ reply: "", blocked: true });
   });
 
   it("replaces unsafe generated scene-chat output", async () => {
@@ -40,6 +40,6 @@ describe("polyLesson.sceneChat safety", () => {
     mocks.invokeLLM.mockResolvedValue({ choices: [{ message: { content: "unsafe scene reply" } }] });
     const result = await createCaller().polyLesson.sceneChat(input);
     expect(mocks.assessConversationOutput).toHaveBeenCalledWith(7, "Hello", "unsafe scene reply", "en-US");
-    expect(result.reply).toContain("frase segura");
+    expect(result).toMatchObject({ reply: "", blocked: true });
   });
 });
