@@ -11,7 +11,8 @@ import {
   Maximize, 
   RotateCcw,
   ChevronLeft,
-  Settings
+  Settings,
+  Sparkles,
 } from 'lucide-react';
 import {
   Select,
@@ -20,6 +21,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
+
+type ClipVocabularyItem = {
+  word: string;
+  translation: string;
+  examples?: string[];
+};
+
+function parseClipVocabulary(value: string | null | undefined): ClipVocabularyItem[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is ClipVocabularyItem => Boolean(item?.word && item?.translation));
+  } catch {
+    return [];
+  }
+}
 
 export default function VideoPlayer() {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +53,10 @@ export default function VideoPlayer() {
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showSubtitles, setShowSubtitles] = useState(true);
+  const [practiceIndex, setPracticeIndex] = useState(0);
+  const [practiceOpen, setPracticeOpen] = useState(false);
+  const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const practiceTtsMutation = trpc.tts.speak.useMutation();
   
   // Buscar dados do clipe
   const { data: clip, isLoading } = trpc.precisionClips.getById.useQuery(
@@ -124,6 +148,27 @@ export default function VideoPlayer() {
       </div>
     );
   }
+
+  const vocabulary = parseClipVocabulary(clip.vocabularyData);
+  const practiceTerm = vocabulary[practiceIndex];
+  const practiceLevel = resolvePracticeCEFRLevel(clip.difficulty);
+
+  const speakPractice = async (text: string) => {
+    if (!text.trim()) return;
+    practiceAudioRef.current?.pause();
+    try {
+      const result = await practiceTtsMutation.mutateAsync({ text: text.slice(0, 400), voiceLang: clip.targetLanguage });
+      if (!result.success || !result.audioBase64) return;
+      const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const audio = new Audio(url);
+      practiceAudioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play();
+    } catch {
+      // The active-recall exercise remains available when neural audio is temporarily unavailable.
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 py-8">
@@ -292,15 +337,37 @@ export default function VideoPlayer() {
 
           <Card className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-3">Vocabulário</h2>
-            <p className="text-gray-600 text-sm">
-              Este clipe contém vocabulário essencial para o nível {clip.difficulty}.
-              Assista várias vezes para memorizar as palavras e expressões.
-            </p>
-            <Button className="mt-4 w-full" variant="outline">
-              Ver Vocabulário Completo
-            </Button>
+            {vocabulary.length > 0 ? (
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600">Escolha uma palavra realmente presente no clipe para praticar recuperação, escrita e criação de frase no nível {practiceLevel}.</p>
+                <div className="flex flex-wrap gap-2">
+                  {vocabulary.map((item, index) => (
+                    <Button key={`${item.word}-${index}`} size="sm" variant={index === practiceIndex ? "default" : "outline"} onClick={() => { setPracticeIndex(index); setPracticeOpen(false); }}>
+                      {item.word} · {item.translation}
+                    </Button>
+                  ))}
+                </div>
+                <Button className="w-full" variant="outline" onClick={() => setPracticeOpen((open) => !open)}>
+                  <Sparkles className="mr-2 h-4 w-4" /> {practiceOpen ? "Fechar prática Pareto" : "Praticar Pareto"}
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">Este clipe ainda não possui vocabulário estruturado para a prática ativa.</p>
+            )}
           </Card>
         </div>
+
+        {practiceOpen && practiceTerm && (
+          <div className="mt-6">
+            <ParetoPracticeCycle
+              term={{ word: practiceTerm.word, translation: practiceTerm.translation, example: practiceTerm.examples?.[0] || practiceTerm.word }}
+              onClose={() => setPracticeOpen(false)}
+              onSpeak={speakPractice}
+              embedded
+              level={practiceLevel}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
