@@ -3,10 +3,9 @@
  * 
  * Informs the user/student that installing a free local AI (Qwen 2.5 or similar)
  * on their computer will:
- * - Provide maximum quality natural voice
- * - Enable extreme animation (lip-sync, head movements)
- * - Reduce app costs (no external API usage)
- * - Work offline after initial setup
+ * - Improve private, local language generation and practice
+ * - Reduce reliance on external text-generation requests
+ * - Keep compatible AI conversations available offline after initial setup
  * 
  * The notification appears once on first visit and can be dismissed.
  * User can choose: install automatically (guided) or manually.
@@ -72,16 +71,16 @@ export default function LocalAINotification() {
             </p>
             <ul className="mt-2 hidden space-y-1 text-xs text-blue-600 dark:text-blue-400 sm:block">
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Voz natural de altíssima qualidade
+                <span className="text-green-500">✓</span> Respostas e prática de idiomas com processamento local
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Animação extrema (lábios e cabeça)
+                <span className="text-green-500">✓</span> Mais privacidade e menor dependência de respostas externas
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-green-500">✓</span> Funcionamento offline
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Sem custos de uso (IA gratuita)
+                <span className="text-green-500">✓</span> Funcionamento local quando o modelo compatível estiver instalado
               </li>
             </ul>
 
@@ -107,18 +106,15 @@ export default function LocalAINotification() {
                 </p>
                 <ol className="space-y-2 text-xs text-blue-700 dark:text-blue-300">
                   <li>
-                    <strong>Passo 1:</strong> Clique no botão Iniciar do Windows, digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">powershell</code>, clique com botão direito em "Windows PowerShell" e selecione <strong>"Executar como administrador"</strong>. Se aparecer tela azul perguntando permissão, clique em <strong>"Sim"</strong>.
+                    <strong>Passo 1:</strong> Baixe o instalador oficial para Windows em{' '}
+                    <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer" className="underline font-semibold">ollama.com/download</a>{' '}
+                    e conclua a instalação. O Windows poderá pedir autorização administrativa; confirme somente no instalador oficial.
                   </li>
                   <li>
-                    <strong>Passo 2:</strong> Se o Ollama não estiver instalado, no PowerShell cole este comando e tecle Enter:{' '}
-                    <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">irm https://ollama.com/install.ps1 | iex</code>
-                    <br />Ou baixe em{' '}
-                    <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-                      ollama.com/download
-                    </a>{' '}e clique em "Download for Windows".
+                    <strong>Passo 2:</strong> Abra o <strong>PowerShell</strong> normalmente pelo menu Iniciar. Não é necessário executar como administrador para baixar o modelo.
                   </li>
                   <li>
-                    <strong>Passo 3:</strong> No PowerShell (como administrador), digite exatamente:{' '}
+                    <strong>Passo 3:</strong> No PowerShell, digite exatamente:{' '}
                     <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">ollama run qwen2.5</code>
                     <br />Tecle <strong>Enter</strong>. Ele vai baixar uns 4GB. Aguarde terminar.
                   </li>
@@ -126,25 +122,24 @@ export default function LocalAINotification() {
                     <strong>Passo 4:</strong> Quando aparecer <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">&gt;&gt;&gt;</code> significa que está pronto. Digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">/bye</code> e tecle Enter para sair. A IA fica instalada permanentemente.
                   </li>
                   <li>
-                    <strong>Passo 5:</strong> O app MultiLingue Universal detecta automaticamente o Ollama na porta 11434 e usa o Qwen 2.5 para voz natural e animação de qualidade, sem custos, funcionando offline.
+                    <strong>Passo 5:</strong> O app detecta o Ollama localmente na porta 11434 e pode usar o Qwen 2.5 para geração de texto, conversas e prática no dispositivo. A voz neural e a animação labial continuam sendo produzidas pelos mecanismos próprios de voz e avatar do app.
                   </li>
                 </ol>
                 <div className="mt-2 rounded-lg bg-amber-100/50 p-2 dark:bg-amber-900/20">
                   <p className="text-xs font-semibold text-amber-700 dark:text-amber-300">
-                    Alternativas gratuitas (se Qwen 2.5 se tornar pago):
+                    Alternativas compatíveis (verifique sempre a licença e os requisitos atuais do modelo):
                   </p>
                   <ul className="mt-1 space-y-1 text-xs text-amber-600 dark:text-amber-400">
-                    <li>• <strong>Llama 3.2</strong> (Meta) — gratuito e permanente: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run llama3.2</code></li>
-                    <li>• <strong>Phi-3 Mini</strong> (Microsoft) — leve e gratuito: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run phi3</code></li>
-                    <li>• <strong>Gemma 2</strong> (Google) — gratuito e permanente: <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run gemma2</code></li>
+                    <li>• <strong>Llama 3.2</strong> (Meta): <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run llama3.2</code></li>
+                    <li>• <strong>Phi-3 Mini</strong> (Microsoft): <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run phi3</code></li>
+                    <li>• <strong>Gemma 2</strong> (Google): <code className="rounded bg-amber-200 px-1 dark:bg-amber-800">ollama run gemma2</code></li>
                   </ul>
                   <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                    Todas essas IAs são gratuitas, permanentes e funcionam offline. O app detecta qualquer uma automaticamente.
+                    Modelos locais funcionam offline depois do download, mas licenças, tamanhos e disponibilidade podem mudar. Consulte sempre a página oficial do modelo antes de instalar.
                   </p>
                 </div>
                 <p className="text-xs text-blue-600 dark:text-blue-400">
-                  A IA local melhora voz, animação e reduz custos do app.
-                  Você pode usar o app sem ela, mas com a IA instalada a qualidade é máxima.
+                  A IA local melhora a autonomia das conversas e práticas de texto. Você pode usar o app sem ela; a qualidade de voz neural e animação não depende do Qwen.
                 </p>
                 <button
                   onClick={handleDismiss}
