@@ -3597,19 +3597,29 @@ Retorne JSON com:
         }
       }),
 
-    familiaScene: publicProcedure
+    familiaScene: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
-        nativeLanguage: z.string().default('pt-BR'),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string().default('infancia'),
         teacherName: z.string().optional(),
         lessonTitle: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const { generateImage } = await import('./_core/imageGeneration');
-        const phaseLabel = input.phase === 'infancia' ? 'beginner' : input.phase === 'crianca' ? 'elementary' : 'intermediate';
-        const prompt = `You are a language teacher. Create a family scene lesson for ${phaseLabel} ${input.targetLanguage} learners.
+        const phaseLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
+          A1: 'concrete family and home vocabulary with very short phrases',
+          A2: 'everyday family routines with simple connected phrases',
+          B1: 'personal descriptions and familiar experiences',
+          B2: 'comparisons and detailed family perspectives',
+          C1: 'nuanced family, culture, and relationship descriptions',
+          C2: 'flexible, precise discussion of family and social contexts',
+        };
+        const prompt = `You are a language teacher. Create a family scene lesson for ${input.cefrLevel} ${input.targetLanguage} learners.
+Difficulty: ${phaseLabel[input.cefrLevel]}. Lesson: ${input.lessonTitle || 'family and home'}.
 
 Return ONLY valid JSON:
 {
@@ -3640,29 +3650,16 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
           } catch { /* image generation optional */ }
           return {
             imageUrl,
-            questions: data.questions || [],
-            vocabulary: data.vocabulary || [],
-            teacherIntro: data.teacherIntro || 'Vamos conhecer esta familia!',
+            questions: Array.isArray(data.questions) ? data.questions : [],
+            vocabulary: Array.isArray(data.vocabulary) ? data.vocabulary : [],
+            teacherIntro: typeof data.teacherIntro === 'string' ? data.teacherIntro : '',
           };
         } catch {
           return {
             imageUrl: null,
-            questions: [
-              { question: 'Quantas pessoas tem na familia?', answer: 'family', options: ['family', 'school', 'kitchen', 'garden'] },
-              { question: 'Onde a familia esta?', answer: 'home', options: ['home', 'park', 'school', 'market'] },
-              { question: 'O que a familia faz juntos?', answer: 'together', options: ['together', 'alone', 'sleeping', 'working'] },
-            ],
-            vocabulary: [
-              { word: 'family', translation: 'familia', emoji: '\u{1F46A}' },
-              { word: 'mother', translation: 'mae', emoji: '\u{1F469}' },
-              { word: 'father', translation: 'pai', emoji: '\u{1F468}' },
-              { word: 'child', translation: 'filho', emoji: '\u{1F476}' },
-              { word: 'home', translation: 'casa', emoji: '\u{1F3E0}' },
-              { word: 'love', translation: 'amor', emoji: '\u2764\uFE0F' },
-              { word: 'happy', translation: 'feliz', emoji: '\u{1F60A}' },
-              { word: 'together', translation: 'juntos', emoji: '\u{1F91D}' },
-            ],
-            teacherIntro: 'Vamos conhecer esta familia e aprender palavras novas!',
+            questions: [],
+            vocabulary: [],
+            teacherIntro: '',
           };
         }
       }),

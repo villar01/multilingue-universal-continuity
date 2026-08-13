@@ -598,12 +598,22 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
   };
 
   const handleNanoBananaNext = () => {
+    if (!isLoggedIn) {
+      toast.error('Entre na sua conta para gerar a atividade Família.');
+      return;
+    }
     setNanoBananaShown(true);
     // Load familia scene data
     setFamiliaImageLoading(true);
     setFamiliaSubStage('photo');
     familiaGenerateMutation.mutate(
-      { targetLanguage: languageCode, phase, lessonTitle: lesson.title },
+      {
+        targetLanguage: languageCode,
+        nativeLanguage: selectedNativeLanguage,
+        cefrLevel: selectedCefrLevel,
+        phase,
+        lessonTitle: lesson.title,
+      },
       {
         onSuccess: (data) => {
           setFamiliaImageUrl(data.imageUrl || null);
