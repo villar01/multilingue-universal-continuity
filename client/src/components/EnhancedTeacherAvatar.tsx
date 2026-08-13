@@ -360,6 +360,8 @@ export default function EnhancedTeacherAvatar({
   const ic = mO > 0.10 ? "#1a0505" : skinTone;
   const activelySpeaking = isSpeaking;
   const sizePx = size === "sm" ? 160 : size === "md" ? 220 : 280;
+  const mouthWidthPct = Math.min(28, Math.max(17, (mw2 / sizePx) * 100));
+  const mouthHeightPct = Math.min(8.5, Math.max(1.6, (mh2 / sizePx) * 50));
 
   return (
     <div className="relative flex flex-col items-center gap-3" style={{ width: sizePx + 40 }}>
@@ -411,6 +413,39 @@ export default function EnhancedTeacherAvatar({
                 transition: "box-shadow 60ms linear",
               }}
             />
+          )}
+
+          {/* Visema facial: usa a amplitude neural/linha fonética e a posição da foto. */}
+          {activelySpeaking && allowsMouthAnimation && !showVideo && (
+            <div
+              className="absolute pointer-events-none overflow-hidden"
+              style={{
+                left: `${positions.mouthX}%`,
+                top: `${positions.mouthY}%`,
+                width: `${mouthWidthPct}%`,
+                height: `${mouthHeightPct}%`,
+                transform: "translate(-50%, -48%)",
+                borderRadius: br,
+                background: `radial-gradient(ellipse at 50% ${45 + lR * 18}%, ${ic} 0%, #3c0a0a 68%, rgba(74, 18, 18, 0.92) 100%)`,
+                border: "1px solid rgba(74, 18, 18, 0.62)",
+                boxShadow: `0 1px ${2 + mO * 2}px rgba(30, 0, 0, ${0.22 + mO * 0.18})`,
+                transition: "width 55ms linear, height 55ms linear, border-radius 55ms linear",
+              }}
+              aria-hidden="true"
+            >
+              {mO > 0.20 && (
+                <div
+                  className="absolute left-[13%] right-[13%] top-0 rounded-b-[50%] bg-[#fff7eb]"
+                  style={{ height: `${Math.min(34, 10 + mO * 28)}%`, opacity: Math.min(0.92, 0.35 + mO) }}
+                />
+              )}
+              {mO > 0.42 && (
+                <div
+                  className="absolute bottom-0 left-[20%] right-[20%] rounded-t-[55%] bg-[#b83d54]"
+                  style={{ height: `${Math.min(42, 12 + mO * 30)}%`, opacity: Math.min(0.88, mO) }}
+                />
+              )}
+            </div>
           )}
 
           {/* Blink overlay — only when not showing video */}

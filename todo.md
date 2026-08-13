@@ -520,7 +520,7 @@
 - [x] Remover a falsa barra de boca do seletor Meu Professor — a prévia usa medidor de reprodução de voz neural, sem simular movimento facial em retrato estático; TypeScript e 300 testes aprovados
 - [x] Remover a boca artificial da Aula Imersiva — a foto estática mostra somente o indicador de áudio neural vinculado à amplitude real, sem fingir sincronização facial; TypeScript e 302 testes aprovados
 - [x] EnhancedTeacherAvatar: estado de fala ligado ao áudio real — a animação não é mais permanente; MP3 controla início, pausa e fim, com fallback fonético somente sem áudio
-- [ ] Ampliar abertura da boca para maior visibilidade
+- [x] Ampliar abertura da boca para maior visibilidade — EnhancedTeacherAvatar agora desenha visemas com boca, dentes e língua em posição calibrável, acionados pela amplitude neural ou linha fonética; Ricardo permanece estático e vídeo externo não recebe sobreposição; TypeScript e 304 testes aprovados
 - [x] Substituir barras de áudio do TalkingTeacher por boca facial visível — abertura, dentes e língua agora seguem a amplitude da voz neural; regressões de Edge TTS e visemas aprovadas
 
 ### Fase 4: Realidade Aumentada (AR.js)
