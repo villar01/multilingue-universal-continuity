@@ -20,9 +20,29 @@ interface DownloadState {
   error: string | null;
 }
 
+type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+const CEFR_DOWNLOAD_PACK: Record<CefrLevel, 'basico' | 'intermediario' | 'avancado'> = {
+  A1: 'basico',
+  A2: 'basico',
+  B1: 'intermediario',
+  B2: 'intermediario',
+  C1: 'avancado',
+  C2: 'avancado',
+};
+
+const CEFR_DOWNLOAD_OPTIONS: { value: CefrLevel; label: string }[] = [
+  { value: 'A1', label: 'A1 — fundamentos essenciais' },
+  { value: 'A2', label: 'A2 — rotina e situações simples' },
+  { value: 'B1', label: 'B1 — conversa independente' },
+  { value: 'B2', label: 'B2 — interação e argumentos' },
+  { value: 'C1', label: 'C1 — fluência avançada' },
+  { value: 'C2', label: 'C2 — domínio e nuances' },
+];
+
 export function DownloadManager() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<'basico' | 'intermediario' | 'avancado' | 'negocios_tecnologia'>('basico');
+  const [selectedLevel, setSelectedLevel] = useState<CefrLevel>('A1');
   const [state, setState] = useState<DownloadState>({
     isDownloading: false,
     isPaused: false,
@@ -36,7 +56,7 @@ export function DownloadManager() {
     error: null,
   });
 
-  const { data: lessons } = trpc.lessons.listByLevel.useQuery({ courseLevel: selectedLevel });
+  const { data: lessons } = trpc.lessons.listByLevel.useQuery({ courseLevel: CEFR_DOWNLOAD_PACK[selectedLevel] });
 
   const startDownload = async () => {
     if (!lessons || lessons.length === 0) {
@@ -181,16 +201,15 @@ export function DownloadManager() {
               {!state.isDownloading ? (
                 <>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Selecione o nível:</label>
+                    <label className="block text-sm font-medium mb-2">Selecione a etapa CEFR:</label>
                     <select
                       value={selectedLevel}
-                      onChange={(e) => setSelectedLevel(e.target.value as 'basico' | 'intermediario' | 'avancado' | 'negocios_tecnologia')}
+                      onChange={(e) => setSelectedLevel(e.target.value as CefrLevel)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                     >
-                      <option value="basico">Básico</option>
-                      <option value="intermediario">Intermediário</option>
-                      <option value="avancado">Avançado</option>
-                      <option value="negocios">Negócios/Tecnologia</option>
+                      {CEFR_DOWNLOAD_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
                     </select>
                   </div>
 
