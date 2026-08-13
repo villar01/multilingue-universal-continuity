@@ -3762,7 +3762,7 @@ Máximo 2 frases por resposta.`,
         return { reply: content };
       }),
     // ── Cenas com Professor (professor dentro da ilustração) ─────────────────
-    sceneLesson: publicProcedure
+    sceneLesson: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
         nativeLanguage: z.string().default('pt-BR'),

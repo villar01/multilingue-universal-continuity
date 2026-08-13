@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const source = readFileSync(resolve(process.cwd(), "server/routers.ts"), "utf8");
-const section = source.slice(source.indexOf("sceneLesson: publicProcedure"), source.indexOf("// ── Chat livre sobre a cena"));
+const section = source.slice(source.indexOf("sceneLesson: protectedProcedure"), source.indexOf("// ── Chat livre sobre a cena"));
 
 describe("scene lesson language fallback", () => {
   it("requests both selected languages and returns empty content instead of fixed PT/EN examples", () => {
