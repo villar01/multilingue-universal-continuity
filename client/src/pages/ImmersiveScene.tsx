@@ -16,7 +16,9 @@ import { type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
-import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Plane, Shell, Shirt, Sparkles, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
+import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
+import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
 
 const HOTSPOT_ICON_COMPONENTS: Array<[string, LucideIcon]> = [
   ["sun", Sun], ["wave", Waves], ["ocean", Waves], ["sea", Waves], ["palm", TreePalm],
@@ -31,6 +33,15 @@ function HotspotVisual({ hotspot, size = 24 }: { hotspot: Hotspot; size?: number
   const source = `${hotspot.id} ${hotspot.label}`.toLowerCase();
   const Icon = HOTSPOT_ICON_COMPONENTS.find(([key]) => source.includes(key))?.[1] || Sparkles;
   return <Icon size={size} strokeWidth={2.35} aria-hidden="true" />;
+}
+
+function audioBlobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error || new Error("Não foi possível ler o áudio gravado."));
+    reader.onloadend = () => resolve(String(reader.result || ""));
+    reader.readAsDataURL(blob);
+  });
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -1349,6 +1360,7 @@ export default function ImmersiveScene() {
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
+  const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1532,9 +1544,15 @@ export default function ImmersiveScene() {
   const [dlgAnswer, setDlgAnswer] = useState<number | null>(null);
   const [dlgWrittenAnswer, setDlgWrittenAnswer] = useState("");
   const [dlgFeedback, setDlgFeedback] = useState("");
+  const [dlgSuggestedHotspot, setDlgSuggestedHotspot] = useState<Hotspot | null>(null);
+  const [dlgIsRecording, setDlgIsRecording] = useState(false);
+  const [dlgIsProcessingSpeech, setDlgIsProcessingSpeech] = useState(false);
   const dlgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const greetingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nativeHelpAudioRef = useRef<HTMLAudioElement | null>(null);
+  const dlgRecorderRef = useRef<MediaRecorder | null>(null);
+  const dlgRecordingStreamRef = useRef<MediaStream | null>(null);
+  const dlgRecordingSessionRef = useRef(0);
 
   const speakNativeHelp = useCallback(async (text: string) => {
     const helpText = text.trim();
@@ -1586,6 +1604,10 @@ export default function ImmersiveScene() {
     setDlgAnswer(null);
     setDlgWrittenAnswer("");
     setDlgFeedback("");
+    setDlgSuggestedHotspot(null);
+    setDlgIsRecording(false);
+    setDlgIsProcessingSpeech(false);
+    dlgRecordingSessionRef.current += 1;
     setActiveHotspot(null);
     setLearnedWords(new Set());
     setQuizIndex(0);
@@ -1598,11 +1620,15 @@ export default function ImmersiveScene() {
       if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
       nativeHelpAudioRef.current?.pause();
       nativeHelpAudioRef.current = null;
+      dlgRecordingSessionRef.current += 1;
+      if (dlgRecorderRef.current?.state === "recording") dlgRecorderRef.current.stop();
+      dlgRecordingStreamRef.current?.getTracks().forEach((track) => track.stop());
+      dlgRecordingStreamRef.current = null;
     };
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
-    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback("");
+    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null);
     const line = scene.dialog[0];
     if (line?.speaker === 'teacher') {
       const words = line.text.split(' ');
@@ -1633,7 +1659,7 @@ export default function ImmersiveScene() {
       setDlgOpen(false);
       return;
     }
-    setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback("");
+    setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgIsRecording(false); setDlgIsProcessingSpeech(false);
     const line = selectedScene.dialog[next];
     if (line.speaker === 'teacher') {
       const words = line.text.split(' ');
@@ -1650,18 +1676,18 @@ export default function ImmersiveScene() {
     }
   }, [dlgStep, selectedScene, speak]);
 
-  const submitWrittenDialogAnswer = useCallback(() => {
+  const validateDialogAnswer = useCallback((answer: string) => {
     const scene = selectedScene;
     if (!scene) return;
     const line = scene.dialog[dlgStep];
     if (!line?.options || line.correctIndex === undefined) return;
-    const expected = line.options[line.correctIndex].trim().toLocaleLowerCase();
-    const provided = dlgWrittenAnswer.trim().toLocaleLowerCase();
+    const expected = line.options[line.correctIndex].trim();
+    const provided = answer.trim();
     if (!provided) {
-      setDlgFeedback("Escreva sua resposta em inglês antes de conferir.");
+      setDlgFeedback("Diga ou escreva sua resposta no idioma estudado antes de conferir.");
       return;
     }
-    const correct = provided === expected || provided.includes(expected) || expected.includes(provided);
+    const correct = matchesImmersiveDialogAnswer(expected, provided);
     if (!correct) {
       setDlgFeedback(`Tente novamente. A resposta deve usar a ideia: “${expected}”.`);
       return;
@@ -1669,8 +1695,81 @@ export default function ImmersiveScene() {
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
     speak(`Excellent. ${line.options[line.correctIndex]}`, scene.teacherLang, undefined, scene.teacherGender);
+    const referencedHotspotId = findReferencedHotspotId(line.options[line.correctIndex], scene.hotspots);
+    const referencedHotspot = referencedHotspotId
+      ? scene.hotspots.find((hotspot) => hotspot.id === referencedHotspotId) || null
+      : null;
+    setDlgSuggestedHotspot(referencedHotspot);
+    if (referencedHotspot) {
+      setDlgFeedback(`Muito bem. Antes de continuar, pratique “${referencedHotspot.label}” com o ciclo Pareto ou siga para a próxima fala.`);
+      return;
+    }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [dlgStep, dlgWrittenAnswer, dlgNext, selectedScene, speak]);
+  }, [dlgStep, dlgNext, selectedScene, speak]);
+
+  const submitWrittenDialogAnswer = useCallback(() => {
+    validateDialogAnswer(dlgWrittenAnswer);
+  }, [dlgWrittenAnswer, validateDialogAnswer]);
+
+  const stopDialogRecording = useCallback(() => {
+    if (dlgRecorderRef.current?.state === "recording") {
+      dlgRecorderRef.current.stop();
+      setDlgIsRecording(false);
+    }
+  }, []);
+
+  const startDialogRecording = useCallback(async () => {
+    const scene = selectedScene;
+    if (!scene || dlgAnswer !== null || dlgIsProcessingSpeech) return;
+    if (!window.confirm("Ativar microfone para responder nesta cena? O áudio será usado apenas para transcrever sua resposta e será encerrado ao concluir.")) return;
+
+    try {
+      const stream = await requestMicrophoneStream();
+      const recorder = createAudioRecorder(stream);
+      const chunks: Blob[] = [];
+      const recordingSession = ++dlgRecordingSessionRef.current;
+      dlgRecorderRef.current = recorder;
+      dlgRecordingStreamRef.current = stream;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) chunks.push(event.data);
+      };
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        if (dlgRecordingStreamRef.current === stream) dlgRecordingStreamRef.current = null;
+        if (dlgRecorderRef.current === recorder) dlgRecorderRef.current = null;
+        if (recordingSession !== dlgRecordingSessionRef.current) return;
+        setDlgIsRecording(false);
+        if (!chunks.length) {
+          setDlgFeedback("Nenhum áudio foi capturado. Tente novamente e fale após iniciar a gravação.");
+          return;
+        }
+        setDlgIsProcessingSpeech(true);
+        try {
+          const transcription = await dialogTranscribeMut.mutateAsync({
+            audioData: await audioBlobToDataUrl(new Blob(chunks, { type: recorder.mimeType || "audio/webm" })),
+            language: scene.teacherLang.split("-")[0],
+          });
+          if (recordingSession !== dlgRecordingSessionRef.current) return;
+          const spokenText = transcription.text.trim();
+          setDlgWrittenAnswer(spokenText);
+          if (!spokenText) {
+            setDlgFeedback("Não foi possível reconhecer uma resposta. Tente falar de forma mais clara ou escreva sua resposta.");
+            return;
+          }
+          validateDialogAnswer(spokenText);
+        } catch (error) {
+          setDlgFeedback(`Não foi possível transcrever sua resposta. ${microphoneErrorMessage(error)}`);
+        } finally {
+          setDlgIsProcessingSpeech(false);
+        }
+      };
+      recorder.start();
+      setDlgFeedback("Gravando sua resposta. Toque em Parar quando terminar.");
+      setDlgIsRecording(true);
+    } catch (error) {
+      setDlgFeedback(microphoneErrorMessage(error));
+    }
+  }, [dialogTranscribeMut, dlgAnswer, dlgIsProcessingSpeech, selectedScene, validateDialogAnswer]);
   const handleAddParetoToNotebook = useCallback((word: ParetoWord) => {
     addToNotebook({
       word: word.enUS,
@@ -2350,14 +2449,14 @@ export default function ImmersiveScene() {
                     </button>
                   ))}
                   <div className="mt-2 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
-                    <p className="mb-2 text-xs font-semibold text-cyan-100">Ou escreva sua resposta em inglês:</p>
+                    <p className="mb-2 text-xs font-semibold text-cyan-100">Ou escreva sua resposta no idioma estudado:</p>
                     <div className="flex gap-2">
                       <input
                         value={dlgWrittenAnswer}
                         onChange={(event) => setDlgWrittenAnswer(event.target.value)}
                         onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
                         disabled={dlgAnswer !== null}
-                        placeholder="Type your answer in English"
+                        placeholder="Digite sua resposta no idioma estudado"
                         className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                         autoComplete="off"
                       />
@@ -2370,7 +2469,38 @@ export default function ImmersiveScene() {
                         Responder
                       </button>
                     </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={dlgIsRecording ? stopDialogRecording : startDialogRecording}
+                        disabled={dlgAnswer !== null || dlgIsProcessingSpeech}
+                        className="inline-flex items-center gap-2 rounded-lg border border-emerald-300/45 bg-emerald-400/10 px-3 py-2 text-sm font-extrabold text-emerald-100 hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {dlgIsRecording ? <Square size={15} fill="currentColor" /> : <Mic size={16} />}
+                        {dlgIsRecording ? "Parar gravação" : dlgIsProcessingSpeech ? "Transcrevendo…" : "Responder com microfone"}
+                      </button>
+                      <span className="text-[11px] text-cyan-100/65">O navegador pedirá permissão antes de gravar.</span>
+                    </div>
                   </div>
+                </div>
+              )}
+              {dlgSuggestedHotspot && dlgAnswer !== null && (
+                <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-400/10 p-3">
+                  <span className="text-xs font-semibold text-amber-100">Objeto visível: {dlgSuggestedHotspot.label}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPracticeHotspot(dlgSuggestedHotspot)}
+                    className="rounded-lg bg-amber-300 px-3 py-2 text-xs font-extrabold text-slate-950"
+                  >
+                    Praticar com Pareto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={dlgNext}
+                    className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/15"
+                  >
+                    Continuar diálogo
+                  </button>
                 </div>
               )}
               {dlgFeedback && (

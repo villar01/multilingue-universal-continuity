@@ -112,7 +112,7 @@
 - [ ] Corrigir clique de hotspot sem resposta, sotaque português em inglês e ausência de sincronização da foto do professor com a fala na cena imersiva
 - [ ] Separar instruções e traduções na voz neural nativa do aluno da pronúncia de objeto na voz neural regional do idioma estudado
 - [ ] Oferecer diálogo com fala e interação no idioma estudado, além de ajuda falada e tradução separadas na língua nativa
-- [ ] Adicionar perguntas do professor e respostas do aluno por escolha, escrita e microfone no diálogo inferior da cena
+- [x] Adicionar perguntas do professor e respostas do aluno por escolha, escrita e microfone no diálogo inferior da cena — a cena aceita escolha, texto ou gravação com consentimento explícito, transcrição no idioma estudado, liberação imediata do microfone e a mesma validação íntegra de resposta; TypeScript e 116 testes aprovados
 
 ## 🎬 NOVOS RECURSOS DO BACKUP
 - [x] ReelsPage - Clipes educacionais estilo TikTok/Instagram com falantes nativos
