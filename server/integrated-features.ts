@@ -8,7 +8,7 @@
 
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
-import { router, publicProcedure, protectedProcedure } from "./_core/trpc";
+import { adminProcedure, router, publicProcedure, protectedProcedure } from "./_core/trpc";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -357,5 +357,5 @@ export const integratedFeaturesRouter = router({
 
   identifyTasks: publicProcedure.query(async () => identifyOptimizationTasks()),
   
-  executeTasks: publicProcedure.mutation(async () => continuousAutoDevLoop()),
+  executeTasks: adminProcedure.mutation(async () => continuousAutoDevLoop()),
 });

@@ -204,6 +204,7 @@
 - [x] Adicionar seletor de professor antes de iniciar lição
 
 ## 🚀 MÁXIMA ACELERAÇÃO - IA DE AUTODESENVOLVIMENTO
+- [x] Restringir a execução de autoaperfeiçoamento a administrador autenticado, impedindo que visitantes disparem tarefas internas sensíveis — `executeTasks` usa procedimento administrativo; visitante e usuário comum recebem FORBIDDEN antes de iniciar tarefas internas; TypeScript e regressões aprovados
 - [x] Ativar modo de máxima aceleração no aiProvider.ts (cache 2s, timeout 30s)
 - [x] Implementar processamento paralelo de requisições AI — `generateAIBatch` limita a 2 gerações simultâneas, preserva cache/fallback/validação e isola falha por item; endpoint protegido aceita até 8 pedidos
 - [x] Integrar `generateAIBatch` em um fluxo real que hoje dispara gerações independentes em sequência — roleplay agora cria tradução e opções de resposta em paralelo após a fala do NPC, mantendo fallback individual
