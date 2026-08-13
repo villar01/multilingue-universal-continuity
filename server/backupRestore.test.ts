@@ -22,6 +22,8 @@ describe("backup durável", () => {
     expect(backupSource).not.toContain("setInterval");
     expect(callbackSource).toContain("user.isCron");
     expect(callbackSource).toContain("user.taskUid");
+    expect(callbackSource).toContain("backup_schedule_config");
+    expect(callbackSource).toContain("skipped: \"orphan\"");
     expect(callbackSource).toContain("runScheduledBackup");
   });
 

@@ -1,12 +1,23 @@
 import type { Request, Response } from "express";
 import { sdk } from "../_core/sdk";
 import { runScheduledBackup } from "../backupRestore";
+import { getDb } from "../db";
 
 export async function handleScheduledBackup(req: Request, res: Response): Promise<void> {
   try {
     const user = await sdk.authenticateRequest(req);
     if (!user.isCron || !user.taskUid) {
       res.status(403).json({ error: "cron-only" });
+      return;
+    }
+    const database = await getDb();
+    if (!database) throw new Error("Database unavailable");
+    const [rows] = await (database as any).$client.promise().execute(
+      "SELECT heartbeat_task_uid FROM backup_schedule_config WHERE heartbeat_task_uid = ? LIMIT 1",
+      [user.taskUid]
+    );
+    if (!Array.isArray(rows) || rows.length === 0) {
+      res.json({ ok: true, skipped: "orphan" });
       return;
     }
     const bucket = String(Math.floor(Date.now() / (6 * 60 * 60 * 1000)));

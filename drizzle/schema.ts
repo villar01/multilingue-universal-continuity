@@ -1979,6 +1979,16 @@ export const backupSnapshots = mysqlTable("backup_snapshots", {
 
 export type BackupSnapshot = typeof backupSnapshots.$inferSelect;
 
+export const backupScheduleConfig = mysqlTable("backup_schedule_config", {
+  id: varchar("id", { length: 32 }).primaryKey(),
+  heartbeatTaskUid: varchar("heartbeat_task_uid", { length: 65 }).notNull(),
+  cronExpression: varchar("cron_expression", { length: 64 }).notNull(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+export type BackupScheduleConfig = typeof backupScheduleConfig.$inferSelect;
+
 // ── Desafio Diário ────────────────────────────────────────────────────────────
 export const dailyChallenges = mysqlTable("daily_challenges", {
   id: int("id").primaryKey().autoincrement(),
