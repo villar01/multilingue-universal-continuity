@@ -49,6 +49,7 @@ export default function ParentalControlPanel() {
   const [newChildLevel, setNewChildLevel] = useState<'infantil' | 'adolescente' | 'adulto'>('infantil');
   const [newChildPin, setNewChildPin] = useState('');
   const [confirmChildPin, setConfirmChildPin] = useState('');
+  const [newChildConsent, setNewChildConsent] = useState(false);
   const [newChildPinError, setNewChildPinError] = useState('');
   const [pinInput, setPinInput] = useState('');
   const [pinVerified, setPinVerified] = useState(false);
@@ -112,18 +113,24 @@ export default function ParentalControlPanel() {
       setNewChildPinError('Os PINs não coincidem.');
       return;
     }
+    if (!newChildConsent) {
+      setNewChildPinError('Confirme que é o responsável legal e autoriza este perfil infantil.');
+      return;
+    }
     await createChild.mutateAsync({
       name: newChildName,
       emoji: newChildEmoji,
       level: newChildLevel,
       pin: newChildPin,
+      parentalConsent: true,
     });
     setNewChildName('');
     setNewChildPin('');
     setConfirmChildPin('');
+    setNewChildConsent(false);
     setNewChildPinError('');
     setShowAddChild(false);
-  }, [newChildName, newChildEmoji, newChildLevel, newChildPin, confirmChildPin, createChild]);
+  }, [newChildName, newChildEmoji, newChildLevel, newChildPin, confirmChildPin, newChildConsent, createChild]);
 
   const handleVerifyPin = useCallback(async () => {
     if (!selectedChildId) return;
@@ -222,11 +229,17 @@ export default function ParentalControlPanel() {
                     <Input id="child-pin-confirm" type="password" inputMode="numeric" maxLength={4} value={confirmChildPin} onChange={(e) => { setConfirmChildPin(e.target.value.replace(/\D/g, '')); setNewChildPinError(''); }} placeholder="Repita o PIN" />
                   </div>
                 </div>
+                <div className="flex items-start gap-3 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3">
+                  <Switch id="child-parental-consent" checked={newChildConsent} onCheckedChange={setNewChildConsent} className="mt-0.5" />
+                  <Label htmlFor="child-parental-consent" className="cursor-pointer text-sm leading-relaxed text-emerald-50">
+                    Confirmo que sou o responsável legal e autorizo a criação deste perfil infantil, incluindo os controles de segurança e a supervisão aplicáveis.
+                  </Label>
+                </div>
                 {newChildPinError ? <p className="text-sm text-red-400">{newChildPinError}</p> : null}
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddChild(false)}>Cancelar</Button>
-                <Button onClick={handleAddChild} disabled={!newChildName.trim() || newChildPin.length !== 4 || confirmChildPin.length !== 4 || createChild.isPending}>
+                <Button onClick={handleAddChild} disabled={!newChildName.trim() || newChildPin.length !== 4 || confirmChildPin.length !== 4 || !newChildConsent || createChild.isPending}>
                   {createChild.isPending ? 'Criando...' : 'Criar Perfil'}
                 </Button>
               </DialogFooter>

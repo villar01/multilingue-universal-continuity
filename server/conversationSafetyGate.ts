@@ -19,6 +19,12 @@ async function enforceChildConversationTimeLimit(userId: number) {
   const [child] = await db.select().from(childProfiles)
     .where(eq(childProfiles.linkedUserId, userId)).limit(1);
   if (!child) return;
+  if (!child.parentalConsentGiven) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "É necessário consentimento explícito do responsável para liberar conversas deste perfil infantil.",
+    });
+  }
 
   const [settings] = await db.select().from(parentalSettings)
     .where(eq(parentalSettings.childId, child.id)).limit(1);

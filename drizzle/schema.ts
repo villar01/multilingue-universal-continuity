@@ -2290,6 +2290,8 @@ export const childProfiles = mysqlTable("child_profiles", {
   emoji: varchar("emoji", { length: 10 }).default("👧"),
   level: mysqlEnum("level", ["infantil", "adolescente", "adulto"]).default("infantil"),
   birthDate: date("birthDate"),
+  parentalConsentGiven: boolean("parentalConsentGiven").default(false).notNull(),
+  parentalConsentAt: timestamp("parentalConsentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

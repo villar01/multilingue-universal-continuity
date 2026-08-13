@@ -65,6 +65,7 @@ export const parentalControlRouter = router({
       level: z.enum(['infantil', 'adolescente', 'adulto']).default('infantil'),
       birthDate: z.string().optional(),
       pin: z.string().regex(/^\d{4}$/, 'PIN deve conter 4 dígitos'),
+      parentalConsent: z.literal(true),
     }))
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
@@ -75,6 +76,8 @@ export const parentalControlRouter = router({
         emoji: input.emoji,
         level: input.level,
         birthDate: input.birthDate ? new Date(input.birthDate) : null,
+        parentalConsentGiven: true,
+        parentalConsentAt: new Date(),
       }).$returningId();
       // Create default settings
       await database.insert(parentalSettings).values({
@@ -124,6 +127,11 @@ export const parentalControlRouter = router({
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
       await requireChildOwnership(database, input.childId, ctx.user.id);
+      const [consentProfile] = await database.select({ parentalConsentGiven: childProfiles.parentalConsentGiven })
+        .from(childProfiles).where(eq(childProfiles.id, input.childId));
+      if (!consentProfile?.parentalConsentGiven) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Confirme o consentimento do responsável antes de vincular este perfil.' });
+      }
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
       if (!settings || !(await verifyAndUpgradeParentPin(database, input.childId, settings.pinCode, input.pin))) {
@@ -135,6 +143,17 @@ export const parentalControlRouter = router({
       await database.update(childProfiles).set({ linkCodeHash, linkCodeExpiresAt: expiresAt })
         .where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
       return { code, expiresAt };
+    }),
+
+  confirmChildConsent: protectedProcedure
+    .input(z.object({ childId: z.number().positive() }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
+      await database.update(childProfiles).set({ parentalConsentGiven: true, parentalConsentAt: new Date() })
+        .where(eq(childProfiles.id, input.childId));
+      return { success: true };
     }),
 
   claimChildProfile: protectedProcedure

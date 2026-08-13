@@ -270,6 +270,7 @@
 - [x] Ativar modo HYPER TURBO em todos endpoints (100X ORIGINAL)
 
 ## 🛡️ PROTEÇÃO DE MENORES, ECA DIGITAL E CONTEÚDO POR PAÍS
+- [x] Exigir e registrar consentimento explícito do responsável em cada perfil infantil, com data de aceite e bloqueio de vínculo sem consentimento — criação requer confirmação explícita na interface e no servidor, persiste aceite e data, bloqueia vínculo sem aceite, disponibiliza confirmação para legado e bloqueia conversa de perfil infantil vinculado sem consentimento; TypeScript e 270 testes aprovados
 - [x] Restringir consultas, relatórios, cálculos e pagamentos do painel financeiro a administradores autenticados — as 15 operações financeiras agora usam procedimento administrativo único, rejeitando visitante e usuário comum antes de ler dados, calcular, analisar ou processar pagamentos; TypeScript e regressão aprovados
 - [x] Alinhar a página financeira à autorização administrativa para não disparar consultas protegidas a usuários sem permissão — consultas usam `enabled: isAdmin` e perfis não administrativos recebem estado protegido antes de carregar dados; TypeScript e regressão aprovados
 - [x] Corrigir o caminho rígido legado da rotina administrativa de configuração de pagamentos automáticos para o diretório atual do projeto — a execução usa `cwd: process.cwd()` e não depende da cópia antiga; TypeScript e regressão aprovados sem disparar semeadura financeira
