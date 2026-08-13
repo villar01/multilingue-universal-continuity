@@ -2680,7 +2680,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
 
   // AI: Tradução e Análise
   aiTranslation: router({
-    translateWord: publicProcedure
+    translateWord: protectedProcedure
       .input(
         z.object({
           word: z.string(),
