@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { CEFR_LEVELS as CEFR_CONFIGS, type CEFRLevel } from "@/lib/lesson-levels";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type Level = "beginner" | "intermediate" | "advanced";
+type LegacyLevel = "beginner" | "intermediate" | "advanced";
 type GameType = "flashcard" | "match" | "fill" | "scene";
 
 interface VisualScene {
@@ -16,7 +17,7 @@ interface VisualScene {
   titlePt: string;
   emoji: string;
   image: string;
-  level: Level;
+  level: LegacyLevel;
   words: { word: string; translation: string; emoji: string }[];
   dialogues?: { speaker: string; text: string; translation: string }[];
   lessonNumber?: number;
@@ -920,51 +921,65 @@ const VISUAL_SCENES: VisualScene[] = [
   },
 ];
 
-// ─── Level Config ──────────────────────────────────────────────────────────────
-const LEVELS = [
-  {
-    id: "beginner" as Level,
-    label: "Iniciante",
-    sublabel: "A1 – A2",
-    emoji: "🌱",
-    color: "text-green-600",
-    bg: "bg-green-50",
-    border: "border-green-300",
-    activeBg: "bg-green-600",
-    gradient: "from-green-500 to-emerald-600",
-    description: "Vocabulário básico, saudações, família, rotina diária",
-    topics: ["Saudações", "Família", "Casa", "Números", "Cores", "Comida", "Animais", "Rotina"],
-    xpPerLesson: 10,
-  },
-  {
-    id: "intermediate" as Level,
-    label: "Intermediário",
-    sublabel: "B1 – B2",
-    emoji: "🚀",
-    color: "text-blue-600",
-    bg: "bg-blue-50",
-    border: "border-blue-300",
-    activeBg: "bg-blue-600",
-    gradient: "from-blue-500 to-indigo-600",
-    description: "Gramática, conversação, trabalho, viagens, cultura",
-    topics: ["Gramática", "Trabalho", "Viagens", "Saúde", "Tecnologia", "Cultura", "Negócios"],
-    xpPerLesson: 20,
-  },
-  {
-    id: "advanced" as Level,
-    label: "Avançado",
-    sublabel: "C1 – C2",
-    emoji: "🎓",
-    color: "text-purple-600",
-    bg: "bg-purple-50",
-    border: "border-purple-300",
-    activeBg: "bg-purple-600",
-    gradient: "from-purple-500 to-violet-600",
-    description: "Fluência, expressões idiomáticas, literatura, debates",
-    topics: ["Idioms", "Literatura", "Debates", "Negociação", "Escrita Formal", "Gírias"],
-    xpPerLesson: 30,
-  },
-];
+// ─── CEFR Curriculum Mapping ──────────────────────────────────────────────────
+const CEFR_ORDER: CEFRLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+const CEFR_STAGE_BY_SCENE: Record<string, CEFRLevel> = {
+  family_home: "A1", smith_family: "A1", playground: "A1", bedroom: "A1", kitchen: "A1",
+  school_classroom: "A1", birthday_party: "A1", pet_care: "A1", greetings: "A1", numbers_colors: "A1",
+  body_parts: "A1",
+  airport: "A2", restaurant: "A2", supermarket: "A2", morning_routine: "A2", grocery_shopping: "A2",
+  park_walk: "A2", beach_day: "A2", clothing_store: "A2", doctor_visit: "A2", bus_ride: "A2",
+  library: "A2", weather: "A2", farm: "A2", sports: "A2",
+  office: "B1", hospital: "B1", train_station: "B1", job_interview: "B1", travel_hotel: "B1",
+  gym: "B1", cooking_class: "B1", city_directions: "B1", wedding: "B1", emergency: "B1", technology: "B1",
+  bank: "B2", pharmacy: "B2", car_rental: "B2", real_estate: "B2", travel_customs: "B2",
+  business_meeting: "B2", medical_consultation: "B2",
+  university: "C1", courtroom: "C1", conference: "C1", museum: "C1", luxury_hotel: "C1",
+  political_debate: "C1", scientific_lab: "C1", financial_market: "C1", architecture: "C1",
+  philosophy: "C2",
+};
+
+function getSceneCefrLevel(scene: VisualScene): CEFRLevel {
+  return CEFR_STAGE_BY_SCENE[scene.id] || "A1";
+}
+
+function makeSceneVocabularyCards(cefrLevel: CEFRLevel): MemoryCard[] {
+  return VISUAL_SCENES
+    .filter((scene) => getSceneCefrLevel(scene) === cefrLevel)
+    .flatMap((scene) => scene.words)
+    .slice(0, 20)
+    .map((word, index) => ({ id: `${cefrLevel.toLowerCase()}-${index + 1}`, ...word, category: `cefr-${cefrLevel.toLowerCase()}` }));
+}
+
+const PARETO_CEFR_CARDS: Record<CEFRLevel, MemoryCard[]> = {
+  A1: PARETO_BEGINNER.slice(0, 10),
+  A2: PARETO_BEGINNER.slice(10),
+  B1: PARETO_INTERMEDIATE.slice(0, 10),
+  B2: PARETO_INTERMEDIATE.slice(10),
+  C1: makeSceneVocabularyCards("C1"),
+  C2: makeSceneVocabularyCards("C2"),
+};
+
+const CEFR_DISPLAY: Record<CEFRLevel, { color: string; bg: string; border: string; gradient: string; badge: string }> = {
+  A1: { color: "text-green-700", bg: "bg-green-50", border: "border-green-300", gradient: "from-green-500 to-emerald-600", badge: "bg-green-600" },
+  A2: { color: "text-lime-700", bg: "bg-lime-50", border: "border-lime-300", gradient: "from-lime-500 to-green-600", badge: "bg-lime-600" },
+  B1: { color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-300", gradient: "from-blue-500 to-cyan-600", badge: "bg-blue-600" },
+  B2: { color: "text-orange-700", bg: "bg-orange-50", border: "border-orange-300", gradient: "from-orange-500 to-amber-600", badge: "bg-orange-600" },
+  C1: { color: "text-violet-700", bg: "bg-violet-50", border: "border-violet-300", gradient: "from-violet-500 to-purple-600", badge: "bg-violet-600" },
+  C2: { color: "text-pink-700", bg: "bg-pink-50", border: "border-pink-300", gradient: "from-pink-500 to-rose-600", badge: "bg-pink-600" },
+};
+
+const LEVELS = CEFR_ORDER.map((id) => ({
+  id,
+  label: id,
+  sublabel: CEFR_CONFIGS[id].label,
+  emoji: CEFR_CONFIGS[id].icon,
+  description: CEFR_CONFIGS[id].description,
+  topics: CEFR_CONFIGS[id].topics,
+  xpPerLesson: Math.max(10, Math.round((CEFR_CONFIGS[id].xpToAdvance || 10000) / 100)),
+  ...CEFR_DISPLAY[id],
+}));
 
 // ─── Flashcard Game ────────────────────────────────────────────────────────────
 function FlashcardGame({ cards, onComplete }: { cards: MemoryCard[]; onComplete: (xp: number) => void }) {
@@ -1227,7 +1242,7 @@ function FillBlankGame({ cards, onComplete }: { cards: MemoryCard[]; onComplete:
 }
 
 // ─── Scene Lesson ──────────────────────────────────────────────────────────────
-function SceneLesson({ scene, onComplete }: { scene: VisualScene; onComplete: (xp: number) => void }) {
+function SceneLesson({ scene, cefrLevel, onComplete }: { scene: VisualScene; cefrLevel: CEFRLevel; onComplete: (xp: number) => void }) {
   const [revealed, setRevealed] = useState<string[]>([]);
   const [showDialogue, setShowDialogue] = useState(false);
   const [activeTab, setActiveTab] = useState<"vocab"|"dialogue">("vocab");
@@ -1243,16 +1258,7 @@ function SceneLesson({ scene, onComplete }: { scene: VisualScene; onComplete: (x
 
   const done = revealed.length >= scene.words.length;
   const progress = Math.round((revealed.length / scene.words.length) * 100);
-  const levelColors: Record<string, string> = {
-    beginner: "bg-green-500",
-    intermediate: "bg-blue-500",
-    advanced: "bg-purple-500",
-  };
-  const levelLabels: Record<string, string> = {
-    beginner: "Iniciante",
-    intermediate: "Intermediário",
-    advanced: "Avançado",
-  };
+  const cefrDisplay = CEFR_DISPLAY[cefrLevel];
 
   return (
     <div className="space-y-4">
@@ -1267,8 +1273,8 @@ function SceneLesson({ scene, onComplete }: { scene: VisualScene; onComplete: (x
           </div>
         )}
         {/* Level badge */}
-        <div className={`absolute top-3 right-3 ${levelColors[scene.level]} text-white text-xs font-bold px-2.5 py-1 rounded-full shadow`}>
-          {levelLabels[scene.level]}
+        <div className={`absolute top-3 right-3 ${cefrDisplay.badge} text-white text-xs font-bold px-2.5 py-1 rounded-full shadow`}>
+          {cefrLevel} · {CEFR_CONFIGS[cefrLevel].label}
         </div>
         {/* Title */}
         <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -1430,7 +1436,10 @@ function SceneLesson({ scene, onComplete }: { scene: VisualScene; onComplete: (x
 export default function LessonsHub() {
   const [, setLocation] = useLocation();
   const { profile } = useLanguage();
-  const [selectedLevel, setSelectedLevel] = useState<Level>("beginner");
+  const [selectedLevel, setSelectedLevel] = useState<CEFRLevel>(() => {
+    const saved = localStorage.getItem("lessonsHub_cefr");
+    return CEFR_ORDER.includes(saved as CEFRLevel) ? saved as CEFRLevel : "A1";
+  });
   const [activeGame, setActiveGame] = useState<{ type: GameType; sceneId?: string } | null>(null);
   const [totalXP, setTotalXP] = useState(() => parseInt(localStorage.getItem("lessonsHub_xp") || "0"));
   const [completedGames, setCompletedGames] = useState<string[]>(() =>
@@ -1439,8 +1448,13 @@ export default function LessonsHub() {
   const [streak, setStreak] = useState(() => parseInt(localStorage.getItem("lessonsHub_streak") || "0"));
 
   const level = LEVELS.find(l => l.id === selectedLevel)!;
-  const cards = selectedLevel === "beginner" ? PARETO_BEGINNER : PARETO_INTERMEDIATE;
-  const scenes = VISUAL_SCENES.filter(s => s.level === selectedLevel);
+  const cards = PARETO_CEFR_CARDS[selectedLevel];
+  const scenes = VISUAL_SCENES.filter((scene) => getSceneCefrLevel(scene) === selectedLevel);
+
+  function selectLevel(cefrLevel: CEFRLevel) {
+    localStorage.setItem("lessonsHub_cefr", cefrLevel);
+    setSelectedLevel(cefrLevel);
+  }
 
   function handleGameComplete(xp: number, gameKey: string) {
     const newXP = totalXP + xp;
@@ -1478,7 +1492,7 @@ export default function LessonsHub() {
                 {activeGame.type === "fill" && "✏️ Preencher Lacunas"}
                 {activeGame.type === "scene" && `🖼️ ${scene?.titlePt}`}
               </div>
-              <div className="text-xs text-gray-500">{level.label} • {profile.targetName || "Inglês"}</div>
+              <div className="text-xs text-gray-500">{level.label} · {level.sublabel} • {profile.targetName || "Inglês"}</div>
             </div>
             <div className="text-sm font-bold text-yellow-600">⚡ {totalXP} XP</div>
           </div>
@@ -1495,7 +1509,7 @@ export default function LessonsHub() {
               <FillBlankGame cards={cards} onComplete={xp => handleGameComplete(xp, gameKey)} />
             )}
             {activeGame.type === "scene" && scene && (
-              <SceneLesson scene={scene} onComplete={xp => handleGameComplete(xp, gameKey)} />
+              <SceneLesson scene={scene} cefrLevel={selectedLevel} onComplete={xp => handleGameComplete(xp, gameKey)} />
             )}
           </div>
         </div>
@@ -1526,11 +1540,11 @@ export default function LessonsHub() {
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
 
         {/* Level Selector */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {LEVELS.map(l => (
             <button
               key={l.id}
-              onClick={() => setSelectedLevel(l.id)}
+              onClick={() => selectLevel(l.id)}
               className={`p-3 rounded-2xl border-2 transition-all duration-200 text-left ${
                 selectedLevel === l.id
                   ? `${l.bg} ${l.border} shadow-md scale-105`
@@ -1680,8 +1694,8 @@ export default function LessonsHub() {
         {/* Pareto Vocabulary Preview */}
         <div>
           <h2 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <span>📊</span> Vocabulário Pareto — {level.label}
-            <span className="text-xs text-gray-400">({cards.length} palavras essenciais)</span>
+            <span>📊</span> Vocabulário do estágio — {level.label}
+            <span className="text-xs text-gray-400">({cards.length} palavras curriculares)</span>
           </h2>
           <div className="bg-white rounded-2xl border border-gray-200 p-4">
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
