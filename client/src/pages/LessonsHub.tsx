@@ -1242,7 +1242,7 @@ function FillBlankGame({ cards, onComplete }: { cards: MemoryCard[]; onComplete:
 }
 
 // ─── Scene Lesson ──────────────────────────────────────────────────────────────
-function SceneLesson({ scene, cefrLevel, onComplete }: { scene: VisualScene; cefrLevel: CEFRLevel; onComplete: (xp: number) => void }) {
+function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: { scene: VisualScene; cefrLevel: CEFRLevel; curricularLessonNumber: number; onComplete: (xp: number) => void }) {
   const [revealed, setRevealed] = useState<string[]>([]);
   const [showDialogue, setShowDialogue] = useState(false);
   const [activeTab, setActiveTab] = useState<"vocab"|"dialogue">("vocab");
@@ -1267,9 +1267,9 @@ function SceneLesson({ scene, cefrLevel, onComplete }: { scene: VisualScene; cef
         <img src={scene.image} alt={scene.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         {/* Lesson number badge */}
-        {scene.lessonNumber && (
+        {curricularLessonNumber > 0 && (
           <div className="absolute top-3 left-3 bg-white/90 text-gray-800 text-xs font-bold px-2.5 py-1 rounded-full shadow">
-            Aula {scene.lessonNumber}
+            Aula {cefrLevel}.{curricularLessonNumber}
           </div>
         )}
         {/* Level badge */}
@@ -1473,6 +1473,7 @@ export default function LessonsHub() {
   if (activeGame) {
     const gameKey = `${selectedLevel}-${activeGame.type}-${activeGame.sceneId || ""}`;
     const scene = activeGame.sceneId ? VISUAL_SCENES.find(s => s.id === activeGame.sceneId) : null;
+    const curricularLessonNumber = scene ? scenes.findIndex((item) => item.id === scene.id) + 1 : 0;
 
     return (
       <div className="min-h-screen bg-gray-50">
@@ -1490,7 +1491,7 @@ export default function LessonsHub() {
                 {activeGame.type === "flashcard" && "🃏 Flashcards"}
                 {activeGame.type === "match" && "🎯 Conectar Pares"}
                 {activeGame.type === "fill" && "✏️ Preencher Lacunas"}
-                {activeGame.type === "scene" && `🖼️ ${scene?.titlePt}`}
+                {activeGame.type === "scene" && `🖼️ Aula ${selectedLevel}.${curricularLessonNumber} · ${scene?.titlePt}`}
               </div>
               <div className="text-xs text-gray-500">{level.label} · {level.sublabel} • {profile.targetName || "Inglês"}</div>
             </div>
@@ -1509,7 +1510,7 @@ export default function LessonsHub() {
               <FillBlankGame cards={cards} onComplete={xp => handleGameComplete(xp, gameKey)} />
             )}
             {activeGame.type === "scene" && scene && (
-              <SceneLesson scene={scene} cefrLevel={selectedLevel} onComplete={xp => handleGameComplete(xp, gameKey)} />
+              <SceneLesson scene={scene} cefrLevel={selectedLevel} curricularLessonNumber={curricularLessonNumber} onComplete={xp => handleGameComplete(xp, gameKey)} />
             )}
           </div>
         </div>
@@ -1576,13 +1577,14 @@ export default function LessonsHub() {
         {scenes.length > 0 && (
           <div>
             <h2 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <span>🖼️</span> Cenas Visuais Interativas
-              <Badge variant="secondary" className="text-xs">Novo</Badge>
+              <span>🖼️</span> Aulas {selectedLevel} — sequência curricular
+              <Badge variant="secondary" className="text-xs">{scenes.length} aulas</Badge>
             </h2>
             <div className="grid grid-cols-1 gap-3">
-              {scenes.map(scene => {
+              {scenes.map((scene, index) => {
                 const gameKey = `${selectedLevel}-scene-${scene.id}`;
                 const done = completedGames.includes(gameKey);
+                const curricularLessonNumber = index + 1;
                 return (
                   <button
                     key={scene.id}
@@ -1594,6 +1596,7 @@ export default function LessonsHub() {
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/20" />
                     <div className="absolute inset-0 p-4 flex items-center justify-between">
                       <div className="text-white">
+                        <div className="inline-flex rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-bold mb-1">Aula {selectedLevel}.{curricularLessonNumber}</div>
                         <div className="text-xl font-bold">{scene.emoji} {scene.titlePt}</div>
                         <div className="text-sm opacity-80">{scene.words.length} palavras • +25 XP</div>
                       </div>
