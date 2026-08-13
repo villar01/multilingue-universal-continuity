@@ -3789,7 +3789,7 @@ Máximo 2 frases por resposta.`,
           const imgResult = await generateImage({ prompt: imagePrompt });
           imageUrl = imgResult.url || null;
         } catch { imageUrl = null; }
-        const prompt = 'Você é um professor de ' + input.targetLanguage + ' para falantes de ' + input.nativeLanguage + '.\nCena: ' + sceneName + ' (' + input.sceneId + '). Nível: ' + phaseLabel + '.\n\nCrie conteúdo educacional para esta cena. Retorne JSON:\n{\n  "teacherIntro": "frase do professor em português apresentando a cena (max 1 frase)",\n  "sceneDescription": "descrição da cena em ' + input.targetLanguage + ' (1-2 frases)",\n  "sceneDescriptionTranslation": "tradução em português",\n  "objects": [\n    { "word": "palavra em ' + input.targetLanguage + '", "translation": "em português", "emoji": "📝", "phonetic": "fonética" }\n  ],\n  "questions": [\n    { "question": "pergunta livre sobre a cena em português", "questionInTarget": "pergunta em ' + input.targetLanguage + '", "suggestedAnswer": "resposta sugerida em ' + input.targetLanguage + '", "answerTranslation": "tradução" }\n  ],\n  "conversationStarters": [\n    "frase para iniciar conversa sobre a cena em ' + input.targetLanguage + '"\n  ]\n}\nRetorne APENAS o JSON, sem markdown. Inclua 8-12 objetos e 4-6 perguntas.';
+        const prompt = 'You teach ' + input.targetLanguage + ' to speakers of ' + input.nativeLanguage + '.\nScene: ' + sceneName + ' (' + input.sceneId + '). Level: ' + phaseLabel + '.\n\nCreate educational content for this scene. Return JSON only:\n{\n  "teacherIntro": "one welcoming sentence in ' + input.nativeLanguage + '",\n  "sceneDescription": "1-2 sentences in ' + input.targetLanguage + '",\n  "sceneDescriptionTranslation": "the same description in ' + input.nativeLanguage + '",\n  "objects": [\n    { "word": "word in ' + input.targetLanguage + '", "translation": "translation in ' + input.nativeLanguage + '", "emoji": "📝", "phonetic": "figurative pronunciation written for a ' + input.nativeLanguage + ' speaker, never IPA" }\n  ],\n  "questions": [\n    { "question": "open question in ' + input.nativeLanguage + '", "questionInTarget": "same question in ' + input.targetLanguage + '", "suggestedAnswer": "suggested answer in ' + input.targetLanguage + '", "answerTranslation": "answer translation in ' + input.nativeLanguage + '" }\n  ],\n  "conversationStarters": [\n    "conversation starter in ' + input.targetLanguage + '"\n  ]\n}\nNever use a third language. Include 8-12 objects and 4-6 questions.';
         try {
           const response = await invokeLLM({
             messages: [{ role: 'user', content: prompt }],
@@ -3803,18 +3803,12 @@ Máximo 2 frases por resposta.`,
         } catch {
           return {
             imageUrl,
-            teacherIntro: 'Vamos explorar a ' + sceneName + '!',
-            sceneDescription: 'This is a ' + input.sceneId.replace('_', ' ') + '.',
-            sceneDescriptionTranslation: 'Esta é uma ' + sceneName + '.',
-            objects: [
-              { word: 'table', translation: 'mesa', emoji: '🪴', phonetic: 'tei-bel' },
-              { word: 'chair', translation: 'cadeira', emoji: '🪑', phonetic: 'tcher' },
-              { word: 'window', translation: 'janela', emoji: '🪟', phonetic: 'uin-dou' },
-            ],
-            questions: [
-              { question: 'O que você vê na ' + sceneName + '?', questionInTarget: 'What do you see in the ' + input.sceneId.replace('_', ' ') + '?', suggestedAnswer: 'I see a table and chairs.', answerTranslation: 'Eu vejo uma mesa e cadeiras.' },
-            ],
-            conversationStarters: ['What is this?', 'Can you name three objects?'],
+            teacherIntro: '',
+            sceneDescription: '',
+            sceneDescriptionTranslation: '',
+            objects: [],
+            questions: [],
+            conversationStarters: [],
           };
         }
       }),
