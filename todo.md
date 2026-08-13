@@ -179,8 +179,8 @@
 - [x] Criar página /clips com lista de vídeos educacionais curtos (Clips.tsx criado, rota adicionada)
 - [x] Adicionar 2 professores fotorrealistas adicionais (Professor Carlos - Espanhol, Professor Jean - Francês)
 - [x] Garantir Professora Ingrid visível e funcional (3 professores criados: Ingrid-English, Carlos-Spanish, Jean-French)
-- [ ] Testar animação lip-sync de todos avatares — mecanismos existem mas validação individual de Ricardo, Ingrid, Carlos, Jean pendente
-- [ ] Verificar sincronização de voz real sem defeitos
+- [ ] Testar animação lip-sync de todos avatares — Ricardo, Ingrid, Carlos e Jean agora têm mapeamento regional/voz e ciclo de boca por relógio do áudio protegidos por regressão; ainda falta validação visual de fala real individual no navegador
+- [ ] Verificar sincronização de voz real sem defeitos — ciclo de áudio neural e encerramento da animação estão testados; audição e observação humana por avatar continuam pendentes
 - [x] Passar retrato, texto e URL do áudio neural do professor selecionado ao avatar ativo da VoiceConversation, eliminando fallback visual genérico sem sincronia — avatar ativo recebe retrato, nome, gênero, locale, estado e o mesmo texto enviado ao MP3 neural; ciclo limpa a fala ao pausar/terminar; TypeScript e 174 testes aprovados
 - [x] Remover o professor fixo e a voz inglesa genérica dos pontos de conversa da CompleteLesson, preservando identidade regional compatível — início, continuidade, TTS e os dois avatares agora usam professor, foto, idioma-alvo, idioma nativo e gênero selecionados; TypeScript e 176 testes aprovados, tela validada
 - [x] Popular banco com clipes educacionais (mother, father, brother, sister, family) — cinco registros A1 em educational_clips com URLs de vídeo e pôsteres individuais duráveis
