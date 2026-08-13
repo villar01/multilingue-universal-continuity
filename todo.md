@@ -803,6 +803,7 @@
 - [x] Substituir notação IPA por pronúncia figurativa em PT em todas as procedures de IA — aiProvider.ts adiciona instrução de pronúncia figurativa em todas as chamadas generateAI
 - [x] Atualizar hotspots da ImmersiveScene com pronúncia figurativa — já implementado, 181 hotspots com pronunciation field
 - [x] Exibir pronúncia figurativa em LessonBook, DailyMemoryTrainer, ActivePauseLessonPlayer — LessonBook: label "Pronúncia (como soa)"; DailyMemoryTrainer: phoneticFigurative field exibido; ActivePauseLessonPlayer: label 🔊 sem colchetes IPA
+- [x] Substituir IPA remanescente no Caderno de Aulas por pronúncia figurativa em português — frases locais, modos de cópia/lacuna/memória/ditado, histórico e exportação usam o rótulo “Como soa em português”; TypeScript e regressão aprovados com 281 testes
 
 ## 🔊 TTS SERVIDOR + EXIBIÇÃO BILÍNGUE (PRIORIDADE MÁXIMA)
 - [x] Endpoint TTS no servidor — server/_core/tts.ts com Google Cloud TTS API

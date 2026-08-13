@@ -41,7 +41,7 @@ interface NotebookEntry {
   languageCode: string;
   phrase: string;       // target language
   translation: string;  // native language (pt-BR)
-  phonetic: string;     // IPA
+  phonetic: string;     // pronúncia figurativa para leitura por falante de pt-BR
   copiedAt: number;     // timestamp
   mastered: boolean;
 }
@@ -54,6 +54,15 @@ interface LessonPhrase {
   phonetic: string;
   keyword: string;
   tip: string;
+}
+
+function FigurativePronunciation({ value, className = "" }: { value: string; className?: string }) {
+  return (
+    <p className={`text-gray-400 ${className}`}>
+      <span className="font-sans font-medium text-gray-500">Como soa em português: </span>
+      {value}
+    </p>
+  );
 }
 
 interface NotebookLessonProps {
@@ -77,32 +86,32 @@ function generateOfflinePhrases(
   // Structured phrase templates for common topics — 100% offline
   const templates: Record<string, LessonPhrase[]> = {
     greetings: [
-      { phrase: "Hello, how are you?", translation: "Olá, como você está?", phonetic: "/hɛˈloʊ haʊ ɑːr juː/", keyword: "hello", tip: "Use ao encontrar alguém" },
-      { phrase: "Good morning!", translation: "Bom dia!", phonetic: "/ɡʊd ˈmɔːrnɪŋ/", keyword: "morning", tip: "Diga antes do meio-dia" },
-      { phrase: "Good afternoon!", translation: "Boa tarde!", phonetic: "/ɡʊd ˌæftərˈnuːn/", keyword: "afternoon", tip: "Diga entre 12h e 18h" },
-      { phrase: "Good night!", translation: "Boa noite!", phonetic: "/ɡʊd naɪt/", keyword: "night", tip: "Diga ao se despedir à noite" },
-      { phrase: "Nice to meet you.", translation: "Prazer em conhecê-lo.", phonetic: "/naɪs tə miːt juː/", keyword: "meet", tip: "Ao ser apresentado a alguém" },
+      { phrase: "Hello, how are you?", translation: "Olá, como você está?", phonetic: "rê-lôu, ráu ar iú?", keyword: "hello", tip: "Use ao encontrar alguém" },
+      { phrase: "Good morning!", translation: "Bom dia!", phonetic: "gúd mór-ning", keyword: "morning", tip: "Diga antes do meio-dia" },
+      { phrase: "Good afternoon!", translation: "Boa tarde!", phonetic: "gúd af-ter-nún", keyword: "afternoon", tip: "Diga entre 12h e 18h" },
+      { phrase: "Good night!", translation: "Boa noite!", phonetic: "gúd náit", keyword: "night", tip: "Diga ao se despedir à noite" },
+      { phrase: "Nice to meet you.", translation: "Prazer em conhecê-lo.", phonetic: "náis tã mít iú", keyword: "meet", tip: "Ao ser apresentado a alguém" },
     ],
     family: [
-      { phrase: "This is my mother.", translation: "Esta é minha mãe.", phonetic: "/ðɪs ɪz maɪ ˈmʌðər/", keyword: "mother", tip: "Apresentando um familiar" },
-      { phrase: "My father works every day.", translation: "Meu pai trabalha todos os dias.", phonetic: "/maɪ ˈfɑːðər wɜːrks ˈɛvri deɪ/", keyword: "father", tip: "Descrevendo rotina" },
-      { phrase: "I have two brothers.", translation: "Eu tenho dois irmãos.", phonetic: "/aɪ hæv tuː ˈbrʌðərz/", keyword: "brothers", tip: "Falando sobre família" },
-      { phrase: "My sister is very kind.", translation: "Minha irmã é muito gentil.", phonetic: "/maɪ ˈsɪstər ɪz ˈvɛri kaɪnd/", keyword: "sister", tip: "Descrevendo personalidade" },
-      { phrase: "We are a happy family.", translation: "Somos uma família feliz.", phonetic: "/wiː ɑːr ə ˈhæpi ˈfæməli/", keyword: "family", tip: "Expressão de afeto" },
+      { phrase: "This is my mother.", translation: "Esta é minha mãe.", phonetic: "dís iz mái má-der", keyword: "mother", tip: "Apresentando um familiar" },
+      { phrase: "My father works every day.", translation: "Meu pai trabalha todos os dias.", phonetic: "mái fá-der uôrks év-ri dêi", keyword: "father", tip: "Descrevendo rotina" },
+      { phrase: "I have two brothers.", translation: "Eu tenho dois irmãos.", phonetic: "ái rév tú brâ-ders", keyword: "brothers", tip: "Falando sobre família" },
+      { phrase: "My sister is very kind.", translation: "Minha irmã é muito gentil.", phonetic: "mái sís-ter iz vé-ri káind", keyword: "sister", tip: "Descrevendo personalidade" },
+      { phrase: "We are a happy family.", translation: "Somos uma família feliz.", phonetic: "uí ar a ré-pi fá-mi-li", keyword: "family", tip: "Expressão de afeto" },
     ],
     numbers: [
-      { phrase: "There are ten students in the class.", translation: "Há dez alunos na turma.", phonetic: "/ðɛr ɑːr tɛn ˈstjuːdənts ɪn ðə klɑːs/", keyword: "ten", tip: "Contando pessoas" },
-      { phrase: "I need twenty minutes.", translation: "Preciso de vinte minutos.", phonetic: "/aɪ niːd ˈtwɛnti ˈmɪnɪts/", keyword: "twenty", tip: "Pedindo tempo" },
-      { phrase: "The price is fifty dollars.", translation: "O preço é cinquenta dólares.", phonetic: "/ðə praɪs ɪz ˈfɪfti ˈdɒlərz/", keyword: "fifty", tip: "Falando de preços" },
-      { phrase: "She is thirty years old.", translation: "Ela tem trinta anos.", phonetic: "/ʃiː ɪz ˈθɜːrti jɪərz oʊld/", keyword: "thirty", tip: "Falando de idade" },
-      { phrase: "There are one hundred pages.", translation: "Há cem páginas.", phonetic: "/ðɛr ɑːr wʌn ˈhʌndrəd ˈpeɪdʒɪz/", keyword: "hundred", tip: "Contando objetos" },
+      { phrase: "There are ten students in the class.", translation: "Há dez alunos na turma.", phonetic: "dér ar ten stiú-dants in the class", keyword: "ten", tip: "Contando pessoas" },
+      { phrase: "I need twenty minutes.", translation: "Preciso de vinte minutos.", phonetic: "ái níd tuén-ti mí-ni-ts", keyword: "twenty", tip: "Pedindo tempo" },
+      { phrase: "The price is fifty dollars.", translation: "O preço é cinquenta dólares.", phonetic: "dã práis iz fíf-ti dó-lars", keyword: "fifty", tip: "Falando de preços" },
+      { phrase: "She is thirty years old.", translation: "Ela tem trinta anos.", phonetic: "xí iz tér-ti iérz ôuld", keyword: "thirty", tip: "Falando de idade" },
+      { phrase: "There are one hundred pages.", translation: "Há cem páginas.", phonetic: "dér ar uãn rân-dred pêi-djis", keyword: "hundred", tip: "Contando objetos" },
     ],
     colors: [
-      { phrase: "The sky is blue.", translation: "O céu é azul.", phonetic: "/ðə skaɪ ɪz bluː/", keyword: "blue", tip: "Descrevendo cores" },
-      { phrase: "I love red roses.", translation: "Eu amo rosas vermelhas.", phonetic: "/aɪ lʌv rɛd ˈroʊzɪz/", keyword: "red", tip: "Expressando preferência" },
-      { phrase: "The grass is green.", translation: "A grama é verde.", phonetic: "/ðə ɡrɑːs ɪz ɡriːn/", keyword: "green", tip: "Descrevendo natureza" },
-      { phrase: "She wears a yellow dress.", translation: "Ela usa um vestido amarelo.", phonetic: "/ʃiː wɛrz ə ˈjɛloʊ drɛs/", keyword: "yellow", tip: "Descrevendo roupas" },
-      { phrase: "The night is black.", translation: "A noite é negra.", phonetic: "/ðə naɪt ɪz blæk/", keyword: "black", tip: "Descrevendo escuridão" },
+      { phrase: "The sky is blue.", translation: "O céu é azul.", phonetic: "dã skái iz blú", keyword: "blue", tip: "Descrevendo cores" },
+      { phrase: "I love red roses.", translation: "Eu amo rosas vermelhas.", phonetic: "ái lâv réd rôu-ziz", keyword: "red", tip: "Expressando preferência" },
+      { phrase: "The grass is green.", translation: "A grama é verde.", phonetic: "dã grás iz grín", keyword: "green", tip: "Descrevendo natureza" },
+      { phrase: "She wears a yellow dress.", translation: "Ela usa um vestido amarelo.", phonetic: "xí uérz a ié-lou drés", keyword: "yellow", tip: "Descrevendo roupas" },
+      { phrase: "The night is black.", translation: "A noite é negra.", phonetic: "dã náit iz blék", keyword: "black", tip: "Descrevendo escuridão" },
     ],
   };
 
@@ -334,7 +343,7 @@ export default function NotebookLesson({
       `[${new Date(e.copiedAt).toLocaleDateString("pt-BR")}] ${e.lessonTitle}\n` +
       `  ${e.phrase}\n` +
       `  Tradução: ${e.translation}\n` +
-      `  Fonética: ${e.phonetic}\n` +
+      `  Como soa em português: ${e.phonetic}\n` +
       `  ${e.mastered ? "⭐ DOMINADA" : ""}\n`
     ).join("\n");
     const blob = new Blob([`CADERNO DE AULAS — MultiLingue Universal\n\n${lines}`], { type: "text/plain" });
@@ -455,7 +464,7 @@ export default function NotebookLesson({
               {dictationRevealed && (
                 <div className="mt-2 p-3 bg-gray-50 rounded-xl">
                   <p className="text-lg font-bold text-gray-800">{currentPhrase.phrase}</p>
-                  <p className="text-sm text-gray-500 font-mono">{currentPhrase.phonetic}</p>
+                  <FigurativePronunciation value={currentPhrase.phonetic} className="text-sm font-mono" />
                 </div>
               )}
               <button
@@ -470,7 +479,7 @@ export default function NotebookLesson({
             <div className="text-center space-y-2">
               <p className="text-gray-500 text-sm mb-2">Tradução (escreva a frase sem ver o original):</p>
               <p className="text-xl font-bold text-blue-700">{currentPhrase.translation}</p>
-              <p className="text-sm text-gray-400 font-mono">{currentPhrase.phonetic}</p>
+              <FigurativePronunciation value={currentPhrase.phonetic} className="text-sm font-mono" />
               <button onClick={speakPhrase} className="text-amber-500 hover:text-amber-700 flex items-center gap-1 text-xs mx-auto">
                 <Volume2 className="h-3.5 w-3.5" /> Ouvir pronúncia
               </button>
@@ -479,7 +488,7 @@ export default function NotebookLesson({
             <div className="space-y-2">
               <p className="text-lg font-bold text-gray-800 text-center">{gapped}</p>
               <p className="text-sm text-gray-500 text-center">{currentPhrase.translation}</p>
-              <p className="text-xs text-gray-400 font-mono text-center">{currentPhrase.phonetic}</p>
+              <FigurativePronunciation value={currentPhrase.phonetic} className="text-xs font-mono text-center" />
               <button onClick={speakPhrase} className="text-amber-500 hover:text-amber-700 flex items-center gap-1 text-xs mx-auto">
                 <Volume2 className="h-3.5 w-3.5" /> Ouvir frase completa
               </button>
@@ -494,7 +503,7 @@ export default function NotebookLesson({
                 </button>
               </div>
               <p className="text-sm text-gray-500">{currentPhrase.translation}</p>
-              <p className="text-xs text-gray-400 font-mono">{currentPhrase.phonetic}</p>
+              <FigurativePronunciation value={currentPhrase.phonetic} className="text-xs font-mono" />
               <Badge variant="outline" className="text-xs">Palavra-chave: <strong className="ml-1">{currentPhrase.keyword}</strong></Badge>
             </div>
           )}
@@ -610,7 +619,7 @@ export default function NotebookLesson({
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-800 text-sm">{entry.phrase}</p>
                       <p className="text-xs text-gray-500">{entry.translation}</p>
-                      <p className="text-xs text-gray-400 font-mono">{entry.phonetic}</p>
+                      <FigurativePronunciation value={entry.phonetic} className="text-xs font-mono" />
                       <p className="text-xs text-gray-300 mt-1">{entry.lessonTitle} · {new Date(entry.copiedAt).toLocaleDateString("pt-BR")}</p>
                     </div>
                     <div className="flex flex-col gap-1 flex-shrink-0">
