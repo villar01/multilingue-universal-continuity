@@ -10,6 +10,7 @@ import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';
 import { IMMERSIVE_SCENES, type Scene, type Hotspot } from '@/pages/ImmersiveScene';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // ── Scene definitions (from ImmersiveScene) ─────────────────────────────────
 const SCENES = IMMERSIVE_SCENES;
@@ -43,6 +44,18 @@ interface Exercise {
   hotspotId?: string;
 }
 
+interface SceneLessonContent {
+  teacherIntro?: string;
+  sceneDescription?: string;
+  sceneDescriptionTranslation?: string;
+  questions?: Array<{
+    question: string;
+    questionInTarget: string;
+    suggestedAnswer: string;
+    answerTranslation: string;
+  }>;
+}
+
 // ── Censorship rules by country ─────────────────────────────────────────────
 const COUNTRY_CENSORSHIP: Record<string, string[]> = {
   BR: ['álcool excessivo', 'drogas', 'violência explícita', 'conteúdo sexual'],
@@ -74,7 +87,9 @@ export default function SceneLesson({
   onComplete,
   onBack,
 }: SceneLessonProps) {
+  const { profile } = useLanguage();
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null);
+  const [sceneContent, setSceneContent] = useState<SceneLessonContent | null>(null);
   const [tab, setTab] = useState<'scene' | 'objects' | 'exercises' | 'test' | 'chat'>('scene');
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
   const [chatInput, setChatInput] = useState('');
@@ -92,7 +107,6 @@ export default function SceneLesson({
 
   const sceneMutation = trpc.polyLesson.sceneLesson.useMutation();
   const chatMutation = trpc.polyLesson.sceneChat.useMutation();
-  const exerciseMutation = trpc.polyLesson.sceneLesson.useMutation();
 
   const sceneInfo = selectedScene;
   const color = sceneInfo?.teacherImage ? phaseColor : phaseColor;
@@ -112,20 +126,29 @@ export default function SceneLesson({
     setSelectedScene(scene);
     setTab('scene');
     setSelectedHotspot(null);
+    setSceneContent(null);
     setLearnedWords(new Set());
     setExercises([]);
     setCurrentExercise(0);
     setTestScore(null);
-    setChatHistory([{
-      role: 'assistant',
-      content: scene.teacherGreeting,
-    }]);
-    // Generate exercises for this scene
-    exerciseMutation.mutate(
-      { targetLanguage, sceneId: scene.id, phase },
+    setChatHistory([]);
+    sceneMutation.mutate(
+      { targetLanguage, nativeLanguage: profile.nativeCode || 'pt-BR', sceneId: scene.id, phase },
       {
-        onSuccess: (data: { exercises?: Exercise[] }) => {
-          setExercises(data.exercises || []);
+        onSuccess: (data: SceneLessonContent) => {
+          setSceneContent(data);
+          const introduction = [data.teacherIntro, data.sceneDescription, data.sceneDescriptionTranslation]
+            .filter((part): part is string => Boolean(part?.trim()))
+            .join('\n\n');
+          setChatHistory(introduction ? [{ role: 'assistant', content: introduction }] : []);
+          setExercises((data.questions || []).map((question, index) => ({
+            type: 'spelling' as const,
+            question: `${question.question}\n${question.questionInTarget}`,
+            questionPt: question.question,
+            answer: question.suggestedAnswer,
+            hint: question.answerTranslation,
+            hotspotId: `scene-question-${index}`,
+          })));
         },
       }
     );
@@ -150,8 +173,9 @@ export default function SceneLesson({
     chatMutation.mutate(
       {
         targetLanguage,
+        nativeLanguage: profile.nativeCode || 'pt-BR',
         sceneId: selectedScene?.id || 'kitchen',
-        sceneDescription: selectedScene?.teacherGreeting || '',
+        sceneDescription: sceneContent?.sceneDescription || selectedScene?.teacherGreeting || '',
         studentMessage: userMsg,
         history: newHistory.slice(-8).map(m => ({ role: m.role, content: m.content })),
       },
@@ -293,7 +317,7 @@ export default function SceneLesson({
   }
 
   // ── Loading exercises ─────────────────────────────────────────────────────
-  if (exerciseMutation.isPending && exercises.length === 0) {
+  if (sceneMutation.isPending && !sceneContent) {
     return (
       <div style={{ maxWidth: 480, margin: '0 auto', fontFamily: 'system-ui, sans-serif', background: '#0f0f1a', borderRadius: 20, overflow: 'hidden' }}>
         <div style={{ padding: '60px 24px', textAlign: 'center' }}>
@@ -353,7 +377,7 @@ export default function SceneLesson({
                 <img src={selectedScene.teacherImage} alt={selectedScene.teacherName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: '0 16px 16px 16px', padding: '10px 14px', border: `1px solid ${phaseColor}30`, fontSize: 13, color: '#ddd', lineHeight: 1.5 }}>
-                {selectedScene.teacherGreeting}
+                {sceneContent?.teacherIntro || selectedScene.teacherGreeting}
               </div>
             </div>
 

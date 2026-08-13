@@ -7,7 +7,8 @@ const selection = source.slice(source.indexOf("const handleSelectScene"), source
 
 describe("scene lesson greeting language", () => {
   it("does not append the Portuguese-only greeting to every selected scene", () => {
-    expect(selection).toContain("content: scene.teacherGreeting,");
+    expect(selection).toContain("setChatHistory([]);");
+    expect(selection).toContain("content: introduction");
     expect(selection).not.toContain("scene.greetingPt");
   });
 });
