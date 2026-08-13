@@ -58,6 +58,7 @@
 - [x] Corrigir as contagens contraditórias do painel principal — retiradas promessas de 69 idiomas e 200 lições; o painel comunica 143 idiomas no catálogo, 58 ativos agora, 85 em preparação e conteúdo curricular em expansão; TypeScript, regressão e interface validados
 - [x] Corrigir alegações contraditórias na página de preços — planos comunicam catálogo de 143 idiomas, 58 ativos agora, 85 em preparação e conteúdo curricular em expansão; o plano de 18 meses deixou de ser chamado de vitalício; TypeScript e 316 testes aprovados
 - [x] Corrigir alegações contraditórias na tela de planos de assinatura — os planos agora informam 143 idiomas no catálogo, 58 ativos agora, 85 em preparação e conteúdo em expansão; o produto de dois anos não é apresentado como vitalício; TypeScript e 318 testes aprovados
+- [x] Corrigir a contagem da Lição Estruturada — o cabeçalho agora distingue 58 idiomas ativos e 143 no catálogo, removendo a alegação contraditória de 69 idiomas; TypeScript e 319 testes aprovados
 - [x] Tradução em tempo real via IA offline — translateRealtime procedure em routers.ts com aiProvider
 - [x] Suporte para 50+ idiomas — LANGUAGES_57 em languages.ts com 57 idiomas definidos (integracao funcional em andamento)
 - [x] Cache de traduções frequentes — server/cache.ts com lessonCache

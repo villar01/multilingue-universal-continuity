@@ -460,7 +460,7 @@ export default function StructuredLesson() {
               <BookOpen style={{ width: 18, height: 18, color: "#818cf8" }} />
               Aulas com Professor
             </div>
-            <div style={{ fontSize: 11, color: "#94a3b8" }}>Escolha seu professor nativo · 69 idiomas</div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>Escolha seu professor nativo · 58 idiomas ativos · 143 no catálogo</div>
           </div>
           <div style={{ background: "rgba(234,179,8,0.15)", border: "1px solid rgba(234,179,8,0.3)", borderRadius: 20, padding: "4px 12px", fontSize: 13, fontWeight: 700, color: "#fbbf24" }}>
             ⭐ {xp} XP
