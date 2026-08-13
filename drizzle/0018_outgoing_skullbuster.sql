@@ -1,0 +1,1 @@
+ALTER TABLE `parental_settings` MODIFY COLUMN `pinCode` varchar(4) NOT NULL;

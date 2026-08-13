@@ -2259,7 +2259,7 @@ export type InsertChildProfile = typeof childProfiles.$inferInsert;
 export const parentalSettings = mysqlTable("parental_settings", {
   id: int("id").autoincrement().primaryKey(),
   childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
-  pinCode: varchar("pinCode", { length: 4 }).default("1234"),
+  pinCode: varchar("pinCode", { length: 4 }).notNull(),
   timeLimitMinutes: int("timeLimitMinutes").default(60),
   allowedDays: json("allowedDays").$type<boolean[]>(), // [seg, ter, qua, qui, sex, sab, dom]
   levelsAllowed: json("levelsAllowed").$type<string[]>(), // ["beginner", "intermediate", "advanced"]
