@@ -31,6 +31,7 @@ import { trpc } from "@/lib/trpc";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AnimatedTeacher from "@/components/AnimatedTeacher";
+import { AVAILABLE_LANGUAGES } from "@/lib/languages";
 // Floating flag items for hero animation — bandeira SVG + sigla
 const FLOAT_FLAGS = [
   { cc: "us", sigla: "US" }, { cc: "br", sigla: "BR" }, { cc: "fr", sigla: "FR" },
@@ -45,21 +46,8 @@ const FLOAT_FLAGS = [
   { cc: "fi", sigla: "FI" }, { cc: "cz", sigla: "CZ" }, { cc: "hu", sigla: "HU" },
 ];
 
-// Idiomas populares para seleção rápida na Home
-const POPULAR_LANGS = [
-  { code: "pt-BR", flag: "🇧🇷", name: "Português" },
-  { code: "en-US", flag: "🇺🇸", name: "English (Inglês)" },
-  { code: "es-ES", flag: "🇪🇸", name: "Español (Espanhol)" },
-  { code: "fr-FR", flag: "🇫🇷", name: "Français (Francês)" },
-  { code: "de-DE", flag: "🇩🇪", name: "Deutsch (Alemão)" },
-  { code: "it-IT", flag: "🇮🇹", name: "Italiano" },
-  { code: "ja-JP", flag: "🇯🇵", name: "日本語 (Japonês)" },
-  { code: "zh-CN", flag: "🇨🇳", name: "中文 (Mandarim)" },
-  { code: "ko-KR", flag: "🇰🇷", name: "한국어 (Coreano)" },
-  { code: "ru-RU", flag: "🇷🇺", name: "Русский (Russo)" },
-  { code: "ar-SA", flag: "🇸🇦", name: "العربية (Árabe)" },
-  { code: "hi-IN", flag: "🇮🇳", name: "हिन्दी (Hindi)" },
-];
+// Todas as escolhas iniciais vêm do catálogo ativo; idiomas em preparação ficam fora deste seletor.
+const POPULAR_LANGS = AVAILABLE_LANGUAGES.map(({ code, flag, label }) => ({ code, flag, name: label }));
 
 // Nav dropdown menus
 const NAV_IDIOMAS = [
