@@ -1190,8 +1190,9 @@ export default function Lesson() {
               <div className="mb-6">
                 <VoiceConversation
                   lessonId={parseInt(lessonId || '1')}
-                  vocabularyContext={lesson.vocabularyDetailed.map((v: any) => v.word)}
+                  vocabularyContext={lesson.vocabularyDetailed}
                   languageCode={lesson.languageCode || 'en-US'}
+                  level={resolvePracticeCEFRLevel((lesson as any).courseLevel)}
                   teacher={teacher ? {
                     id: teacher.id,
                     name: teacher.name,

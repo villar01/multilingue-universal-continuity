@@ -10,6 +10,9 @@ import { canAttachTeacherVideo } from "@/lib/teacherVideoSession";
 import { resolveVoiceConversationTeacher, type VoiceConversationTeacherInput } from "@/lib/voiceConversationTeacher";
 import UserGuide from "@/components/UserGuide";
 import { toast } from "sonner";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import type { ParetoPracticeTerm } from "@/lib/paretoPracticeCycle";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 
 interface Message {
   role: "user" | "assistant";
@@ -19,9 +22,10 @@ interface Message {
 
 interface VoiceConversationProps {
   lessonId: number;
-  vocabularyContext?: string[];
+  vocabularyContext?: Array<string | { word: string; translation?: string; example?: string; exampleSentence?: string }>;
   languageCode?: string;
   teacher?: VoiceConversationTeacherInput;
+  level?: CEFRLevel;
 }
 
 export default function VoiceConversation({
@@ -29,6 +33,7 @@ export default function VoiceConversation({
   vocabularyContext = [],
   languageCode = "en-US",
   teacher: selectedTeacher,
+  level = "A1",
 }: VoiceConversationProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,6 +49,7 @@ export default function VoiceConversation({
   const [cachedVideoUrl, setCachedVideoUrl] = useState<string | null>(null);
   const [cachedPortraitUrl, setCachedPortraitUrl] = useState<string | null>(null);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+  const [activeParetoTerm, setActiveParetoTerm] = useState<ParetoPracticeTerm | null>(null);
 
   // Offline sync via IndexedDB
   const offlineDB = useOfflineSyncDB();
@@ -74,6 +80,13 @@ export default function VoiceConversation({
       };
   const activeTeacher = selectedCompatibleTeacher ?? fallbackTeacher;
   const cachedVideoId = `lesson-video-${lessonId}-${languageCode}`;
+  const paretoTerms = vocabularyContext.flatMap((entry): ParetoPracticeTerm[] => {
+    if (typeof entry === "string") return [];
+    const word = entry.word?.trim();
+    const translation = entry.translation?.trim();
+    if (!word || !translation) return [];
+    return [{ word, translation, example: entry.example || entry.exampleSentence }];
+  }).slice(0, 6);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -518,6 +531,34 @@ export default function VoiceConversation({
     return { portuguese, english };
   };
 
+  const speakParetoTerm = async (text: string) => {
+    if (!text.trim()) return;
+    try {
+      audioElementRef.current?.pause();
+      const ttsResult = await generateTTS.mutateAsync({
+        text,
+        languageCode: activeTeacher.fallbackLanguage,
+        gender: activeTeacher.gender === "male" ? "MALE" : "FEMALE",
+      });
+      const speechSession = activeSpeechSessionRef.current + 1;
+      activeSpeechSessionRef.current = speechSession;
+      audioSessionRef.current = speechSession;
+      setActiveTeacherSpeechText(text);
+      setActiveTeacherAudioUrl(ttsResult.audioUrl);
+      setIsSpeaking(true);
+      setTeacherEmotion("encouraging");
+      if (audioElementRef.current) {
+        audioElementRef.current.src = ttsResult.audioUrl;
+        await audioElementRef.current.play();
+      }
+    } catch (error) {
+      console.error("[VoiceConversation] Pareto neural speech error:", error);
+      toast.error("Não foi possível reproduzir a pronúncia neural agora.");
+      setIsSpeaking(false);
+      setTeacherEmotion("neutral");
+    }
+  };
+
   const playableVideoUrl = isOnline ? animatedVideoUrl : cachedVideoUrl;
 
   return (
@@ -613,6 +654,33 @@ export default function VoiceConversation({
           </div>
         ))}
       </div>
+
+      {/* Pareto vocabulary practice */}
+      {paretoTerms.length > 0 && (
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4" aria-label="Prática Pareto da conversa por voz">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-amber-950">Prática Pareto da conversa</p>
+              <p className="mt-1 text-xs text-amber-900">Recupere, escreva e crie uma frase com o vocabulário desta lição.</p>
+            </div>
+            {activeParetoTerm && <Button variant="outline" size="sm" onClick={() => setActiveParetoTerm(null)}>Fechar prática</Button>}
+          </div>
+          {!activeParetoTerm && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {paretoTerms.map((term) => (
+                <Button key={term.word} size="sm" variant="outline" className="border-amber-300 bg-white text-amber-950 hover:bg-amber-100" onClick={() => setActiveParetoTerm(term)}>
+                  Praticar {term.word}
+                </Button>
+              ))}
+            </div>
+          )}
+          {activeParetoTerm && (
+            <div className="mt-4">
+              <ParetoPracticeCycle term={activeParetoTerm} level={level} onClose={() => setActiveParetoTerm(null)} onSpeak={speakParetoTerm} embedded />
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Current Transcript */}
       {currentTranscript && (
