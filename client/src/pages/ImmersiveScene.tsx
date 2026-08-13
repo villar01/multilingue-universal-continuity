@@ -13,6 +13,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
 import { createImmersiveHotspotInteraction } from "@/lib/immersiveHotspotInteraction";
+import { getImmersiveDialogTeacherSpeech } from "@/lib/immersiveDialogSpeech";
+import { getNativeDialogueTranslation, isPortugueseLocale } from "@/lib/immersiveDialogTranslation";
 import { getNativeHelpSpeechRequest } from "@/lib/immersiveSpeechChannels";
 import { type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
@@ -1363,6 +1365,7 @@ export default function ImmersiveScene() {
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
+  const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1525,16 +1528,6 @@ export default function ImmersiveScene() {
     const labels: Record<string, string> = { pt: 'PT', en: 'EN', es: 'ES', fr: 'FR', de: 'DE', it: 'IT', ja: 'JA', zh: 'ZH', ko: 'KO', ru: 'RU', ar: 'AR' };
     return labels[code] || code.toUpperCase();
   })();
-  // Returns the best available translation for a dialog line based on native language
-  const getDlgTranslation = (line: DialogLine): string => {
-    const code = (nativeLang || 'pt-BR').split('-')[0].toLowerCase();
-    // Use textPt for Portuguese natives; for others, show the target text with a 'Translation:' prefix
-    if (code === 'pt') return line.textPt || '';
-    // For EN natives learning another language: show English translation if available
-    // textPt is always Portuguese — for non-PT natives we show it as context with lang label
-    return line.textPt ? `[${nativeLangLabel}] ${line.textPt}` : '';
-  };
-
   // ── Dialog Panel (scrolling text + exercises) ──
   const [dlgOpen, setDlgOpen] = useState(false);
   const [dlgStep, setDlgStep] = useState(0);
@@ -1544,6 +1537,8 @@ export default function ImmersiveScene() {
   const [dlgAnswer, setDlgAnswer] = useState<number | null>(null);
   const [dlgWrittenAnswer, setDlgWrittenAnswer] = useState("");
   const [dlgFeedback, setDlgFeedback] = useState("");
+  const [dlgNativeTranslation, setDlgNativeTranslation] = useState("");
+  const [dlgTranslationLoading, setDlgTranslationLoading] = useState(false);
   const [dlgSuggestedHotspot, setDlgSuggestedHotspot] = useState<Hotspot | null>(null);
   const [dlgIsRecording, setDlgIsRecording] = useState(false);
   const [dlgIsProcessingSpeech, setDlgIsProcessingSpeech] = useState(false);
@@ -1553,6 +1548,34 @@ export default function ImmersiveScene() {
   const dlgRecorderRef = useRef<MediaRecorder | null>(null);
   const dlgRecordingStreamRef = useRef<MediaStream | null>(null);
   const dlgRecordingSessionRef = useRef(0);
+
+  const getDlgTranslation = (line: DialogLine): string =>
+    getNativeDialogueTranslation(line, nativeLang, dlgNativeTranslation);
+
+  useEffect(() => {
+    const line = selectedScene?.dialog[dlgStep];
+    if (!line || isPortugueseLocale(nativeLang)) {
+      setDlgNativeTranslation("");
+      setDlgTranslationLoading(false);
+      return;
+    }
+
+    let active = true;
+    setDlgNativeTranslation("");
+    setDlgTranslationLoading(true);
+    void dialogTranslateMut.mutateAsync({
+      text: line.text,
+      sourceLanguage: selectedScene.teacherLang,
+      targetLanguage: nativeLang || "pt-BR",
+    }).then((result) => {
+      if (active) setDlgNativeTranslation(result.translation);
+    }).catch(() => {
+      if (active) setDlgNativeTranslation("");
+    }).finally(() => {
+      if (active) setDlgTranslationLoading(false);
+    });
+    return () => { active = false; };
+  }, [dlgStep, nativeLang, selectedScene?.id]);
 
   const speakNativeHelp = useCallback(async (text: string) => {
     const helpText = text.trim();
@@ -1636,7 +1659,8 @@ export default function ImmersiveScene() {
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(true);
-      speak(line.text, scene.teacherLang);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
+      void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -1667,7 +1691,8 @@ export default function ImmersiveScene() {
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(true);
-      speak(line.text, selectedScene.teacherLang);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
+      void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -1694,7 +1719,8 @@ export default function ImmersiveScene() {
     }
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
-    speak(`Excellent. ${line.options[line.correctIndex]}`, scene.teacherLang, undefined, scene.teacherGender);
+    const teacherSpeech = getImmersiveDialogTeacherSpeech(`Excellent. ${line.options[line.correctIndex]}`, scene);
+    void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
     const referencedHotspotId = findReferencedHotspotId(line.options[line.correctIndex], scene.hotspots);
     const referencedHotspot = referencedHotspotId
       ? scene.hotspots.find((hotspot) => hotspot.id === referencedHotspotId) || null
@@ -2396,6 +2422,9 @@ export default function ImmersiveScene() {
                 <span style={{ fontSize: "11px", fontWeight: 700, color: selectedScene.dialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   {selectedScene.dialog[dlgStep].speaker === 'teacher' ? `🏫 ${selectedScene.teacherName}` : '👤 Você'}
                 </span>
+                {dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
+                  <span className="text-[11px] text-cyan-100/65">Traduzindo para {nativeLangLabel}…</span>
+                )}
 {getDlgTranslation(selectedScene.dialog[dlgStep]) && (
                   <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
                     — {getDlgTranslation(selectedScene.dialog[dlgStep])}
@@ -2433,7 +2462,10 @@ export default function ImmersiveScene() {
                       onClick={() => {
                         setDlgAnswer(i);
                         const correct = selectedScene.dialog[dlgStep].correctIndex === i;
-                        if (correct) speak('✅ ' + opt, selectedScene.teacherLang);
+                        if (correct) {
+                          const teacherSpeech = getImmersiveDialogTeacherSpeech(`✅ ${opt}`, selectedScene);
+                          void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
+                        }
                         setTimeout(() => dlgNext(), 1400);
                       }}
                       style={{

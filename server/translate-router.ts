@@ -2,8 +2,9 @@
  * Translate Router — Tradução por Imagem (estilo Google Translate AR)
  */
 import { z } from "zod";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM, type ImageContent, type TextContent } from "./_core/llm";
+import { generateAI } from "./aiProvider";
 
 export const translateRouter = router({
   translateImage: publicProcedure
@@ -82,5 +83,39 @@ Return ONLY valid JSON, nothing else.`,
       });
       const translation = response.choices?.[0]?.message?.content || input.word;
       return { translation: typeof translation === "string" ? translation : input.word };
+    }),
+
+  dialogueText: protectedProcedure
+    .input(
+      z.object({
+        text: z.string().trim().min(1).max(600),
+        sourceLanguage: z.string().trim().min(2).max(80),
+        targetLanguage: z.string().trim().min(2).max(80),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.sourceLanguage.toLowerCase() === input.targetLanguage.toLowerCase()) {
+        return { translation: input.text, translated: false };
+      }
+
+      try {
+        const response = await generateAI({
+          messages: [
+            {
+              role: "system",
+              content: `Translate educational dialogue from ${input.sourceLanguage} to ${input.targetLanguage}. Preserve the meaning, appropriate CEFR difficulty, and student-safe tone. Return ONLY the translated text, with no notes or labels.`,
+            },
+            { role: "user", content: input.text },
+          ],
+          temperature: 0,
+          max_tokens: 400,
+          useCache: true,
+          userId: ctx.user.id,
+        });
+        const translation = response.content.trim();
+        return { translation: translation || input.text, translated: Boolean(translation) };
+      } catch {
+        return { translation: input.text, translated: false };
+      }
     }),
 });
