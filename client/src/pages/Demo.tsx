@@ -315,6 +315,7 @@ export default function Demo() {
         message: userMsg,
         targetLanguage: selectedLang.name,
         nativeLanguage: 'pt-BR',
+        cefrLevel: 'A1',
         phase: 'infancia',
         teacherName: selectedLang.teacher.name,
         history: chatMessages.map(m => ({ role: m.role === 'teacher' ? 'assistant' : 'user', content: m.text })),

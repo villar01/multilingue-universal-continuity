@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   assessConversationText: vi.fn(),
   assessConversationOutput: vi.fn(),
+  ensureConversationAccess: vi.fn(),
   invokeLLM: vi.fn(),
 }));
 
@@ -10,6 +11,7 @@ vi.mock("./conversationSafetyGate", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./conversationSafetyGate")>()),
   assessConversationText: mocks.assessConversationText,
   assessConversationOutput: mocks.assessConversationOutput,
+  ensureConversationAccess: mocks.ensureConversationAccess,
 }));
 vi.mock("./_core/llm", () => ({ invokeLLM: mocks.invokeLLM }));
 
@@ -17,18 +19,20 @@ import { appRouter } from "./routers";
 
 const allowed = { allowed: true, context: { userId: 7, ageGroup: "adulto", moderationLevel: "standard" } };
 const blocked = { allowed: false, reason: "blocked_content", flaggedContent: ["blocked"] };
-const input = { message: "Hello", targetLanguage: "en-US", nativeLanguage: "pt-BR", teacherName: "James", history: [] };
+const input = { message: "Hello", targetLanguage: "en-US", nativeLanguage: "pt-BR", cefrLevel: "A1" as const, teacherName: "James", history: [] };
 
 function createCaller() {
   return appRouter.createCaller({ user: { id: 7 } } as any);
 }
 
 describe("polyLesson.teacherChat safety", () => {
+  mocks.ensureConversationAccess.mockResolvedValue(allowed.context);
+
   it("blocks unsafe lesson-chat input before calling the model", async () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
     const result = await createCaller().polyLesson.teacherChat({ ...input, message: "unsafe" });
     expect(mocks.invokeLLM).not.toHaveBeenCalled();
-    expect(result.reply).toContain("frase segura");
+    expect(result.reply).toBe("");
   });
 
   it("does not expose unsafe generated lesson-chat output", async () => {
@@ -37,6 +41,6 @@ describe("polyLesson.teacherChat safety", () => {
     mocks.invokeLLM.mockResolvedValue({ choices: [{ message: { content: "unsafe output" } }] });
     const result = await createCaller().polyLesson.teacherChat(input);
     expect(mocks.assessConversationOutput).toHaveBeenCalledWith(7, "Hello", "unsafe output", "en-US");
-    expect(result.reply).toContain("frase segura");
+    expect(result.reply).toBe("");
   });
 });

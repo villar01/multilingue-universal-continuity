@@ -564,6 +564,10 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
 
   const handleChatSend = async () => {
     if (!chatInput.trim()) return;
+    if (!isLoggedIn) {
+      toast.error('Entre na sua conta para conversar com o professor.');
+      return;
+    }
     const userMsg = chatInput.trim();
     setChatInput('');
     const newHistory = [...chatHistory, { role: 'user' as const, content: userMsg }];
@@ -573,6 +577,8 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
       const result = await teacherChatMutation.mutateAsync({
         message: userMsg,
         targetLanguage: languageCode,
+        nativeLanguage: selectedNativeLanguage,
+        cefrLevel: selectedCefrLevel,
         teacherName,
         teacherGender,
         phase,
@@ -585,7 +591,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
       speakTeacher(result.reply);
       addXp(5);
     } catch {
-      setChatHistory(h => [...h, { role: 'assistant', content: 'Ótima pergunta! Continue praticando! 😊' }]);
+      setChatHistory(h => [...h, { role: 'assistant', content: '' }]);
     }
   };
 

@@ -3444,7 +3444,8 @@ Return JSON object: {"vocabulary": [{"word": "word in ${targetName}", "translati
       .input(z.object({
         message: z.string(),
         targetLanguage: z.string(),
-        nativeLanguage: z.string().default('pt-BR'),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         teacherName: z.string().default('Professor'),
         teacherGender: z.enum(['male', 'female']).default('female'),
         phase: z.string().default('infancia'),
@@ -3453,41 +3454,37 @@ Return JSON object: {"vocabulary": [{"word": "word in ${targetName}", "translati
         history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
-        const safeFallback = { reply: "Vamos continuar com uma frase segura da lição.", teacherName: input.teacherName };
+        const safeFallback = { reply: '', teacherName: input.teacherName };
         const inputSafety = await assessConversationText(ctx.user.id, input.message, input.targetLanguage);
         if (!inputSafety.allowed) return safeFallback;
-        const phaseLabels: Record<string, string> = {
-          infancia: 'Infância A1 — vocabulário básico, frases simples',
-          crianca: 'Criança A2 — frases cotidianas, perguntas simples',
-          adolescencia: 'Adolescência B1 — conversação intermediária',
-          adulto: 'Adulto B2 — conversação fluente, expressões idiomáticas',
-          fluente: 'Fluente C1-C2 — domínio completo da língua',
+        const cefrLabels: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
+          A1: 'concrete vocabulary and very short phrases',
+          A2: 'everyday routines and connected simple sentences',
+          B1: 'familiar topics and personal opinions',
+          B2: 'detailed explanations and comparisons',
+          C1: 'nuanced discussion with precise vocabulary',
+          C2: 'flexible, idiomatic, and highly precise conversation',
         };
-        const phaseDesc = phaseLabels[input.phase] || phaseLabels['infancia'];
-        const systemPrompt = `Você é ${input.teacherName}, um(a) professor(a) de ${input.targetLanguage} que ensina falantes de português brasileiro.
+        const systemPrompt = `You are ${input.teacherName}, a teacher of ${input.targetLanguage} for speakers of ${input.nativeLanguage}.
 
-Nível atual do aluno: ${phaseDesc}.
-Palavra/tópico atual da aula: ${input.currentWord || input.lessonTitle || 'vocabulário básico'}.
+Student CEFR level: ${input.cefrLevel} — ${cefrLabels[input.cefrLevel]}.
+Current lesson word/topic: ${input.currentWord || input.lessonTitle || 'the current lesson vocabulary'}.
 
-Seu estilo de ensino:
-- Fale SEMPRE em português brasileiro com o aluno (idioma nativo)
-- Quando ensinar palavras/frases, diga-as em ${input.targetLanguage} e depois explique em português
-- Seja caloroso(a), encorajador(a) e paciente — como um professor real
-- Faça perguntas simples para testar o aluno (ex: "Como se diz 'maçã' em inglês?")
-- Corrija erros gentilmente e celebre acertos com entusiasmo
-- Use emojis ocasionalmente para tornar o aprendizado divertido
-- Para nível Infância/A1: use frases curtíssimas, muita repetição, muitos exemplos visuais (emojis)
-- Para nível Fluente: pode usar expressões idiomáticas e discussões mais complexas
-- Sempre relacione o que está ensinando com situações da vida real
-- Máximo 3-4 frases por resposta — seja conciso e direto`;
+Teaching style:
+- Explain and encourage in ${input.nativeLanguage}.
+- Use ${input.targetLanguage} only for the words or phrases being taught, then explain them in ${input.nativeLanguage}.
+- Be warm, concise, patient, and age-appropriate.
+- Correct errors gently and celebrate progress.
+- Keep replies to 3–4 sentences and stay within the lesson topic.`;
         const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
           { role: 'system', content: systemPrompt },
           ...(input.history || []).slice(-8),
           { role: 'user', content: input.message },
         ];
         const response = await invokeLLM({ messages });
-        const reply = (response.choices[0]?.message?.content as string) || 'Vamos continuar aprendendo juntos! 😊';
+        const reply = (response.choices[0]?.message?.content as string) || '';
         const outputSafety = await assessConversationOutput(ctx.user.id, input.message, reply, input.targetLanguage);
         return outputSafety.allowed ? { reply, teacherName: input.teacherName } : safeFallback;
       }),
