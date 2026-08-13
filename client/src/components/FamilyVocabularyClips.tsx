@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, Sparkles, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import { trpc } from "@/lib/trpc";
 
 type FamilyClip = {
   id: string;
@@ -30,7 +32,10 @@ export default function FamilyVocabularyClips() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [rate, setRate] = useState(1);
   const [repeat, setRepeat] = useState(false);
+  const [practiceOpen, setPracticeOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const practiceTtsMut = trpc.tts.speak.useMutation();
   const clip = FAMILY_CLIPS[activeIndex];
 
   useEffect(() => {
@@ -55,6 +60,27 @@ export default function FamilyVocabularyClips() {
   const chooseClip = (index: number) => {
     setActiveIndex(index);
     setIsPlaying(false);
+    setPracticeOpen(false);
+  };
+
+  const speakPractice = async (text: string) => {
+    if (!text.trim()) return;
+    if (practiceAudioRef.current) {
+      practiceAudioRef.current.pause();
+      practiceAudioRef.current = null;
+    }
+    try {
+      const result = await practiceTtsMut.mutateAsync({ text: text.slice(0, 400), voiceLang: "en-US", gender: "female" });
+      if (!result.success || !result.audioBase64) return;
+      const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const audio = new Audio(url);
+      practiceAudioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play();
+    } catch {
+      // The A1 recall and writing cycle remains available when neural playback fails.
+    }
   };
 
   return (
@@ -101,6 +127,9 @@ export default function FamilyVocabularyClips() {
             <Button type="button" size="sm" variant="outline" className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white" onClick={() => { const video = videoRef.current; if (video) { video.currentTime = 0; void video.play(); } }}>
               <RotateCcw className="mr-1 h-4 w-4" /> Repetir
             </Button>
+            <Button type="button" size="sm" variant="outline" className="border-amber-300/60 bg-amber-300/10 text-amber-100 hover:bg-amber-300/20 hover:text-amber-50" onClick={() => setPracticeOpen(true)}>
+              <Sparkles className="mr-1 h-4 w-4" /> Praticar Pareto
+            </Button>
             <label className="flex items-center gap-1 text-xs text-slate-200"><Volume2 className="h-3.5 w-3.5" /> Velocidade
               <select value={rate} onChange={(event) => setRate(Number(event.target.value))} className="rounded border border-slate-600 bg-slate-800 px-1.5 py-1 text-white">
                 <option value={0.75}>0,75×</option><option value={1}>1×</option><option value={1.25}>1,25×</option>
@@ -110,6 +139,18 @@ export default function FamilyVocabularyClips() {
           </div>
         </div>
       </div>
+
+      {practiceOpen && (
+        <div className="mt-4">
+          <ParetoPracticeCycle
+            term={{ word: clip.word, translation: clip.translation, example: clip.sentence }}
+            onClose={() => setPracticeOpen(false)}
+            onSpeak={speakPractice}
+            embedded
+            level="A1"
+          />
+        </div>
+      )}
 
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
         {FAMILY_CLIPS.map((item, index) => (
