@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
 import { ArrowLeft, Volume2, CheckCircle, XCircle, ChevronRight, BookOpen, Sparkles, RotateCcw, Trophy, Star, Zap, Heart, MessageCircle, Mic, MicOff } from "lucide-react";
@@ -307,6 +308,7 @@ export default function StructuredLesson() {
   const [currentLessonIdx, setCurrentLessonIdx] = useState(0);
   const [streak, setStreak]     = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   const tinyLessonMut = trpc.tinyLesson.generateByScenario.useMutation();
   const ttsMut        = trpc.tts.speak.useMutation();
@@ -329,6 +331,10 @@ export default function StructuredLesson() {
   // ── Gerar Aula ────────────────────────────────────────────────────────────
   const generateLesson = useCallback(async (t: typeof teacher, tp: typeof topic, lv: string) => {
     if (!t || !tp) return;
+    if (!isAuthenticated || authLoading) {
+      toast.info("Entre para gerar o vocabulário personalizado desta aula.");
+      return;
+    }
     setPhase("vocab"); setVocab([]); setVocabIdx(0); setFlipped(false);
     setScore(0); setLives(5); setStreak(0);
     showMsg(`Olá! Vamos aprender ${tp.label} hoje! 🎉`, t.voiceLang);
@@ -347,7 +353,7 @@ export default function StructuredLesson() {
       toast.error("Erro ao gerar aula. Tente novamente.");
       setPhase("select-topic");
     }
-  }, [tinyLessonMut, showMsg]);
+  }, [tinyLessonMut, showMsg, isAuthenticated, authLoading]);
 
   // ── Q&A local ─────────────────────────────────────────────────────────────
   const generateQA = (words: VocabWord[], _lang: string): QAItem[] => {

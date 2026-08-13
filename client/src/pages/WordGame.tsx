@@ -44,7 +44,7 @@ interface Word { word: string; translation: string; emoji?: string; phonetic?: s
 
 export default function WordGame() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [phase, setPhase] = useState<"setup" | "game" | "result">("setup");
   const [lang, setLang] = useState<Language>(LANGUAGES_57[0]);
   const [category, setCategory] = useState(CATEGORIES[0]);
@@ -67,6 +67,10 @@ export default function WordGame() {
   }, []);
 
   const loadWords = async () => {
+    if (!isAuthenticated || authLoading) {
+      toast.info("Entre para gerar palavras personalizadas.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await generateWords.mutateAsync({

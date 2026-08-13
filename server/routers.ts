@@ -3274,7 +3274,7 @@ Rules:
   // ── Tiny Lesson: Vocabulário Situacional por IA ──────────────────────
   tinyLesson: router({
     // Gera vocabulário contextual por situação real
-    generateByScenario: publicProcedure
+    generateByScenario: protectedProcedure
       .input(z.object({
         scenario: z.string(),
         targetLanguage: z.string().default("en-US"),
