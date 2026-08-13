@@ -21,4 +21,12 @@ describe("CompleteLesson teacher voice", () => {
     expect(source).toContain("imageUrl={lessonTeacher?.photoUrl || lessonTeacher?.photo_url}");
     expect(source).toContain("currentText={activeTeacherSpeechText || lesson.storyText || \"\"}");
   });
+
+  it("uses the learner CEFR level and target locale instead of fixed A1 and English inputs", () => {
+    expect(source).toContain('resolvePracticeCEFRLevel(localStorage.getItem("ml_current_level") || "A1")');
+    expect(source).toContain("userLevel: learnerCefrLevel");
+    expect(source).toContain('language: targetLanguageCode.split("-")[0]');
+    expect(source).not.toContain('userLevel: "A1"');
+    expect(source).not.toContain('language: "en"');
+  });
 });

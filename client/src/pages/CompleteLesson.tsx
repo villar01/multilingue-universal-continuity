@@ -22,6 +22,7 @@ import EnhancedTeacherAvatar from "@/components/EnhancedTeacherAvatar";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import ClickableText from "@/components/ClickableWord";
 import PhrasalVerbsDictionary from "@/components/PhrasalVerbsDictionary";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 
 interface ConversationMessage {
   role: "user" | "assistant";
@@ -55,6 +56,7 @@ export default function CompleteLesson() {
   const [lessonStartedAt] = useState(() => Date.now());
   const [targetLanguageCode] = useState(() => localStorage.getItem("ml_target_lang") || "en-US");
   const [nativeLanguageCode] = useState(() => localStorage.getItem("ml_native_lang") || "pt-BR");
+  const [learnerCefrLevel] = useState(() => resolvePracticeCEFRLevel(localStorage.getItem("ml_current_level") || "A1"));
   const [selectedTeacherId] = useState(() => Number(localStorage.getItem("ml_selected_teacher")) || undefined);
   const { isRecording, audioBlob, startRecording, stopRecording, reset: resetRecording } = useVoiceRecording();
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -120,7 +122,7 @@ export default function CompleteLesson() {
     try {
       const result = await startConversation.mutateAsync({
         lessonId: lesson.id,
-        userLevel: "A1",
+        userLevel: learnerCefrLevel,
         targetLanguage: targetLanguageCode,
         nativeLanguage: nativeLanguageCode,
       });
@@ -188,7 +190,7 @@ export default function CompleteLesson() {
         toast.info("Transcrevendo áudio...");
         const result = await transcribeAudio.mutateAsync({
           audioData: base64Audio,
-          language: "en",
+          language: targetLanguageCode.split("-")[0],
         });
 
         // Adicionar transcrição ao campo de mensagem
@@ -224,7 +226,7 @@ export default function CompleteLesson() {
       console.log("[handleSendMessage] Chamando continueConversation.mutateAsync...");
       const result = await continueConversation.mutateAsync({
         lessonId: lesson.id,
-        userLevel: "A1",
+        userLevel: learnerCefrLevel,
         targetLanguage: targetLanguageCode,
         nativeLanguage: nativeLanguageCode,
         history: conversationHistory.concat(userMsg).map(msg => ({
@@ -263,7 +265,7 @@ export default function CompleteLesson() {
       // Adicionar mensagem de fallback
       const fallbackMessage: ConversationMessage = {
         role: "assistant",
-        content: "[PT] Desculpe, tive um problema técnico. Pode repetir sua pergunta?\n[EN] Sorry, I had a technical issue. Can you repeat your question?",
+        content: "Não foi possível continuar a conversa agora. Tente novamente em instantes.",
         timestamp: new Date(),
       };
       setConversationHistory(prev => [...prev, fallbackMessage]);
