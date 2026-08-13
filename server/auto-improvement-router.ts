@@ -3,7 +3,7 @@
  */
 
 import { z } from "zod";
-import { publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { autoFixTTSPronunciation, testPronunciationQuality, getOptimizedTTSConfig, CERTIFIED_VOICES } from "./tts-auto-fix";
 import { generateFeatureCode, autoImproveSystem } from "./blackbox-ai";
 
@@ -11,7 +11,7 @@ export const autoImprovementRouter = router({
   /**
    * Corrige automaticamente problemas de pronúncia TTS
    */
-  fixTTSPronunciation: publicProcedure
+  fixTTSPronunciation: adminProcedure
     .input(
       z.object({
         language: z.string(),
@@ -50,7 +50,7 @@ export const autoImprovementRouter = router({
   /**
    * Testa qualidade de pronúncia
    */
-  testPronunciation: publicProcedure
+  testPronunciation: protectedProcedure
     .input(
       z.object({
         language: z.string(),
@@ -104,7 +104,7 @@ export const autoImprovementRouter = router({
   /**
    * Gera código automaticamente para funcionalidade pendente
    */
-  generateFeature: publicProcedure
+  generateFeature: adminProcedure
     .input(
       z.object({
         featureName: z.string(),
@@ -127,7 +127,7 @@ export const autoImprovementRouter = router({
   /**
    * Sistema de autoaperfeiçoamento: detecta e resolve problemas
    */
-  autoFix: publicProcedure
+  autoFix: adminProcedure
     .input(
       z.object({
         problemDescription: z.string(),
