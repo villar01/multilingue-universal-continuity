@@ -21,4 +21,12 @@ describe("adaptação de exercício pedagógico", () => {
     expect(pedagogicalSource).toContain("if (!isCorrect && awaitingCorrectiveRetry)");
     expect(pedagogicalSource).toContain("Tentar novamente com a dica");
   });
+
+  it("usa os formatos de erro persistidos para reforçar a próxima lição autenticada sem enviar respostas", () => {
+    expect(routerSource).toContain("generateLessonContent: protectedProcedure");
+    expect(routerSource).toContain("const errorPatterns = await db.getUserErrorPatterns(ctx.user.id)");
+    expect(routerSource).toContain("const weakExerciseTypes = errorPatterns");
+    expect(routerSource).toContain("Include one additional gentle, vocabulary-only reinforcement exercise");
+    expect(routerSource).not.toContain("input.wrongAnswers");
+  });
 });

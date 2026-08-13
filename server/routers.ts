@@ -676,7 +676,7 @@ export const appRouter = router({
       }),
 
     // Gerar conteúdo completo de aula (vocabulário, diálogo, exercícios)
-    generateLessonContent: publicProcedure
+    generateLessonContent: protectedProcedure
       .input(
         z.object({
           lessonTitle: z.string(),
@@ -686,7 +686,7 @@ export const appRouter = router({
           level: z.string().optional().default('beginner'),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import("./_core/llm");
         const { getPhaseFromLevel, getPhaseConfig, buildPedagogicalPrompt } = await import("./_core/pedagogicalLevels");
         const { buildLanguageLogicPrompt } = await import("./_core/languageLogic");
@@ -696,7 +696,16 @@ export const appRouter = router({
         const phaseConfig = getPhaseConfig(phase);
         const pedagogicalPrompt = buildPedagogicalPrompt(phase, lang, native, input.lessonTitle);
         const langLogicPrompt = buildLanguageLogicPrompt(input.languageCode, lang, native, phase);
-        const systemPrompt = pedagogicalPrompt + '\n\n' + langLogicPrompt;
+        const errorPatterns = await db.getUserErrorPatterns(ctx.user.id);
+        const weakExerciseTypes = errorPatterns
+          .filter((pattern: any) => typeof pattern.errorType === "string" && pattern.errorType.startsWith("pedagogical:"))
+          .slice(0, 3)
+          .map((pattern: any) => pattern.errorType.split(":").at(-1))
+          .filter((value): value is string => Boolean(value));
+        const adaptationPrompt = weakExerciseTypes.length > 0
+          ? `\n\nADAPTATION: The learner recently struggled with these exercise formats: ${weakExerciseTypes.join(", ")}. Include one additional gentle, vocabulary-only reinforcement exercise for these formats. Do not introduce vocabulary outside this lesson or exceed the CEFR complexity.`
+          : "";
+        const systemPrompt = pedagogicalPrompt + '\n\n' + langLogicPrompt + adaptationPrompt;
         try {
           const response = await invokeLLM({
             messages: [

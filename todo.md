@@ -611,7 +611,7 @@
 - [x] Criar componente LessonDictionary.tsx (dicionário consultável em qualquer aula) — LessonDictionary.tsx com busca, CEFR level, pronúncia bilateral, sinônimos
 - [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge + level progress bar + difficulty label exibidos na barra de exercícios
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
-- [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — completeLesson agora salva currentLevel (A1→C2) no perfil; adaptação automática de perguntas por erros do aluno ainda pendente
+- [x] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — o perfil persiste A1→C2; erros pedagógicos registram somente formato/CEFR, a tela oferece revisão corretiva e a próxima geração autenticada reforça os formatos frágeis sem introduzir vocabulário fora da lição; TypeScript e 190 testes aprovados
 - [x] Registrar erros dos exercícios pedagógicos no histórico do aluno e oferecer uma tentativa corretiva orientada antes de avançar para a próxima questão — rota autenticada grava apenas tipo/CEFR do erro, sem resposta textual, e a interface exige uma nova tentativa com dica antes de seguir; TypeScript e 189 testes aprovados
 - [x] Remover A1 e inglês fixos da conversa e transcrição da CompleteLesson, usando o CEFR e o idioma-alvo selecionados pelo aluno — conversa recebe CEFR normalizado e o reconhecimento usa a base do locale alvo; TypeScript e 187 testes aprovados
 
