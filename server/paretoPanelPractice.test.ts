@@ -14,6 +14,6 @@ describe("prática Pareto no painel de vocabulário", () => {
   it("mantém a prática em voz neural regional e recebe o nível CEFR da cena", () => {
     expect(panelSource).not.toContain("speakNaturalVoice");
     expect(panelSource).toContain("voiceLang: targetLang, gender: voiceGender");
-    expect(sceneSource).toContain('practiceLevel={selectedScene?.difficulty === "advanced" ? "C1" : selectedScene?.difficulty === "intermediate" ? "B1" : "A1"}');
+    expect(sceneSource).toContain("practiceLevel={resolvePracticeCEFRLevel(selectedScene?.difficulty)}");
   });
 });

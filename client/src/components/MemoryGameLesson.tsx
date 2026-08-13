@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { speakText } from "@/hooks/useNaturalVoice";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { trpc } from "@/lib/trpc";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import { toast } from "sonner";
 import {
   Brain, RotateCcw, CheckCircle, XCircle, Volume2,
@@ -531,7 +532,7 @@ export default function MemoryGameLesson({
             onClose={() => setMode(null)}
             onSpeak={speakPareto}
             embedded
-            level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}
+            level={resolvePracticeCEFRLevel(level)}
           />
           {vocabulary.length > 1 && (
             <Button

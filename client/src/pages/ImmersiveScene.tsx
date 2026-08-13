@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../components/Notebook";
 import ParetoPanel from "../components/ParetoPanel";
 import { ParetoPracticeCycle } from "../components/ParetoPracticeCycle";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
@@ -2610,7 +2611,7 @@ export default function ImmersiveScene() {
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
           currentScene={selectedScene?.id}
-          practiceLevel={selectedScene?.difficulty === "advanced" ? "C1" : selectedScene?.difficulty === "intermediate" ? "B1" : "A1"}
+          practiceLevel={resolvePracticeCEFRLevel(selectedScene?.difficulty)}
           voiceGender={selectedScene?.teacherGender}
           onAddToNotebook={handleAddParetoToNotebook}
         />

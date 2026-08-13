@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import { toast } from "sonner";
 import {
   Volume2,
@@ -962,7 +963,7 @@ export default function DailyMemoryTrainer({
           onClose={() => setParetoOpen(false)}
           onSpeak={speakPareto}
           embedded
-          level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}
+          level={resolvePracticeCEFRLevel(level)}
         />
       )}
 

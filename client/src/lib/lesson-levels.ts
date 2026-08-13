@@ -521,6 +521,23 @@ export function getLevelByXP(totalXP: number): CEFRLevel {
   return 'A1';
 }
 
+/**
+ * Converte rótulos usados por modalidades de prática no nível CEFR canônico.
+ * Aceita os seis níveis explícitos e os três agrupamentos visíveis ao aluno.
+ */
+export function resolvePracticeCEFRLevel(level?: string): CEFRLevel {
+  const normalized = level?.trim().toUpperCase().replace(/[_\s-]+/g, "_");
+  if (normalized === 'A1' || normalized === 'A2' || normalized === 'B1' || normalized === 'B2' || normalized === 'C1' || normalized === 'C2') {
+    return normalized;
+  }
+  if (normalized === 'BASIC' || normalized === 'A2') return 'A2';
+  if (normalized === 'INTERMEDIATE' || normalized === 'B1') return 'B1';
+  if (normalized === 'UPPER_INTERMEDIATE' || normalized === 'B2') return 'B2';
+  if (normalized === 'ADVANCED' || normalized === 'C1') return 'C1';
+  if (normalized === 'PROFICIENT' || normalized === 'C2') return 'C2';
+  return 'A1';
+}
+
 /** Retorna perguntas filtradas por nível */
 export function getQuestionsByLevel(level: CEFRLevel): LessonQuestion[] {
   return LESSON_QUESTIONS.filter(q => q.level === level);

@@ -13,6 +13,6 @@ describe("jogos de memorização com ciclo Pareto", () => {
 
   it("envia a palavra pelo TTS neural do idioma da lição e aplica CEFR por nível", () => {
     expect(source).toContain("voiceLang: languageCode");
-    expect(source).toContain('level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}');
+    expect(source).toContain("level={resolvePracticeCEFRLevel(level)}");
   });
 });

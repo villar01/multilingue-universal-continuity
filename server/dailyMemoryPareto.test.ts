@@ -12,6 +12,6 @@ describe("treino diário com ciclo Pareto", () => {
 
   it("usa voz neural da variante regional ativa e aumenta o requisito por nível", () => {
     expect(source).toContain("voiceLang: activeVariant?.lang || languageCode");
-    expect(source).toContain('level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}');
+    expect(source).toContain("level={resolvePracticeCEFRLevel(level)}");
   });
 });
