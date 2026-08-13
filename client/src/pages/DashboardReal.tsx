@@ -26,8 +26,8 @@ import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useState, useEffect } from "react";
 
-// ─── Tipos de nível de curso ────────────────────────────────────────────────
-type CourseLevel = "basico" | "intermediario" | "avancado" | "negocios_tecnologia";
+// ─── Etapas CEFR ────────────────────────────────────────────────────────────
+type CourseLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
 interface LevelOption {
   id: CourseLevel;
@@ -44,9 +44,9 @@ interface LevelOption {
 
 const LEVEL_OPTIONS: LevelOption[] = [
   {
-    id: "basico",
-    label: "Básico",
-    description: "Primeiros passos no idioma",
+    id: "A1",
+    label: "A1",
+    description: "Fundamentos essenciais",
     icon: <GraduationCap className="h-6 w-6" />,
     color: "text-green-700",
     bgColor: "bg-green-50",
@@ -56,9 +56,21 @@ const LEVEL_OPTIONS: LevelOption[] = [
     activeText: "text-white",
   },
   {
-    id: "intermediario",
-    label: "Intermediário",
-    description: "Expanda seu vocabulário",
+    id: "A2",
+    label: "A2",
+    description: "Frases do dia a dia",
+    icon: <BookOpen className="h-6 w-6" />,
+    color: "text-emerald-700",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-200",
+    activeBg: "bg-emerald-600",
+    activeBorder: "border-emerald-600",
+    activeText: "text-white",
+  },
+  {
+    id: "B1",
+    label: "B1",
+    description: "Conversação independente",
     icon: <BookOpen className="h-6 w-6" />,
     color: "text-blue-700",
     bgColor: "bg-blue-50",
@@ -68,10 +80,22 @@ const LEVEL_OPTIONS: LevelOption[] = [
     activeText: "text-white",
   },
   {
-    id: "avancado",
-    label: "Avançado",
-    description: "Fluência e expressões",
+    id: "B2",
+    label: "B2",
+    description: "Interação e argumentos",
     icon: <TrendingUp className="h-6 w-6" />,
+    color: "text-indigo-700",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
+    activeBg: "bg-indigo-600",
+    activeBorder: "border-indigo-600",
+    activeText: "text-white",
+  },
+  {
+    id: "C1",
+    label: "C1",
+    description: "Fluência avançada",
+    icon: <Briefcase className="h-6 w-6" />,
     color: "text-purple-700",
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
@@ -80,31 +104,29 @@ const LEVEL_OPTIONS: LevelOption[] = [
     activeText: "text-white",
   },
   {
-    id: "negocios_tecnologia",
-    label: "Negócios / Tecnologia",
-    description: "Vocabulário profissional",
-    icon: <Briefcase className="h-6 w-6" />,
-    color: "text-orange-700",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-200",
-    activeBg: "bg-orange-600",
-    activeBorder: "border-orange-600",
+    id: "C2",
+    label: "C2",
+    description: "Domínio e nuances",
+    icon: <Sparkles className="h-6 w-6" />,
+    color: "text-rose-700",
+    bgColor: "bg-rose-50",
+    borderColor: "border-rose-200",
+    activeBg: "bg-rose-600",
+    activeBorder: "border-rose-600",
     activeText: "text-white",
   },
 ];
 
-// Mapeia nível → palavras-chave para filtrar lições
-const LEVEL_KEYWORDS: Record<CourseLevel, string[]> = {
-  basico: ["basic", "basics", "beginner", "introduction", "intro", "greetings", "alphabet", "numbers", "colors", "family", "food", "animals", "body", "clothes", "weather", "school", "a1", "a2", "básico", "iniciante", "introdução", "saudações", "números", "cores", "família", "animais"],
-  intermediario: ["intermediate", "conversation", "grammar", "tenses", "vocabulary", "phrases", "b1", "b2", "intermediário", "conversação", "gramática", "tempos verbais", "vocabulário"],
-  avancado: ["advanced", "fluency", "idioms", "expressions", "phrasal", "literature", "c1", "c2", "avançado", "fluência", "expressões", "literatura", "verbos frasais"],
-  negocios_tecnologia: ["business", "technology", "tech", "professional", "finance", "marketing", "email", "meeting", "presentation", "startup", "ai", "software", "negócios", "tecnologia", "profissional", "finanças", "reunião", "apresentação"],
+const LEGACY_LEVEL_TO_CEFR: Record<string, CourseLevel> = {
+  basico: "A1",
+  intermediario: "B1",
+  avancado: "C1",
+  negocios_tecnologia: "B2",
 };
 
-function matchesLevel(lesson: { title: string; description?: string | null }, level: CourseLevel): boolean {
-  const keywords = LEVEL_KEYWORDS[level];
-  const text = `${lesson.title} ${lesson.description || ""}`.toLowerCase();
-  return keywords.some(kw => text.includes(kw));
+function resolveStoredCefrLevel(value: string | null): CourseLevel {
+  if (value && LEVEL_OPTIONS.some(level => level.id === value)) return value as CourseLevel;
+  return LEGACY_LEVEL_TO_CEFR[value || ""] || "A1";
 }
 
 // ─── Componente principal ────────────────────────────────────────────────────
@@ -121,16 +143,19 @@ export default function DashboardReal() {
   // Nível persistido em localStorage
   const [selectedLevel, setSelectedLevel] = useState<CourseLevel>(() => {
     try {
-      return (localStorage.getItem("multilingue_course_level") as CourseLevel) || "basico";
+      return resolveStoredCefrLevel(
+        localStorage.getItem("multilingue_cefr_level") || localStorage.getItem("multilingue_course_level")
+      );
     } catch {
-      return "basico";
+      return "A1";
     }
   });
 
   const handleLevelChange = (level: CourseLevel) => {
     setSelectedLevel(level);
     try {
-      localStorage.setItem("multilingue_course_level", level);
+      localStorage.setItem("multilingue_cefr_level", level);
+      localStorage.removeItem("multilingue_course_level");
     } catch {}
   };
 
@@ -145,10 +170,12 @@ export default function DashboardReal() {
 
   // Mapear nível do curso para o level do banco
   const levelToDbLevel: Record<CourseLevel, string> = {
-    basico: 'beginner',
-    intermediario: 'intermediate',
-    avancado: 'advanced',
-    negocios_tecnologia: 'beginner',
+    A1: 'beginner',
+    A2: 'beginner',
+    B1: 'intermediate',
+    B2: 'intermediate',
+    C1: 'advanced',
+    C2: 'advanced',
   };
 
   // Encontrar o courseId correto buscando no banco pelo level
@@ -288,7 +315,7 @@ export default function DashboardReal() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
                   {LEVEL_OPTIONS.map((level) => {
                     const isActive = selectedLevel === level.id;
                     return (
