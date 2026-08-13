@@ -398,6 +398,12 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
     setIntroLoaded(false);
     setTeacherIntro('');
     const v = vocab[vocabIndex];
+    if (!isLoggedIn) {
+      setTeacherIntro(`Vamos aprender a palavra "${v.word}"! Em português significa "${v.translation}". 🎯`);
+      setIntroLoaded(true);
+      speakWord(v.word);
+      return;
+    }
     wordIntroMutation.mutateAsync({
       word: v.word,
       translation: v.translation,
@@ -416,7 +422,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, onComplete }
       setIntroLoaded(true);
       speakWord(v.word);
     });
-  }, [vocabIndex, stage]);
+  }, [vocabIndex, stage, isLoggedIn]);
 
   // Shuffle options for quiz
   useEffect(() => {

@@ -3492,7 +3492,7 @@ Seu estilo de ensino:
         return outputSafety.allowed ? { reply, teacherName: input.teacherName } : safeFallback;
       }),
     // Gerar frase de apresentação inicial do professor para cada palavra
-    wordIntro: publicProcedure
+    wordIntro: protectedProcedure
       .input(z.object({
         word: z.string(),
         translation: z.string(),
