@@ -3,7 +3,8 @@ import { X, BookOpen, Volume2, Search, Star, ChevronLeft, ChevronRight, BookMark
 import { PARETO_VOCAB, searchWords, getWordsByScene, type ParetoWord } from "@/lib/vocab-pareto";
 import { HOTSPOT_TRANSLATIONS } from "@/lib/hotspot-translations";
 import { trpc } from "@/lib/trpc";
-import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 
 // Get translated word for a given BCP-47 target language
 function getTranslatedWord(word: ParetoWord, targetLang: string): string {
@@ -53,6 +54,8 @@ interface ParetoPanelProps {
   targetLang: string; // e.g. "en-US", "en-GB", "fr-FR"
   targetLangName: string; // e.g. "English (US)"
   currentScene?: string; // filter by scene
+  practiceLevel?: CEFRLevel;
+  voiceGender?: "male" | "female";
   onAddToNotebook?: (word: ParetoWord) => void;
 }
 
@@ -90,12 +93,17 @@ export default function ParetoPanel({
   targetLang,
   targetLangName,
   currentScene,
+  practiceLevel = "A1",
+  voiceGender,
   onAddToNotebook,
 }: ParetoPanelProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [page, setPage] = useState(0);
   const [sceneFilter, setSceneFilter] = useState(false); // default: show ALL words, not just scene words
+  const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
+  const practiceTtsMut = trpc.tts.speak.useMutation();
+  const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
   const [starred, setStarred] = useState<Set<string>>(() => {
     try {
       const s = localStorage.getItem("ml_starred_words");
@@ -138,6 +146,26 @@ export default function ParetoPanel({
     setCategory(k);
     setPage(0);
   };
+
+  const speakPractice = useCallback(async (text: string) => {
+    if (!text.trim()) return;
+    if (practiceAudioRef.current) {
+      practiceAudioRef.current.pause();
+      practiceAudioRef.current = null;
+    }
+    try {
+      const result = await practiceTtsMut.mutateAsync({ text: text.slice(0, 400), voiceLang: targetLang, gender: voiceGender });
+      if (!result.success || !result.audioBase64) return;
+      const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const audio = new Audio(url);
+      practiceAudioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play();
+    } catch {
+      // The cycle stays available for recall and writing when neural audio is unavailable.
+    }
+  }, [practiceTtsMut, targetLang, voiceGender]);
 
   if (!isOpen) return null;
 
@@ -217,8 +245,10 @@ export default function ParetoPanel({
                 word={word}
                 targetLang={targetLang}
                 targetLangName={targetLangName}
+                voiceGender={voiceGender}
                 isStarred={starred.has(word.id)}
                 onStar={() => toggleStar(word.id)}
+                onPractice={() => setPracticeWord(word)}
                 onAddToNotebook={onAddToNotebook}
               />
             ))
@@ -247,6 +277,21 @@ export default function ParetoPanel({
             </button>
           </div>
         )}
+        {practiceWord && (
+          <div className="absolute inset-0 z-10 flex items-end bg-slate-950/55 p-3 sm:items-center">
+            <ParetoPracticeCycle
+              term={{
+                word: getTranslatedWord(practiceWord, targetLang),
+                translation: targetLang.split("-")[0].toLowerCase() === "pt" ? practiceWord.enUS : practiceWord.ptBR,
+                example: targetLang.split("-")[0].toLowerCase() === "pt" ? practiceWord.examplePt : practiceWord.example,
+              }}
+              onClose={() => setPracticeWord(null)}
+              onSpeak={speakPractice}
+              embedded
+              level={practiceLevel}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -256,15 +301,19 @@ function WordCard({
   word,
   targetLang,
   targetLangName,
+  voiceGender,
   isStarred,
   onStar,
+  onPractice,
   onAddToNotebook,
 }: {
   word: ParetoWord;
   targetLang: string;
   targetLangName: string;
+  voiceGender?: "male" | "female";
   isStarred: boolean;
   onStar: () => void;
+  onPractice: () => void;
   onAddToNotebook?: (word: ParetoWord) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -275,7 +324,7 @@ function WordCard({
     if (!text?.trim()) return;
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     try {
-      const r = await ttsMut.mutateAsync({ text: text.slice(0, 400), voiceLang: lang });
+      const r = await ttsMut.mutateAsync({ text: text.slice(0, 400), voiceLang: lang, gender: voiceGender });
       if (r.success && r.audioBase64) {
         const bytes = Uint8Array.from(atob(r.audioBase64), c => c.charCodeAt(0));
         const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
@@ -285,10 +334,10 @@ function WordCard({
         audio.play().catch(() => {});
         return;
       }
-    } catch {}
-    // Fallback: Edge TTS Neural
-    speakNaturalVoice(text, lang, { rate: 0.85 });
-  }, [ttsMut]);
+    } catch {
+      // Neural audio failure leaves the word visible for recall and writing practice.
+    }
+  }, [ttsMut, voiceGender]);
 
   // Determine display word based on target language
   const base = targetLang.split("-")[0].toLowerCase();
@@ -410,6 +459,13 @@ function WordCard({
               </button>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={e => { e.stopPropagation(); onPractice(); }}
+            className="w-full rounded-lg border border-amber-300/45 bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-100 hover:bg-amber-400/20"
+          >
+            Praticar: lembrar, escrever e criar frase
+          </button>
           {/* en-GB variant note */}
           {targetLang === "en-GB" && (
             <p className="text-xs text-amber-400/70">

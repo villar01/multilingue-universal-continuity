@@ -2610,6 +2610,8 @@ export default function ImmersiveScene() {
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
           currentScene={selectedScene?.id}
+          practiceLevel={selectedScene?.difficulty === "advanced" ? "C1" : selectedScene?.difficulty === "intermediate" ? "B1" : "A1"}
+          voiceGender={selectedScene?.teacherGender}
           onAddToNotebook={handleAddParetoToNotebook}
         />
       </div>
