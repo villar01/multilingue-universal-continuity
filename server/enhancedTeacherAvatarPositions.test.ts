@@ -11,6 +11,10 @@ describe('posições faciais calibradas do avatar aprimorado', () => {
     expect(source).toContain('"teacher-portrait-sophie_"');
     expect(source).toContain('"teacher-portrait-emre_"');
     expect(source).toContain('"teacher-portrait-verified-b_"');
+    expect(source).toContain('"teacher-sarah-mitchell_"');
+    expect(source).toContain('"teacher-james-williams-v2_"');
+    expect(source).toContain('"teacher-ingrid-english_"');
+    expect(source).toContain('"teacher-ricardo-portuguese_"');
   });
 
   it('mantém a posição genérica somente como fallback e conserva a exceção do Ricardo', () => {

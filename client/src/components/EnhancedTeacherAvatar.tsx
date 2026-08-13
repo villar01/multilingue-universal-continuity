@@ -64,6 +64,10 @@ const PHOTO_POSITIONS: Record<string, PhotoPos> = {
   "teacher-portrait-maja_":   { mouthX: 50, mouthY: 47, mouthScale: 0.83, leftEyeX: 38, leftEyeY: 30, rightEyeX: 62, rightEyeY: 30, skinTone: "#e2b38f" },
   "teacher-portrait-emre_":   { mouthX: 50, mouthY: 48, mouthScale: 0.84, leftEyeX: 38, leftEyeY: 31, rightEyeX: 62, rightEyeY: 31, skinTone: "#b87956" },
   "teacher-portrait-verified-b_": { mouthX: 50, mouthY: 45, mouthScale: 0.86, leftEyeX: 38, leftEyeY: 28, rightEyeX: 62, rightEyeY: 28, skinTone: "#c8956a" },
+  "teacher-sarah-mitchell_": { mouthX: 50, mouthY: 52, mouthScale: 0.84, leftEyeX: 38, leftEyeY: 35, rightEyeX: 62, rightEyeY: 35, skinTone: "#e8c4a0" },
+  "teacher-james-williams-v2_": { mouthX: 50, mouthY: 53, mouthScale: 0.87, leftEyeX: 38, leftEyeY: 35, rightEyeX: 62, rightEyeY: 35, skinTone: "#c8956a" },
+  "teacher-ingrid-english_": { mouthX: 50, mouthY: 51, mouthScale: 0.83, leftEyeX: 38, leftEyeY: 34, rightEyeX: 62, rightEyeY: 34, skinTone: "#e8c4a0" },
+  "teacher-ricardo-portuguese_": { mouthX: 50, mouthY: 52, mouthScale: 0.88, leftEyeX: 38, leftEyeY: 35, rightEyeX: 62, rightEyeY: 35, skinTone: "#c8956a" },
 };
 const DEFAULT_POS: PhotoPos = { mouthX: 50, mouthY: 73, mouthScale: 0.92, leftEyeX: 37, leftEyeY: 38, rightEyeX: 63, rightEyeY: 38, skinTone: "#d4956a" };
 
