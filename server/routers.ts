@@ -2382,14 +2382,18 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         return outputSafety.allowed ? { prompts } : safeFallback;
       }),
     // Tradução em tempo real
-    translateRealtime: publicProcedure
+    translateRealtime: protectedProcedure
       .input(z.object({
         text: z.string(),
         fromLanguage: z.string(),
         toLanguage: z.string(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
+        const safeFallback = { translation: "", wordByWord: [], blocked: true };
+        const inputSafety = await assessConversationText(ctx.user.id, input.text, input.fromLanguage);
+        if (!inputSafety.allowed) return safeFallback;
         const result = await invokeLLM({
           messages: [
             { role: 'system', content: 'You are a translator. Return JSON with fields: translation (string), wordByWord (array of {word, translation}).' },
@@ -2400,7 +2404,8 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         try {
           let rawResult = (result.choices[0].message.content as string) ?? "{}";
           rawResult = await sanitizeContent(rawResult, input.fromLanguage) || rawResult;
-          return JSON.parse(rawResult);
+          const outputSafety = await assessConversationOutput(ctx.user.id, input.text, rawResult, input.toLanguage);
+          return outputSafety.allowed ? JSON.parse(rawResult) : safeFallback;
         }
         catch { return { translation: input.text, wordByWord: [] }; }
       }),
