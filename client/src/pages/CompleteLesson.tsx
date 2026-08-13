@@ -109,7 +109,7 @@ export default function CompleteLesson() {
     try {
       const result = await startConversation.mutateAsync({
         lessonId: lesson.id,
-        userLevel: "beginner",
+        userLevel: "A1",
         targetLanguage: "English",
         nativeLanguage: "Portuguese",
       });
@@ -213,7 +213,7 @@ export default function CompleteLesson() {
       console.log("[handleSendMessage] Chamando continueConversation.mutateAsync...");
       const result = await continueConversation.mutateAsync({
         lessonId: lesson.id,
-        userLevel: "beginner",
+        userLevel: "A1",
         targetLanguage: "English",
         nativeLanguage: "Portuguese",
         history: conversationHistory.concat(userMsg).map(msg => ({

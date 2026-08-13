@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Mic, Send, Volume2, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 
 interface DialogueMessage {
   role: "npc" | "user";
@@ -23,7 +24,6 @@ interface DialogueMessage {
 export default function RoleplayPage() {
   const { user } = useAuth();
   const [scenarioId, setScenarioId] = useState<number | null>(null);
-  const [sessionId, setSessionId] = useState<number | null>(null);
   const [messages, setMessages] = useState<DialogueMessage[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -35,6 +35,9 @@ export default function RoleplayPage() {
     vocabularyScore: 0,
     fluencyScore: 0,
   });
+  const targetLanguage = localStorage.getItem("ml_target_lang") || "en-US";
+  const nativeLanguage = localStorage.getItem("ml_native_lang") || "pt-BR";
+  const userLevel = resolvePracticeCEFRLevel(localStorage.getItem("ml_free_talk_level") || "A1");
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -42,7 +45,6 @@ export default function RoleplayPage() {
 
   const startScenarioMutation = trpc.conversationAI.start.useMutation();
   const submitResponseMutation = trpc.conversationAI.continue.useMutation();
-  const completeConversationMutation = trpc.conversationAI?.feedback.useMutation();
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -56,16 +58,13 @@ export default function RoleplayPage() {
     const initScenario = async () => {
       try {
         setIsLoading(true);
-        const result = await startScenarioMutation.mutateAsync({ scenarioId, lessonId: 1, userLevel: "beginner", targetLanguage: "en", nativeLanguage: "pt" } as any) as any;
-        setSessionId(result?.sessionId);
-        setCurrentNode(result?.firstNode);
-
-        if (result?.firstNode) {
+        const result = await startScenarioMutation.mutateAsync({ scenarioId, lessonId: 1, userLevel, targetLanguage, nativeLanguage } as any) as any;
+        if (result?.question) {
+          setCurrentNode({ contextHint: "Responda ao professor no idioma estudado." });
           setMessages([
             {
               role: "npc",
-              text: result?.firstNode.npcDialogue,
-              audioUrl: result?.firstNode.npcAudioUrl,
+              text: result.question,
             },
           ]);
         }
@@ -116,57 +115,38 @@ export default function RoleplayPage() {
 
   // Submit user response
   const submitUserResponse = async (text: string, audioUrl?: string) => {
-    if (!sessionId || !currentNode || !user) return;
+    if (!currentNode || !user || !text.trim()) return;
 
     try {
       setIsLoading(true);
 
       const result = await submitResponseMutation.mutateAsync({
         lessonId: 1,
-        userLevel: "beginner",
-        targetLanguage: "en",
-        nativeLanguage: "pt",
+        userLevel,
+        targetLanguage,
+        nativeLanguage,
         history: [{ role: "user" as const, content: text }],
       } as any) as any;
 
-      // Add user message
+      // Add the learner turn first, then the protected continuation returned by the server.
       setMessages((prev) => [
         ...prev,
         {
           role: "user",
           text,
           audioUrl,
-          feedback: {
-            grammarScore: result?.feedback.grammarScore,
-            pronunciationScore: result?.feedback.pronunciationScore,
-            vocabularyScore: result?.feedback.vocabularyScore,
-            fluencyScore: result?.feedback.fluencyScore,
-          },
         },
       ]);
 
-      // Update stats
-      setSessionStats({
-        grammarScore: result?.feedback.grammarScore,
-        pronunciationScore: result?.feedback.pronunciationScore,
-        vocabularyScore: result?.feedback.vocabularyScore,
-        fluencyScore: result?.feedback.fluencyScore,
-      });
-
-      // Add NPC response
-      if (result.nextNode && result.nextNode !== null) {
+      if (result?.response) {
         setMessages((prev) => [
           ...prev,
           {
             role: "npc",
-            text: result.nextNode!.npcDialogue,
-            audioUrl: result.nextNode!.npcAudioUrl,
+            text: result.response,
           },
         ]);
-        setCurrentNode(result.nextNode);
-      } else {
-        // Conversation ended
-        await completeConversation();
+        setCurrentNode({ contextHint: "Continue a conversa usando o vocabulário da lição." });
       }
 
       setUserInput("");
@@ -174,19 +154,6 @@ export default function RoleplayPage() {
       toast.error("Failed to submit response");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Complete conversation
-  const completeConversation = async () => {
-    if (!sessionId) return;
-
-    try {
-      const result = await completeConversationMutation.mutateAsync({ lessonId: 1, userLevel: "beginner", targetLanguage: "en", nativeLanguage: "pt", userMessage: userInput } as any) as any;
-      toast.success(`Conversation completed! Overall score: ${result?.overallScore}`);
-      setCurrentNode(null);
-    } catch (error) {
-      toast.error("Failed to complete conversation");
     }
   };
 

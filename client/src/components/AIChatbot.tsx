@@ -114,7 +114,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
       lessonId,
       targetLanguage: "English",
       nativeLanguage: "Portuguese",
-      userLevel: "beginner",
+      userLevel: "A1",
       history: messages.concat(userMessage).map(m => ({
         role: m.role,
         content: m.content

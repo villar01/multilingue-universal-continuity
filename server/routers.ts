@@ -2183,16 +2183,18 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // IA Conversacional
   conversationAI: router({
     // Iniciar conversa com pergunta aberta
-    start: publicProcedure
+    start: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
-          userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+          userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const safeFallback = { question: "Let us practice a safe language sentence." };
+        await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
           throw new TRPCError({
@@ -2211,27 +2213,33 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           nativeLanguage: input.nativeLanguage,
         };
 
+        const inputSafety = await assessConversationText(ctx.user.id, `${context.lessonTitle}\n${context.lessonTopic}`, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
+
         const question = await generateConversationStarter(context);
-        return { question };
+        const outputSafety = await assessConversationOutput(ctx.user.id, context.lessonTopic, question, input.targetLanguage);
+        return outputSafety.allowed ? { question } : safeFallback;
       }),
 
     // Continuar conversa
-    continue: publicProcedure
+    continue: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
-          userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+          userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
-          history: z.array(
-            z.object({
-              role: z.enum(["user", "assistant", "system"]),
-              content: z.string(),
-            })
-          ),
-        })
-      )
-      .mutation(async ({ input }) => {
+         history: z.array(
+           z.object({
+             role: z.enum(["user", "assistant", "system"]),
+             content: z.string(),
+           })
+         ),
+       })
+     )
+      .mutation(async ({ input, ctx }) => {
+        const safeFallback = { response: "Let us continue with a safe language-practice sentence." };
+        await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
           throw new TRPCError({
@@ -2250,22 +2258,33 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           nativeLanguage: input.nativeLanguage,
         };
 
+        const learnerText = input.history.filter((message) => message.role === "user").slice(-1)[0]?.content || "";
+        const inputSafety = await assessConversationText(ctx.user.id, learnerText, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
+
         const response = await continueConversation(context, input.history);
-        return { response };
+        const outputSafety = await assessConversationOutput(ctx.user.id, learnerText, response, input.targetLanguage);
+        return outputSafety.allowed ? { response } : safeFallback;
       }),
 
     // Obter feedback sobre resposta
-    feedback: publicProcedure
+    feedback: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
-          userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+          userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
           userMessage: z.string(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const safeFallback = {
+          feedback: "Let us continue with safe language practice.",
+          corrections: [],
+          encouragement: "Keep practicing safely.",
+        };
+        await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
           throw new TRPCError({
@@ -2284,21 +2303,27 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           nativeLanguage: input.nativeLanguage,
         };
 
-        return await provideFeedback(context, input.userMessage);
+        const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
+        const feedback = await provideFeedback(context, input.userMessage);
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.userMessage, JSON.stringify(feedback), input.targetLanguage);
+        return outputSafety.allowed ? feedback : safeFallback;
       }),
 
     // Gerar prompts de conversação para uma lição
-    generatePrompts: publicProcedure
+    generatePrompts: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
-          userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+          userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
           count: z.number().min(1).max(20).optional(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const safeFallback = { prompts: ["Let us practice a safe language sentence."] };
+        await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
           throw new TRPCError({
@@ -2317,8 +2342,11 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           nativeLanguage: input.nativeLanguage,
         };
 
+        const inputSafety = await assessConversationText(ctx.user.id, `${context.lessonTitle}\n${context.lessonTopic}`, input.targetLanguage);
+        if (!inputSafety.allowed) return safeFallback;
         const prompts = await generateConversationPrompts(context, input.count || 10);
-        return { prompts };
+        const outputSafety = await assessConversationOutput(ctx.user.id, context.lessonTopic, prompts.join("\n"), input.targetLanguage);
+        return outputSafety.allowed ? { prompts } : safeFallback;
       }),
     // Tradução em tempo real
     translateRealtime: publicProcedure

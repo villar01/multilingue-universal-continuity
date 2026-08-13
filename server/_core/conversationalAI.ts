@@ -6,12 +6,23 @@
 
 import { invokeLLM } from "./llm";
 
+export type ConversationCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+const CONVERSATION_LEVEL_GUIDANCE: Record<ConversationCEFRLevel, string> = {
+  A1: "Use concrete everyday words, no more than 6 words per sentence, and simple identification or yes/no questions.",
+  A2: "Use common routine vocabulary, no more than 10 words per sentence, and short descriptive questions.",
+  B1: "Use familiar travel, work, and personal-experience topics with sentences of at most 18 words.",
+  B2: "Use supported opinions, comparisons, and error correction with sentences of at most 25 words.",
+  C1: "Use nuanced professional or academic vocabulary, paraphrase, and argument with sentences of at most 35 words.",
+  C2: "Use precise cultural nuance, debate, and sophisticated reformulation with sentences of at most 50 words.",
+};
+
 export interface ConversationContext {
   lessonTitle: string;
   lessonTopic: string;
   storyText: string;
   vocabulary: string[];
-  userLevel: "beginner" | "intermediate" | "advanced";
+  userLevel: ConversationCEFRLevel;
   targetLanguage: string;
   nativeLanguage: string;
 }
@@ -29,6 +40,8 @@ export async function generateConversationStarter(
 ): Promise<string> {
   const systemPrompt = `You are a friendly language teacher teaching ${context.targetLanguage} to a ${context.userLevel} student.
 The current lesson is about: ${context.lessonTopic}
+
+CEFR CONSTRAINT: ${CONVERSATION_LEVEL_GUIDANCE[context.userLevel]}
 
 Generate ONE open-ended question in ${context.targetLanguage} that:
 1. Is related to the lesson topic
@@ -51,7 +64,7 @@ IMPORTANT: Return ONLY the question in ${context.targetLanguage}, nothing else.`
   } catch (error) {
     console.error("Error generating conversation starter:", error);
     // Fallback genérico
-    return context.userLevel === "beginner" 
+    return context.userLevel === "A1" || context.userLevel === "A2"
       ? "Tell me about your family."
       : "Can you describe your family and what you like to do together?";
   }
@@ -70,6 +83,7 @@ LESSON CONTEXT:
 - Topic: ${context.lessonTopic}
 - Key vocabulary: ${context.vocabulary.join(", ")}
 - Student level: ${context.userLevel}
+- CEFR constraint: ${CONVERSATION_LEVEL_GUIDANCE[context.userLevel]}
 
 YOUR ROLE:
 1. Respond naturally to the student's message
@@ -116,6 +130,7 @@ export async function provideFeedback(
   encouragement: string;
 }> {
   const systemPrompt = `You are a language teacher analyzing a ${context.userLevel} student's response in ${context.targetLanguage}.
+CEFR constraint: ${CONVERSATION_LEVEL_GUIDANCE[context.userLevel]}
 
 Analyze this message and provide:
 1. Positive feedback on what they did well
@@ -196,6 +211,7 @@ export async function generateConversationPrompts(
   count: number = 10
 ): Promise<string[]> {
   const systemPrompt = `You are a language teacher creating conversation prompts for a ${context.userLevel} ${context.targetLanguage} lesson.
+CEFR constraint: ${CONVERSATION_LEVEL_GUIDANCE[context.userLevel]}
 
 LESSON: ${context.lessonTopic}
 VOCABULARY: ${context.vocabulary.join(", ")}
