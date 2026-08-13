@@ -64,23 +64,23 @@ export default function LocalAINotification() {
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-bold text-blue-900 dark:text-blue-100">
-              Melhore sua experiência com IA Local
+              Use IA Local com uma integração configurada
             </h3>
             <p className="mt-1 pr-6 text-xs text-blue-700 dark:text-blue-300">
               Instale uma IA gratuita no seu computador para ter:
             </p>
             <ul className="mt-2 hidden space-y-1 text-xs text-blue-600 dark:text-blue-400 sm:block">
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Respostas e prática de idiomas com processamento local
+                <span className="text-green-500">✓</span> Prática de texto local no Ollama e menor dependência de serviços externos
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Mais privacidade e menor dependência de respostas externas
+                <span className="text-green-500">✓</span> Mais privacidade para tarefas executadas no computador configurado
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Funcionamento offline
+                <span className="text-green-500">✓</span> Uso offline do modelo local após o download
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-green-500">✓</span> Funcionamento local quando o modelo compatível estiver instalado
+                <span className="text-green-500">✓</span> Integração direta com o app quando a conexão cliente-local estiver disponível
               </li>
             </ul>
 
@@ -122,7 +122,7 @@ export default function LocalAINotification() {
                     <strong>Passo 4:</strong> Quando aparecer <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">&gt;&gt;&gt;</code> significa que está pronto. Digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">/bye</code> e tecle Enter para sair. A IA fica instalada permanentemente.
                   </li>
                   <li>
-                    <strong>Passo 5:</strong> O app detecta o Ollama localmente na porta 11434 e pode usar o Qwen 2.5 para geração de texto, conversas e prática no dispositivo. A voz neural e a animação labial continuam sendo produzidas pelos mecanismos próprios de voz e avatar do app.
+                    <strong>Passo 5:</strong> O Qwen 2.5 estará disponível no seu computador para prática local pelo Ollama. Nesta versão hospedada, o servidor não detecta automaticamente a porta local do navegador do aluno: a integração direta cliente-local precisa estar configurada antes de o app usar esse modelo. A voz neural e a animação labial continuam sendo produzidas pelos mecanismos próprios de voz e avatar do app.
                   </li>
                 </ol>
                 <div className="mt-2 rounded-lg bg-amber-100/50 p-2 dark:bg-amber-900/20">

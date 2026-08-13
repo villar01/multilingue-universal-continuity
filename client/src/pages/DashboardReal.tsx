@@ -565,7 +565,7 @@ export default function DashboardReal() {
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Cpu className={`h-5 w-5 ${iaNativaAtiva ? "text-green-600" : "text-amber-600"}`} />
-                  IA Nativa Local
+                  Runtime local do servidor
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -573,7 +573,7 @@ export default function DashboardReal() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-green-700">
                       <CheckCircle2 className="h-4 w-4" />
-                      IA local ativa — desempenho otimizado
+                      Provedor local do servidor ativo
                     </div>
                     <div className="text-xs text-green-600">
                       {ollamaOnline && "Ollama: Online"}
@@ -585,10 +585,10 @@ export default function DashboardReal() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-amber-700">
                       <AlertCircle className="h-4 w-4" />
-                      IA local não detectada
+                      Provedor local do servidor indisponível
                     </div>
                     <p className="text-xs text-amber-600">
-                      Instale Ollama ou LM Studio para respostas instantâneas, privacidade total e funcionamento offline.
+                      A página mostra somente provedores acessíveis ao servidor. Um modelo no computador do aluno requer integração cliente-local explícita.
                     </p>
                     <Link href="/ia-nativa">
                       <Button size="sm" variant="outline" className="w-full mt-2 border-amber-400 text-amber-700 hover:bg-amber-100">

@@ -53,7 +53,7 @@ export default function IANativa() {
           </Link>
           <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
             <Cpu className="h-5 w-5 text-purple-600" />
-            IA Nativa Local
+            IA Local — Runtime do Servidor
           </h1>
         </div>
       </header>
@@ -66,19 +66,19 @@ export default function IANativa() {
               {anyLocal ? (
                 <>
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  IA Nativa Ativa
+                  Runtime local do servidor ativo
                 </>
               ) : (
                 <>
                   <XCircle className="h-6 w-6 text-amber-600" />
-                  IA Nativa Não Detectada
+                  Runtime local do servidor indisponível
                 </>
               )}
             </CardTitle>
             <CardDescription>
               {anyLocal
-                ? "Sua IA local está funcionando. O app usará seus recursos para respostas mais rápidas e sem depender de servidores externos."
-                : "Instale uma IA local para acelerar suas lições, reduzir latência e funcionar mesmo sem internet."}
+                ? "O servidor deste app encontrou um provedor local configurado. Esse status não verifica o Ollama instalado apenas no computador do aluno."
+                : "Nenhum provedor local foi encontrado no servidor deste app. Uma instalação no computador do aluno requer integração cliente-local explícita."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -135,42 +135,39 @@ export default function IANativa() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <Sparkles className="h-5 w-5 text-purple-600" />
-              Por que usar IA Nativa no seu computador?
+              Sobre IA local e integração com o app
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg bg-purple-50 border border-purple-100">
                 <Gauge className="h-8 w-8 text-purple-600 mb-2" />
-                <h3 className="font-semibold mb-1">Muito Mais Rápido</h3>
+                <h3 className="font-semibold mb-1">Processamento local configurado</h3>
                 <p className="text-sm text-slate-600">
-                  As respostas são geradas no seu próprio computador, sem esperar servidores remotos. Latência quase zero.
+                  Um modelo local pode executar tarefas de texto sem enviar esse processamento ao provedor remoto, quando a integração apropriada estiver configurada.
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
                 <Shield className="h-8 w-8 text-blue-600 mb-2" />
-                <h3 className="font-semibold mb-1">Privacidade Total</h3>
+                <h3 className="font-semibold mb-1">Privacidade por tarefa</h3>
                 <p className="text-sm text-slate-600">
-                  Seus dados de aprendizado nunca saem do seu computador. Nada é enviado para servidores de terceiros.
+                  O modelo local reduz dependência de geração remota, mas outras funções do app podem continuar usando servidor e armazenamento conforme a política de privacidade.
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-green-50 border border-green-100">
                 <WifiOff className="h-8 w-8 text-green-600 mb-2" />
-                <h3 className="font-semibold mb-1">Funciona Offline</h3>
+                <h3 className="font-semibold mb-1">Modelo disponível offline</h3>
                 <p className="text-sm text-slate-600">
-                  Sem internet? Sem problema. A IA local continua funcionando para suas lições e exercícios.
+                  Depois do download, o modelo pode funcionar offline no Ollama; o uso dentro desta versão hospedada depende de uma integração cliente-local ainda configurável.
                 </p>
               </div>
             </div>
             <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
               <p className="text-sm text-amber-800">
-                <strong>Importante:</strong> Com IA nativa ativa, o app reduz drasticamente o uso de recursos de terceiros.
-                Isso significa menos custo de servidores, menos carga de processamento remoto, e uma experiência muito mais fluida para você.
-                O app detecta automaticamente sua IA local e a utiliza como prioridade.
+                <strong>Importante:</strong> O status acima verifica somente provedores acessíveis ao servidor do app. Uma instalação de Ollama no computador do aluno não é detectada automaticamente por esta versão hospedada.
+                A integração direta cliente-local deve ser habilitada antes de o app enviar tarefas para esse modelo.
                 <br/><br/>
-                <strong>Voz natural e animação:</strong> Com IA local, a geração de voz natural e animação dos professores virtuais
-                acontece no seu próprio computador, sem depender de servidores externos. Isso resulta em voz de altíssima qualidade,
-                animação lip-sync perfeita e respostas instantâneas — tudo sem custo adicional.
+                <strong>Voz natural e animação:</strong> Voz neural e animação dos professores usam os mecanismos próprios do app. Instalar Qwen não cria voz neural nem animação labial.
               </p>
             </div>
           </CardContent>
@@ -186,10 +183,8 @@ export default function IANativa() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-blue-800">
-              Para aproveitar ao máximo esta plataforma — com voz natural de altíssima qualidade, animação dos professores virtuais,
-              respostas instantâneas e funcionamento offline — é necessário instalar a IA Qwen2.5 no seu computador.
-              A instalação é <strong>gratuita</strong>, leva menos de 5 minutos, e reduz drasticamente o uso de recursos externos.
-              O app detecta automaticamente quando a IA está ativa e passa a usá-la como prioridade.
+              Qwen2.5 no Ollama é uma opção para prática local de texto. Sua instalação não é obrigatória para usar esta plataforma e não ativa automaticamente voz neural, animação ou modo offline do app hospedado.
+              Consulte as licenças e requisitos atuais do modelo antes de instalar.
             </p>
           </CardContent>
         </Card>
@@ -199,10 +194,10 @@ export default function IANativa() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <Download className="h-5 w-5 text-green-600" />
-              Instalação Automática do Qwen2.5
+              Instalação guiada do Qwen2.5
             </CardTitle>
             <CardDescription>
-              Escolha seu sistema operacional e siga os comandos. Tudo é gratuito e automático.
+              Escolha seu sistema operacional e siga os comandos oficiais. Licenças, tamanhos e compatibilidade variam por modelo e equipamento.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -300,16 +295,10 @@ export default function IANativa() {
               </h3>
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm text-slate-600 mb-2">Passo 1: Instalar Ollama com um comando</p>
-                  <div className="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm flex items-center justify-between">
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <Terminal className="h-4 w-4 text-green-400 flex-shrink-0" />
-                      <span className="truncate">curl -fsSL https://ollama.com/install.sh | sh</span>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("curl -fsSL https://ollama.com/install.sh | sh", "linux-install")}>
-                      <Copy className="h-3 w-3" /> {copiedCmd === "linux-install" ? "Copiado!" : "Copiar"}
-                    </Button>
-                  </div>
+                  <p className="text-sm text-slate-600 mb-2">Passo 1: Abra as instruções oficiais para Linux e escolha o método adequado à sua distribuição.</p>
+                  <a href="https://docs.ollama.com/linux" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Instruções oficiais do Ollama</Button>
+                  </a>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600 mb-2">Passo 2: Instalar o Qwen2.5</p>
@@ -329,10 +318,7 @@ export default function IANativa() {
             {/* Info sobre o modelo */}
             <div className="p-4 rounded-lg bg-purple-50 border border-purple-100">
               <p className="text-sm text-purple-800">
-                <strong>Sobre o Qwen2.5 3B:</strong> Modelo de 1.9 GB, gratuito e open-source.
-                Melhor IA gratuita multilingual com suporte para português, inglês, espanhol, francês, alemão, italiano,
-                japonês, chinês, coreano e mais. Roda em computadores com 4GB+ de RAM.
-                Para computadores com 8GB+ de RAM, você pode usar <code className="bg-purple-100 px-1 rounded">qwen2.5:7b</code> para qualidade ainda superior.
+                <strong>Sobre o Qwen2.5 3B:</strong> modelo de linguagem local disponível no catálogo Ollama. Tamanho, requisitos de memória, licença e variantes dependem da versão/quantização; confirme os detalhes na página oficial antes de baixar.
               </p>
             </div>
           </CardContent>
@@ -402,15 +388,13 @@ export default function IANativa() {
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-slate-700">
-                <strong>Prioridade local:</strong> O app sempre tenta usar sua IA local primeiro (Ollama ou LM Studio).
-                Só usa servidores remotos como fallback se nenhuma IA local estiver disponível.
+                <strong>Prioridade local no servidor:</strong> O app tenta usar Ollama ou LM Studio acessíveis ao servidor. Modelos locais do aluno exigem uma conexão cliente-local adicional.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-slate-700">
-                <strong>Detecção automática:</strong> Não precisa configurar nada. O app detecta automaticamente
-                se Ollama (porta 11434) ou LM Studio (porta 1234) estão rodando.
+                <strong>Status exibido:</strong> A verificação indica somente os endpoints acessíveis ao servidor deste app; ela não inspeciona automaticamente as portas do navegador do aluno.
               </p>
             </div>
             <div className="flex items-start gap-3">
@@ -423,8 +407,7 @@ export default function IANativa() {
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-slate-700">
-                <strong>Fallback gracioso:</strong> Se sua IA local cair, o app automaticamente muda para o servidor remoto
-                sem interromper sua lição. Quando a IA local voltar, o app volta a usá-la.
+                <strong>Fallback gracioso:</strong> Quando nenhum provedor local do servidor responde, o app usa o provedor integrado e identifica essa escolha em métricas e cache.
               </p>
             </div>
           </CardContent>
@@ -435,7 +418,7 @@ export default function IANativa() {
           {anyLocal ? (
             <div className="space-y-3">
               <p className="text-lg font-semibold text-green-700">
-                Sua IA nativa está ativa e pronta para uso!
+                O runtime local do servidor está ativo.
               </p>
               <Link href="/dashboard">
                 <Button size="lg" className="bg-green-600 hover:bg-green-700">
@@ -446,7 +429,7 @@ export default function IANativa() {
           ) : (
             <div className="space-y-3">
               <p className="text-lg font-semibold text-amber-700">
-                Instale uma IA local para aproveitar ao máximo o app!
+                Consulte as opções de IA local para prática de texto em ambiente configurado.
               </p>
               <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="bg-purple-600 hover:bg-purple-700">

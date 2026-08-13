@@ -366,7 +366,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Cpu className="h-5 w-5 flex-shrink-0" />
             <p className="text-sm font-medium">
-              <strong>IA Nativa:</strong> Instale Ollama ou LM Studio no seu computador para respostas instantâneas, privacidade total e funcionamento offline.
+              <strong>IA Local:</strong> Conheça a configuração de provedores locais para tarefas de texto em ambientes compatíveis.
             </p>
           </div>
           <Link href="/ia-nativa">
