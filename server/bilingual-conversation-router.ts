@@ -55,11 +55,14 @@ Start the conversation now:`;
         ],
       });
 
-      const rawQuestion = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "Hello! How are you today?";
+      const rawQuestion = (String(response.choices[0]?.message?.content ?? ""))?.trim();
+      if (!rawQuestion) {
+        return { question: "", suggestions: [], blocked: true };
+      }
       const outputSafety = await assessConversationText(ctx.user.id, rawQuestion, input.targetLanguage);
       const question = outputSafety.allowed
         ? rawQuestion
-        : `[${nativeTag}] Vamos continuar com uma pergunta segura da lição.\n[${targetTag}] Let us continue with a safe lesson question.`;
+        : "";
 
       return {
         question,
@@ -98,7 +101,7 @@ Start the conversation now:`;
         });
         throw new Error("targetLanguage and nativeLanguage are required");
       }
-      const safeResponse = `[${nativeTag}] Essa mensagem não pode ser usada neste perfil. Escolha uma frase segura da lição.\n[${targetTag}] This message cannot be used in this profile. Choose a safe lesson phrase.`;
+      const safeResponse = "";
       const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "";
       const inputSafety = await assessConversationText(ctx.user.id, lastUserMessage, input.targetLanguage);
       if (!inputSafety.allowed) {
@@ -123,13 +126,9 @@ CRITICAL RESPONSE FORMAT:
 5. Keep responses appropriate for ${input.userLevel} level
 6. Be encouraging and patient
 
-Example 1 - User asks "Hello! How are you?":
-Your response: "[PT] Olá! Estou muito bem, obrigado por perguntar! Como você está hoje?
-[EN] Hello! I am doing very well, thank you for asking! How are you today?"
-
-Example 2 - User asks "how do you say dark sky in English?":
-Your response: "[PT] 'Céu escuro' em inglês é 'dark sky'. Note que em inglês o adjetivo vem antes do substantivo.
-[EN] 'Dark sky' - Remember: adjective + noun. Example: 'The dark sky looks beautiful tonight.'"
+Example:
+Your response: "[${nativeTag}] Helpful explanation in ${input.nativeLanguage}.
+[${targetTag}] Corresponding practice in ${input.targetLanguage}."
 
 NOW respond to the user's message following this EXACT format with [${nativeTag}] and [${targetTag}] tags.`;
 
@@ -155,7 +154,10 @@ NOW respond to the user's message following this EXACT format with [${nativeTag}
         throw new Error("LLM returned empty or invalid response");
       }
 
-      let aiResponse = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "I understand. Please continue.";
+      let aiResponse = (String(response.choices[0]?.message?.content ?? ""))?.trim();
+      if (!aiResponse) {
+        return { response: "", suggestions: [], blocked: true };
+      }
       
       // Content filter: sanitize AI response
       aiResponse = await sanitizeContent(aiResponse, input.targetLanguage) || aiResponse;
@@ -193,7 +195,10 @@ NOW respond to the user's message following this EXACT format with [${nativeTag}
           ]
         });
         
-        const nativeVersion = (String(translationResponse.choices[0]?.message?.content ?? "")).trim() || aiResponse;
+        const nativeVersion = (String(translationResponse.choices[0]?.message?.content ?? "")).trim();
+        if (!nativeVersion) {
+          return { response: "", suggestions: [], blocked: true };
+        }
         
         // Formatar como bilíngue
         aiResponse = `[${nativeTag}] ${nativeVersion}\n[${targetTag}] ${aiResponse}`;
@@ -202,7 +207,7 @@ NOW respond to the user's message following this EXACT format with [${nativeTag}
 
       const outputSafety = await assessConversationText(ctx.user.id, aiResponse, input.targetLanguage);
       if (!outputSafety.allowed) {
-        aiResponse = `[${nativeTag}] Vamos continuar com uma frase segura da lição.\n[${targetTag}] Let us continue with a safe lesson sentence.`;
+        return { response: "", suggestions: [], blocked: true };
       }
 
       // Gerar sugestões de resposta
@@ -247,10 +252,10 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
         console.error("[Bilingual Conversation] Error stack:", error.stack);
         console.error("[Bilingual Conversation] Input history length:", input.history?.length || 0);
         
-        // Retornar resposta de fallback em vez de lançar erro
         return {
-          response: `[${nativeTag}] Desculpe, tive um problema técnico. Pode repetir?\n[${targetTag}] Sorry, I had a technical issue. Can you repeat?`,
+          response: "",
           suggestions: [],
+          blocked: true,
         };
       }
     }),
