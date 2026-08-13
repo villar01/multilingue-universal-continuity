@@ -6,10 +6,12 @@ const routerSource = readFileSync(new URL("./routers.ts", import.meta.url), "utf
 
 describe("conversa livre com progressão CEFR", () => {
   it("oferece os seis níveis CEFR sem misturar B1 e B2 no seletor", () => {
-    for (const label of ["A1 - Iniciante", "A2 - Básico", "B1 - Intermediário", "B2 - Intermediário avançado", "C1 - Avançado", "C2 - Proficiente"]) {
+    for (const label of ["A1 — primeiros contatos", "A2 — rotina e situações simples", "B1 — conversa independente", "B2 — interação e argumentos", "C1 — fluência avançada", "C2 — domínio e nuances"]) {
       expect(clientSource).toContain(label);
     }
     expect(clientSource).not.toContain("B1/B2 - Intermediário");
+    expect(clientSource).not.toContain("A2 - Básico");
+    expect(clientSource).not.toContain("C1 - Avançado");
     expect(clientSource).toContain("resolvePracticeCEFRLevel");
   });
 

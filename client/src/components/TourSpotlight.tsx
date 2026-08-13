@@ -30,7 +30,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   "/dashboard": [
     { target: "tour-dash-level", title: "📊 Streak e XP", description: "Aqui ficam seu streak (dias seguidos) e XP total. Faça uma lição por dia para manter o streak.", position: "bottom" },
-    { target: "tour-dash-lessons", title: "📚 Lições e acesso rápido", description: "Escolha o nível (Básico/Intermediário/Avançado/Negócios), veja as lições disponíveis e acesse recursos rápidos.", position: "top" },
+    { target: "tour-dash-lessons", title: "📚 Lições e acesso rápido", description: "Escolha sua etapa CEFR de A1 a C2, veja as lições disponíveis e acesse recursos rápidos.", position: "top" },
     { target: "tour-dash-quick", title: "⚡ Atalhos rápidos", description: "Acesse: Aprendizado Natural, Meu Professor, Conversa Livre, Cenas Imersivas, Batalha e muito mais.", position: "top", action: "Abrir Master Lesson", route: "/master-lesson" },
   ],
   "/master-lesson": [

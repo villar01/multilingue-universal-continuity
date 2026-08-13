@@ -10,12 +10,12 @@ import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 import { ArrowLeft, Send, Mic, MicOff, Volume2, BookOpen, Star, ChevronDown } from "lucide-react";
 
 const LEVELS: { id: CEFRLevel; label: string; color: string }[] = [
-  { id: "A1", label: "A1 - Iniciante", color: "bg-green-500" },
-  { id: "A2", label: "A2 - Básico", color: "bg-emerald-500" },
-  { id: "B1", label: "B1 - Intermediário", color: "bg-blue-500" },
-  { id: "B2", label: "B2 - Intermediário avançado", color: "bg-sky-500" },
-  { id: "C1", label: "C1 - Avançado", color: "bg-purple-500" },
-  { id: "C2", label: "C2 - Proficiente", color: "bg-rose-500" },
+  { id: "A1", label: "A1 — primeiros contatos", color: "bg-green-500" },
+  { id: "A2", label: "A2 — rotina e situações simples", color: "bg-emerald-500" },
+  { id: "B1", label: "B1 — conversa independente", color: "bg-blue-500" },
+  { id: "B2", label: "B2 — interação e argumentos", color: "bg-sky-500" },
+  { id: "C1", label: "C1 — fluência avançada", color: "bg-purple-500" },
+  { id: "C2", label: "C2 — domínio e nuances", color: "bg-rose-500" },
 ];
 
 // Tópicos sugeridos por categoria
