@@ -4032,11 +4032,12 @@ Máximo 2 frases por resposta.`,
         } catch { return { objects: [] }; }
       }),
 
-    analyzeFace: publicProcedure
+    analyzeFace: protectedProcedure
       .input(z.object({
         imageBase64: z.string().min(10),
-        currentWord: z.string(),
-        targetLanguage: z.string().default("en-US"),
+        currentWord: z.string().min(1),
+        targetLanguage: z.string().min(2),
+        nativeLanguage: z.string().min(2),
       }))
       .mutation(async ({ input }) => {
         const { invokeLLM } = await import("./_core/llm");
@@ -4045,7 +4046,7 @@ Máximo 2 frases por resposta.`,
             role: "user",
             content: [
               { type: "image_url", image_url: { url: `data:image/jpeg;base64,${input.imageBase64}`, detail: "low" as const } },
-              { type: "text", text: `Look at this person's face. They are trying to pronounce "${input.currentWord}" in ${input.targetLanguage}. Analyze their facial expression and mouth position. Return JSON with: emotion (one of: confident, confused, nervous, focused, happy, uncertain), mouthOpen (boolean), eyebrowsRaised (boolean), tip (one short encouraging tip in Portuguese max 10 words), encouragement (one motivational phrase in Portuguese max 8 words). Return ONLY JSON, no markdown.` },
+              { type: "text", text: `Look at this person's face. They are trying to pronounce "${input.currentWord}" in ${input.targetLanguage}. Analyze their facial expression and mouth position. Return JSON with: emotion (one of: confident, confused, nervous, focused, happy, uncertain), mouthOpen (boolean), eyebrowsRaised (boolean), tip (one short encouraging tip in ${input.nativeLanguage} max 10 words), encouragement (one motivational phrase in ${input.nativeLanguage} max 8 words). Return ONLY JSON, no markdown.` },
             ],
           }],
         });
@@ -4053,7 +4054,7 @@ Máximo 2 frases por resposta.`,
           const content = (response.choices[0]?.message?.content as string) || "{}";
           const clean = content.replace(/```json|```/g, "").trim();
           return JSON.parse(clean);
-        } catch { return { emotion: "focused", tip: "Relaxe e tente novamente!", encouragement: "Você está indo bem!" }; }
+        } catch { return { emotion: "focused", tip: "", encouragement: "" }; }
       }),
   }),
   // ── Adaptive Learning Path ─────────────────────────────────────────────
