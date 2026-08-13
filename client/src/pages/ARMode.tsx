@@ -17,10 +17,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 
 const ARVocabulary = lazy(() => import("@/components/ARVocabulary"));
 const CameraTranslator = lazy(() => import("@/components/CameraTranslator"));
 const ImmersiveAdventure = lazy(() => import("@/components/ImmersiveAdventure"));
+const ACTIVE_LANGUAGE_LABEL = `${ACTIVE_LANGUAGE_COUNT} idiomas ativos`;
+const CATALOG_LANGUAGE_LABEL = `${TOTAL_LANGUAGES} no catálogo`;
 
 // ─── Vocabulário demo ─────────────────────────────────────────────────────────
 const DEMO_VOCAB = [
@@ -45,7 +48,7 @@ const MODES = [
     glow: "shadow-purple-900/50",
     isExternal: true,
     href: "/vr-conversation",
-    stats: ["12 cenários", "69 idiomas", "IA generativa", "WebXR"],
+    stats: ["12 cenários", ACTIVE_LANGUAGE_LABEL, "IA generativa", "WebXR"],
   },
   {
     id: "word-game",
@@ -58,7 +61,7 @@ const MODES = [
     glow: "shadow-violet-900/50",
     isExternal: true,
     href: "/word-game",
-    stats: ["6 modos", "12 categorias", "69 idiomas", "SRS SM-2"],
+    stats: ["6 modos", "12 categorias", ACTIVE_LANGUAGE_LABEL, "SRS SM-2"],
   },
   {
     id: "daily-challenge",
@@ -97,7 +100,7 @@ const MODES = [
     glow: "shadow-red-900/50",
     isExternal: true,
     href: "/battle",
-    stats: ["Tempo real", "10 perguntas", "Placar ao vivo", "69 idiomas"],
+    stats: ["Tempo real", "10 perguntas", "Placar ao vivo", ACTIVE_LANGUAGE_LABEL],
   },
   {
     id: "certificates",
@@ -110,7 +113,7 @@ const MODES = [
     glow: "shadow-yellow-900/50",
     isExternal: true,
     href: "/certificates",
-    stats: ["69 idiomas", "Canvas HD", "Download PNG"],
+    stats: [ACTIVE_LANGUAGE_LABEL, "Canvas HD", "Download PNG"],
   },
   {
     id: "pronunciation-history",
@@ -123,7 +126,7 @@ const MODES = [
     glow: "shadow-cyan-900/50",
     isExternal: true,
     href: "/pronunciation-history",
-    stats: ["Chart.js", "Média móvel", "69 idiomas"],
+    stats: ["Chart.js", "Média móvel", ACTIVE_LANGUAGE_LABEL],
   },
   {
     id: "structured-lesson",
@@ -131,12 +134,12 @@ const MODES = [
     emoji: "📖",
     badge: "NOVO · Superior ao Duolingo",
     badgeColor: "bg-blue-600/40 text-blue-200 border-blue-500/40",
-    description: "Vocabulário correto + Q&A validado por IA · 5 níveis A1-C1 · 69 idiomas",
+    description: `Vocabulário correto + Q&A validado por IA · A1–C2 · ${CATALOG_LANGUAGE_LABEL}`,
     color: "from-blue-700 to-indigo-800",
     glow: "shadow-blue-900/50",
     isExternal: true,
     href: "/structured-lesson",
-    stats: ["5 níveis A1-C1", "12 tópicos", "69 idiomas", "SRS + Quiz"],
+    stats: ["A1–C2", "12 tópicos", ACTIVE_LANGUAGE_LABEL, "SRS + Quiz"],
   },
   {
     id: "immersive-scene",
@@ -149,7 +152,7 @@ const MODES = [
     glow: "shadow-fuchsia-900/50",
     isExternal: true,
     href: "/immersive-scene",
-    stats: ["6 cenas", "Paris · Tokyo · NY", "Professor animado", "69 idiomas"],
+    stats: ["6 cenas", "Paris · Tokyo · NY", "Professor animado", ACTIVE_LANGUAGE_LABEL],
   },
   {
     id: "ar-vocab",
@@ -168,14 +171,14 @@ const MODES = [
     id: "camera-translate",
     label: "Tradução AR",
     emoji: "📸",
-    badge: "Câmera · 94 idiomas",
+    badge: `Câmera · ${CATALOG_LANGUAGE_LABEL}`,
     badgeColor: "bg-emerald-600/40 text-emerald-200 border-emerald-500/40",
     description: "Aponte a câmera para qualquer texto e veja a tradução",
     color: "from-emerald-700 to-teal-800",
     glow: "shadow-emerald-900/50",
     isExternal: false,
     href: null,
-    stats: ["OCR IA", "94 idiomas", "Instantâneo"],
+    stats: ["OCR IA", ACTIVE_LANGUAGE_LABEL, "Instantâneo"],
   },
   {
     id: "adventure",

@@ -13,7 +13,7 @@ export interface Language {
   category: "modern" | "ancient" | "indigenous" | "constructed" | "regional";
 }
 
-// ── 57 IDIOMAS MODERNOS DISPONÍVEIS AGORA ──────────────────────────────────
+// ── 58 IDIOMAS MODERNOS DISPONÍVEIS AGORA ──────────────────────────────────
 const MODERN_AVAILABLE: Language[] = [
   // Europa Ocidental
   { code: "en-US", label: "Inglês (EUA)", flag: "🇺🇸", name: "English (US)", region: "América", available: true, category: "modern" },
@@ -188,7 +188,7 @@ const CONSTRUCTED_LANGUAGES: Language[] = [
 
 ];
 
-// ── LISTA COMPLETA: 143 IDIOMAS ────────────────────────────────────────────
+// ── LISTA COMPLETA: 143 IDIOMAS (58 ativos + 85 em preparação) ────────────
 export const LANGUAGES_57: Language[] = [
   ...MODERN_AVAILABLE,
   ...MODERN_COMING_SOON,
@@ -221,5 +221,8 @@ export const AVAILABLE_LANGUAGES = LANGUAGES_57.filter(l => l.available);
 // Idiomas em breve
 export const COMING_SOON_LANGUAGES = LANGUAGES_57.filter(l => !l.available);
 
-// Total de idiomas
-export const TOTAL_LANGUAGES = LANGUAGES_57.length; // 143
+// Contagens verificáveis usadas na interface. O nome LANGUAGES_57 permanece
+// por compatibilidade com chamadas legadas, mas o catálogo contém 143 itens.
+export const ACTIVE_LANGUAGE_COUNT = AVAILABLE_LANGUAGES.length;
+export const COMING_SOON_LANGUAGE_COUNT = COMING_SOON_LANGUAGES.length;
+export const TOTAL_LANGUAGES = LANGUAGES_57.length;

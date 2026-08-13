@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { LANGUAGES_57, POPULAR_LANGUAGES, LANGUAGES_BY_REGION, REGIONS, type Language } from "@/lib/languages";
+import { ACTIVE_LANGUAGE_COUNT, COMING_SOON_LANGUAGE_COUNT, LANGUAGES_57, POPULAR_LANGUAGES, LANGUAGES_BY_REGION, REGIONS, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
 
 interface Props {
   value: Language;
@@ -66,12 +66,13 @@ export default function LanguageSelector({ value, onChange, label = "Idioma" }: 
                 {filtered.map(l => (
                   <button
                     key={l.code}
-                    onClick={() => { onChange(l); setOpen(false); setSearch(""); }}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all ${value.code === l.code ? "bg-indigo-700 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}
+                    disabled={!l.available}
+                    onClick={() => { if (l.available) { onChange(l); setOpen(false); setSearch(""); } }}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all ${!l.available ? "cursor-not-allowed text-slate-500 opacity-70" : value.code === l.code ? "bg-indigo-700 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}
                   >
                     <span className="text-lg w-7 text-center">{l.flag}</span>
                     <span className="flex-1 text-sm">{l.label}</span>
-                    <span className="text-xs text-slate-500">{l.name}</span>
+                    <span className="text-xs text-slate-500">{l.available ? l.name : "Em preparação"}</span>
                   </button>
                 ))}
               </div>
@@ -80,7 +81,7 @@ export default function LanguageSelector({ value, onChange, label = "Idioma" }: 
 
           {/* Footer */}
           <div className="px-3 py-2 border-t border-slate-700 text-xs text-slate-500 text-center">
-            {LANGUAGES_57.length} idiomas disponíveis
+            Catálogo de {TOTAL_LANGUAGES} idiomas · {ACTIVE_LANGUAGE_COUNT} disponíveis agora · {COMING_SOON_LANGUAGE_COUNT} em preparação
           </div>
         </div>
       )}

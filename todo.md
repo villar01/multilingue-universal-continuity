@@ -49,6 +49,8 @@
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
 
 ### 3. SISTEMA MULTILÍNGUE UNIVERSAL
+- [x] Corrigir contagens contraditórias de idiomas e distinguir 143 no catálogo total, 58 disponíveis agora e 85 em preparação em seletores, tours e superfícies públicas — seletor, tour, compartilhamento e hub AR usam contagens verificáveis; idiomas em preparação são identificados e não selecionáveis; TypeScript e 197 testes aprovados
+- [x] Corrigir rótulos públicos remanescentes com 57/69/94 idiomas e adicionar regressão contra números contraditórios fora do catálogo verificado — regressão cobre catálogo, seletor, tour, compartilhamento, ARMode e ARTeacher
 - [x] Tradução em tempo real via IA offline — translateRealtime procedure em routers.ts com aiProvider
 - [x] Suporte para 50+ idiomas — LANGUAGES_57 em languages.ts com 57 idiomas definidos (integracao funcional em andamento)
 - [x] Cache de traduções frequentes — server/cache.ts com lessonCache

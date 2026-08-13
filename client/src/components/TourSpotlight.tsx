@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLocation } from "wouter";
 import { X, ChevronRight, ChevronLeft, HelpCircle } from "lucide-react";
+import { ACTIVE_LANGUAGE_COUNT, COMING_SOON_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 
 export interface TourStep {
   target: string;
@@ -23,7 +24,7 @@ interface SpotlightRect {
 
 export const TOUR_STEPS: Record<string, TourStep[]> = {
   "/": [
-    { target: "tour-home-logo", title: "🌍 MultiLingue Universal", description: "Bem-vindo! Este é o app de idiomas mais completo. Aprenda 57 idiomas com IA, professores virtuais e gamificação.", position: "bottom" },
+    { target: "tour-home-logo", title: "🌍 MultiLingue Universal", description: `Bem-vindo! O catálogo reúne ${TOTAL_LANGUAGES} idiomas: ${ACTIVE_LANGUAGE_COUNT} estão disponíveis agora e ${COMING_SOON_LANGUAGE_COUNT} permanecem identificados como em preparação.`, position: "bottom" },
     { target: "tour-home-start", title: "🚀 Começar agora", description: "Escolha seu idioma nativo e o idioma que quer aprender. Depois clique em Começar para entrar no Dashboard.", position: "bottom", action: "Ir para o Dashboard", route: "/dashboard" },
     { target: "tour-home-features", title: "✨ Funcionalidades únicas", description: "Realidade aumentada, professores com IA, aprendizado natural por fases da vida, batalha de palavras e muito mais.", position: "top" },
   ],

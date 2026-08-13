@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 
 interface SocialShareProps {
   title?: string;
@@ -8,8 +9,8 @@ interface SocialShareProps {
 }
 
 export function SocialShare({ 
-  title = "MultiLingue Universal — Aprenda 69 idiomas com IA!",
-  description = "Estou aprendendo idiomas com professores virtuais 3D e IA! Junte-se a mim no MultiLingue Universal 🌍",
+  title = `MultiLingue Universal — Catálogo de ${TOTAL_LANGUAGES} idiomas com IA`,
+  description = `Estou aprendendo idiomas com professores virtuais e IA! O catálogo reúne ${TOTAL_LANGUAGES} idiomas, com ${ACTIVE_LANGUAGE_COUNT} disponíveis agora. Junte-se a mim no MultiLingue Universal.`,
   compact = false
 }: SocialShareProps) {
   const [copied, setCopied] = useState(false);

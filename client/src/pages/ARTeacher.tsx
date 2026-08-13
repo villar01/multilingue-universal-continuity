@@ -2,7 +2,7 @@
  * ARTeacher v3 — O Professor de Idiomas mais Avançado do Mundo
  * Conversação em Realidade Aumentada com IA Avançada
  * Inovações: Scan AR objetos, Professor animado, Modo Espelho,
- *            Caça-Objetos gamificado, Diálogo IA com voz, 69 idiomas
+ *            Caça-Objetos gamificado, Diálogo IA com voz e catálogo multilíngue
  */
 import { useState, useRef, useEffect, useCallback } from "react";
 import { flushSync } from "react-dom";
