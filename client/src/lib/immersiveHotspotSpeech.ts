@@ -15,5 +15,7 @@ export function getImmersiveHotspotSpeech(
     text: hotspot.label,
     language: scene.teacherLang,
     gender: scene.teacherGender,
+    purpose: "hotspot" as const,
+    requiresNeural: true,
   };
 }

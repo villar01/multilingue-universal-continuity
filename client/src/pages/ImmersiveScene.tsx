@@ -12,6 +12,7 @@ import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
+import { getNativeHelpSpeechRequest } from "@/lib/immersiveSpeechChannels";
 import { type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
@@ -1439,8 +1440,6 @@ export default function ImmersiveScene() {
     const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
     setActiveSpeechText(text);
     setIsPreparingNeuralAudio(true);
-    setActiveSpeechText(text);
-    setIsPreparingNeuralAudio(true);
 
     const playEdgeNeural = async () => {
       const edgeAudio = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
@@ -1559,7 +1558,7 @@ export default function ImmersiveScene() {
     if (!helpText) return;
     nativeHelpAudioRef.current?.pause();
     nativeHelpAudioRef.current = null;
-    const nativeLocale = nativeLang || "pt-BR";
+    const nativeSpeech = getNativeHelpSpeechRequest(helpText, nativeLang);
     const playHelpAudio = async (source: string, revokeOnEnd = false) => {
       const audio = new Audio(source);
       nativeHelpAudioRef.current = audio;
@@ -1572,14 +1571,14 @@ export default function ImmersiveScene() {
       await audio.play();
     };
     try {
-      const neural = await googleTtsMut.mutateAsync({ text: helpText.slice(0, 500), languageCode: nativeLocale, gender: "FEMALE" });
+      const neural = await googleTtsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), languageCode: nativeSpeech.language, gender: "FEMALE" });
       if (neural.audioUrl) {
         await playHelpAudio(neural.audioUrl);
         return;
       }
     } catch { /* Use the other neural provider below. */ }
     try {
-      const neural = await ttsMut.mutateAsync({ text: helpText.slice(0, 500), voiceLang: nativeLocale, gender: "female" });
+      const neural = await ttsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), voiceLang: nativeSpeech.language, gender: "female" });
       if (neural.success && neural.audioBase64) {
         const bytes = Uint8Array.from(atob(neural.audioBase64), (char) => char.charCodeAt(0));
         await playHelpAudio(URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" })), true);
