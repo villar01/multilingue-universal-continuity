@@ -4,6 +4,7 @@ import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { toast } from "sonner";
 import {
   Volume2,
@@ -26,6 +27,7 @@ import {
   Flame,
   Target,
   Zap,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Voice engine ────────────────────────────────────────────────────────────
@@ -742,9 +744,12 @@ export default function DailyMemoryTrainer({
   const [cards, setCards] = useState<WordCard[]>([]);
   const [sessionScore, setSessionScore] = useState({ correct: 0, total: 0 });
   const [showComplete, setShowComplete] = useState(false);
+  const [paretoOpen, setParetoOpen] = useState(false);
+  const paretoAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const { variants, activeVariantIdx, setActiveVariantIdx, speak, isSpeaking } =
     useMultiVoice(languageCode);
+  const paretoTtsMut = trpc.tts.speak.useMutation();
 
   const wordsQuery = trpc.ai.getDailyWords.useQuery(
     { languageCode, nativeLanguage, level, count: 15, topic },
@@ -810,6 +815,32 @@ export default function DailyMemoryTrainer({
     setSessionScore({ correct: 0, total: 0 });
     setShowComplete(false);
     setCards((prev) => prev.map((c) => ({ ...c, mastered: false, attempts: 0, errors: 0 })));
+  };
+
+  const speakPareto = async (text: string) => {
+    if (!text.trim()) return;
+    if (paretoAudioRef.current) {
+      paretoAudioRef.current.pause();
+      paretoAudioRef.current = null;
+    }
+    const activeVariant = variants[activeVariantIdx];
+    const gender = activeVariant?.label.includes("Masc.") ? "male" : activeVariant?.label.includes("Fem.") ? "female" : undefined;
+    try {
+      const result = await paretoTtsMut.mutateAsync({
+        text: text.slice(0, 400),
+        voiceLang: activeVariant?.lang || languageCode,
+        gender,
+      });
+      if (!result.success || !result.audioBase64) return;
+      const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const audio = new Audio(url);
+      paretoAudioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play();
+    } catch {
+      // Recall and writing remain available even if neural playback is temporarily unavailable.
+    }
   };
 
   if (wordsQuery.isLoading) {
@@ -914,6 +945,26 @@ export default function DailyMemoryTrainer({
         onChange={setActiveVariantIdx}
         isSpeaking={isSpeaking}
       />
+
+      {currentCard && (
+        <button
+          type="button"
+          onClick={() => setParetoOpen(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800 hover:bg-amber-100"
+        >
+          <Sparkles className="h-4 w-4" /> Praticar ciclo Pareto desta palavra
+        </button>
+      )}
+
+      {currentCard && paretoOpen && (
+        <ParetoPracticeCycle
+          term={{ word: currentCard.word, translation: currentCard.translation, example: currentCard.exampleSentence }}
+          onClose={() => setParetoOpen(false)}
+          onSpeak={speakPareto}
+          embedded
+          level={level === "advanced" ? "C1" : level === "intermediate" ? "B1" : "A1"}
+        />
+      )}
 
       {/* Mode tabs */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
