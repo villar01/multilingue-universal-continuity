@@ -11,6 +11,13 @@ import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
 import { assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
 
+const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+const cefrLevelSchema = z.enum(CEFR_LEVELS);
+
+function localeTag(language: string) {
+  return language.split(/[-_]/)[0]?.toUpperCase() || "XX";
+}
+
 export const bilingualConversationRouter = router({
   /**
    * Iniciar conversação bilíngue
@@ -21,16 +28,18 @@ export const bilingualConversationRouter = router({
         lessonId: z.number(),
         targetLanguage: z.string(), // "English", "Spanish", etc.
         nativeLanguage: z.string(), // "Portuguese"
-        userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+        userLevel: cefrLevelSchema,
       })
     )
     .mutation(async ({ input, ctx }) => {
       await ensureConversationAccess(ctx.user.id);
+      const nativeTag = localeTag(input.nativeLanguage);
+      const targetTag = localeTag(input.targetLanguage);
       const prompt = `You are a language teacher. Start a conversation about a lesson topic in ${input.targetLanguage}.
 
 CRITICAL RULES:
 1. Respond in BOTH languages: ${input.nativeLanguage} first, then ${input.targetLanguage}
-2. Format: "[PT] Portuguese text\n[${input.targetLanguage.substring(0, 2).toUpperCase()}] Target language text"
+2. Format: "[${nativeTag}] Native-language text\n[${targetTag}] Target-language text"
 3. Keep it simple for ${input.userLevel} level
 4. Ask an engaging question to start the conversation
 5. Be encouraging and supportive
@@ -50,7 +59,7 @@ Start the conversation now:`;
       const outputSafety = await assessConversationText(ctx.user.id, rawQuestion, input.targetLanguage);
       const question = outputSafety.allowed
         ? rawQuestion
-        : "[PT] Vamos continuar com uma pergunta segura da lição. [EN] Let us continue with a safe lesson question.";
+        : `[${nativeTag}] Vamos continuar com uma pergunta segura da lição.\n[${targetTag}] Let us continue with a safe lesson question.`;
 
       return {
         question,
@@ -72,7 +81,7 @@ Start the conversation now:`;
         lessonId: z.number(),
         targetLanguage: z.string(),
         nativeLanguage: z.string(),
-        userLevel: z.enum(["beginner", "intermediate", "advanced"]),
+        userLevel: cefrLevelSchema,
         history: z.array(
           z.object({
             role: z.enum(["user", "assistant"]),
@@ -91,11 +100,14 @@ Start the conversation now:`;
         });
         throw new Error("targetLanguage and nativeLanguage are required");
       }
+      const nativeTag = localeTag(input.nativeLanguage);
+      const targetTag = localeTag(input.targetLanguage);
+      const safeResponse = `[${nativeTag}] Essa mensagem não pode ser usada neste perfil. Escolha uma frase segura da lição.\n[${targetTag}] This message cannot be used in this profile. Choose a safe lesson phrase.`;
       const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "";
       const inputSafety = await assessConversationText(ctx.user.id, lastUserMessage, input.targetLanguage);
       if (!inputSafety.allowed) {
         return {
-          response: "[PT] Essa mensagem não pode ser usada neste perfil. Escolha uma frase segura da lição.\n[EN] This message cannot be used in this profile. Choose a safe lesson phrase.",
+          response: safeResponse,
           suggestions: ["Hello", "Thank you", "I am learning"],
           blocked: true,
           flaggedContent: inputSafety.flaggedContent,
@@ -105,11 +117,11 @@ Start the conversation now:`;
       const systemPrompt = `You are a supportive language teacher teaching ${input.targetLanguage} to native ${input.nativeLanguage} speakers.
 
 ⚠️ MANDATORY FORMAT - YOU MUST FOLLOW THIS EXACTLY:
-EVERY response MUST start with "[PT]" followed by Portuguese text, then "[EN]" followed by English text.
+EVERY response MUST start with "[${nativeTag}]" followed by native-language text, then "[${targetTag}]" followed by target-language text.
 
 CRITICAL RESPONSE FORMAT:
-1. ALWAYS respond FIRST in Portuguese (PT), THEN in the target language (${input.targetLanguage})
-2. Format: "[PT] Explicação completa em português\n[${input.targetLanguage.substring(0, 2).toUpperCase()}] Target language version with teaching focus"
+1. ALWAYS respond FIRST in ${input.nativeLanguage} (${nativeTag}), THEN in the target language (${input.targetLanguage})
+2. Format: "[${nativeTag}] Native-language explanation\n[${targetTag}] Target-language version with teaching focus"
 3. NEVER respond in only one language - ALWAYS use BOTH languages
 4. FOCUS on teaching the target language: corrections, pronunciation tips, grammar explanations
 5. Keep responses appropriate for ${input.userLevel} level
@@ -123,7 +135,7 @@ Example 2 - User asks "how do you say dark sky in English?":
 Your response: "[PT] 'Céu escuro' em inglês é 'dark sky'. Note que em inglês o adjetivo vem antes do substantivo.
 [EN] 'Dark sky' - Remember: adjective + noun. Example: 'The dark sky looks beautiful tonight.'"
 
-NOW respond to the user's message following this EXACT format with [PT] and [EN] tags.`;
+NOW respond to the user's message following this EXACT format with [${nativeTag}] and [${targetTag}] tags.`;
 
       const messages = [
         {
@@ -167,16 +179,16 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
       console.log("[Bilingual Conversation] User message:", loggedUserMessage);
       console.log("[Bilingual Conversation] AI response (raw):", aiResponse);
 
-      // Fallback: Se resposta não tem formato bilíngue, traduzir e formatar
-      if (!aiResponse.includes("[PT]") || !aiResponse.includes("[EN]")) {
+      // Fallback: se a resposta não vier marcada, traduzir para o idioma nativo e formatar.
+      if (!aiResponse.includes(`[${nativeTag}]`) || !aiResponse.includes(`[${targetTag}]`)) {
         console.log("[Bilingual Conversation] Response missing bilingual format, applying fallback...");
         
-        // Traduzir resposta para português
+        // Traduzir resposta para o idioma nativo selecionado.
         const translationResponse = await invokeLLM({
           messages: [
             {
               role: "system",
-              content: "You are a translator. Translate the following English text to Portuguese. Return ONLY the Portuguese translation, nothing else."
+              content: `You are a translator. Translate the following target-language text to ${input.nativeLanguage}. Return ONLY the translation, nothing else.`
             },
             {
               role: "user",
@@ -185,16 +197,16 @@ NOW respond to the user's message following this EXACT format with [PT] and [EN]
           ]
         });
         
-        const portugueseVersion = (String(translationResponse.choices[0]?.message?.content ?? "")).trim() || aiResponse;
+        const nativeVersion = (String(translationResponse.choices[0]?.message?.content ?? "")).trim() || aiResponse;
         
         // Formatar como bilíngue
-        aiResponse = `[PT] ${portugueseVersion}\n[EN] ${aiResponse}`;
+        aiResponse = `[${nativeTag}] ${nativeVersion}\n[${targetTag}] ${aiResponse}`;
         console.log("[Bilingual Conversation] Formatted response:", aiResponse);
       }
 
       const outputSafety = await assessConversationText(ctx.user.id, aiResponse, input.targetLanguage);
       if (!outputSafety.allowed) {
-        aiResponse = "[PT] Vamos continuar com uma frase segura da lição.\n[EN] Let us continue with a safe lesson sentence.";
+        aiResponse = `[${nativeTag}] Vamos continuar com uma frase segura da lição.\n[${targetTag}] Let us continue with a safe lesson sentence.`;
       }
 
       // Gerar sugestões de resposta

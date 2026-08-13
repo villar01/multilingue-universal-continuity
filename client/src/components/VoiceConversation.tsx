@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import type { ParetoPracticeTerm } from "@/lib/paretoPracticeCycle";
 import type { CEFRLevel } from "@/lib/lesson-levels";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -35,6 +36,10 @@ export default function VoiceConversation({
   teacher: selectedTeacher,
   level = "A1",
 }: VoiceConversationProps) {
+  const { profile } = useLanguage();
+  const nativeLanguage = profile.nativeCode;
+  const nativeTag = nativeLanguage.split(/[-_]/)[0]?.toUpperCase() || "XX";
+  const targetTag = languageCode.split(/[-_]/)[0]?.toUpperCase() || "XX";
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -161,8 +166,8 @@ export default function VoiceConversation({
                       lessonId,
                       history,
                       targetLanguage: languageCode,
-                      nativeLanguage: "pt-BR",
-                      userLevel: "beginner",
+                      nativeLanguage,
+                      userLevel: level,
                     });
                     // Update the last assistant message with the improved online response
                     const updatedMessages = conv.messages.slice(0, -1);
@@ -423,37 +428,37 @@ export default function VoiceConversation({
           lessonId,
           history: conversationHistory,
           targetLanguage: languageCode,
-          nativeLanguage: "pt-BR",
-          userLevel: "beginner",
+          nativeLanguage,
+          userLevel: level,
         });
       } catch (err) {
         // Fallback: use offlineAI for local response
         console.log("[VoiceConversation] Falling back to offlineAI");
         const offlineResult = await offlineAI.mutateAsync({
           messages: [
-            { role: "system", content: `You are a language teacher. Respond in BOTH Portuguese and ${languageCode}. Format: [PT] Portuguese text\n[${languageCode.substring(0,2).toUpperCase()}] Target language text` },
+            { role: "system", content: `You are a language teacher. Respond in BOTH ${nativeLanguage} and ${languageCode}. Format: [${nativeTag}] Native-language text\n[${targetTag}] Target-language text` },
             ...conversationHistory.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
           ],
         });
         aiResponse = {
-          response: offlineResult.content || "[PT] Desculpe, não entendi. Pode repetir?\n[EN] Sorry, I didn't understand. Can you repeat?",
+          response: offlineResult.content || `[${nativeTag}] Desculpe, não entendi. Pode repetir?\n[${targetTag}] Sorry, I didn't understand. Can you repeat?`,
           suggestions: ["Yes", "No", "Tell me more"],
         };
       }
 
       // Parse bilingual response
-      const { portuguese, english } = parseBilingualResponse(aiResponse.response);
+      const { nativeText, targetText } = parseBilingualResponse(aiResponse.response);
 
       // Add assistant message
       const assistantMessage: Message = {
         role: "assistant",
-        content: `${portuguese}\n\n[EN] ${english}`,
+        content: `${nativeText}\n\n[${targetTag}] ${targetText}`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
 
       // Generate TTS audio
-      const teacherSpeechText = isPortugueseLesson ? portuguese : (english || portuguese);
+      const teacherSpeechText = targetText || nativeText;
       const ttsResult = await generateTTS.mutateAsync({
         text: teacherSpeechText,
         languageCode: activeTeacher.fallbackLanguage,
@@ -520,15 +525,17 @@ export default function VoiceConversation({
     }
   };
 
-  // Parse bilingual response [PT] ... [EN] ...
-  const parseBilingualResponse = (response: string): { portuguese: string; english: string } => {
-    const ptMatch = response.match(/\[PT\]\s*([\s\S]*?)(?=\[EN\]|$)/);
-    const enMatch = response.match(/\[EN\]\s*([\s\S]*?)$/);
-
-    const portuguese = ptMatch ? ptMatch[1].trim() : response;
-    const english = enMatch ? enMatch[1].trim() : "";
-
-    return { portuguese, english };
+  // Parse bilingual response using the learner's native and target locales.
+  const parseBilingualResponse = (response: string): { nativeText: string; targetText: string } => {
+    const nativeMarker = `[${nativeTag}]`;
+    const targetMarker = `[${targetTag}]`;
+    const nativeStart = response.indexOf(nativeMarker);
+    const targetStart = response.indexOf(targetMarker);
+    const nativeText = nativeStart >= 0
+      ? response.slice(nativeStart + nativeMarker.length, targetStart >= 0 ? targetStart : undefined).trim()
+      : response;
+    const targetText = targetStart >= 0 ? response.slice(targetStart + targetMarker.length).trim() : "";
+    return { nativeText, targetText };
   };
 
   const speakParetoTerm = async (text: string) => {
