@@ -2420,12 +2420,15 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }))
       .mutation(async ({ input, ctx }) => {
         const { invokeLLM } = await import('./_core/llm');
-        const safeFallback = { suggestions: "Vamos praticar uma frase segura da lição." };
+        const safeFallback = { suggestions: "", blocked: true };
         const inputSafety = await assessConversationText(ctx.user.id, input.originalPhrase, input.targetLanguage);
         if (!inputSafety.allowed) return safeFallback;
         const result = await invokeLLM({
           messages: [
-            { role: 'system', content: `You are a ${input.targetLanguage} language teacher.` },
+            {
+              role: 'system',
+              content: `You are a ${input.targetLanguage} language teacher helping a native ${input.nativeLanguage} learner. Give each suggestion with a concise explanation in ${input.nativeLanguage} and the suggested phrase in ${input.targetLanguage}. Do not use any third language.`,
+            },
             { role: 'user', content: `Phrase: "${input.originalPhrase}". Action: ${input.editType}${input.wordToModify ? ` (word: ${input.wordToModify})` : ''}. Give 3 suggestions.` },
           ],
         });

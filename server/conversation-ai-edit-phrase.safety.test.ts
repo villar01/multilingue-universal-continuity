@@ -33,7 +33,7 @@ describe("conversationAI.editPhrase safety", () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
     const result = await createCaller().conversationAI.editPhrase({ ...input, originalPhrase: "unsafe" });
     expect(mocks.invokeLLM).not.toHaveBeenCalled();
-    expect(result.suggestions).toContain("frase segura");
+    expect(result).toEqual({ suggestions: "", blocked: true });
   });
 
   it("replaces unsafe generated phrase suggestions", async () => {
@@ -43,6 +43,6 @@ describe("conversationAI.editPhrase safety", () => {
     mocks.sanitizeContent.mockResolvedValue("unsafe suggestion");
     const result = await createCaller().conversationAI.editPhrase(input);
     expect(mocks.assessConversationOutput).toHaveBeenCalledWith(7, input.originalPhrase, "unsafe suggestion", "en-US");
-    expect(result.suggestions).toContain("frase segura");
+    expect(result).toEqual({ suggestions: "", blocked: true });
   });
 });
