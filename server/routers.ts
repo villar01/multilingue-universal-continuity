@@ -1817,7 +1817,8 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
 
         const { execSync } = await import("child_process");
         try {
-          const output = execSync("cd /home/ubuntu/copy-of-multilingue-universal---plataforma-de-ensino-com-ia-avançada && node --loader tsx server/seed-auto-payments.ts", {
+          const output = execSync("node --loader tsx server/seed-auto-payments.ts", {
+            cwd: process.cwd(),
             encoding: "utf-8",
             timeout: 60000,
           });
