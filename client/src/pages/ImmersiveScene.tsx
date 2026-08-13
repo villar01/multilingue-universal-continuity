@@ -12,6 +12,7 @@ import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
+import { createImmersiveHotspotInteraction } from "@/lib/immersiveHotspotInteraction";
 import { getNativeHelpSpeechRequest } from "@/lib/immersiveSpeechChannels";
 import { type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
@@ -1809,11 +1810,11 @@ export default function ImmersiveScene() {
       scene: selectedScene.name,
     });
     setNotebookCount(loadNotebook().length);
-    setGreetingText(`${hotspot.label} — ${hotspot.translation}`);
+    const interaction = createImmersiveHotspotInteraction(hotspot, selectedScene);
+    setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    const hotspotSpeech = getImmersiveHotspotSpeech(hotspot, selectedScene);
-    speak(hotspotSpeech.text, hotspotSpeech.language, undefined, hotspotSpeech.gender, "hotspot");
+    void speak(interaction.speech.text, interaction.speech.language, undefined, interaction.speech.gender, interaction.speech.purpose);
     setTimeout(() => setShowGreeting(false), 5000);
   }, [selectedScene, learnedWords, speak, nativeLang]);
 
