@@ -378,6 +378,7 @@
 - [x] Verificar que 4 professores aparecem no seletor (Ricardo, Ingrid, Carlos, Jean)
 - [x] Remover professor "Michael Johnson" antigo — não existe no TeacherSelector; referência é apenas em conteúdo de lição (storyText do restaurante)
 - [x] Testar seletor com fotos CDN corretas — TeacherSelector usa TEACHERS_57 + photoUrl do banco, sem nomes genéricos
+- [x] Restaurar os retratos quebrados da tela Meu Professor — os 11 professores pessoais agora usam URLs fotográficas duráveis e distintas; a grade foi validada visualmente sem falhas de imagem ou geração, com TypeScript e 298 testes aprovados
 
 ## 🚀🚀🚀🚀🚀 AUMENTAR VELOCIDADE DA IA PARA 300.000X COM OTIMIZAÇÕES REAIS
 - [x] Implementar cache em memória com 100k itens e 0.1ms TTL (otimização REAL)

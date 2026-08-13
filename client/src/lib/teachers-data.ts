@@ -24,7 +24,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "sophie",
     name: "Sophie",
-    photo: "/manus-storage/prof_sophie_efa02a67.png",
+    photo: "/manus-storage/teacher-portrait-sophie_6ffe702d.jpg",
     voiceLang: "fr-FR",
     langCode: "fr",
     langName: "Francês",
@@ -39,7 +39,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "james",
     name: "James",
-    photo: "/manus-storage/prof_james_0aee8d8d.png",
+    photo: "/manus-storage/teacher-portrait-james_0b43cb3d.jpg",
     voiceLang: "en-US",
     langCode: "en",
     langName: "Inglês",
@@ -54,7 +54,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "priya",
     name: "Priya",
-    photo: "/manus-storage/prof_priya_3389cc9a.png",
+    photo: "/manus-storage/teacher-portrait-priya_e3768b1b.jpg",
     voiceLang: "en-GB",
     langCode: "en",
     langName: "Inglês Britânico",
@@ -69,7 +69,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "hans",
     name: "Hans",
-    photo: "/manus-storage/prof_hans_7e788467.png",
+    photo: "/manus-storage/teacher-portrait-hans_f47d441a.jpg",
     voiceLang: "de-DE",
     langCode: "de",
     langName: "Alemão",
@@ -84,7 +84,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "yuki",
     name: "Yuki",
-    photo: "/manus-storage/prof_yuki_cfeb5ca6.png",
+    photo: "/manus-storage/teacher-portrait-yuki_11528cd6.jpg",
     voiceLang: "ja-JP",
     langCode: "ja",
     langName: "Japonês",
@@ -99,7 +99,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "carlos",
     name: "Carlos",
-    photo: "/manus-storage/prof_carlos_v2_fff862cf.jpg",
+    photo: "/manus-storage/teacher-portrait-carlos_594b15ba.jpg",
     voiceLang: "es-ES",
     langCode: "es",
     langName: "Espanhol",
@@ -114,7 +114,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "giulia",
     name: "Giulia",
-    photo: "/manus-storage/prof_giulia_9e244159.png",
+    photo: "/manus-storage/teacher-portrait-giulia_9bd19177.jpg",
     voiceLang: "it-IT",
     langCode: "it",
     langName: "Italiano",
@@ -129,7 +129,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "omar",
     name: "Omar",
-    photo: "/manus-storage/prof_omar_5be02afe.png",
+    photo: "/manus-storage/teacher-portrait-omar_78fd1a6b.jpg",
     voiceLang: "ar-SA",
     langCode: "ar",
     langName: "Árabe",
@@ -144,7 +144,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "maja",
     name: "Maja",
-    photo: "/manus-storage/prof_maja_f8ce331b.png",
+    photo: "/manus-storage/teacher-portrait-maja_551c6831.jpg",
     voiceLang: "pl-PL",
     langCode: "pl",
     langName: "Polonês",
@@ -159,7 +159,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "emre",
     name: "Emre",
-    photo: "/manus-storage/prof_emre_2a7313d7.png",
+    photo: "/manus-storage/teacher-portrait-emre_cb7b002a.jpg",
     voiceLang: "tr-TR",
     langCode: "tr",
     langName: "Turco",
@@ -174,7 +174,7 @@ export const ALL_TEACHERS: TeacherProfile[] = [
   {
     id: "ivan",
     name: "Ivan",
-    photo: "/manus-storage/prof_ivan_752b0cef.png",
+    photo: "/manus-storage/teacher-portrait-verified-b_ee829f75.jpg",
     voiceLang: "ru-RU",
     langCode: "ru",
     langName: "Russo",
