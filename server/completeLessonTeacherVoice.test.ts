@@ -20,6 +20,11 @@ describe("CompleteLesson teacher voice", () => {
     expect(source).toContain("teacherId={selectedTeacherId}");
     expect(source).toContain("imageUrl={lessonTeacher?.photoUrl || lessonTeacher?.photo_url}");
     expect(source).toContain("currentText={activeTeacherSpeechText || lesson.storyText || \"\"}");
+    expect(source).toContain("currentText={activeTeacherSpeechText || conversationHistory[conversationHistory.length - 1]?.content || \"\"}");
+    expect(source).toContain("audioUrl={activeTeacherAudioUrl}");
+    expect(source).toContain("syncOnly");
+    expect(source).toContain("setActiveTeacherAudioUrl(result.audioUrl)");
+    expect(source).toContain("setActiveTeacherAudioUrl(null)");
   });
 
   it("uses the learner CEFR level and target locale instead of fixed A1 and English inputs", () => {

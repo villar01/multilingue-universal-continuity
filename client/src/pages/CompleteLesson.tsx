@@ -53,6 +53,7 @@ export default function CompleteLesson() {
   const [userMessage, setUserMessage] = useState("");
   const [isAISpeaking, setIsAISpeaking] = useState(false);
   const [activeTeacherSpeechText, setActiveTeacherSpeechText] = useState("");
+  const [activeTeacherAudioUrl, setActiveTeacherAudioUrl] = useState<string | null>(null);
   const [lessonStartedAt] = useState(() => Date.now());
   const [targetLanguageCode] = useState(() => localStorage.getItem("ml_target_lang") || "en-US");
   const [nativeLanguageCode] = useState(() => localStorage.getItem("ml_native_lang") || "pt-BR");
@@ -285,9 +286,11 @@ export default function CompleteLesson() {
       const stopAvatarSpeech = () => {
         setIsAISpeaking(false);
         setActiveTeacherSpeechText("");
+        setActiveTeacherAudioUrl(null);
       };
       audio.onplay = () => {
         setActiveTeacherSpeechText(text);
+        setActiveTeacherAudioUrl(result.audioUrl);
         setIsAISpeaking(true);
       };
       audio.onended = stopAvatarSpeech;
@@ -425,8 +428,10 @@ export default function CompleteLesson() {
                     imageUrl={lessonTeacher?.photoUrl || lessonTeacher?.photo_url}
                     teacherName={lessonTeacher?.name}
                     gender={lessonTeacher?.gender}
-                    isTeaching={isAISpeaking}
-                    currentText={activeTeacherSpeechText || lesson.storyText || ""}
+                  isTeaching={isAISpeaking}
+                  currentText={activeTeacherSpeechText || lesson.storyText || ""}
+                  audioUrl={activeTeacherAudioUrl}
+                  syncOnly
                     languageCode={teacherVoiceLanguage}
                     emotion="happy"
                   />
@@ -640,6 +645,8 @@ export default function CompleteLesson() {
                   gender={lessonTeacher?.gender}
                   isTeaching={isAISpeaking}
                   currentText={activeTeacherSpeechText || conversationHistory[conversationHistory.length - 1]?.content || ""}
+                  audioUrl={activeTeacherAudioUrl}
+                  syncOnly
                   languageCode={teacherVoiceLanguage}
                   emotion={isAISpeaking ? "encouraging" : "neutral"}
                 />

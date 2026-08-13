@@ -41,8 +41,9 @@
 - [x] Sincronização labial com áudio — ActivePauseLessonPlayer lipSync CSS animation + Animated3DAvatar com visemes
 - [x] Animações faciais (piscadas, expressões) — AnimatedTeacher.tsx e TalkingTeacher.tsx com animações CSS
 - [x] Transições suaves entre expressões — AnimatedTeacher.tsx com transitionExpression, auto-cycle idle/smile/thinking, animação de olhos/sobrancelhas/bochechas
-- [ ] Integração com Google TTS para timing preciso — ImmersiveScene prioriza Google Neural TTS, preserva gênero e sincroniza visemes pelo áudio; integrar os demais fluxos de avatar/lip-sync ainda pendente
-- [ ] Propagar a URL do MP3 neural aos avatares de VoiceConversation e CompleteLesson por canal silencioso de sincronização, sem reproduzir áudio em duplicidade — VoiceConversation concluída com MP3 neural em modo silencioso, relógio de áudio e limpeza no término; CompleteLesson ainda precisa receber o mesmo contrato
+- [x] Integração com Google TTS para timing preciso — ImmersiveScene, VoiceConversation e CompleteLesson entregam MP3 neural ao relógio do avatar; `tts.generate` é verificado como rota para Google Cloud TTS e fallback textual só sustenta a animação quando o analisador não está disponível; TypeScript e 195 testes aprovados
+- [x] Propagar a URL do MP3 neural aos avatares de VoiceConversation e CompleteLesson por canal silencioso de sincronização, sem reproduzir áudio em duplicidade — os dois fluxos usam canal `syncOnly`, limpam URL no término e mantêm uma única reprodução audível; regressões de avatar, visemas e CompleteLesson aprovadas
+- [x] Verificar por regressão o provedor neural e a política de fallback do relógio labial em ImmersiveScene, VoiceConversation e CompleteLesson — teste cobre rota Google, canal silencioso, MP3 e fallback resiliente sem áudio duplicado
 - [x] AnimatedTeacher: aplicar relógio do Google Neural TTS ao retrato fotorrealista — visemas por tempo controlam abertura, largura, arredondamento e língua da boca
 - [x] Cache de vídeos gerados em S3 — LivePortrait baixa o MP4 concluído, armazena em video-cache/liveportrait no S3 e retorna a URL estável; mantém fallback seguro para a URL do provedor
 - [x] Seletor de avatar na interface — MyTeacher.tsx com galeria de professores
