@@ -3,6 +3,8 @@ import { Send, Mic, Volume2, Bot, User, Loader2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
+import { useLanguage } from '@/contexts/LanguageContext';
+import type { CEFRLevel } from '@/lib/lesson-levels';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,13 +21,22 @@ interface AIChatbotProps {
     example: string;
   }>;
   languageCode: string;
+  level?: CEFRLevel;
 }
 
 /**
  * Chatbot IA Conversacional para prática de idiomas
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
-export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChatbotProps) {
+export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1' }: AIChatbotProps) {
+  const { profile } = useLanguage();
+  const targetLanguage = languageCode || profile.targetCode;
+  const nativeLanguage = profile.nativeCode;
+  const [latestFeedback, setLatestFeedback] = useState<{
+    feedback: string;
+    corrections: Array<{ original: string; corrected: string; explanation: string }>;
+    encouragement: string;
+  } | null>(null);
   const storageKey = `ml_chat_history_${lessonId}`;
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
@@ -40,7 +51,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
     return [
       {
         role: 'assistant',
-        content: `Hello! I'm your AI conversation partner. Let's practice using the vocabulary from this lesson. Try using words like: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}...`,
+        content: `Prática de ${targetLanguage}: use o vocabulário desta lição. Comece com: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}.`,
         timestamp: new Date(),
       },
     ];
@@ -88,6 +99,13 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
       toast.error('Erro na conversa: ' + error.message);
     },
   });
+  const feedbackMutation = trpc.conversationAI.feedback.useMutation({
+    onSuccess: (feedback) => setLatestFeedback(feedback),
+    onError: () => {
+      // A conversa principal permanece utilizável se o feedback complementar falhar.
+      setLatestFeedback(null);
+    },
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -108,17 +126,25 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setLatestFeedback(null);
 
-    // Enviar para IA com contexto da lição
+    // A conversa e o feedback usam o mesmo par de idiomas e estágio CEFR.
     chatMutation.mutate({
       lessonId,
-      targetLanguage: "English",
-      nativeLanguage: "Portuguese",
-      userLevel: "A1",
+      targetLanguage,
+      nativeLanguage,
+      userLevel: level,
       history: messages.concat(userMessage).map(m => ({
         role: m.role,
         content: m.content
       }))
+    });
+    feedbackMutation.mutate({
+      lessonId,
+      targetLanguage,
+      nativeLanguage,
+      userLevel: level,
+      userMessage: userMessage.content,
     });
   };
 
@@ -130,7 +156,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
   };
 
   const playAudio = (text: string) => {
-    speakNaturalVoice(text, languageCode, { rate: 0.9 });
+    speakNaturalVoice(text, targetLanguage, { rate: 0.9 });
   };
 
   const startRecording = () => {
@@ -144,8 +170,8 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
       <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
         <Bot className="h-6 w-6" />
         <div className="flex-1">
-          <h3 className="font-semibold">AI Conversation Partner</h3>
-          <p className="text-xs text-blue-100">Practice speaking naturally</p>
+          <h3 className="font-semibold">Prática de conversa com IA</h3>
+          <p className="text-xs text-blue-100">{nativeLanguage} → {targetLanguage} · {level}</p>
         </div>
         <div className="flex items-center gap-1.5 bg-white/20 px-2 py-1 rounded-full text-xs">
           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -236,6 +262,25 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
           </div>
         )}
 
+        {latestFeedback && (
+          <section className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm" aria-label="Feedback gramatical da resposta">
+            <p className="font-semibold text-emerald-900">Feedback do professor</p>
+            <p className="mt-1 text-emerald-900">{latestFeedback.feedback}</p>
+            {latestFeedback.corrections.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {latestFeedback.corrections.map((correction, index) => (
+                  <div key={`${correction.original}-${index}`} className="rounded-lg bg-white p-2 text-xs text-slate-700">
+                    <p><span className="font-semibold text-rose-700">Como foi escrito:</span> {correction.original}</p>
+                    <p><span className="font-semibold text-emerald-700">Forma sugerida:</span> {correction.corrected}</p>
+                    <p className="mt-1 text-slate-600">{correction.explanation}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="mt-2 font-medium text-emerald-800">{latestFeedback.encouragement}</p>
+          </section>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -247,7 +292,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message in English..."
+              placeholder={`Escreva ou fale em ${targetLanguage}...`}
               className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none resize-none text-sm"
               rows={2}
               disabled={chatMutation.isPending}
@@ -275,7 +320,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode }: AIChat
         </div>
 
         <p className="text-xs text-gray-500 mt-2 text-center">
-          💡 Dica: Use o vocabulário da lição para praticar. A IA corrigirá sua gramática automaticamente!
+          💡 Dica: use o vocabulário da lição. O feedback gramatical aparece após cada tentativa.
         </p>
       </div>
     </div>

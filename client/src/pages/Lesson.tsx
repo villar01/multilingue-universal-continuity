@@ -1211,6 +1211,7 @@ export default function Lesson() {
                   lessonId={parseInt(lessonId || '1')}
                   vocabulary={lesson.vocabularyDetailed}
                   languageCode={lesson.languageCode || 'en-US'}
+                  level={resolvePracticeCEFRLevel((lesson as any).courseLevel)}
                 />
               </div>
             )}

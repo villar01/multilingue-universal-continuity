@@ -180,6 +180,7 @@
 
 ## 💬 CONVERSAS LLM EM TEMPO REAL
 - [x] Integrar offlineAI.generate em VoiceConversation — fallback para IA offline quando conversa bilíngue falha
+- [x] Corrigir o chatbot da lição para usar idioma nativo, idioma-alvo e CEFR selecionados e exibir o feedback gramatical estruturado da rota protegida — usa o perfil global e o nível da lição em conversa/feedback, remove valores fixos de inglês e A1, e mostra correção, forma sugerida, explicação e encorajamento; TypeScript, regressões e renderização validados
 - [x] Correção automática de gramática no backend — ai-chat-router + freeChat com correction field (UI frontend pendente)
 - [x] Implementar feedback personalizado baseado em erros do usuário — Lesson registra tentativas e mostra plano de reforço por erro recorrente; FreeTalk classifica correções, memoriza padrões locais por idioma e exibe orientação personalizada
 - [x] Criar histórico de conversas com análise de progresso — AIChatbot mantém 50 mensagens por lição e exibe turnos, palavras produzidas e vocabulário da lição efetivamente praticado
