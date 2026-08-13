@@ -277,82 +277,39 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
       const safety = await assessConversationText(ctx.user.id, input.originalPhrase, input.targetLanguage);
       if (!safety.allowed) {
         return {
-          suggestions: "[PT] Escolha uma frase segura da lição para praticar.\n[EN] Choose a safe lesson phrase to practise.",
+          suggestions: "",
           originalPhrase: input.originalPhrase,
           editType: input.editType,
           blocked: true,
         };
       }
-      let prompt = "";
+      const nativeTag = localeTag(input.nativeLanguage);
+      const targetTag = localeTag(input.targetLanguage);
+      let actionInstruction = "";
 
       switch (input.editType) {
         case "modify_word":
-          prompt = `The user wants to modify the word "${input.wordToModify}" in this ${input.targetLanguage} phrase: "${input.originalPhrase}"
-
-Provide 3 alternative words that could replace "${input.wordToModify}" and make sense in context.
-
-Format your response as:
-[PT] Palavra original: "${input.wordToModify}"
-Alternativas:
-1. [word1] - [Portuguese meaning]
-2. [word2] - [Portuguese meaning]
-3. [word3] - [Portuguese meaning]
-
-[${input.targetLanguage.substring(0, 2).toUpperCase()}] Original word: "${input.wordToModify}"
-Alternatives:
-1. [word1] - [English meaning]
-2. [word2] - [English meaning]
-3. [word3] - [English meaning]`;
+          actionInstruction = `Offer alternatives for the word "${input.wordToModify}" that preserve the meaning in context.`;
           break;
 
         case "add_word":
-          prompt = `The user wants to add a word to this ${input.targetLanguage} phrase: "${input.originalPhrase}"
-
-Suggest 3 words that could be naturally added to enhance this phrase, with their placement.
-
-Format:
-[PT] Sugestões para adicionar:
-1. [word1] → "new phrase with word1" (significado)
-2. [word2] → "new phrase with word2" (significado)
-3. [word3] → "new phrase with word3" (significado)
-
-[${input.targetLanguage.substring(0, 2).toUpperCase()}] Suggestions to add:
-1. [word1] → "new phrase with word1" (meaning)
-2. [word2] → "new phrase with word2" (meaning)
-3. [word3] → "new phrase with word3" (meaning)`;
+          actionInstruction = "Suggest words that can be naturally added, including their placement in the phrase.";
           break;
 
         case "translate":
-          prompt = `Translate this phrase to both ${input.nativeLanguage} and ${input.targetLanguage}:
-"${input.originalPhrase}"
-
-Also provide word-by-word breakdown.
-
-Format:
-[PT] Tradução: [translation]
-Palavra por palavra: [word1] = [meaning1], [word2] = [meaning2]...
-
-[${input.targetLanguage.substring(0, 2).toUpperCase()}] Translation: [translation]
-Word by word: [word1] = [meaning1], [word2] = [meaning2]...`;
+          actionInstruction = "Translate the phrase and provide a concise word-by-word breakdown.";
           break;
 
         case "improve":
-          prompt = `Improve this ${input.targetLanguage} phrase: "${input.originalPhrase}"
-
-Provide 3 improved versions with explanations in both languages.
-
-Format:
-[PT] Versões melhoradas:
-1. "[improved1]" - (por quê é melhor)
-2. "[improved2]" - (por quê é melhor)
-3. "[improved3]" - (por quê é melhor)
-
-[${input.targetLanguage.substring(0, 2).toUpperCase()}] Improved versions:
-1. "[improved1]" - (why it's better)
-2. "[improved2]" - (why it's better)
-3. "[improved3]" - (why it's better)`;
+          actionInstruction = "Provide improved versions and explain briefly why each version is better.";
           break;
       }
+
+      const prompt = `You are helping a native ${input.nativeLanguage} learner practise ${input.targetLanguage}.
+Original phrase: "${input.originalPhrase}"
+Task: ${actionInstruction}
+
+Return exactly three useful suggestions. For every suggestion, write the explanation in ${input.nativeLanguage} marked [${nativeTag}], followed by the phrase or result in ${input.targetLanguage} marked [${targetTag}]. Do not use any third language.`;
 
       const response = await invokeLLM({
         messages: [
