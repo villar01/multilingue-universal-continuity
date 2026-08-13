@@ -56,6 +56,43 @@ interface SceneLessonContent {
   }>;
 }
 
+function normalizePronunciationText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim();
+}
+
+function pronunciationSimilarity(expected: string, heard: string): number {
+  const source = normalizePronunciationText(expected);
+  const target = normalizePronunciationText(heard);
+  if (!source || !target) return 0;
+  const matrix = Array.from({ length: source.length + 1 }, (_, row) => [row]);
+  for (let column = 0; column <= target.length; column += 1) matrix[0][column] = column;
+  for (let row = 1; row <= source.length; row += 1) {
+    for (let column = 1; column <= target.length; column += 1) {
+      matrix[row][column] = Math.min(
+        matrix[row - 1][column] + 1,
+        matrix[row][column - 1] + 1,
+        matrix[row - 1][column - 1] + (source[row - 1] === target[column - 1] ? 0 : 1),
+      );
+    }
+  }
+  const distance = matrix[source.length][target.length];
+  return Math.round(Math.max(0, 1 - distance / Math.max(source.length, target.length)) * 100);
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 // ── Censorship rules by country ─────────────────────────────────────────────
 const COUNTRY_CENSORSHIP: Record<string, string[]> = {
   BR: ['álcool excessivo', 'drogas', 'violência explícita', 'conteúdo sexual'],
@@ -102,11 +139,14 @@ export default function SceneLesson({
   const [exerciseResult, setExerciseResult] = useState<'correct' | 'wrong' | null>(null);
   const [testScore, setTestScore] = useState<{ correct: number; total: number } | null>(null);
   const [pronunciationScore, setPronunciationScore] = useState<number | null>(null);
+  const [pronunciationTranscript, setPronunciationTranscript] = useState('');
+  const [pronunciationError, setPronunciationError] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const sceneMutation = trpc.polyLesson.sceneLesson.useMutation();
   const chatMutation = trpc.polyLesson.sceneChat.useMutation();
+  const transcriptionMutation = trpc.voiceTranscription.transcribe.useMutation();
 
   const sceneInfo = selectedScene;
   const color = sceneInfo?.teacherImage ? phaseColor : phaseColor;
@@ -226,30 +266,42 @@ export default function SceneLesson({
     if (!selectedHotspot) return;
     setIsRecording(true);
     setPronunciationScore(null);
+    setPronunciationTranscript('');
+    setPronunciationError(false);
     try {
       const stream = await requestMicrophoneStream();
       const recorder = createAudioRecorder(stream);
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
-        // Score using Levenshtein-like comparison
-        const expected = selectedHotspot.label.toLowerCase();
-        // Simulate scoring (in real app, would send audio to Whisper)
-        const score = Math.floor(Math.random() * 30) + 70; // 70-100
-        setPronunciationScore(score);
-        setIsRecording(false);
-        if (score >= 80) {
-          setXp(x => x + 15);
+        try {
+          const audioBlob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+          if (audioBlob.size < 1000) throw new Error('audio_too_short');
+          const audioData = await blobToDataUrl(audioBlob);
+          const result = await transcriptionMutation.mutateAsync({
+            audioData,
+            language: languageCode.split('-')[0],
+          });
+          const heard = (result.text || '').trim();
+          if (!heard) throw new Error('empty_transcript');
+          const score = pronunciationSimilarity(selectedHotspot.label, heard);
+          setPronunciationTranscript(heard);
+          setPronunciationScore(score);
+          if (score >= 80) setXp(x => x + 15);
+        } catch {
+          setPronunciationError(true);
+        } finally {
+          setIsRecording(false);
         }
       };
       recorder.start();
       setTimeout(() => { try { recorder.stop(); } catch {} }, 3000);
     } catch {
       setIsRecording(false);
-      setPronunciationScore(0);
+      setPronunciationError(true);
     }
-  }, [selectedHotspot]);
+  }, [languageCode, selectedHotspot, transcriptionMutation]);
 
   // ── Scene picker ─────────────────────────────────────────────────────────
   if (!selectedScene) {
@@ -453,6 +505,8 @@ export default function SceneLesson({
                     Pronúncia: {pronunciationScore}/100 {pronunciationScore >= 80 ? '✅ Excelente!' : pronunciationScore >= 60 ? '⚠️ Bom, continue praticando' : '❌ Tente novamente'}
                   </div>
                 )}
+                {pronunciationTranscript && <div style={{ textAlign: 'center', marginTop: 6, fontSize: 12, color: '#aaa' }}>{pronunciationTranscript}</div>}
+                {pronunciationError && <div style={{ textAlign: 'center', marginTop: 10, fontSize: 12, color: '#f59e0b' }}>⚠️</div>}
               </div>
             )}
 
