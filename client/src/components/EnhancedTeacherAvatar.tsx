@@ -12,6 +12,7 @@ interface EnhancedTeacherAvatarProps {
   isTeaching?: boolean;
   currentText?: string;
   audioUrl?: string | null;
+  syncOnly?: boolean;
   emotion?: "neutral" | "happy" | "thinking" | "surprised" | "encouraging" | "confused";
   languageCode?: string;
   hideNameLabel?: boolean;
@@ -74,6 +75,7 @@ export default function EnhancedTeacherAvatar({
   isTeaching = false,
   currentText = "",
   audioUrl,
+  syncOnly = false,
   emotion = "neutral",
   languageCode = "en-US",
   hideNameLabel = false,
@@ -209,6 +211,7 @@ export default function EnhancedTeacherAvatar({
       }
       const audio = new Audio(url);
       audio.crossOrigin = "anonymous";
+      audio.muted = syncOnly;
       audio.volume = 1.0;
       audioRef.current = audio;
       audio.onplay = () => setIsSpeaking(true);
@@ -309,10 +312,10 @@ export default function EnhancedTeacherAvatar({
       setShowVideo(false);
       return;
     }
-    // When an MP3 exists, its playback/analyser is the source of truth for
-    // facial motion. Text timing is reserved for the offline/no-audio path.
+    // Start text timing as a resilient fallback. When the MP3 analyser is
+    // available it clears this schedule and becomes the source of truth.
     if (currentText && currentText.trim().length > 0) {
-      if (!audioUrl) runPhonemeLipSync(currentText);
+      runPhonemeLipSync(currentText);
       // If D-ID is configured, generate real video
       if (didStatus?.configured && imageUrl && !showVideo && !isGeneratingVideo) {
         generateDIDVideo(currentText, imageUrl);

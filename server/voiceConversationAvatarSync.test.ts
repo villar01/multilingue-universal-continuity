@@ -7,7 +7,9 @@ describe("avatar da conversa por voz", () => {
   it("encaminha o texto efetivamente enviado ao TTS ao ciclo visual do professor", () => {
     expect(source).toContain("const teacherSpeechText = isPortugueseLesson ? portuguese : (english || portuguese)");
     expect(source).toContain("setActiveTeacherSpeechText(teacherSpeechText)");
+    expect(source).toContain("setActiveTeacherAudioUrl(ttsResult.audioUrl)");
     expect(source).toContain("setActiveTeacherSpeechText(\"\")");
+    expect(source).toContain("setActiveTeacherAudioUrl(null)");
   });
 
   it("preserva retrato, gênero, locale e estado de fala do professor ativo no avatar fotorrealista", () => {
@@ -18,6 +20,8 @@ describe("avatar da conversa por voz", () => {
     expect(avatarSegment).toContain("gender={activeTeacher.gender}");
     expect(avatarSegment).toContain("isTeaching={isSpeaking}");
     expect(avatarSegment).toContain("currentText={activeTeacherSpeechText}");
+    expect(avatarSegment).toContain("audioUrl={activeTeacherAudioUrl}");
+    expect(avatarSegment).toContain("syncOnly");
     expect(avatarSegment).toContain("languageCode={activeTeacher.fallbackLanguage}");
     expect(source).not.toContain("<EnhancedTeacherAvatar />");
   });

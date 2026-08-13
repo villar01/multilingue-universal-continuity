@@ -34,6 +34,7 @@ export default function VoiceConversation({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeTeacherSpeechText, setActiveTeacherSpeechText] = useState("");
+  const [activeTeacherAudioUrl, setActiveTeacherAudioUrl] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentTranscript, setCurrentTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState(""); // Real-time transcript
@@ -241,6 +242,7 @@ export default function VoiceConversation({
       }
       setIsSpeaking(false);
       setActiveTeacherSpeechText("");
+      setActiveTeacherAudioUrl(null);
       setTeacherEmotion("neutral");
       teacherVideoRef.current?.pause();
       if (teacherVideoRef.current) teacherVideoRef.current.currentTime = 0;
@@ -489,6 +491,7 @@ export default function VoiceConversation({
       if (audioElementRef.current) {
         audioElementRef.current.src = ttsResult.audioUrl;
         setActiveTeacherSpeechText(teacherSpeechText);
+        setActiveTeacherAudioUrl(ttsResult.audioUrl);
         setIsSpeaking(true);
         setTeacherEmotion("happy");
         await audioElementRef.current.play();
@@ -579,6 +582,8 @@ export default function VoiceConversation({
             gender={activeTeacher.gender}
             isTeaching={isSpeaking}
             currentText={activeTeacherSpeechText}
+            audioUrl={activeTeacherAudioUrl}
+            syncOnly
             languageCode={activeTeacher.fallbackLanguage}
             hideNameLabel
           />
