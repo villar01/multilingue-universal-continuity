@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { getUserSafetyContext, moderateAIResponse } from "./content-moderation";
 import { checkContent } from "./contentFilter";
 import { recordConversationSafetyAlert } from "./parentalConversationAlert";
+import { isContentAllowedForJurisdiction } from "../client/src/lib/country-compliance";
 
 export type ConversationSafetyDecision =
   | { allowed: true; context: Awaited<ReturnType<typeof getUserSafetyContext>>["context"] }
@@ -30,6 +31,11 @@ export async function assessConversationText(
   languageCode: string,
 ): Promise<ConversationSafetyDecision> {
   const context = await ensureConversationAccess(userId);
+  const jurisdiction = isContentAllowedForJurisdiction(text, context.country, languageCode);
+  if (!jurisdiction.allowed) {
+    await recordConversationSafetyAlert(userId, "country_compliance_block");
+    return { allowed: false, reason: "blocked_content", flaggedContent: [jurisdiction.reason || "Conteúdo incompatível com a jurisdição do perfil"] };
+  }
   const deterministic = await checkContent(text, languageCode.split("-")[0]);
   if (deterministic.isBlocked) {
     await recordConversationSafetyAlert(userId, "blocked_input");
@@ -50,6 +56,11 @@ export async function assessConversationOutput(
   languageCode: string,
 ): Promise<ConversationSafetyDecision> {
   const context = await ensureConversationAccess(userId);
+  const jurisdiction = isContentAllowedForJurisdiction(outputText, context.country, languageCode);
+  if (!jurisdiction.allowed) {
+    await recordConversationSafetyAlert(userId, "country_compliance_block");
+    return { allowed: false, reason: "blocked_content", flaggedContent: [jurisdiction.reason || "Conteúdo incompatível com a jurisdição do perfil"] };
+  }
   const deterministic = await checkContent(outputText, languageCode.split("-")[0]);
   if (deterministic.isBlocked) {
     await recordConversationSafetyAlert(userId, "blocked_output");

@@ -2,9 +2,17 @@ import { eq } from "drizzle-orm";
 import { childProfiles, parentalAlerts } from "../drizzle/schema";
 import { getDb } from "./db";
 
-export type ConversationSafetyEvent = "blocked_input" | "blocked_output";
+export type ConversationSafetyEvent = "blocked_input" | "blocked_output" | "country_compliance_block";
 
 export function buildSafeConversationAlert(event: ConversationSafetyEvent) {
+  if (event === "country_compliance_block") {
+    return {
+      alertType: "country_compliance_blocked",
+      title: "Interação bloqueada pela proteção regional",
+      detail: "A mensagem foi bloqueada pela regra de proteção aplicável ao perfil. O texto não foi armazenado no alerta.",
+    };
+  }
+
   return event === "blocked_input"
     ? {
         alertType: "content_blocked",

@@ -48,6 +48,16 @@ describe("conversation safety gate", () => {
     await expect(ensureConversationAccess(7)).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
+  it("bloqueia conteúdo incompatível com a jurisdição antes da moderação e registra somente a categoria", async () => {
+    await expect(assessConversationText(7, "child porn", "en-US")).resolves.toMatchObject({
+      allowed: false,
+      reason: "blocked_content",
+    });
+    expect(mocks.checkContent).not.toHaveBeenCalled();
+    expect(mocks.moderateAIResponse).not.toHaveBeenCalled();
+    expect(mocks.recordConversationSafetyAlert).toHaveBeenCalledWith(7, "country_compliance_block");
+  });
+
   it("bloqueia padrão determinístico antes da moderação semântica", async () => {
     mocks.checkContent.mockResolvedValueOnce({ isBlocked: true, matchedPatterns: ["padrão proibido"], category: "safety", severity: "block" });
     await expect(assessConversationText(7, "texto", "en-US")).resolves.toEqual({

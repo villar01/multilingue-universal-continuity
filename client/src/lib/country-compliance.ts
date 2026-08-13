@@ -698,6 +698,15 @@ export function getComplianceForLanguage(languageCode: string): CountryComplianc
 
 /** Verifica se conteúdo é permitido em um país específico */
 export function isContentAllowedInCountry(content: string, languageCode: string): { allowed: boolean; reason?: string; rule?: ComplianceRule } {
+  return isContentAllowedForJurisdiction(content, undefined, languageCode);
+}
+
+/** Verifica conteúdo pela jurisdição declarada do perfil, recorrendo ao locale quando ela não estiver disponível. */
+export function isContentAllowedForJurisdiction(
+  content: string,
+  countryCode?: string,
+  languageCode = "",
+): { allowed: boolean; reason?: string; rule?: ComplianceRule } {
   const universalViolation = detectMoralViolation(content);
   if (universalViolation.detected && universalViolation.type) {
     const rule = UNIVERSAL_RULES[universalViolation.type];
@@ -708,7 +717,10 @@ export function isContentAllowedInCountry(content: string, languageCode: string)
     };
   }
 
-  const compliance = getComplianceForLanguage(languageCode);
+  const normalizedCountry = countryCode?.trim().toUpperCase();
+  const compliance = normalizedCountry
+    ? COUNTRY_COMPLIANCE.find((country) => country.countryCode === normalizedCountry) || getComplianceForLanguage(languageCode)
+    : getComplianceForLanguage(languageCode);
 
   for (const prohibited of compliance.prohibitedContent) {
     if (content.toLowerCase().includes(prohibited.toLowerCase())) {
