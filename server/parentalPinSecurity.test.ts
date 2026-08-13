@@ -6,7 +6,8 @@ describe("proteção de PIN parental em repouso", () => {
     const first = hashParentPin("4829");
     const second = hashParentPin("4829");
     expect(isHashedParentPin(first)).toBe(true);
-    expect(first).not.toContain("4829");
+    expect(first).toMatch(/^scrypt\$[a-f0-9]{32}\$[a-f0-9]{64}$/);
+    expect(first).not.toMatch(/^scrypt\$4829\$/);
     expect(first).not.toBe(second);
   });
 

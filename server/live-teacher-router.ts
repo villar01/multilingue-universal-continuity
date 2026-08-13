@@ -10,6 +10,7 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
+import { assessConversationOutput, assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
 
 const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 type CEFRLevel = (typeof CEFR_LEVELS)[number];
@@ -185,7 +186,7 @@ export const liveTeacherRouter = router({
    * Mensagem conversacional do professor — responde ao aluno de forma natural
    * com moderação de conteúdo integrada.
    */
-  chat: publicProcedure
+  chat: protectedProcedure
     .input(z.object({
       message: z.string().min(1).max(1000),
       teacherName: z.string().default("Professor"),
@@ -200,7 +201,17 @@ export const liveTeacherRouter = router({
         content: z.string(),
       })).default([]),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
+      const inputSafety = await assessConversationText(ctx.user.id, input.message, input.targetLang);
+      if (!inputSafety.allowed) {
+        return {
+          content: "Essa mensagem não pode ser usada neste perfil. Vamos continuar com uma frase segura da lição.",
+          blocked: true,
+          teacherExpression: "neutral" as const,
+          suggestedTopics: ["Vocabulário da lição", "Pronúncia", "Expressões do dia a dia"],
+        };
+      }
       // 1. Verificar moderação de conteúdo
       const modCheck = checkModeration(input.message, input.countryCode, input.nativeLang);
 
@@ -243,6 +254,15 @@ export const liveTeacherRouter = router({
         let content = (response.choices[0]?.message?.content as string) || "Ótima pergunta! Vamos continuar praticando.";
         // Content filter: sanitize response
         content = await sanitizeContent(content, input.targetLang) || content;
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.message, content, input.targetLang);
+        if (!outputSafety.allowed) {
+          return {
+            content: "Vamos continuar com uma explicação segura da lição.",
+            blocked: true,
+            teacherExpression: "neutral" as const,
+            suggestedTopics: ["Vocabulário da lição", "Pronúncia", "Expressões do dia a dia"],
+          };
+        }
 
         // Detectar expressão do professor baseada no conteúdo
         let teacherExpression: "neutral" | "happy" | "thinking" | "question" | "encouraging" = "neutral";
@@ -259,7 +279,7 @@ export const liveTeacherRouter = router({
 
         // Log interaction for parental monitoring
         logInteraction({
-          userId: 0, // public procedure — no ctx.user available
+          userId: ctx.user.id,
           teacherId: null,
           interactionType: 'teacher_chat',
           content: input.message,
@@ -286,7 +306,7 @@ export const liveTeacherRouter = router({
   /**
    * Introdução da aula — professor apresenta o tema de forma natural e envolvente.
    */
-  introduce: publicProcedure
+  introduce: protectedProcedure
     .input(z.object({
       teacherName: z.string().default("Professor"),
       targetLang: z.string().default("English"),
@@ -296,7 +316,8 @@ export const liveTeacherRouter = router({
       lessonNumber: z.number().default(1),
       countryCode: z.string().default("BR"),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
 Apresente a Aula ${input.lessonNumber} sobre "${input.lessonTopic}" para um aluno em ${CEFR_LEVEL_DESCRIPTIONS[input.level]}.
 Fale em ${input.nativeLang}, de forma calorosa e animada, como um apresentador de TV.
@@ -307,8 +328,15 @@ Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
         const response = await invokeLLM({
           messages: [{ role: "user", content: prompt }],
         });
+        const content = (await sanitizeContent((response.choices[0]?.message?.content as string) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`, input.targetLang)) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`;
+        const outputSafety = await assessConversationOutput(
+          ctx.user.id,
+          `Introdução segura sobre ${input.lessonTopic}`,
+          content,
+          input.targetLang,
+        );
         return {
-          content: (await sanitizeContent((response.choices[0]?.message?.content as string) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`, input.targetLang)) || `Olá! Hoje vamos aprender sobre "${input.lessonTopic}". Vai ser incrível!`,
+          content: outputSafety.allowed ? content : "Vamos começar com segurança pelo vocabulário desta lição.",
           teacherExpression: "happy" as const,
         };
       } catch {
@@ -322,7 +350,7 @@ Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
   /**
    * Feedback do professor sobre a resposta do aluno — corrige e encoraja.
    */
-  feedback: publicProcedure
+  feedback: protectedProcedure
     .input(z.object({
       studentAnswer: z.string(),
       expectedAnswer: z.string(),
@@ -332,7 +360,17 @@ Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
       teacherName: z.string().default("Professor"),
       level: z.enum(CEFR_LEVELS).default("A1"),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
+      const inputSafety = await assessConversationText(ctx.user.id, input.studentAnswer, input.targetLang);
+      if (!inputSafety.allowed) {
+        return {
+          content: "Vamos usar uma resposta segura da lição para continuar praticando.",
+          isCorrect: false,
+          teacherExpression: "neutral" as const,
+          pointsEarned: 0,
+        };
+      }
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
 O aluno (${CEFR_LEVEL_DESCRIPTIONS[input.level]}) fez um exercício de ${input.exerciseType}.
 
@@ -353,6 +391,15 @@ Máximo 2 frases. Seja natural, como um professor real falando com o aluno.`;
         let content = (response.choices[0]?.message?.content as string) || "Boa tentativa! Continue praticando.";
         // Content filter: sanitize response
         content = await sanitizeContent(content, input.targetLang) || content;
+        const outputSafety = await assessConversationOutput(ctx.user.id, input.studentAnswer, content, input.targetLang);
+        if (!outputSafety.allowed) {
+          return {
+            content: "Vamos continuar com uma orientação segura de vocabulário e pronúncia.",
+            isCorrect: false,
+            teacherExpression: "neutral" as const,
+            pointsEarned: 0,
+          };
+        }
 
         // Determinar se está correto
         const isCorrect = input.studentAnswer.trim().toLowerCase() === input.expectedAnswer.trim().toLowerCase() ||
@@ -380,7 +427,7 @@ Máximo 2 frases. Seja natural, como um professor real falando com o aluno.`;
   /**
    * Professor comenta um objeto/cena imersiva — usado na ImmersiveScene.
    */
-  commentObject: publicProcedure
+  commentObject: protectedProcedure
     .input(z.object({
       objectName: z.string(),
       objectTranslation: z.string(),
@@ -390,7 +437,19 @@ Máximo 2 frases. Seja natural, como um professor real falando com o aluno.`;
       teacherName: z.string().default("Professor"),
       level: z.enum(CEFR_LEVELS).default("A1"),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
+      const inputSafety = await assessConversationText(
+        ctx.user.id,
+        `${input.objectName} ${input.objectTranslation} ${input.sceneName}`,
+        input.targetLang,
+      );
+      if (!inputSafety.allowed) {
+        return {
+          content: "Vamos praticar outro objeto seguro desta cena.",
+          teacherExpression: "neutral" as const,
+        };
+      }
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
 O aluno em ${CEFR_LEVEL_DESCRIPTIONS[input.level]} clicou em "${input.objectName}" (${input.objectTranslation}) na cena "${input.sceneName}".
 Faça um comentário curto e envolvente em ${input.nativeLang} sobre esta palavra, como um professor real faria.
@@ -401,10 +460,17 @@ Máximo 2 frases. Seja natural e animado!`;
         const response = await invokeLLM({
           messages: [{ role: "user", content: prompt }],
         });
+        const content = (await sanitizeContent((response.choices[0]?.message?.content as string) ||
+          `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`, input.targetLang)) ||
+          `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`;
+        const outputSafety = await assessConversationOutput(
+          ctx.user.id,
+          input.objectName,
+          content,
+          input.targetLang,
+        );
         return {
-          content: (await sanitizeContent((response.choices[0]?.message?.content as string) ||
-            `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`, input.targetLang)) ||
-            `"${input.objectName}" é uma palavra muito útil! Pratique dizendo: "${input.objectName}" — ${input.objectTranslation}.`,
+          content: outputSafety.allowed ? content : "Vamos praticar outro objeto seguro desta cena.",
           teacherExpression: "happy" as const,
         };
       } catch {
