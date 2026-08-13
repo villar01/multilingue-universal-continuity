@@ -519,6 +519,36 @@ export const parentalControlRouter = router({
       return { logs: result[0] || [] };
     }),
 
+  listSupervisedInteractions: protectedProcedure
+    .input(z.object({ childId: z.number().positive(), limit: z.number().min(1).max(50).default(20) }))
+    .query(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const child = await requireChildOwnership(database, input.childId, ctx.user.id);
+
+      const linkedUserId = child.linkedUserId;
+      const result = linkedUserId
+        ? await database.execute(sql`
+            SELECT interaction_type AS interactionType, language_code AS languageCode,
+                   is_flagged AS isFlagged, created_at AS createdAt
+            FROM interaction_logs
+            WHERE child_profile_id = ${input.childId}
+               OR (child_profile_id IS NULL AND user_id = ${linkedUserId})
+            ORDER BY created_at DESC
+            LIMIT ${input.limit}
+          `)
+        : await database.execute(sql`
+            SELECT interaction_type AS interactionType, language_code AS languageCode,
+                   is_flagged AS isFlagged, created_at AS createdAt
+            FROM interaction_logs
+            WHERE child_profile_id = ${input.childId}
+            ORDER BY created_at DESC
+            LIMIT ${input.limit}
+          `);
+
+      return { interactions: (result[0] as unknown as any[]) || [] };
+    }),
+
   getSecurityStats: protectedProcedure
     .query(async ({ ctx }) => {
       const database = await getDb();

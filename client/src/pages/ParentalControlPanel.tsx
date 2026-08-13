@@ -342,7 +342,7 @@ export default function ParentalControlPanel() {
             <div className="lg:col-span-3">
               {selectedChild && (
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-5 bg-slate-900/50">
+                    <TabsList className="grid w-full grid-cols-6 bg-slate-900/50">
                     <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600">
                       <TrendingUp className="w-4 h-4 mr-1" /> Visão Geral
                     </TabsTrigger>
@@ -351,6 +351,9 @@ export default function ParentalControlPanel() {
                     </TabsTrigger>
                     <TabsTrigger value="alerts" className="data-[state=active]:bg-blue-600">
                       <Bell className="w-4 h-4 mr-1" /> Alertas
+                    </TabsTrigger>
+                    <TabsTrigger value="activity" className="data-[state=active]:bg-blue-600">
+                      <BookOpen className="w-4 h-4 mr-1" /> Atividades
                     </TabsTrigger>
                     <TabsTrigger value="security" className="data-[state=active]:bg-blue-600">
                       <Lock className="w-4 h-4 mr-1" /> Segurança
@@ -373,6 +376,10 @@ export default function ParentalControlPanel() {
                   {/* Alerts Tab */}
                   <TabsContent value="alerts" className="mt-4 space-y-4">
                     <AlertsTab childId={selectedChild.id} alerts={alerts || []} onMarkRead={(id) => markAlertRead.mutate({ alertId: id })} />
+                  </TabsContent>
+
+                  <TabsContent value="activity" className="mt-4 space-y-4">
+                    <SupervisedActivityTab childId={selectedChild.id} />
                   </TabsContent>
 
                   {/* Security Tab */}
@@ -552,6 +559,60 @@ function UsageOverview({ childId, childName }: { childId: number; childName: str
             </div>
           ) : (
             <p className="text-slate-400 text-sm text-center py-4">Nenhuma sessão registrada esta semana</p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ── Supervised Activity Tab ──────────────────────────────────
+function SupervisedActivityTab({ childId }: { childId: number }) {
+  const { data, isLoading } = trpc.parentalControl.listSupervisedInteractions.useQuery({ childId, limit: 20 });
+  const interactions = data?.interactions || [];
+
+  const activityLabel: Record<string, string> = {
+    bilingual_conversation: 'Conversa bilíngue',
+    live_teacher: 'Professor ao vivo',
+    lesson_chat: 'Conversa da lição',
+    scene_chat: 'Interação na cena',
+    free_chat: 'Conversa livre',
+    roleplay: 'Prática de situação',
+  };
+
+  return (
+    <div className="space-y-4">
+      <Alert className="border-blue-500/40 bg-blue-950/30">
+        <Shield className="h-4 w-4 text-blue-300" />
+        <AlertTitle className="text-blue-200">Histórico supervisionável e minimizado</AlertTitle>
+        <AlertDescription className="text-blue-50/90">
+          Mostra somente horário, idioma, tipo de atividade e indicação de atenção. Mensagens, respostas e transcrições não são exibidas neste painel.
+        </AlertDescription>
+      </Alert>
+
+      <Card className="bg-slate-900/50 border-slate-800">
+        <CardHeader><CardTitle className="text-base">Atividades recentes</CardTitle></CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" /></div>
+          ) : interactions.length ? (
+            <div className="space-y-2">
+              {interactions.map((interaction: any, index: number) => (
+                <div key={`${interaction.createdAt}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-800/50 p-3 text-sm">
+                  <div>
+                    <p className="font-medium text-slate-100">{activityLabel[interaction.interactionType] || 'Atividade de aprendizagem'}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {(interaction.languageCode || '—').toUpperCase()} · {interaction.createdAt ? new Date(interaction.createdAt).toLocaleString('pt-BR') : 'Horário indisponível'}
+                    </p>
+                  </div>
+                  <Badge variant="outline" className={interaction.isFlagged ? 'border-amber-500/40 text-amber-300' : 'border-green-500/40 text-green-300'}>
+                    {interaction.isFlagged ? 'Requer atenção' : 'Sem alerta'}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="py-6 text-center text-sm text-slate-400">Ainda não há atividades supervisionáveis para este perfil.</p>
           )}
         </CardContent>
       </Card>
