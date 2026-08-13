@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { CEFR_LEVELS, type CEFRLevel } from "@/lib/lesson-levels";
+import { resolveActiveLanguageLocale } from "@/lib/languages";
 import {
   MessageSquare, X, Minimize2, Maximize2, Volume2, VolumeX,
   Send, Mic, MicOff, AlertTriangle, ChevronRight, Sparkles,
@@ -206,7 +207,7 @@ function StreamingTeacherMessage({ content, isLast }: { content: string; isLast:
 export default function LiveLessonTeacher({
   teacherName = "Professor",
   teacherPhoto,
-  targetLang = "English",
+  targetLang = "en-US",
   nativeLang = "Português",
   level = "A1",
   lessonTopic = "Vocabulário Básico",
@@ -259,6 +260,11 @@ export default function LiveLessonTeacher({
 
   const speakText = useCallback(async (text: string) => {
     if (isMuted) return;
+    const targetLocale = resolveActiveLanguageLocale(targetLang);
+    if (!targetLocale) {
+      toast.error("A voz neural não está disponível para o idioma selecionado.");
+      return;
+    }
     setIsSpeaking(true);
     if (onSpeakText) {
       onSpeakText(text);
@@ -266,10 +272,9 @@ export default function LiveLessonTeacher({
       return;
     }
     try {
-      const voiceLang = targetLang.toLowerCase().startsWith("pt") ? "pt-BR" : targetLang.length <= 10 ? targetLang : "en-US";
       const result = await ttsMutation.mutateAsync({
         text: text.substring(0, 300),
-        voiceLang,
+        voiceLang: targetLocale,
       });
       if (result.success && result.audioBase64) {
         if (audioRef.current) {
@@ -286,11 +291,9 @@ export default function LiveLessonTeacher({
         setIsSpeaking(false);
       }
     } catch {
-      // Fallback: Edge TTS Neural
       stopEdgeTTS();
-      speakNaturalVoice(text.substring(0, 200), targetLang.toLowerCase().startsWith("pt") ? "pt-BR" : "en-US", {
-        onEnd: () => setIsSpeaking(false),
-      });
+      setIsSpeaking(false);
+      toast.error("Não foi possível gerar a voz neural. Tente novamente.");
     }
   }, [isMuted, targetLang, ttsMutation, onSpeakText]);
 

@@ -218,6 +218,66 @@ export const POPULAR_LANGUAGES = LANGUAGES_57.filter(l =>
 // Idiomas disponíveis agora
 export const AVAILABLE_LANGUAGES = LANGUAGES_57.filter(l => l.available);
 
+const LANGUAGE_LOCALE_ALIASES: Record<string, string> = {
+  english: "en-US",
+  "inglês": "en-US",
+  spanish: "es-ES",
+  "espanhol": "es-ES",
+  french: "fr-FR",
+  "francês": "fr-FR",
+  german: "de-DE",
+  "alemão": "de-DE",
+  italian: "it-IT",
+  italiano: "it-IT",
+  portuguese: "pt-BR",
+  "português": "pt-BR",
+  japanese: "ja-JP",
+  "japonês": "ja-JP",
+  korean: "ko-KR",
+  "coreano": "ko-KR",
+  russian: "ru-RU",
+  russo: "ru-RU",
+  arabic: "ar-SA",
+  "árabe": "ar-SA",
+  hindi: "hi-IN",
+  mandarin: "zh-CN",
+  "mandarim": "zh-CN",
+};
+
+function normalizedLanguageName(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\([^)]*\)/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Converte o idioma selecionado para um locale BCP-47 ativo do catálogo.
+ * Retorna null em vez de trocar silenciosamente para inglês quando não houver correspondência.
+ */
+export function resolveActiveLanguageLocale(value?: string): string | null {
+  const candidate = value?.trim();
+  if (!candidate) return null;
+
+  const direct = AVAILABLE_LANGUAGES.find((language) => language.code.toLowerCase() === candidate.toLowerCase());
+  if (direct) return direct.code;
+
+  const normalized = normalizedLanguageName(candidate);
+  const alias = LANGUAGE_LOCALE_ALIASES[normalized];
+  if (alias) return alias;
+
+  const byName = AVAILABLE_LANGUAGES.find((language) => {
+    const names = [language.name, language.label].map(normalizedLanguageName);
+    return names.includes(normalized);
+  });
+  if (byName) return byName.code;
+
+  const primaryTag = candidate.toLowerCase().split("-")[0];
+  return AVAILABLE_LANGUAGES.find((language) => language.code.toLowerCase().startsWith(`${primaryTag}-`))?.code ?? null;
+}
+
 // Idiomas em breve
 export const COMING_SOON_LANGUAGES = LANGUAGES_57.filter(l => !l.available);
 
