@@ -31,6 +31,8 @@ import { LANGUAGES_57 } from "@/lib/languages";
 import LanguageSelector from "@/components/LanguageSelector";
 import type { Language } from "@/lib/languages";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 interface DetectedObject {
@@ -55,6 +57,8 @@ type Phase = "scan" | "result" | "quiz";
 
 // ── Componente Principal ──────────────────────────────────────────────────────
 export default function ObjectScanAR() {
+  const { user } = useAuth();
+  const { profile } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -149,6 +153,10 @@ export default function ObjectScanAR() {
 
   // ── Executar scan via IA ──────────────────────────────────────────────────
   const runScan = useCallback(async (base64: string) => {
+    if (!user) {
+      toast.error("Entre na sua conta para analisar objetos com IA.");
+      return;
+    }
     setObjects([]);
     setSelectedObj(null);
     setPhase("result");
@@ -156,7 +164,7 @@ export default function ObjectScanAR() {
       const result = await scanMutation.mutateAsync({
         imageBase64: base64,
         targetLanguage: language.code,
-        nativeLanguage: "pt-BR",
+        nativeLanguage: profile.nativeCode,
       });
       if (result.objects && result.objects.length > 0) {
         setObjects(result.objects as DetectedObject[]);
@@ -170,7 +178,7 @@ export default function ObjectScanAR() {
       toast.error("Erro ao analisar imagem. Tente novamente.");
       setPhase("scan");
     }
-  }, [language, scanMutation]);
+  }, [language, profile.nativeCode, scanMutation, user]);
 
   // ── Falar palavra (Edge TTS Neural) ───────────────────────────────────────
   const speak = useCallback((text: string) => {

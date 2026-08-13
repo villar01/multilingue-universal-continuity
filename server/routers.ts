@@ -3999,11 +3999,11 @@ Máximo 2 frases por resposta.`,
 
   // ── Vision: Detecção de Objetos via IA (sem TensorFlow) ──────────────
   vision: router({
-    scanObjects: publicProcedure
+    scanObjects: protectedProcedure
       .input(z.object({
         imageBase64: z.string().min(10),
-        targetLanguage: z.string().default("en-US"),
-        nativeLanguage: z.string().default("pt-BR"),
+        targetLanguage: z.string().min(2),
+        nativeLanguage: z.string().min(2),
       }))
       .mutation(async ({ input }) => {
         const { invokeLLM } = await import("./_core/llm");

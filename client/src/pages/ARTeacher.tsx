@@ -18,6 +18,7 @@ import { TEACHERS_57, type Teacher57 } from "@/data/teachers57";
 import { MULTILANG_COUNTRY_ALIASES, getNativeLang } from "@/lib/detect-native-lang";
 import { getLessonStrings } from "@/lib/lesson-i18n";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowLeft, Camera, CameraOff, Mic, MicOff, Send,
   Volume2, Sparkles, Search
@@ -57,6 +58,7 @@ const SCENARIOS = [
 const HUNT_TARGETS = ["cadeira","mesa","janela","porta","livro","copo","telefone","planta","luz","teclado"];
 
 export default function ARTeacher() {
+  const { user } = useAuth();
   const [mode, setMode]           = useState<AppMode>("select-teacher");
   const [teacher, setTeacher]     = useState<Teacher57 | null>(null);
   const [selMode, setSelMode]     = useState("");
@@ -157,6 +159,7 @@ export default function ARTeacher() {
   // ── Scan AR de Objetos ───────────────────────────────────────────────────────
   const scanObjects = useCallback(async () => {
     if (!teacher || scanning) return;
+    if (!user) { toast.error("Entre na sua conta para analisar objetos com IA."); return; }
     const b64 = captureFrame();
     if (!b64) { toast.error("Câmera não ativa"); return; }
     setScanning(true);
@@ -187,7 +190,7 @@ export default function ARTeacher() {
       }
     } catch { toast.error("Erro ao analisar. Tente novamente."); }
     finally { setScanning(false); }
-  }, [teacher, scanning, captureFrame, scanMut, selMode, huntTargets, speakText]);
+  }, [teacher, scanning, user, captureFrame, scanMut, selMode, huntTargets, speakText]);
 
   // ── Auto-Scan ────────────────────────────────────────────────────────────────
   useEffect(() => {
