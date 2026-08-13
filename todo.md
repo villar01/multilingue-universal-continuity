@@ -107,7 +107,9 @@
 - [x] Implementar exercícios ditados pelo professor/professora
 - [x] Sistema de correção de pronúncia em tempo real (aluno fala, professor corrige)
 - [x] Opção de escolha entre Professor Ricardo e Professora Ingrid para exercícios
-- [ ] Ajustar palavras de inglês dos hotspots ao nível CEFR e ao vocabulário frequente já consolidado nas lições
+- [x] Ajustar palavras de inglês dos hotspots ao nível CEFR e ao vocabulário frequente já consolidado nas lições — cenas A1 usam núcleo Pareto de frequência ≥8, cenas B1 usam vocabulário Pareto consolidado de frequência ≥7, e futuras cenas C1+ são protegidas por regra de expansão ≥6; Spa e Família no Aeroporto foram reposicionadas em B1; TypeScript e 136 testes aprovados
+- [x] Auditar e validar hotspots ingleses intermediate/advanced contra regras CEFR explícitas e o vocabulário consolidado das lições — contrato automatizado cobre A1, B1 e qualquer cena avançada futura
+- [x] Revisar exemplos e frases dos hotspots ingleses para garantir progressão CEFR coerente em todos os níveis — regressão garante que cada exemplo inglês menciona o objeto ensinado e exemplos A1 permanecem curtos
 - [ ] Fazer hotspots de inglês usarem a voz neural natural regional do professor, sem degradação para síntese do navegador
 - [ ] Corrigir clique de hotspot sem resposta, sotaque português em inglês e ausência de sincronização da foto do professor com a fala na cena imersiva
 - [ ] Separar instruções e traduções na voz neural nativa do aluno da pronúncia de objeto na voz neural regional do idioma estudado

@@ -704,7 +704,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherName:"Priya", teacherLang:"en-GB", langCode:"en", teacherGender:"female",
     teacherGreeting:"Welcome to the spa! Let's relax and learn wellness vocabulary!",
     greetingPt:"Bem-vindo ao spa! Vamos relaxar e aprender vocabulário de bem-estar!",
-    difficulty:"beginner", premium:false,
+    difficulty:"intermediate", premium:false,
     dialog:[
       {speaker:"teacher", text:"Welcome to the spa! I'm Priya. How do you feel today?", textPt:"Bem-vindo ao spa! Sou Priya. Como você se sente hoje?"},
       {speaker:"user", text:"I feel a bit stressed. I need to relax!", textPt:"Me sinto um pouco estressado. Preciso relaxar!", options:["I feel a bit stressed. I need to relax!","I feel great already.","I don't know."], correctIndex:0},
@@ -793,7 +793,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     ],
     hotspots:[
       {id:"sofa", x:35, y:65, label:"Sofa", translation:"Sofá", pronunciation:"SOU-fa", example:"The family sits on the sofa.", examplePt:"A família senta no sofá.", icon:"🛋️", color:"#a16207"},
-      {id:"tv", x:60, y:40, label:"Television", translation:"Televisão", pronunciation:"te-li-VI-zhon", example:"We watch TV together.", examplePt:"Assistimos TV juntos.", icon:"📺", color:"#1d4ed8"},
+      {id:"tv", x:60, y:40, label:"Television", translation:"Televisão", pronunciation:"te-li-VI-zhon", example:"We watch television together.", examplePt:"Assistimos televisão juntos.", icon:"📺", color:"#1d4ed8"},
       {id:"table", x:50, y:75, label:"Table", translation:"Mesa", pronunciation:"TEY-bel", example:"We eat at the table.", examplePt:"Comemos na mesa.", icon:"🪑", color:"#92400e"},
       {id:"window", x:80, y:30, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"Open the window.", examplePt:"Abra a janela.", icon:"🪟", color:"#0ea5e9"},
       {id:"door", x:15, y:50, label:"Door", translation:"Porta", pronunciation:"DOOR", example:"Close the door please.", examplePt:"Feche a porta por favor.", icon:"🚪", color:"#7c3aed"},
@@ -809,7 +809,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male",
     teacherGreeting:"The family is at the airport! Let's learn travel phrases!",
     greetingPt:"A família está no aeroporto! Vamos aprender frases de viagem!",
-    difficulty:"beginner", premium:false,
+    difficulty:"intermediate", premium:false,
     dialog:[
       {speaker:"teacher", text:"The family is going on vacation! Where are they going?", textPt:"A família vai de férias! Para onde eles vão?"},
       {speaker:"user", text:"They are going to London!", textPt:"Eles vão para Londres!", options:["They are going to London!","They are going home.","They are lost."], correctIndex:0},
