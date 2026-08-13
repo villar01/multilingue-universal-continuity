@@ -11,6 +11,18 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
 
+const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+type CEFRLevel = (typeof CEFR_LEVELS)[number];
+
+const CEFR_LEVEL_DESCRIPTIONS: Record<CEFRLevel, string> = {
+  A1: "A1 — introduza vocabulário concreto, frases de até 6 palavras e perguntas de identificação ou sim/não",
+  A2: "A2 — pratique rotina e situações cotidianas com frases simples de até 10 palavras e apoio explícito",
+  B1: "B1 — conduza descrições e comparações de experiências familiares com conectores claros",
+  B2: "B2 — peça argumentos organizados, comparação de perspectivas e correção de estruturas mais complexas",
+  C1: "C1 — desenvolva precisão, registro, paráfrase, nuances culturais e explicações críticas",
+  C2: "C2 — proponha debate, reformulação sofisticada e uso flexível de registros sem simplificação artificial",
+};
+
 // ─── Moderação por País ────────────────────────────────────────────────────────
 
 /**
@@ -132,17 +144,11 @@ function buildTeacherSystemPrompt(params: {
   teacherName: string;
   targetLang: string;
   nativeLang: string;
-  level: "beginner" | "intermediate" | "advanced";
+  level: CEFRLevel;
   lessonTopic: string;
   countryCode: string;
   lessonNumber: number;
 }) {
-  const levelDescriptions = {
-    beginner: "iniciante (A1-A2): use frases simples, vocabulário básico, muita repetição e encorajamento",
-    intermediate: "intermediário (B1-B2): use estruturas mais complexas, expressões idiomáticas simples, contexto cultural",
-    advanced: "avançado (C1-C2): use linguagem natural, gírias, nuances culturais, discussões profundas",
-  };
-
   const rules = COUNTRY_CONTENT_RULES[params.countryCode.toUpperCase()] || COUNTRY_CONTENT_RULES.DEFAULT;
 
   return `Você é ${params.teacherName}, um professor de ${params.targetLang} altamente qualificado e carismático.
@@ -153,7 +159,7 @@ MISSÃO ATUAL:
 - Aula ${params.lessonNumber}: "${params.lessonTopic}"
 - Idioma alvo: ${params.targetLang}
 - Idioma nativo do aluno: ${params.nativeLang}
-- Nível: ${levelDescriptions[params.level]}
+- Nível: ${CEFR_LEVEL_DESCRIPTIONS[params.level]}
 - País: ${rules.name}
 
 REGRAS DE CONDUTA (OBRIGATÓRIAS):
@@ -185,7 +191,7 @@ export const liveTeacherRouter = router({
       teacherName: z.string().default("Professor"),
       targetLang: z.string().default("English"),
       nativeLang: z.string().default("Português"),
-      level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
+      level: z.enum(CEFR_LEVELS).default("A1"),
       lessonTopic: z.string().default("Vocabulário Básico"),
       lessonNumber: z.number().default(1),
       countryCode: z.string().default("BR"),
@@ -285,20 +291,14 @@ export const liveTeacherRouter = router({
       teacherName: z.string().default("Professor"),
       targetLang: z.string().default("English"),
       nativeLang: z.string().default("Português"),
-      level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
+      level: z.enum(CEFR_LEVELS).default("A1"),
       lessonTopic: z.string(),
       lessonNumber: z.number().default(1),
       countryCode: z.string().default("BR"),
     }))
     .mutation(async ({ input }) => {
-      const levelLabel = {
-        beginner: "Iniciante",
-        intermediate: "Intermediário",
-        advanced: "Avançado",
-      }[input.level];
-
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
-Apresente a Aula ${input.lessonNumber} sobre "${input.lessonTopic}" para um aluno de nível ${levelLabel}.
+Apresente a Aula ${input.lessonNumber} sobre "${input.lessonTopic}" para um aluno em ${CEFR_LEVEL_DESCRIPTIONS[input.level]}.
 Fale em ${input.nativeLang}, de forma calorosa e animada, como um apresentador de TV.
 Mencione o que o aluno vai aprender e por que é útil na vida real.
 Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
@@ -330,11 +330,11 @@ Máximo 3 frases. Seja específico sobre o tema "${input.lessonTopic}".`;
       targetLang: z.string().default("English"),
       nativeLang: z.string().default("Português"),
       teacherName: z.string().default("Professor"),
-      level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
+      level: z.enum(CEFR_LEVELS).default("A1"),
     }))
     .mutation(async ({ input }) => {
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
-O aluno (nível ${input.level}) fez um exercício de ${input.exerciseType}.
+O aluno (${CEFR_LEVEL_DESCRIPTIONS[input.level]}) fez um exercício de ${input.exerciseType}.
 
 Resposta esperada: "${input.expectedAnswer}"
 Resposta do aluno: "${input.studentAnswer}"
@@ -388,11 +388,11 @@ Máximo 2 frases. Seja natural, como um professor real falando com o aluno.`;
       targetLang: z.string().default("English"),
       nativeLang: z.string().default("Português"),
       teacherName: z.string().default("Professor"),
-      level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
+      level: z.enum(CEFR_LEVELS).default("A1"),
     }))
     .mutation(async ({ input }) => {
       const prompt = `Você é ${input.teacherName}, professor de ${input.targetLang}.
-O aluno clicou em "${input.objectName}" (${input.objectTranslation}) na cena "${input.sceneName}".
+O aluno em ${CEFR_LEVEL_DESCRIPTIONS[input.level]} clicou em "${input.objectName}" (${input.objectTranslation}) na cena "${input.sceneName}".
 Faça um comentário curto e envolvente em ${input.nativeLang} sobre esta palavra, como um professor real faria.
 Inclua: como usar em uma frase, uma dica de pronúncia ou um fato cultural interessante.
 Máximo 2 frases. Seja natural e animado!`;

@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
+import { CEFR_LEVELS, type CEFRLevel } from "@/lib/lesson-levels";
 import {
   MessageSquare, X, Minimize2, Maximize2, Volume2, VolumeX,
   Send, Mic, MicOff, AlertTriangle, ChevronRight, Sparkles,
@@ -42,7 +43,7 @@ interface LiveLessonTeacherProps {
   teacherPhoto?: string;
   targetLang?: string;
   nativeLang?: string;
-  level?: "beginner" | "intermediate" | "advanced";
+  level?: CEFRLevel;
   lessonTopic?: string;
   lessonNumber?: number;
   countryCode?: string;
@@ -207,7 +208,7 @@ export default function LiveLessonTeacher({
   teacherPhoto,
   targetLang = "English",
   nativeLang = "Português",
-  level = "beginner",
+  level = "A1",
   lessonTopic = "Vocabulário Básico",
   lessonNumber = 1,
   countryCode = "BR",
@@ -406,8 +407,6 @@ export default function LiveLessonTeacher({
     ? "bottom-6 left-6"
     : "bottom-6 right-6";
 
-  const levelLabels = { beginner: "Iniciante", intermediate: "Intermediário", advanced: "Avançado" };
-
   return (
     <div className={`fixed ${positionClass} z-50 flex flex-col items-end gap-2`}>
       {/* Chat Panel */}
@@ -429,7 +428,7 @@ export default function LiveLessonTeacher({
               <div>
                 <p className="text-white font-semibold text-sm leading-tight">{teacherName}</p>
                 <div className="flex items-center gap-1">
-                  <Badge className="bg-white/20 text-white text-xs px-1.5 py-0">{levelLabels[level]}</Badge>
+                  <Badge className="bg-white/20 text-white text-xs px-1.5 py-0">{level} · {CEFR_LEVELS[level].label}</Badge>
                   <span className="text-white/70 text-xs">{targetLang}</span>
                 </div>
               </div>

@@ -33,7 +33,7 @@ import { synthesizeSpeechLocal as synthesizeSpeechLocalBase, isWebSpeechSupporte
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
 import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
-import { getLevelByLesson, getLevelConfig, type CEFRLevel } from "@/lib/lesson-levels";
+import { getLevelByLesson, getLevelConfig, resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { resolveTeacherSpeechVoice } from "@/lib/voiceConversationTeacher";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
@@ -1596,7 +1596,7 @@ export default function Lesson() {
           teacherPhoto={teacher.photoUrl || undefined}
           targetLang={lesson.languageCode || "en-US"}
           nativeLang="Português"
-          level={((lesson as any).courseLevel as "beginner" | "intermediate" | "advanced") || "beginner"}
+          level={resolvePracticeCEFRLevel((lesson as any).courseLevel)}
           lessonTopic={lesson.title || "Vocabulário"}
           lessonNumber={(lesson as any).orderIndex || 1}
           countryCode="BR"
