@@ -35,8 +35,9 @@ const PLANS: Plan[] = [
     period: "/mês",
     description: "Acesso completo por 1 mês",
     features: [
-      "69 idiomas disponíveis",
-      "200 lições por idioma",
+      "Catálogo de 143 idiomas",
+      "58 idiomas ativos agora · 85 em preparação",
+      "Conteúdo curricular em expansão",
       "Cenas Imersivas em AR",
       "Professor em AR (AR Teacher)",
       "Conversação Livre com IA",
@@ -56,8 +57,9 @@ const PLANS: Plan[] = [
     features: [
       "Tudo do plano Mensal",
       "Economia de R$ 168,90/ano",
-      "69 idiomas disponíveis",
-      "200 lições por idioma",
+      "Catálogo de 143 idiomas",
+      "58 idiomas ativos agora · 85 em preparação",
+      "Conteúdo curricular em expansão",
       "Cenas Imersivas em AR",
       "Professor em AR (AR Teacher)",
       "Conversação Livre com IA",
@@ -71,7 +73,7 @@ const PLANS: Plan[] = [
   },
   {
     id: "lifetime",
-    name: "Vitalício",
+    name: "Acesso de 2 anos",
     price: 998.90,
     normalPrice: 1437.60,
     period: " único",
@@ -80,14 +82,15 @@ const PLANS: Plan[] = [
       "Tudo do plano Anual",
       "Acesso por 2 anos sem mensalidades",
       "Parcelado em 10x R$ 99,89",
-      "69 idiomas disponíveis",
-      "200 lições por idioma",
+      "Catálogo de 143 idiomas",
+      "58 idiomas ativos agora · 85 em preparação",
+      "Conteúdo curricular em expansão",
       "Todas as funcionalidades futuras",
       "Suporte VIP vitalício",
     ],
     highlighted: false,
     badge: "MELHOR VALOR",
-    cta: "Comprar Vitalício",
+    cta: "Comprar acesso de 2 anos",
     savings: "Economize R$ 438,70",
   },
 ];
@@ -136,7 +139,7 @@ export default function SubscriptionPlans() {
             Escolha Seu Plano
           </h1>
           <p className="text-white/60 text-lg">
-            Aprenda 69 idiomas com IA avançada, AR e voz neural ultra-realista
+            Aprenda em 58 idiomas ativos agora, dentro de um catálogo de 143 idiomas com IA avançada, AR e voz neural
           </p>
         </div>
 
