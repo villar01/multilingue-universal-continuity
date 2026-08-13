@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 
 const avatar = readFileSync(new URL("../client/src/components/EnhancedTeacherAvatar.tsx", import.meta.url), "utf8");
+const animatedTeacher = readFileSync(new URL("../client/src/components/AnimatedTeacher.tsx", import.meta.url), "utf8");
 
 describe("política visual por professor", () => {
   it("mantém a exceção estática de Ricardo sem desativar o áudio neural dos demais professores", () => {
@@ -16,5 +17,13 @@ describe("política visual por professor", () => {
     expect(avatar).toContain("const imageUrl = photoUrl");
     expect(avatar).toContain("const teacherName = propTeacherName");
     expect(avatar).toContain("audioUrl");
+  });
+
+  it("impede vídeo e visemas no fluxo AnimatedTeacher de Ricardo sem interromper seu áudio", () => {
+    expect(animatedTeacher).toContain("allowsMouthAnimation");
+    expect(animatedTeacher).toContain("if (!allowsMouthAnimation)");
+    expect(animatedTeacher).toContain("if (allowsMouthAnimation)");
+    expect(animatedTeacher).toContain("audio.play()");
+    expect(animatedTeacher).toContain("setMouthOpen(0)");
   });
 });

@@ -113,6 +113,7 @@ export function AnimatedTeacher({
 
   const resolvedImageUrl = teacherImageUrl || teacherData?.photoUrl || undefined;
   const resolvedName = teacherName !== "Professor" ? teacherName : (teacherData?.name || teacherName);
+  const allowsMouthAnimation = !/^\s*(prof\.?\s*)?ricardo\b/i.test(resolvedName);
 
   // Mutation para gerar vídeo animado (D-ID)
   const animateMutation = trpc.livePortrait.animate.useMutation({
@@ -196,6 +197,29 @@ export function AnimatedTeacher({
     audio.crossOrigin = "anonymous";
     audioRef.current = audio;
 
+    if (!allowsMouthAnimation) {
+      audio.addEventListener("play", () => {
+        setIsPlaying(true);
+        setLipSyncActive(false);
+        setMouthOpen(0);
+      });
+      audio.addEventListener("ended", () => {
+        setIsPlaying(false);
+        setLipSyncActive(false);
+        setMouthOpen(0);
+        setAudioViseme(null);
+        onSpeakEnd?.();
+      });
+      audio.addEventListener("error", () => {
+        setIsPlaying(false);
+        setLipSyncActive(false);
+        setMouthOpen(0);
+        setAudioViseme(null);
+      });
+      audio.play().catch((e) => console.warn("[AnimatedTeacher] Autoplay blocked:", e.message));
+      return;
+    }
+
     const ctx = new AudioContext();
     audioCtxRef.current = ctx;
     const analyser = ctx.createAnalyser();
@@ -249,7 +273,7 @@ export function AnimatedTeacher({
       console.warn("[AnimatedTeacher] Autoplay blocked:", e.message);
       // Mostrar botão de play manual
     });
-  }, [languageCode, onSpeakEnd, stopVisemeSync, syncWithAudio, text]);
+  }, [allowsMouthAnimation, languageCode, onSpeakEnd, stopVisemeSync, syncWithAudio, text]);
 
   useEffect(() => () => {
     cancelAnimationFrame(animFrameRef.current);
@@ -275,15 +299,16 @@ export function AnimatedTeacher({
   useEffect(() => {
     if (!audioUrl || !resolvedImageUrl || !isTeaching) return;
 
-    // Tentar D-ID para vídeo animado
-    animateMutation.mutate({
-      imageUrl: resolvedImageUrl,
-      audioUrl: audioUrl,
-    });
+    if (allowsMouthAnimation) {
+      animateMutation.mutate({
+        imageUrl: resolvedImageUrl,
+        audioUrl: audioUrl,
+      });
+    }
 
     // Também iniciar lip-sync CSS como fallback imediato
     startLipSync(audioUrl);
-  }, [audioUrl, resolvedImageUrl]);
+  }, [allowsMouthAnimation, audioUrl, resolvedImageUrl]);
 
   // Quando propAudioUrl muda externamente
   useEffect(() => {
