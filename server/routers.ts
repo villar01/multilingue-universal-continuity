@@ -2493,7 +2493,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
 
   // Text-to-Speech (Google Cloud TTS)
   ttsGoogle: router({
-    generate: publicProcedure
+    generate: protectedProcedure
       .input(
         z.object({
           text: z.string(),
