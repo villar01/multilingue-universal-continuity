@@ -367,13 +367,13 @@ export default function DashboardReal() {
                     <div className="flex-1">
                       <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita — 10 Lições</h3>
                       <p className="text-gray-700 mb-4">
-                        Desbloqueie <strong>200 lições completas</strong>, <strong>todos os 69 idiomas</strong> e
-                        recursos premium!
+                        Desbloqueie o catálogo de <strong>143 idiomas</strong>, com <strong>58 idiomas ativos agora</strong> e
+                        85 idiomas em preparação, além de recursos premium.
                       </p>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge variant="secondary" className="bg-white">✅ 200 lições por idioma</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ 69 idiomas</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ Todos os níveis</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Conteúdo curricular em expansão</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ 58 idiomas ativos agora</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Progressão A1–C2</Badge>
                       </div>
                       <Link href="/checkout">
                         <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
@@ -394,7 +394,7 @@ export default function DashboardReal() {
                   Selecione seu Idioma
                 </CardTitle>
                 <CardDescription>
-                  {isPremium ? "69 idiomas disponíveis" : "1 idioma na versão gratuita"}
+                  {isPremium ? "58 idiomas ativos agora" : "1 idioma na versão gratuita"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -426,7 +426,7 @@ export default function DashboardReal() {
                     {!isPremium && (
                       <div className="p-4 rounded-lg border-2 border-gray-200 bg-gray-50 flex flex-col items-center justify-center">
                         <Lock className="h-8 w-8 text-gray-400 mb-2" />
-                        <div className="text-xs text-gray-500 text-center">+56 idiomas</div>
+                        <div className="text-xs text-gray-500 text-center">+57 idiomas ativos</div>
                       </div>
                     )}
                   </div>
@@ -473,7 +473,7 @@ export default function DashboardReal() {
                 <CardDescription>
                   {displayLessons.length > 0
                     ? `${displayLessons.length} lições para o nível ${currentLevelOption.label}`
-                    : loadingLessons ? "Carregando..." : isPremium ? "200 lições disponíveis" : "5 lições gratuitas"}
+                    : loadingLessons ? "Carregando..." : isPremium ? "Catálogo de lições por idioma" : "5 lições gratuitas"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">

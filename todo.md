@@ -55,6 +55,7 @@
 - [x] Corrigir contagens contraditórias de idiomas e distinguir 143 no catálogo total, 58 disponíveis agora e 85 em preparação em seletores, tours e superfícies públicas — seletor, tour, compartilhamento e hub AR usam contagens verificáveis; idiomas em preparação são identificados e não selecionáveis; TypeScript e 197 testes aprovados
 - [x] Ampliar o seletor inicial de idiomas para os 58 idiomas ativos do catálogo canônico, mantendo indisponíveis os 85 idiomas em preparação — seletor deriva diretamente de `AVAILABLE_LANGUAGES`, preserva persistência do perfil e não apresenta opções em preparação; TypeScript, regressões e página inicial validados
 - [x] Corrigir rótulos públicos remanescentes com 57/69/94 idiomas e adicionar regressão contra números contraditórios fora do catálogo verificado — regressão cobre catálogo, seletor, tour, compartilhamento, ARMode e ARTeacher
+- [x] Corrigir as contagens contraditórias do painel principal — retiradas promessas de 69 idiomas e 200 lições; o painel comunica 143 idiomas no catálogo, 58 ativos agora, 85 em preparação e conteúdo curricular em expansão; TypeScript, regressão e interface validados
 - [x] Tradução em tempo real via IA offline — translateRealtime procedure em routers.ts com aiProvider
 - [x] Suporte para 50+ idiomas — LANGUAGES_57 em languages.ts com 57 idiomas definidos (integracao funcional em andamento)
 - [x] Cache de traduções frequentes — server/cache.ts com lessonCache
