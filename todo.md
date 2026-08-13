@@ -245,7 +245,7 @@
 - [x] Aplicar no portão central de conversa a regra de jurisdição do perfil, com fallback pelo locale, para bloquear entrada e saída incompatíveis sem registrar texto sensível — violação regional gera somente evento `country_compliance_block`, sem texto no alerta parental
 - [ ] Exibir para responsáveis histórico supervisionável, alertas e motivos de bloqueio sem expor mais dados do que o necessário
 - [x] Criar comunicação para responsáveis no início e no controle parental, explicando proteções reais, benefícios, limites e dever de custódia/acompanhamento do menor — aviso incluído no consentimento de menor e validado visualmente no painel parental, sem prometer substituição da responsabilidade do responsável legal
-- [ ] Acionar alerta sonoro e visual ao detectar conteúdo incompatível com a idade, com motivo auditável para o responsável
+- [ ] Acionar alerta sonoro e visual ao detectar conteúdo incompatível com a idade, com motivo auditável para o responsável — alertas de segurança e bloqueio regional entram no som opt-in e na lista visual sem texto sensível; a simulação ponta a ponta de novo alerta no painel ainda precisa ser verificada
 - [x] Permitir apenas autorização parental temporária por PIN para conteúdo etariamente inadequado e não ilegal; manter bloqueio absoluto para risco grave ou conteúdo ilegal — painel mostra decisão apenas para `age_content_review`; servidor confere vínculo, PIN e prazo de 15 minutos, grava auditoria e recusa categorias de alto risco; 109 testes aprovados
 - [ ] Aplicar a política de bloqueio e alerta parental diretamente às entradas e saídas das conversas de IA e professor
 - [ ] Remover contexto adulto padrão e rota pública desprotegida das conversas de IA, exigindo perfil etário e consentimento aplicáveis

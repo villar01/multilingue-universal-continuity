@@ -704,7 +704,7 @@ function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: a
   });
   useEffect(() => {
     if (!soundEnabled || !hasAudibleParentalAlert(alerts)) return;
-    const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && ["inappropriate_content", "age_content_review", "child_safety", "content_blocked"].includes(alert.alertType));
+    const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && ["inappropriate_content", "age_content_review", "child_safety", "content_blocked", "country_compliance_blocked"].includes(alert.alertType));
     if (!unreadSafetyAlert || soundedAlertIds.current.has(unreadSafetyAlert.id)) return;
     soundedAlertIds.current.add(unreadSafetyAlert.id);
     playParentalAlertSound();

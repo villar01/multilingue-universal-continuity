@@ -9,6 +9,7 @@ const AUDIBLE_ALERT_TYPES = new Set([
   "age_content_review",
   "child_safety",
   "content_blocked",
+  "country_compliance_blocked",
 ]);
 
 export function hasAudibleParentalAlert(alerts: ParentalAlertSignal[]): boolean {
