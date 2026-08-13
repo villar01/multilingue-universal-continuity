@@ -647,7 +647,7 @@ export const appRouter = router({
       }),
 
     // Traduzir palavra
-    translateWord: publicProcedure
+    translateWord: protectedProcedure
       .input(
         z.object({
           word: z.string(),

@@ -43,7 +43,6 @@ export function AdvancedVideoPlayer({ videoId, title, dialogues, onComplete }: A
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const translateWord = trpc.ai.translateWord.useMutation();
   const analyzePronunciation = trpc.stt.analyzePronunciation.useMutation();
 
   // Encontrar diálogo atual baseado no tempo

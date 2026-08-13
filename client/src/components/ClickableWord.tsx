@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
 
 interface ClickableWordProps {
   word: string;
@@ -18,10 +19,12 @@ export default function ClickableWord({
   languageCode = 'en',
   className = '',
 }: ClickableWordProps) {
+  const { isAuthenticated } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [translatedText, setTranslatedText] = useState(translation || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [authNotice, setAuthNotice] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Mutation para gerar áudio TTS
@@ -32,6 +35,12 @@ export default function ClickableWord({
 
   const handleClick = async () => {
     setShowTooltip(true);
+    if (!isAuthenticated) {
+      setAuthNotice('Entre para ouvir e consultar esta palavra.');
+      return;
+    }
+
+    setAuthNotice(null);
     setIsLoading(true);
 
     try {
@@ -116,6 +125,8 @@ export default function ClickableWord({
             <div className="flex items-center gap-2">
               {isLoading ? (
                 <span className="text-sm">Carregando...</span>
+              ) : authNotice ? (
+                <span className="text-sm text-amber-300 dark:text-amber-600">{authNotice}</span>
               ) : (
                 <>
                   <span className="font-bold text-blue-400 dark:text-blue-600">{word}</span>
