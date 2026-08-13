@@ -3499,41 +3499,47 @@ Seu estilo de ensino:
         phonetic: z.string().optional(),
         example: z.string().optional(),
         targetLanguage: z.string(),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string().default('infancia'),
         teacherName: z.string().default('Professor'),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const response = await invokeLLM({
           messages: [{
             role: 'user',
-            content: `Você é ${input.teacherName}, professor(a) de ${input.targetLanguage}. Crie uma apresentação curta (2-3 frases em português BR) para ensinar a palavra "${input.word}" (= ${input.translation}) ao aluno. Nível: ${input.phase}. Pronúncia figurada: ${input.phonetic || ''}. Exemplo: ${input.example || ''}. Seja caloroso(a), use emoji, explique quando usar essa palavra na vida real. Máximo 3 frases.`,
+            content: `Você é ${input.teacherName}, professor(a) de ${input.targetLanguage}. Crie uma apresentação curta (2-3 frases em ${input.nativeLanguage}) para ensinar a palavra "${input.word}" (= ${input.translation}) ao aluno. Nível CEFR: ${input.cefrLevel}. Pronúncia figurada para ${input.nativeLanguage}: ${input.phonetic || ''}. Exemplo: ${input.example || ''}. Seja caloroso(a), use emoji, explique quando usar essa palavra na vida real. Máximo 3 frases.`,
           }],
         });
-        return { intro: (response.choices[0]?.message?.content as string) || `Vamos aprender a palavra "${input.word}"! Em português significa "${input.translation}". 🎯` };
+        return { intro: (response.choices[0]?.message?.content as string) || '' };
       }),
     // Avaliar resposta do aluno e dar feedback pedagógico
-    evaluateAnswer: publicProcedure
+    evaluateAnswer: protectedProcedure
       .input(z.object({
         studentAnswer: z.string(),
         correctAnswer: z.string(),
         word: z.string(),
         targetLanguage: z.string(),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string().default('infancia'),
         teacherName: z.string().default('Professor'),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const isCorrect = input.studentAnswer.toLowerCase().trim() === input.correctAnswer.toLowerCase().trim();
         const response = await invokeLLM({
           messages: [{
             role: 'user',
-            content: `Você é ${input.teacherName}, professor(a) de ${input.targetLanguage}. O aluno respondeu "${input.studentAnswer}" para a palavra "${input.word}" (resposta correta: "${input.correctAnswer}"). ${isCorrect ? 'O aluno ACERTOU!' : 'O aluno ERROU.'} Dê um feedback encorajador em português BR (máximo 2 frases). ${isCorrect ? 'Celebre o acerto com entusiasmo!' : 'Corrija gentilmente e explique a resposta certa.'} Use emoji.`,
+            content: `Você é ${input.teacherName}, professor(a) de ${input.targetLanguage}. O aluno respondeu "${input.studentAnswer}" para a palavra "${input.word}" (resposta correta: "${input.correctAnswer}"). ${isCorrect ? 'O aluno ACERTOU!' : 'O aluno ERROU.'} Dê um feedback encorajador em ${input.nativeLanguage} (máximo 2 frases) para o nível CEFR ${input.cefrLevel}. ${isCorrect ? 'Celebre o acerto com entusiasmo!' : 'Corrija gentilmente e explique a resposta certa.'} Use emoji.`,
           }],
         });
         return {
           isCorrect,
-          feedback: (response.choices[0]?.message?.content as string) || (isCorrect ? '🎉 Muito bem! Você acertou!' : `❌ A resposta correta é "${input.correctAnswer}". Continue praticando!`),
+          feedback: (response.choices[0]?.message?.content as string) || '',
           quality: isCorrect ? 4 : 1,
         };
       }),

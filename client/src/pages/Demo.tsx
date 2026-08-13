@@ -280,6 +280,8 @@ export default function Demo() {
         correctAnswer: currentWord.translation,
         word: currentWord.word,
         targetLanguage: selectedLang.name,
+        nativeLanguage: 'pt-BR',
+        cefrLevel: 'A1',
         phase: 'infancia',
         teacherName: selectedLang.teacher.name,
       });

@@ -14,9 +14,10 @@ describe('introdução de palavras protegida', () => {
     expect(wordIntro).toContain('await invokeLLM');
   });
 
-  it('preserva abertura local para visitantes sem acionar a mutação protegida', () => {
+  it('mantém visitante sem acionar a mutação e sem inserir texto PT-BR fixo', () => {
     expect(polyLesson).toContain('if (!isLoggedIn)');
-    expect(polyLesson).toContain('setTeacherIntro(`Vamos aprender a palavra');
+    expect(polyLesson).toContain("setTeacherIntro('');");
+    expect(polyLesson).not.toContain('Em português significa');
     expect(polyLesson).toContain('speakWord(v.word);');
   });
 });

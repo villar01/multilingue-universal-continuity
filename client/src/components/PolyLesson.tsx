@@ -405,7 +405,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
     setTeacherIntro('');
     const v = vocab[vocabIndex];
     if (!isLoggedIn) {
-      setTeacherIntro(`Vamos aprender a palavra "${v.word}"! Em português significa "${v.translation}". 🎯`);
+      setTeacherIntro('');
       setIntroLoaded(true);
       speakWord(v.word);
       return;
@@ -416,6 +416,8 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
       phonetic: v.phonetic,
       example: v.example,
       targetLanguage: languageCode,
+      nativeLanguage: selectedNativeLanguage,
+      cefrLevel: selectedCefrLevel,
       phase,
       teacherName,
     }).then(r => {
@@ -424,7 +426,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
       // Auto-speak the word
       speakWord(v.word);
     }).catch(() => {
-      setTeacherIntro(`Vamos aprender a palavra "${v.word}"! Em português significa "${v.translation}". 🎯`);
+      setTeacherIntro('');
       setIntroLoaded(true);
       speakWord(v.word);
     });
@@ -501,6 +503,20 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
     const correct = answer.toLowerCase().trim() === ex.answer.toLowerCase().trim();
     setIsCorrect(correct);
 
+    if (!isLoggedIn) {
+      setFeedbackText('');
+      setShowFeedback(true);
+      if (correct) {
+        setStreak(s => s + 1);
+        setTotalCorrect(c => c + 1);
+        addXp(streak >= 3 ? 20 : 10);
+      } else {
+        setStreak(0);
+        addXp(2);
+      }
+      return;
+    }
+
     // Get AI feedback
     try {
       const result = await evaluateAnswerMutation.mutateAsync({
@@ -508,6 +524,8 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
         correctAnswer: ex.answer,
         word: ex.question,
         targetLanguage: languageCode,
+        nativeLanguage: selectedNativeLanguage,
+        cefrLevel: selectedCefrLevel,
         phase,
         teacherName,
       });
