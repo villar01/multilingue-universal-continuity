@@ -8,6 +8,7 @@ import { eq, desc, and, gte, gt, sql } from 'drizzle-orm';
 import { getUsagePatterns } from './contentFilter';
 import { assessChildSafety } from './childSafetyPolicy';
 import { hashParentPin, isHashedParentPin, verifyStoredParentPin } from './parentalPinSecurity';
+import { PARENTAL_CEFR_LEVELS } from '../shared/parental-cefr';
 
 async function verifyAndUpgradeParentPin(database: any, childId: number, storedPin: string, candidatePin: string): Promise<boolean> {
   const valid = verifyStoredParentPin(storedPin, candidatePin);
@@ -81,7 +82,7 @@ export const parentalControlRouter = router({
         pinCode: hashParentPin(input.pin),
         timeLimitMinutes: 60,
         allowedDays: [true, true, true, true, true, false, false],
-        levelsAllowed: ['beginner'],
+        levelsAllowed: ['A1'],
       });
       return { success: true, childId: child.id };
     }),
@@ -173,7 +174,7 @@ export const parentalControlRouter = router({
       pinCode: z.string().max(4).optional(),
       timeLimitMinutes: z.number().min(1).max(480).optional(),
       allowedDays: z.array(z.boolean()).optional(),
-      levelsAllowed: z.array(z.string()).optional(),
+      levelsAllowed: z.array(z.enum(PARENTAL_CEFR_LEVELS)).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();

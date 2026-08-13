@@ -16,6 +16,7 @@ import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, A
 import CybersecurityAlert from '@/components/CybersecurityAlert';
 import { hasAudibleParentalAlert, playParentalAlertSound } from '@/lib/parentalAlertSound';
 import UserGuide from '@/components/UserGuide';
+import { normalizeParentalCefrLevels, PARENTAL_CEFR_LEVEL_DETAILS, PARENTAL_CEFR_LEVELS, type ParentalCefrLevel } from '@shared/parental-cefr';
 
 const DAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const EMOJI_OPTIONS = ['👧', '👦', '🧒', '👶', '🧑', '👨', '👩'];
@@ -568,13 +569,13 @@ function LimitsTab({ childId }: { childId: number }) {
 
   const [timeLimit, setTimeLimit] = useState(60);
   const [allowedDays, setAllowedDays] = useState<boolean[]>([true, true, true, true, true, false, false]);
-  const [levels, setLevels] = useState<string[]>(['beginner']);
+  const [levels, setLevels] = useState<ParentalCefrLevel[]>(['A1']);
 
   useEffect(() => {
     if (settings) {
       setTimeLimit(settings.timeLimitMinutes || 60);
       setAllowedDays(settings.allowedDays || [true, true, true, true, true, false, false]);
-      setLevels(settings.levelsAllowed || ['beginner']);
+      setLevels(normalizeParentalCefrLevels(settings.levelsAllowed));
     }
   }, [settings]);
 
@@ -659,21 +660,19 @@ function LimitsTab({ childId }: { childId: number }) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {['beginner', 'intermediate', 'advanced'].map(level => (
+            {PARENTAL_CEFR_LEVELS.map(level => (
               <div key={level} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
                 <div>
-                  <p className="font-medium capitalize">{level === 'beginner' ? 'Iniciante' : level === 'intermediate' ? 'Intermediário' : 'Avançado'}</p>
-                  <p className="text-xs text-slate-400">
-                    {level === 'beginner' ? 'Lições básicas e vocabulário' : level === 'intermediate' ? 'Conversação e gramática' : 'Fluência e textos complexos'}
-                  </p>
+                  <p className="font-medium">{PARENTAL_CEFR_LEVEL_DETAILS[level].label}</p>
+                  <p className="text-xs text-slate-400">{PARENTAL_CEFR_LEVEL_DETAILS[level].description}</p>
                 </div>
                 <Switch
                   checked={levels.includes(level)}
                   onCheckedChange={(checked) => {
                     if (checked) {
-                      setLevels([...levels, level]);
+                      setLevels((current) => normalizeParentalCefrLevels([...current, level]));
                     } else {
-                      setLevels(levels.filter(l => l !== level));
+                      setLevels((current) => current.filter((item) => item !== level));
                     }
                   }}
                 />
