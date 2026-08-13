@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { achievements, userAchievements, userStats, users } from "../drizzle/schema";
 import * as db from "./db";
+import { ensureGamificationCatalog } from "./gamification-catalog";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 
 type UserStatsRecord = typeof userStats.$inferSelect;
@@ -53,6 +54,7 @@ function achievementSatisfied(achievement: typeof achievements.$inferSelect, sta
 
 async function checkAndUnlockAchievements(userId: number) {
   const database = await requireDatabase();
+  await ensureGamificationCatalog();
   const stats = await getOrCreateUserStats(userId);
   const catalogue = await database.select().from(achievements);
   const unlocked = await database.select({ achievementId: userAchievements.achievementId }).from(userAchievements).where(eq(userAchievements.userId, userId));
@@ -134,6 +136,7 @@ export const gamificationRouter = router({
 
   listAchievements: publicProcedure.query(async () => {
     const database = await requireDatabase();
+    await ensureGamificationCatalog();
     return database.select().from(achievements).orderBy(achievements.requirementValue);
   }),
 
