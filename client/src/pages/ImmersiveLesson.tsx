@@ -342,11 +342,9 @@ function TeacherAvatar({
   mouthOpen: number;
   currentLine: LessonLine | null;
 }) {
-  const openPx = Math.round(mouthOpen * 18);
-
   return (
     <div className="flex flex-col items-center gap-3">
-      {/* Photo with lip-sync */}
+      {/* Foto do professor com indicador de reprodução de áudio */}
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
@@ -367,27 +365,14 @@ function TeacherAvatar({
           }}
         />
 
-        {/* Lip-sync mouth overlay */}
+        {/* Indicador de áudio — a foto estática não finge movimento facial */}
         {isSpeaking && (
           <div
-            className="absolute"
-            style={{
-              bottom: "22%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 32,
-              height: Math.max(3, openPx),
-              background: "rgba(200,40,40,0.85)",
-              borderRadius: openPx > 5 ? "50%" : "4px",
-              transition: "height 0.04s ease-out",
-              boxShadow: "0 0 10px rgba(200,40,40,0.5)",
-            }}
-          />
-        )}
-
-        {/* Audio bars */}
-        {isSpeaking && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 items-end">
+            className="absolute bottom-2 left-0 right-0 mx-auto flex w-fit items-end gap-1 rounded-md px-2 py-1"
+            style={{ background: "rgba(15,12,41,0.74)" }}
+            aria-label="Áudio neural em reprodução"
+          >
+            <span className="mr-1 text-[10px] font-semibold text-white">Voz neural</span>
             {[0.6, 1, 0.8, 1, 0.7, 0.9, 0.5].map((h, i) => (
               <div
                 key={i}
