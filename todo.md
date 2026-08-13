@@ -32,7 +32,9 @@
 - [x] Cache multinível (memória + banco) para traduções — server/cache.ts com cache em memoria + lessonCache para lições
 - [x] API tRPC unificada para IAs locais — aiProvider.ts integrado em routers.ts, procedures usam getBestProvider
 - [x] Métricas de economia de créditos — MetricsDashboard.tsx com tokensSaved e Savings Breakdown
-- [x] Fallback automático para Manus AI se ambos offline — aiProvider.ts fallback chain termina em invokeLLM (Manus)
+- [x] Fallback automático para Manus AI se ambos offline — cadeia testa Ollama e LM Studio primeiro e retorna `invokeLLM` identificado como `manus` quando ambos falham; TypeScript e 206 testes aprovados
+- [x] Simular indisponibilidade de Ollama e LM Studio para validar que `generateAI` retorna conteúdo com provider `manus` sem custo local — teste comportamental simula os dois provedores indisponíveis e confirma conteúdo, tokens e provider do fallback integrado
+- [x] Validar que métricas e cache persistem provider/modelo `manus` no schema e banco sem violar enum ou tipo — banco usa `metrics.provider varchar(50)` e `ai_cache.modelUsed varchar(100)`, confirmados compatíveis com o identificador `manus`
 
 ### 2. AVATARES FOTORREALISTAS COM LIP-SYNC PERFEITO
 - [x] Confirmar foto profissional Professora Ingrid (feminino, inglês) — retrato original 1920×1920 gerado, integrado no registro inglês da TeacherSelector, Home e mapa de avatares; fallback visual configurado

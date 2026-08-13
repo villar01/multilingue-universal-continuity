@@ -2,10 +2,12 @@ import { generateWithOllama, isOllamaAvailable } from "./ollama";
 import { generateWithLMStudio, isLMStudioAvailable } from "./lmstudio";
 import { getDb } from "./db";
 import { metrics } from "../drizzle/schema";
+import { invokeLLM } from "./_core/llm";
 import crypto from "crypto";
 import { compressAIMessages, estimateTokens } from "./promptCompression";
 
-export type AIProvider = "ollama" | "lmstudio";
+export type LocalAIProvider = "ollama" | "lmstudio";
+export type AIProvider = LocalAIProvider | "manus";
 
 export interface AIMessage {
   role: "system" | "user" | "assistant";
@@ -16,7 +18,7 @@ export interface AIGenerateOptions {
   messages: AIMessage[];
   temperature?: number;
   max_tokens?: number;
-  preferredProvider?: AIProvider;
+  preferredProvider?: LocalAIProvider;
   useCache?: boolean;
   userId?: number;
 }
@@ -95,7 +97,7 @@ let providerStatusCache: {
 // FIXED BUG #2: was 0.000000001s (1 nanosecond) → provider status never cached → now 30s
 const CACHE_DURATION = 30000; // 30 seconds in milliseconds
 
-async function checkProviderAvailability(provider: AIProvider): Promise<boolean> {
+async function checkProviderAvailability(provider: LocalAIProvider): Promise<boolean> {
   const now = Date.now();
   const cached = providerStatusCache[provider];
 
@@ -275,7 +277,7 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
 
   // Determine provider order
   const preferredProvider = options.preferredProvider || "ollama";
-  const providers: AIProvider[] =
+  const providers: LocalAIProvider[] =
     preferredProvider === "ollama" ? ["ollama", "lmstudio"] : ["lmstudio", "ollama"];
 
   let lastError: Error | null = null;
@@ -385,7 +387,48 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
     }
   }
 
-  // All providers failed
+  // Local providers are unavailable: preserve application continuity through the
+  // platform LLM. This call has project cost, so it is deliberately last and is
+  // surfaced as provider="manus" in cache and metrics.
+  try {
+    const fallback = await invokeLLM({
+      messages: options.messages,
+      max_tokens: options.max_tokens,
+    });
+    const content = typeof fallback.choices[0]?.message.content === "string"
+      ? fallback.choices[0].message.content.trim()
+      : "";
+    if (content.length < 5) throw new Error("Fallback response too short or empty");
+
+    const tokensUsed = fallback.usage?.total_tokens ?? estimateTokens(content);
+    const responseTime = Date.now() - startTime;
+    if (options.useCache !== false) {
+      const cacheKey = generateCacheKey(options.messages);
+      const prompt = options.messages.map((m) => `${m.role}: ${m.content}`).join("\n");
+      await saveToCache(cacheKey, prompt, content, tokensUsed, "manus");
+    }
+    await logMetrics(
+      options.userId,
+      "ai_request",
+      "manus",
+      tokensUsed,
+      compressionTokensSaved,
+      responseTime,
+      false,
+    );
+    return {
+      content,
+      tokensUsed,
+      tokensSaved: compressionTokensSaved,
+      responseTime,
+      provider: "manus",
+      cacheHit: false,
+    };
+  } catch (fallbackError) {
+    const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+    lastError = new Error(`Integrated fallback failed: ${fallbackMessage}`);
+  }
+
   throw new Error(
     `All AI providers failed. Last error: ${lastError?.message || "Unknown error"}`
   );
