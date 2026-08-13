@@ -12,6 +12,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { Play, Search, Filter, Star } from "lucide-react";
+import { CEFR_LEVELS, type CEFRLevel } from "@/lib/lesson-levels";
 import {
   Select,
   SelectContent,
@@ -23,7 +24,7 @@ import {
 export function PracticeClips() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<CEFRLevel | "all">("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Query todos os clipes (filtros aplicados localmente)
@@ -31,12 +32,13 @@ export function PracticeClips() {
     limit: 50,
   });
 
-  // Mapear dificuldade selecionada para níveis CEFR
-  const getDifficultyLevels = (difficulty: string): string[] => {
-    if (difficulty === "beginner") return ["A1", "A2"];
-    if (difficulty === "intermediate") return ["B1", "B2"];
-    if (difficulty === "advanced") return ["C1", "C2"];
-    return []; // all
+  const normalizeClipCefr = (difficulty?: string): CEFRLevel | undefined => {
+    const normalized = difficulty?.trim().toUpperCase();
+    if (normalized === "A1" || normalized === "A2" || normalized === "B1" || normalized === "B2" || normalized === "C1" || normalized === "C2") return normalized;
+    if (normalized === "BEGINNER") return "A1";
+    if (normalized === "INTERMEDIATE") return "B1";
+    if (normalized === "ADVANCED") return "C1";
+    return undefined;
   };
 
   // Filtrar clipes localmente (busca, idioma, dificuldade e categoria)
@@ -49,9 +51,9 @@ export function PracticeClips() {
       clip.targetLanguage === selectedLanguage ||
       selectedLanguage.startsWith(clip.targetLanguage + "-");
     
-    const difficultyLevels = getDifficultyLevels(selectedDifficulty);
+    const clipCefr = normalizeClipCefr(clip.difficulty);
     const matchesDifficulty = selectedDifficulty === "all" || 
-      difficultyLevels.includes(clip.difficulty);
+      clipCefr === selectedDifficulty;
     
     const matchesCategory = selectedCategory === "all";
     
@@ -104,15 +106,17 @@ export function PracticeClips() {
           </Select>
 
           {/* Dificuldade */}
-          <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+          <Select value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as CEFRLevel | "all")}>
             <SelectTrigger>
               <SelectValue placeholder="Dificuldade" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="beginner">Iniciante</SelectItem>
-              <SelectItem value="intermediate">Intermediário</SelectItem>
-              <SelectItem value="advanced">Avançado</SelectItem>
+              {(Object.keys(CEFR_LEVELS) as CEFRLevel[]).map((cefrLevel) => (
+                <SelectItem key={cefrLevel} value={cefrLevel}>
+                  {cefrLevel} · {CEFR_LEVELS[cefrLevel].label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -166,7 +170,9 @@ export function PracticeClips() {
 
               {/* Badges */}
               <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="outline">{clip.difficulty}</Badge>
+                <Badge variant="outline">
+                  {normalizeClipCefr(clip.difficulty) || clip.difficulty}
+                </Badge>
 
               </div>
 
