@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { childProfiles, parentalAlerts } from "../drizzle/schema";
 import { getDb } from "./db";
 
-export type ConversationSafetyEvent = "blocked_input" | "blocked_output" | "country_compliance_block";
+export type ConversationSafetyEvent = "blocked_input" | "blocked_output" | "country_compliance_block" | "daily_time_limit";
 
 export function buildSafeConversationAlert(event: ConversationSafetyEvent) {
   if (event === "country_compliance_block") {
@@ -10,6 +10,14 @@ export function buildSafeConversationAlert(event: ConversationSafetyEvent) {
       alertType: "country_compliance_blocked",
       title: "Interação bloqueada pela proteção regional",
       detail: "A mensagem foi bloqueada pela regra de proteção aplicável ao perfil. O texto não foi armazenado no alerta.",
+    };
+  }
+
+  if (event === "daily_time_limit") {
+    return {
+      alertType: "daily_time_limit_reached",
+      title: "Limite diário de uso atingido",
+      detail: "Uma conversa foi bloqueada porque o limite diário definido pelo responsável foi atingido. O conteúdo da conversa não foi armazenado.",
     };
   }
 

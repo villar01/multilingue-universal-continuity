@@ -1,12 +1,63 @@
 import { TRPCError } from "@trpc/server";
+import { and, eq, gte, isNull } from "drizzle-orm";
+import { childProfiles, parentalSettings, usageSessions } from "../drizzle/schema";
+import { getDb } from "./db";
 import { getUserSafetyContext, moderateAIResponse } from "./content-moderation";
 import { checkContent } from "./contentFilter";
 import { recordConversationSafetyAlert } from "./parentalConversationAlert";
 import { isContentAllowedForJurisdiction } from "../client/src/lib/country-compliance";
+import { calculateDailyUsageMinutes, canUseOnDay } from "./childConversationTimeLimit";
 
 export type ConversationSafetyDecision =
   | { allowed: true; context: Awaited<ReturnType<typeof getUserSafetyContext>>["context"] }
   | { allowed: false; reason: "blocked_content"; flaggedContent: string[] };
+
+async function enforceChildConversationTimeLimit(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  const [child] = await db.select().from(childProfiles)
+    .where(eq(childProfiles.linkedUserId, userId)).limit(1);
+  if (!child) return;
+
+  const [settings] = await db.select().from(parentalSettings)
+    .where(eq(parentalSettings.childId, child.id)).limit(1);
+  if (!settings) return;
+
+  const now = new Date();
+  if (!canUseOnDay(settings.allowedDays, now)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "As conversas estão fora dos dias permitidos pelo responsável.",
+    });
+  }
+
+  const dayStart = new Date(now);
+  dayStart.setHours(0, 0, 0, 0);
+  const sessions = await db.select().from(usageSessions)
+    .where(and(eq(usageSessions.childId, child.id), gte(usageSessions.sessionStart, dayStart)));
+  const usedMinutes = calculateDailyUsageMinutes(sessions, now);
+  const dailyLimitMinutes = settings.timeLimitMinutes ?? 60;
+
+  if (usedMinutes >= dailyLimitMinutes) {
+    await recordConversationSafetyAlert(userId, "daily_time_limit");
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "O limite diário definido pelo responsável foi atingido.",
+    });
+  }
+
+  const hasActiveSession = sessions.some((session) => !session.sessionEnd);
+  if (!hasActiveSession) {
+    await db.insert(usageSessions).values({
+      childId: child.id,
+      sessionStart: now,
+      minutesUsed: 0,
+      lessonsCompleted: 0,
+      accuracyScore: 0,
+    });
+  }
+}
 
 export async function ensureConversationAccess(userId: number) {
   const safety = await getUserSafetyContext(userId);
@@ -21,6 +72,9 @@ export async function ensureConversationAccess(userId: number) {
       code: "FORBIDDEN",
       message: "É necessário consentimento do responsável para liberar conversas infantis.",
     });
+  }
+  if (safety.context.ageGroup === "infantil") {
+    await enforceChildConversationTimeLimit(userId);
   }
   return safety.context;
 }
