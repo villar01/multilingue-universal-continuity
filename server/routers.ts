@@ -1070,7 +1070,7 @@ IMPORTANT: For ALL "phonetic" fields, write how the word SOUNDS in Portuguese le
         z.object({
           languageCode: z.string(),
           nativeLanguage: z.string().default('pt'),
-          level: z.string().default('beginner'),
+          level: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']).default('A1'),
           count: z.number().default(15),
           topic: z.string().optional(),
         })
@@ -1090,16 +1090,21 @@ IMPORTANT: For ALL "phonetic" fields, write how the word SOUNDS in Portuguese le
           };
           const targetLang = langNames[input.languageCode] || input.languageCode;
           const nativeLang = langNames[input.nativeLanguage] || 'Portuguese';
-          const levelLabel = input.level === 'beginner' ? 'beginner (basic everyday words)'
-            : input.level === 'intermediate' ? 'intermediate (conversational words)'
-            : input.level === 'slang' ? 'slang and idiomatic expressions'
-            : 'advanced (sophisticated vocabulary)';
+          const levelLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
+            A1: 'concrete, high-frequency everyday words and phrases up to six words',
+            A2: 'common routine, shopping, travel, and social vocabulary in short phrases',
+            B1: 'frequent conversational vocabulary with connected examples',
+            B2: 'abstract, professional, and comparative vocabulary with nuanced examples',
+            C1: 'precise academic, professional, and idiomatic vocabulary with register awareness',
+            C2: 'specialized, culturally nuanced, and stylistically refined vocabulary',
+          };
 
           const prompt = `Generate ${input.count} vocabulary words for daily memorization practice.
 
 Target Language: ${targetLang}
 Student Native Language: ${nativeLang}
-Level: ${levelLabel}
+CEFR Level: ${input.level}
+Level constraints: ${levelLabel[input.level]}
 ${input.topic ? `Topic focus: ${input.topic}` : 'Mix of common everyday words'}
 
 Return a JSON object with this structure:

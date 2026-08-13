@@ -5,14 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { ArrowLeft, Flame, Globe, ChevronDown } from "lucide-react";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 
 const DailyMemoryTrainer = lazy(() => import("@/components/DailyMemoryTrainer"));
 
-const LEVELS = [
-  { value: "beginner", label: "🟢 Iniciante", desc: "Palavras básicas do dia a dia" },
-  { value: "intermediate", label: "🟡 Intermediário", desc: "Vocabulário conversacional" },
-  { value: "advanced", label: "🔴 Avançado", desc: "Vocabulário sofisticado" },
-  { value: "slang", label: "🎭 Gírias", desc: "Expressões idiomáticas e gírias" },
+const LEVELS: Array<{ value: CEFRLevel; label: string; desc: string }> = [
+  { value: "A1", label: "A1 · Iniciante", desc: "Palavras concretas e frases essenciais" },
+  { value: "A2", label: "A2 · Básico", desc: "Rotina, compras e situações simples" },
+  { value: "B1", label: "B1 · Intermediário", desc: "Vocabulário conversacional frequente" },
+  { value: "B2", label: "B2 · Intermediário avançado", desc: "Temas abstratos e comparações" },
+  { value: "C1", label: "C1 · Avançado", desc: "Precisão, registro e nuance" },
+  { value: "C2", label: "C2 · Proficiente", desc: "Vocabulário especializado e refinado" },
 ];
 
 export default function DailyMemoryPage() {
@@ -20,7 +23,7 @@ export default function DailyMemoryPage() {
   const { user } = useAuth();
   const [started, setStarted] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en-US");
-  const [selectedLevel, setSelectedLevel] = useState("beginner");
+  const [selectedLevel, setSelectedLevel] = useState<CEFRLevel>("A1");
   const [showLangPicker, setShowLangPicker] = useState(false);
 
   // All available languages
@@ -139,7 +142,7 @@ export default function DailyMemoryPage() {
         {/* Level selector */}
         <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-6 border border-white/20">
           <p className="text-xs font-bold text-blue-300 uppercase mb-3">Nível de vocabulário</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {LEVELS.map((lv) => (
               <button
                 key={lv.value}

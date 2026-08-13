@@ -5,7 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
-import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
+import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 import { toast } from "sonner";
 import {
   Volume2,
@@ -720,7 +720,7 @@ function SynonymMode({
 interface DailyMemoryTrainerProps {
   languageCode: string;
   nativeLanguage?: string;
-  level?: string;
+  level?: CEFRLevel;
   topic?: string;
   onClose?: () => void;
 }
@@ -736,7 +736,7 @@ const MODE_META: Record<TrainMode, { icon: React.ReactNode; label: string; color
 export default function DailyMemoryTrainer({
   languageCode,
   nativeLanguage = "pt",
-  level = "beginner",
+  level = "A1",
   topic,
   onClose,
 }: DailyMemoryTrainerProps) {
