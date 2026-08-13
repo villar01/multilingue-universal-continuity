@@ -9,6 +9,7 @@ import { speakEdgeTTS, stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 
 export type LifePhase = 'infancia' | 'crianca' | 'adolescencia' | 'adulto' | 'fluente';
 
@@ -58,6 +59,7 @@ interface Props {
   lesson: LessonData;
   languageCode: string;
   onComplete?: (score: number) => void;
+  onExerciseAnswered?: (attempt: { exerciseType: string; cefrLevel: CEFRLevel; correct: boolean }) => void;
 }
 
 const PHASE_COLORS: Record<LifePhase, string> = {
@@ -76,8 +78,9 @@ const PHASE_LABELS: Record<LifePhase, string> = {
   fluente: '🎓 Fluente',
 };
 
-export default function PedagogicalLesson({ lesson, languageCode, onComplete }: Props) {
+export default function PedagogicalLesson({ lesson, languageCode, onComplete, onExerciseAnswered }: Props) {
   const phase = (lesson.phase || 'infancia') as LifePhase;
+  const cefrLevel = resolvePracticeCEFRLevel(lesson.cefr);
   const phaseColor = PHASE_COLORS[phase] || '#6C5CE7';
   const vocab = lesson.vocabulary || [];
   const exercises = lesson.exercises || [];
@@ -96,6 +99,7 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
   const [memorizeRound, setMemorizeRound] = useState(0);
   const [memorizeMatched, setMemorizeMatched] = useState<Set<string>>(new Set());
   const [memorizeSelected, setMemorizeSelected] = useState<{word: string; translation: string} | null>(null);
+  const [awaitingCorrectiveRetry, setAwaitingCorrectiveRetry] = useState(false);
 
   const currentVocab = vocab[vocabIndex];
   const currentExercise = exercises[exerciseIndex];
@@ -120,11 +124,20 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
     const correct = answer.toLowerCase().trim() === currentExercise.answer.toLowerCase().trim();
     setIsCorrect(correct);
     if (correct) setScore(s => s + 10);
+    setAwaitingCorrectiveRetry(!correct);
+    onExerciseAnswered?.({ exerciseType: currentExercise.type, cefrLevel, correct });
   };
 
   const handleExerciseNext = () => {
+    if (!isCorrect && awaitingCorrectiveRetry) {
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+      setAwaitingCorrectiveRetry(false);
+      return;
+    }
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setAwaitingCorrectiveRetry(false);
     setWordOrderAnswer([]);
     if (exerciseIndex < exercises.length - 1) {
       setExerciseIndex(e => e + 1);
@@ -646,9 +659,9 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
               color: isCorrect ? '#00b894' : '#ff7675',
               fontWeight: 600,
             }}>
-              {isCorrect
+            {isCorrect
                 ? '🎉 Correto! Muito bem!'
-                : `❌ Resposta correta: "${currentExercise.answer}"`}
+                : `❌ Resposta correta: "${currentExercise.answer}". Agora tente novamente para reforçar.`}
             </div>
           )}
         </div>
@@ -658,7 +671,9 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete }: 
             onClick={handleExerciseNext}
             style={{ width: '100%', background: phaseColor, color: '#fff', fontWeight: 700, fontSize: 16, height: 48 }}
           >
-            {exerciseIndex < exercises.length - 1 ? 'Próximo Exercício →' : 'Concluir Lição 🎓'}
+            {!isCorrect && awaitingCorrectiveRetry
+              ? 'Tentar novamente com a dica →'
+              : exerciseIndex < exercises.length - 1 ? 'Próximo Exercício →' : 'Concluir Lição 🎓'}
           </Button>
         )}
       </div>

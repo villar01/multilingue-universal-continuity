@@ -612,6 +612,7 @@
 - [x] Integrar dificuldade gradativa no Lesson.tsx — CEFR level badge + level progress bar + difficulty label exibidos na barra de exercícios
 - [x] Integrar dicionário nas cenas ImmersiveScene com ícone de livro — LessonDictionary integrado em Lesson.tsx acima de VocabularySection
 - [ ] Salvar nível atual do aluno no banco e adaptar perguntas automaticamente — completeLesson agora salva currentLevel (A1→C2) no perfil; adaptação automática de perguntas por erros do aluno ainda pendente
+- [x] Registrar erros dos exercícios pedagógicos no histórico do aluno e oferecer uma tentativa corretiva orientada antes de avançar para a próxima questão — rota autenticada grava apenas tipo/CEFR do erro, sem resposta textual, e a interface exige uma nova tentativa com dica antes de seguir; TypeScript e 189 testes aprovados
 - [x] Remover A1 e inglês fixos da conversa e transcrição da CompleteLesson, usando o CEFR e o idioma-alvo selecionados pelo aluno — conversa recebe CEFR normalizado e o reconhecimento usa a base do locale alvo; TypeScript e 187 testes aprovados
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS

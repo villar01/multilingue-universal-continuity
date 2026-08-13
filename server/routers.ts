@@ -117,6 +117,30 @@ export const appRouter = router({
         return status;
       }),
   }),
+  adaptiveLearning: router({
+    recordPedagogicalAttempt: protectedProcedure
+      .input(z.object({
+        lessonId: z.number().int().positive(),
+        exerciseType: z.string().trim().min(1).max(80),
+        cefrLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
+        correct: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!input.correct) {
+          await db.recordErrorPattern({
+            userId: ctx.user.id,
+            errorType: `pedagogical:${input.lessonId}:${input.exerciseType}`,
+            errorCategory: `cefr:${input.cefrLevel}`,
+            severity: 1,
+          });
+        }
+
+        return {
+          recorded: !input.correct,
+          correctiveRetryRecommended: !input.correct,
+        };
+      }),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     updateProfile: protectedProcedure

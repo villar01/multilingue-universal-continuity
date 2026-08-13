@@ -131,6 +131,7 @@ export default function Lesson() {
   // Mutation para salvar progresso
   const completeLessonMutation = trpc.progress.completeLesson.useMutation();
   const recordExerciseAttemptMutation = trpc.progress.recordExerciseAttempt.useMutation();
+  const recordPedagogicalAttemptMutation = trpc.adaptiveLearning.recordPedagogicalAttempt.useMutation();
   
   // Buscar lição real do banco
   const { data: lesson, isLoading: loadingLesson } = trpc.lessons.getById.useQuery(
@@ -954,6 +955,14 @@ export default function Lesson() {
                 <PedagogicalLesson
                   lesson={pedagogicalContent}
                   languageCode={lesson.languageCode || 'en-US'}
+                  onExerciseAnswered={({ exerciseType, cefrLevel, correct }) => {
+                    recordPedagogicalAttemptMutation.mutate({
+                      lessonId: parseInt(lessonId || '1'),
+                      exerciseType,
+                      cefrLevel,
+                      correct,
+                    });
+                  }}
                   onComplete={(score) => {
                     toast.success(`🏆 Lição concluída! +${score} XP`);
                     completeLessonMutation.mutate({ lessonId: parseInt(lessonId || '1'), courseId: (lesson as any).courseId || 1, score, timeSpentSeconds: Math.floor((Date.now() - lessonStartTime) / 1000) });
