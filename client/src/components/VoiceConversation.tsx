@@ -33,6 +33,7 @@ export default function VoiceConversation({
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeTeacherSpeechText, setActiveTeacherSpeechText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentTranscript, setCurrentTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState(""); // Real-time transcript
@@ -239,6 +240,7 @@ export default function VoiceConversation({
         activeSpeechSessionRef.current += 1;
       }
       setIsSpeaking(false);
+      setActiveTeacherSpeechText("");
       setTeacherEmotion("neutral");
       teacherVideoRef.current?.pause();
       if (teacherVideoRef.current) teacherVideoRef.current.currentTime = 0;
@@ -260,6 +262,7 @@ export default function VoiceConversation({
 
     audioElementRef.current.onpause = () => {
       teacherVideoRef.current?.pause();
+      setActiveTeacherSpeechText("");
     };
     
     // Inicializar Web Audio API para análise de frequência
@@ -435,8 +438,9 @@ export default function VoiceConversation({
       setMessages((prev) => [...prev, assistantMessage]);
 
       // Generate TTS audio
+      const teacherSpeechText = isPortugueseLesson ? portuguese : (english || portuguese);
       const ttsResult = await generateTTS.mutateAsync({
-        text: isPortugueseLesson ? portuguese : (english || portuguese),
+        text: teacherSpeechText,
         languageCode: activeTeacher.fallbackLanguage,
         gender: activeTeacher.gender === "male" ? "MALE" : "FEMALE",
       });
@@ -484,6 +488,7 @@ export default function VoiceConversation({
       // Play audio
       if (audioElementRef.current) {
         audioElementRef.current.src = ttsResult.audioUrl;
+        setActiveTeacherSpeechText(teacherSpeechText);
         setIsSpeaking(true);
         setTeacherEmotion("happy");
         await audioElementRef.current.play();
@@ -568,7 +573,15 @@ export default function VoiceConversation({
             />
           )
         ) : (
-          <EnhancedTeacherAvatar />
+          <EnhancedTeacherAvatar
+            imageUrl={activeTeacher.imageUrl}
+            teacherName={activeTeacher.name}
+            gender={activeTeacher.gender}
+            isTeaching={isSpeaking}
+            currentText={activeTeacherSpeechText}
+            languageCode={activeTeacher.fallbackLanguage}
+            hideNameLabel
+          />
         )}
       </div>
 
