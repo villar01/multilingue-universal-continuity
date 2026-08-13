@@ -3538,17 +3538,19 @@ Seu estilo de ensino:
         };
       }),
     // Pergunta contextual por ambiente (cartilha): "O que tem com a letra A na cozinha?"
-    cartilhaQuestion: publicProcedure
+    cartilhaQuestion: protectedProcedure
       .input(z.object({
         letter: z.string(),
         environment: z.string(), // cozinha, quarto, escola, jardim, etc.
         targetLanguage: z.string(),
-        nativeLanguage: z.string().default('pt'),
+        nativeLanguage: z.string().min(2),
+        cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string().default('infancia'),
         teacherName: z.string().default('Professor'),
         knownWords: z.array(z.string()).optional(), // words already taught
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
         const response = await invokeLLM({
           messages: [{
@@ -3559,7 +3561,7 @@ Crie uma pergunta lúdica de cartilha para ensinar a letra "${input.letter.toUpp
 Tarefa: gere uma lista de 5-8 palavras em ${input.targetLanguage} que:
 1. Começam com a letra "${input.letter.toUpperCase()}"
 2. São objetos/coisas encontradas em "${input.environment}"
-3. São palavras simples e concretas (nível ${input.phase})
+3. Respeitam o nível CEFR ${input.cefrLevel} e usam vocabulário concreto adequado
 4. São diferentes das já conhecidas: ${(input.knownWords || []).join(', ') || 'nenhuma ainda'}
 
 Retorne JSON com:
@@ -3588,11 +3590,11 @@ Retorne JSON com:
           return data;
         } catch {
           return {
-            question: 'O que tem com a letra ' + input.letter.toUpperCase() + ' na ' + input.environment + '?',
-            questionInTarget: 'What has the letter ' + input.letter.toUpperCase() + ' in the ' + input.environment + '?',
+            question: '',
+            questionInTarget: '',
             words: [],
-            teacherIntro: 'Vamos explorar a ' + input.environment + ' e encontrar palavras com a letra ' + input.letter.toUpperCase() + '!',
-            celebration: 'Incrivel! Voce encontrou a palavra!',
+            teacherIntro: '',
+            celebration: '',
           };
         }
       }),

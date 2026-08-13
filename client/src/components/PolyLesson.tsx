@@ -1504,12 +1504,23 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
                 <button
                   key={env.id}
                   onClick={() => {
+                    if (!isLoggedIn) {
+                      toast.error('Entre na sua conta para gerar a atividade Cartilha.');
+                      return;
+                    }
                     setCartilhaEnv(env.id);
                     cartilhaQuestionMutation.mutate(
-                      { letter, environment: env.labelEn, targetLanguage: languageCode, phase },
+                      {
+                        letter,
+                        environment: env.labelEn,
+                        targetLanguage: languageCode,
+                        nativeLanguage: selectedNativeLanguage,
+                        cefrLevel: selectedCefrLevel,
+                        phase,
+                      },
                       {
                         onSuccess: (data) => setCartilhaData(data),
-                        onError: () => setCartilhaData({ question: 'O que tem com a letra ' + letter + ' na ' + env.label + '?', questionInTarget: 'What has letter ' + letter + ' in the ' + env.labelEn + '?', words: [], teacherIntro: 'Vamos explorar!', celebration: 'Incrivel!' }),
+                        onError: () => setCartilhaData({ question: '', questionInTarget: '', words: [], teacherIntro: '', celebration: '' }),
                       }
                     );
                   }}
@@ -1535,7 +1546,7 @@ export default function PolyLesson({ lesson, languageCode, teacher, nativeLangua
           <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 16 }}>
             <TeacherAvatar speaking={isSpeaking} />
             <div style={{ flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: '0 16px 16px 16px', padding: '12px 14px', border: `1px solid ${phaseColor}30`, fontSize: 14, color: '#ddd', lineHeight: 1.5 }}>
-              {isLoadingCartilha ? '💭 Preparando palavras...' : (cartilhaData?.teacherIntro || 'Vamos explorar!')}
+              {isLoadingCartilha ? '…' : cartilhaData?.teacherIntro}
             </div>
           </div>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
