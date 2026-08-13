@@ -458,7 +458,16 @@ export default function VoiceConversation({
       setMessages((prev) => [...prev, assistantMessage]);
 
       // Generate TTS audio
-      const teacherSpeechText = targetText || nativeText;
+      const teacherSpeechText = targetText.trim();
+      if (!teacherSpeechText) {
+        audioElementRef.current?.pause();
+        setActiveTeacherSpeechText("");
+        setActiveTeacherAudioUrl(null);
+        setIsSpeaking(false);
+        toast.info("A resposta segura foi exibida sem áudio no idioma-alvo.");
+        setCurrentTranscript("");
+        return;
+      }
       const ttsResult = await generateTTS.mutateAsync({
         text: teacherSpeechText,
         languageCode: activeTeacher.fallbackLanguage,

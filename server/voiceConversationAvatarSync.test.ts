@@ -5,7 +5,8 @@ const source = readFileSync(new URL("../client/src/components/VoiceConversation.
 
 describe("avatar da conversa por voz", () => {
   it("encaminha o texto efetivamente enviado ao TTS ao ciclo visual do professor", () => {
-    expect(source).toContain("const teacherSpeechText = targetText || nativeText");
+    expect(source).toContain("const teacherSpeechText = targetText.trim()");
+    expect(source).toContain("if (!teacherSpeechText)");
     expect(source).toContain("setActiveTeacherSpeechText(teacherSpeechText)");
     expect(source).toContain("setActiveTeacherAudioUrl(ttsResult.audioUrl)");
     expect(source).toContain("setActiveTeacherSpeechText(\"\")");
