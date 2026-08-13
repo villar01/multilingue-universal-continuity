@@ -9,6 +9,12 @@ export type ConversationSafetyDecision =
 
 export async function ensureConversationAccess(userId: number) {
   const safety = await getUserSafetyContext(userId);
+  if (!safety.hasSafetyProfile) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Conclua o perfil etário e de segurança antes de iniciar conversas com IA.",
+    });
+  }
   if (safety.context.ageGroup === "infantil" && !safety.hasParentalConsent) {
     throw new TRPCError({
       code: "FORBIDDEN",

@@ -39,6 +39,15 @@ describe("conversation safety gate", () => {
     await expect(ensureConversationAccess(7)).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
+  it("recusa perfil ainda não classificado em vez de supor que seja adulto", async () => {
+    mocks.getUserSafetyContext.mockResolvedValueOnce({
+      context: { userId: 7, ageGroup: "adulto" },
+      hasSafetyProfile: false,
+      hasParentalConsent: false,
+    });
+    await expect(ensureConversationAccess(7)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
   it("bloqueia padrão determinístico antes da moderação semântica", async () => {
     mocks.checkContent.mockResolvedValueOnce({ isBlocked: true, matchedPatterns: ["padrão proibido"], category: "safety", severity: "block" });
     await expect(assessConversationText(7, "texto", "en-US")).resolves.toEqual({
