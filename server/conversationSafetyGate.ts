@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { getUserSafetyContext, moderateAIResponse } from "./content-moderation";
 import { checkContent } from "./contentFilter";
+import { recordConversationSafetyAlert } from "./parentalConversationAlert";
 
 export type ConversationSafetyDecision =
   | { allowed: true; context: Awaited<ReturnType<typeof getUserSafetyContext>>["context"] }
@@ -25,10 +26,12 @@ export async function assessConversationText(
   const context = await ensureConversationAccess(userId);
   const deterministic = await checkContent(text, languageCode.split("-")[0]);
   if (deterministic.isBlocked) {
+    await recordConversationSafetyAlert(userId, "blocked_input");
     return { allowed: false, reason: "blocked_content", flaggedContent: deterministic.matchedPatterns };
   }
   const semantic = await moderateAIResponse(context, text, text);
   if (!semantic.isAllowed) {
+    await recordConversationSafetyAlert(userId, "blocked_output");
     return { allowed: false, reason: "blocked_content", flaggedContent: semantic.flaggedContent.map((item) => item.word) };
   }
   return { allowed: true, context };

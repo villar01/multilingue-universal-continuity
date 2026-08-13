@@ -227,6 +227,9 @@
 - [ ] Aplicar a política de bloqueio e alerta parental diretamente às entradas e saídas das conversas de IA e professor
 - [ ] Remover contexto adulto padrão e rota pública desprotegida das conversas de IA, exigindo perfil etário e consentimento aplicáveis
 - [x] Aplicar guarda de perfil etário, consentimento infantil e bloqueio de conteúdo ao chat de lição e à conversa bilíngue — entradas e saídas usam filtro determinístico e moderação, com auditoria e regressões aprovadas; 104 testes no total
+- [ ] Criar alerta parental auditável quando a conversa de um menor for bloqueada ou entrar em revisão etária, sem registrar o texto sensível
+- [ ] Vincular a conta autenticada do menor ao perfil infantil e ao responsável antes de emitir alertas automáticos de conversa
+- [ ] Exigir verificação de titularidade do responsável em toda operação parental que receba `childId`, `alertId` ou `sessionId`
 
 ## 📘 GUIA DE USO E SEGURANÇA
 - [x] Criar guia simples para alunos e responsáveis sobre acesso, idiomas, professores, microfone, cenas, exercícios, voz, alertas e controle parental — UserGuide ampliado com ciclo Pareto, uso de microfone, alertas etários, PIN, painel parental e dever contínuo de acompanhamento; acesso confirmado no painel parental

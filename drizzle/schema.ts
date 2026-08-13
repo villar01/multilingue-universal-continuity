@@ -2242,6 +2242,9 @@ export type InsertEmailVerification = typeof emailVerifications.$inferInsert;
 export const childProfiles = mysqlTable("child_profiles", {
   id: int("id").autoincrement().primaryKey(),
   parentId: int("parentId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  linkedUserId: int("linkedUserId").unique().references(() => users.id, { onDelete: "set null" }),
+  linkCodeHash: varchar("linkCodeHash", { length: 64 }),
+  linkCodeExpiresAt: timestamp("linkCodeExpiresAt"),
   name: varchar("name", { length: 100 }).notNull(),
   emoji: varchar("emoji", { length: 10 }).default("👧"),
   level: mysqlEnum("level", ["infantil", "adolescente", "adulto"]).default("infantil"),

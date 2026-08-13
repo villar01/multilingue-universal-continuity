@@ -1,11 +1,26 @@
 import { router, protectedProcedure } from './_core/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { createHash, randomBytes } from 'node:crypto';
 import { getDb } from './db';
 import { childProfiles, parentalSettings, usageSessions, parentalAlerts, parentalContentDecisions } from '../drizzle/schema';
-import { eq, desc, and, gte, sql } from 'drizzle-orm';
+import { eq, desc, and, gte, gt, sql } from 'drizzle-orm';
 import { getUsagePatterns } from './contentFilter';
 import { assessChildSafety } from './childSafetyPolicy';
+
+async function requireChildOwnership(database: any, childId: number, parentId: number) {
+  const [child] = await database.select().from(childProfiles)
+    .where(and(eq(childProfiles.id, childId), eq(childProfiles.parentId, parentId)));
+  if (!child) throw new TRPCError({ code: 'FORBIDDEN', message: 'Perfil infantil não pertence a este responsável' });
+  return child;
+}
+
+async function requireAlertOwnership(database: any, alertId: number, parentId: number) {
+  const [alert] = await database.select().from(parentalAlerts).where(eq(parentalAlerts.id, alertId));
+  if (!alert) throw new TRPCError({ code: 'NOT_FOUND', message: 'Alerta não encontrado' });
+  await requireChildOwnership(database, alert.childId, parentId);
+  return alert;
+}
 
 export const parentalControlRouter = router({
   getUsagePatterns: protectedProcedure
@@ -71,6 +86,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const updateData: Record<string, unknown> = {};
       if (input.name) updateData.name = input.name;
       if (input.emoji) updateData.emoji = input.emoji;
@@ -85,8 +101,45 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
-      await database.delete(childProfiles).where(eq(childProfiles.id, input.childId));
+      await requireChildOwnership(database, input.childId, ctx.user.id);
+      await database.delete(childProfiles).where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
       return { success: true };
+    }),
+
+  createChildLinkCode: protectedProcedure
+    .input(z.object({ childId: z.number(), pin: z.string().length(4) }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
+      const [settings] = await database.select().from(parentalSettings)
+        .where(eq(parentalSettings.childId, input.childId));
+      if (!settings || settings.pinCode !== input.pin) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'PIN do responsável inválido' });
+      }
+      const code = randomBytes(4).toString('hex').toUpperCase();
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+      const linkCodeHash = createHash('sha256').update(code).digest('hex');
+      await database.update(childProfiles).set({ linkCodeHash, linkCodeExpiresAt: expiresAt })
+        .where(and(eq(childProfiles.id, input.childId), eq(childProfiles.parentId, ctx.user.id)));
+      return { code, expiresAt };
+    }),
+
+  claimChildProfile: protectedProcedure
+    .input(z.object({ code: z.string().trim().length(8) }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const linkCodeHash = createHash('sha256').update(input.code.toUpperCase()).digest('hex');
+      const [child] = await database.select().from(childProfiles)
+        .where(and(eq(childProfiles.linkCodeHash, linkCodeHash), gt(childProfiles.linkCodeExpiresAt, new Date())))
+        .limit(1);
+      if (!child || child.linkedUserId || child.parentId === ctx.user.id) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Código de vínculo inválido, expirado ou já utilizado' });
+      }
+      await database.update(childProfiles).set({ linkedUserId: ctx.user.id, linkCodeHash: null, linkCodeExpiresAt: null })
+        .where(eq(childProfiles.id, child.id));
+      return { success: true, childId: child.id, level: child.level };
     }),
 
   // ── PARENTAL SETTINGS ──────────────────────────────────────
@@ -95,6 +148,7 @@ export const parentalControlRouter = router({
     .query(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
       return settings || null;
@@ -111,6 +165,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const updateData: Record<string, unknown> = {};
       if (input.pinCode) updateData.pinCode = input.pinCode;
       if (input.timeLimitMinutes) updateData.timeLimitMinutes = input.timeLimitMinutes;
@@ -126,6 +181,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const [settings] = await database.select().from(parentalSettings)
         .where(eq(parentalSettings.childId, input.childId));
       if (!settings) return { valid: false };
@@ -138,6 +194,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const [session] = await database.insert(usageSessions).values({
         childId: input.childId,
         sessionStart: new Date(),
@@ -158,6 +215,9 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const [session] = await database.select().from(usageSessions).where(eq(usageSessions.id, input.sessionId));
+      if (!session) throw new TRPCError({ code: 'NOT_FOUND', message: 'Sessão não encontrada' });
+      await requireChildOwnership(database, session.childId, ctx.user.id);
       await database.update(usageSessions).set({
         sessionEnd: new Date(),
         minutesUsed: input.minutesUsed,
@@ -172,6 +232,7 @@ export const parentalControlRouter = router({
     .query(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const sessions = await database.select().from(usageSessions)
@@ -198,6 +259,7 @@ export const parentalControlRouter = router({
     .query(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       const sessions = await database.select().from(usageSessions)
@@ -218,6 +280,7 @@ export const parentalControlRouter = router({
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
       if (input.childId) {
+        await requireChildOwnership(database, input.childId, ctx.user.id);
         const alerts = await database.select().from(parentalAlerts)
           .where(eq(parentalAlerts.childId, input.childId))
           .orderBy(desc(parentalAlerts.createdAt));
@@ -239,6 +302,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireAlertOwnership(database, input.alertId, ctx.user.id);
       await database.update(parentalAlerts).set({ isRead: true })
         .where(eq(parentalAlerts.id, input.alertId));
       return { success: true };
@@ -255,6 +319,7 @@ export const parentalControlRouter = router({
     .mutation(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      await requireChildOwnership(database, input.childId, ctx.user.id);
       await database.insert(parentalAlerts).values({
         childId: input.childId,
         alertType: input.alertType,
