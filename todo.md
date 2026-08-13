@@ -270,6 +270,7 @@
 - [x] Ativar modo HYPER TURBO em todos endpoints (100X ORIGINAL)
 
 ## 🛡️ PROTEÇÃO DE MENORES, ECA DIGITAL E CONTEÚDO POR PAÍS
+- [x] Restringir consultas, relatórios, cálculos e pagamentos do painel financeiro a administradores autenticados — as 15 operações financeiras agora usam procedimento administrativo único, rejeitando visitante e usuário comum antes de ler dados, calcular, analisar ou processar pagamentos; TypeScript e regressão aprovados
 - [x] Exigir sessão para a transcrição que envia áudio ao armazenamento temporário e ao reconhecimento de voz, impedindo uso anônimo de recursos externos — a rota `voiceTranscription.transcribe` agora é protegida e rejeita visitante antes de armazenar áudio ou chamar STT; TypeScript e regressão de autorização aprovados
 - [x] Restringir a geração interna de clipes de precisão a administradores, impedindo que alunos disparem rotinas de IA sem interface autorizada — `generateSingle` e `generateLibrary` usam procedimento administrativo; usuário comum recebe FORBIDDEN antes da geração; TypeScript e regressão aprovados
 - [x] Exigir sessão para síntese neural sob demanda, preservando consultas públicas de vozes e bloqueando geração anônima de áudio — `tts.speak` agora é protegido e rejeita visitante antes de encaminhar texto ao Edge TTS; TypeScript e regressão de autorização aprovados

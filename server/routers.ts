@@ -44,6 +44,13 @@ import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
 
+const financeAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'admin') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Apenas administradores podem acessar o painel financeiro' });
+  }
+  return next();
+});
+
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -1855,7 +1862,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // Gestão Financeira
   finance: router({
     // Listar receitas
-    listRevenues: publicProcedure
+    listRevenues: financeAdminProcedure
       .input(z.object({
         status: z.enum(["pending", "completed", "failed", "refunded"]).optional(),
         limit: z.number().optional(),
@@ -1865,7 +1872,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Listar despesas
-    listExpenses: publicProcedure
+    listExpenses: financeAdminProcedure
       .input(z.object({
         status: z.enum(["pending", "paid", "overdue", "cancelled"]).optional(),
         category: z.string().optional(),
@@ -1877,7 +1884,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Listar pagamentos automáticos
-    listAutoPayments: publicProcedure
+    listAutoPayments: financeAdminProcedure
       .input(z.object({
         isActive: z.boolean().optional(),
       }).optional())
@@ -1886,7 +1893,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Listar recibos
-    listReceipts: publicProcedure
+    listReceipts: financeAdminProcedure
       .input(z.object({
         limit: z.number().optional(),
       }).optional())
@@ -1895,7 +1902,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Listar relatórios
-    listReports: publicProcedure
+    listReports: financeAdminProcedure
       .input(z.object({
         limit: z.number().optional(),
       }).optional())
@@ -1904,7 +1911,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Gerar relatório mensal
-    generateMonthlyReport: publicProcedure
+    generateMonthlyReport: financeAdminProcedure
       .input(z.object({
         month: z.number().min(1).max(12),
         year: z.number(),
@@ -1914,7 +1921,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Calcular impostos
-    calculateTaxes: publicProcedure
+    calculateTaxes: financeAdminProcedure
       .input(z.object({
         month: z.number().min(1).max(12),
         year: z.number(),
@@ -1924,7 +1931,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Processar pagamento automático
-    processAutoPayment: publicProcedure
+    processAutoPayment: financeAdminProcedure
       .input(z.object({
         configId: z.number(),
       }))
@@ -1933,7 +1940,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Criar receita manualmente
-    createRevenue: publicProcedure
+    createRevenue: financeAdminProcedure
       .input(z.object({
         source: z.enum(["subscription", "one_time_payment", "refund", "other"]),
         userId: z.number().optional(),
@@ -1949,7 +1956,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Criar despesa
-    createExpense: publicProcedure
+    createExpense: financeAdminProcedure
       .input(z.object({
         category: z.enum(["hosting", "payment_gateway", "domain", "software", "marketing", "taxes", "other"]),
         description: z.string(),
@@ -1964,7 +1971,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Atualizar status de despesa
-    updateExpenseStatus: publicProcedure
+    updateExpenseStatus: financeAdminProcedure
       .input(z.object({
         expenseId: z.number(),
         status: z.enum(["pending", "paid", "overdue", "cancelled"]),
@@ -1975,7 +1982,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Análise financeira com IA
-    analyzeHealth: publicProcedure
+    analyzeHealth: financeAdminProcedure
       .input(z.object({
         month: z.number().min(1).max(12),
         year: z.number(),
@@ -1986,14 +1993,14 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Gerar alertas automáticos
-    generateAlerts: publicProcedure
+    generateAlerts: financeAdminProcedure
       .query(async () => {
         const { generateFinancialAlerts } = await import("./financial-ai");
         return await generateFinancialAlerts();
       }),
 
     // Recomendações de otimização fiscal
-    taxOptimization: publicProcedure
+    taxOptimization: financeAdminProcedure
       .input(z.object({
         month: z.number().min(1).max(12),
         year: z.number(),
@@ -2004,7 +2011,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Previsão de receita
-    predictRevenue: publicProcedure
+    predictRevenue: financeAdminProcedure
       .input(z.object({
         months: z.number().min(1).max(12).optional(),
       }).optional())
