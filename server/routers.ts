@@ -319,7 +319,7 @@ export const appRouter = router({
       }),
 
     // ─── Edge TTS: voz neural Microsoft de alta qualidade ───────────────
-    speak: publicProcedure
+    speak: protectedProcedure
       .input(z.object({
         text: z.string().min(1).max(2000),
         voiceLang: z.string().min(2).max(10),
