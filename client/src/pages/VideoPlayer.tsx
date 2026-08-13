@@ -30,12 +30,35 @@ type ClipVocabularyItem = {
   examples?: string[];
 };
 
+type ClipSubtitle = {
+  startTime: number;
+  endTime: number;
+  targetText: string;
+  nativeText: string;
+};
+
 function parseClipVocabulary(value: string | null | undefined): ClipVocabularyItem[] {
   if (!value) return [];
   try {
     const parsed = JSON.parse(value);
     if (!Array.isArray(parsed)) return [];
     return parsed.filter((item): item is ClipVocabularyItem => Boolean(item?.word && item?.translation));
+  } catch {
+    return [];
+  }
+}
+
+function parseClipSubtitles(value: string | null | undefined): ClipSubtitle[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is ClipSubtitle => Boolean(
+      typeof item?.startTime === "number" &&
+      typeof item?.endTime === "number" &&
+      item?.targetText &&
+      item?.nativeText
+    ));
   } catch {
     return [];
   }
@@ -150,6 +173,11 @@ export default function VideoPlayer() {
   }
 
   const vocabulary = parseClipVocabulary(clip.vocabularyData);
+  const subtitles = parseClipSubtitles(clip.subtitlesData);
+  const activeSubtitle = subtitles.find((subtitle) => {
+    const playbackMs = currentTime * 1000;
+    return playbackMs >= subtitle.startTime && playbackMs <= subtitle.endTime;
+  });
   const practiceTerm = vocabulary[practiceIndex];
   const practiceLevel = resolvePracticeCEFRLevel(clip.difficulty);
 
@@ -205,12 +233,12 @@ export default function VideoPlayer() {
               onPause={() => setIsPlaying(false)}
             />
             
-            {/* Legendas (placeholder) */}
-            {showSubtitles && (
+            {/* Legendas bilíngues reais e sincronizadas */}
+            {showSubtitles && activeSubtitle && (
               <div className="absolute bottom-20 left-0 right-0 text-center px-4">
                 <div className="inline-block bg-black/80 text-white px-4 py-2 rounded-lg text-lg">
-                  <p className="text-purple-300 text-sm mb-1">[PT] Olá! Como você está?</p>
-                  <p>[EN] Hello! How are you?</p>
+                  <p className="text-purple-300 text-sm mb-1">[{clip.nativeLanguage.toUpperCase()}] {activeSubtitle.nativeText}</p>
+                  <p>[{clip.targetLanguage.toUpperCase()}] {activeSubtitle.targetText}</p>
                 </div>
               </div>
             )}
