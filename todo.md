@@ -952,7 +952,8 @@
 - [x] Criar procedimentos tRPC para controle parental (child profiles, settings, sessions, alerts) — 14 procedimentos em parental-control-router.ts
 - [x] Construir ParentalControlPanel component (PIN, limites de tempo, alertas, progresso em tempo real)
 - [x] Adicionar rota /parental-control no App.tsx
-- [x] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas — PedagogicalLesson.tsx tem fluxo: vocab → reading → dialogue → memorize → exercises → complete
+- [x] Corrigir fluxo pedagógico: vocabulário → texto → ilustração → memorização → perguntas — PedagogicalLesson bloqueia questões sem vocabulário, apresenta leitura/diálogo quando existentes e só libera exercícios após a memorização completa; TypeScript e 201 testes aprovados
+- [x] Impedir início de exercícios sem vocabulário estudado e remover o atalho que permite pular a etapa obrigatória de memorização — estado vazio informa material indisponível e o atalho foi removido; regressão protege as duas regras
 - [x] Exercícios só usam palavras do vocabulário da lição — server valida e substitui respostas fora do vocabulário
 - [x] Adicionar seção de texto de leitura com vocabulário em contexto — readingText + readingTextTranslation gerados pelo LLM e exibidos no PedagogicalLesson
 - [x] Adicionar seção de memorização antes dos exercícios — stage 'memorize' no PedagogicalLesson com flashcards

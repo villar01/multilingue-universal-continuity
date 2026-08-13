@@ -164,6 +164,18 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete, on
     ? 50 + (exerciseIndex / Math.max(exercises.length, 1)) * 50
     : 100;
 
+  if (stage === 'vocab' && !currentVocab) {
+    return (
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '32px 16px', textAlign: 'center', color: '#cbd5e1' }}>
+        <div style={{ fontSize: 42, marginBottom: 12 }}>📚</div>
+        <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Material da lição indisponível</h2>
+        <p style={{ fontSize: 14, lineHeight: 1.6 }}>
+          Esta lição não libera perguntas até que vocabulário e exemplos de estudo estejam disponíveis.
+        </p>
+      </div>
+    );
+  }
+
   // ── VOCAB STAGE ──────────────────────────────────────────────────────────────
   if (stage === 'vocab' && currentVocab) {
     return (
@@ -298,7 +310,7 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete, on
           onClick={handleVocabNext}
           style={{ width: '100%', background: phaseColor, color: '#fff', fontWeight: 700, fontSize: 16, height: 48 }}
         >
-          {vocabIndex < vocab.length - 1 ? 'Próxima Palavra →' : 'Ir para Exercícios →'}
+          {vocabIndex < vocab.length - 1 ? 'Próxima Palavra →' : 'Continuar material da lição →'}
         </Button>
       </div>
     );
@@ -542,23 +554,6 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete, on
                 </div>
               </div>
             )}
-            {/* Skip button */}
-            <div style={{ marginTop: 20, textAlign: 'center' }}>
-              <button
-                onClick={() => setStage('exercises')}
-                style={{
-                  background: 'none',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8,
-                  padding: '8px 20px',
-                  color: '#888',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                }}
-              >
-                Pular memorização →
-              </button>
-            </div>
           </div>
         )}
       </div>

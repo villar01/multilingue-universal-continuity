@@ -29,4 +29,12 @@ describe("adaptação de exercício pedagógico", () => {
     expect(routerSource).toContain("Include one additional gentle, vocabulary-only reinforcement exercise");
     expect(routerSource).not.toContain("input.wrongAnswers");
   });
+
+  it("não libera perguntas sem vocabulário e exige a memorização antes dos exercícios", () => {
+    expect(pedagogicalSource).toContain("Material da lição indisponível");
+    expect(pedagogicalSource).toContain("não libera perguntas até que vocabulário e exemplos de estudo estejam disponíveis");
+    expect(pedagogicalSource).toContain("const allMatched = memorizedWords.size === vocab.length");
+    expect(pedagogicalSource).toContain("onClick={() => setStage('exercises')}");
+    expect(pedagogicalSource).not.toContain("Pular memorização");
+  });
 });
