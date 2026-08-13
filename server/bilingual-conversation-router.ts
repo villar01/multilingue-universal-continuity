@@ -63,11 +63,7 @@ Start the conversation now:`;
 
       return {
         question,
-        suggestions: outputSafety.allowed ? [
-          "I'm fine, thank you!",
-          "I'm learning English.",
-          "Can you help me?",
-        ] : ["Hello", "Thank you", "Please help me"],
+        suggestions: [],
         blocked: !outputSafety.allowed,
       };
     }),
@@ -91,6 +87,8 @@ Start the conversation now:`;
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const nativeTag = localeTag(input.nativeLanguage);
+      const targetTag = localeTag(input.targetLanguage);
       try {
       // Validar inputs
       if (!input.targetLanguage || !input.nativeLanguage) {
@@ -100,15 +98,13 @@ Start the conversation now:`;
         });
         throw new Error("targetLanguage and nativeLanguage are required");
       }
-      const nativeTag = localeTag(input.nativeLanguage);
-      const targetTag = localeTag(input.targetLanguage);
       const safeResponse = `[${nativeTag}] Essa mensagem não pode ser usada neste perfil. Escolha uma frase segura da lição.\n[${targetTag}] This message cannot be used in this profile. Choose a safe lesson phrase.`;
       const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "";
       const inputSafety = await assessConversationText(ctx.user.id, lastUserMessage, input.targetLanguage);
       if (!inputSafety.allowed) {
         return {
           response: safeResponse,
-          suggestions: ["Hello", "Thank you", "I am learning"],
+          suggestions: [],
           blocked: true,
           flaggedContent: inputSafety.flaggedContent,
         };
@@ -225,7 +221,7 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
 
       console.log("[Bilingual Conversation] Suggestions response:", JSON.stringify(suggestionsResponse, null, 2));
       
-      let suggestions = ["Yes", "No", "Tell me more"];
+      let suggestions: string[] = [];
       if (suggestionsResponse && suggestionsResponse.choices && suggestionsResponse.choices.length > 0) {
         const suggestionsText = (String(suggestionsResponse.choices[0]?.message?.content ?? "")).trim();
         if (suggestionsText) {
@@ -253,8 +249,8 @@ Generate 3 simple ${input.userLevel}-level questions or responses the student co
         
         // Retornar resposta de fallback em vez de lançar erro
         return {
-          response: "[PT] Desculpe, tive um problema técnico. Pode repetir?\n[EN] Sorry, I had a technical issue. Can you repeat?",
-          suggestions: ["Yes", "No", "Tell me more"],
+          response: `[${nativeTag}] Desculpe, tive um problema técnico. Pode repetir?\n[${targetTag}] Sorry, I had a technical issue. Can you repeat?`,
+          suggestions: [],
         };
       }
     }),

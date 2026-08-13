@@ -442,7 +442,7 @@ export default function VoiceConversation({
         });
         aiResponse = {
           response: offlineResult.content || `[${nativeTag}] Desculpe, não entendi. Pode repetir?\n[${targetTag}] Sorry, I didn't understand. Can you repeat?`,
-          suggestions: ["Yes", "No", "Tell me more"],
+          suggestions: [],
         };
       }
 
