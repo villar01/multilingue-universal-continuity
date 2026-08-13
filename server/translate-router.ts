@@ -2,12 +2,12 @@
  * Translate Router — Tradução por Imagem (estilo Google Translate AR)
  */
 import { z } from "zod";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM, type ImageContent, type TextContent } from "./_core/llm";
 import { generateAI } from "./aiProvider";
 
 export const translateRouter = router({
-  translateImage: publicProcedure
+  translateImage: protectedProcedure
     .input(
       z.object({
         imageBase64: z.string(),
@@ -57,7 +57,7 @@ Return ONLY valid JSON, nothing else.`,
       return { translations };
     }),
 
-  translateWord: publicProcedure
+  translateWord: protectedProcedure
     .input(
       z.object({
         word: z.string(),

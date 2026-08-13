@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Camera, X, Languages, Zap, RefreshCw, Image as ImageIcon, ScanLine } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 interface CameraTranslatorProps {
   targetLanguage?: string;
@@ -21,6 +22,7 @@ export default function CameraTranslator({
   nativeLanguage = "Português",
   onClose,
 }: CameraTranslatorProps) {
+  const { user } = useAuth();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cameraActive, setCameraActive] = useState(false);
@@ -105,6 +107,10 @@ export default function CameraTranslator({
   });
 
   const handleCapture = useCallback(async () => {
+    if (!user) {
+      toast.error("Faça login para traduzir imagens com IA.");
+      return;
+    }
     setIsCapturing(true);
     const imageData = captureFrame();
     if (!imageData) {
@@ -120,7 +126,7 @@ export default function CameraTranslator({
       targetLanguage,
       nativeLanguage,
     });
-  }, [captureFrame, targetLanguage, nativeLanguage, translateImageMutation]);
+  }, [captureFrame, targetLanguage, nativeLanguage, translateImageMutation, user]);
 
   const handleReset = () => {
     setCapturedImage(null);
