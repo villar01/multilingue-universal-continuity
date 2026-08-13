@@ -6,7 +6,7 @@
  */
 
 import { z } from "zod";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
 import { assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
@@ -374,7 +374,7 @@ Format:
   /**
    * Tradução simultânea ao digitar
    */
-  translateRealtime: publicProcedure
+  translateRealtime: protectedProcedure
     .input(
       z.object({
         text: z.string(),
@@ -382,12 +382,18 @@ Format:
         toLanguage: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
       if (!input.text.trim()) {
         return {
           translation: "",
           wordByWord: [],
         };
+      }
+
+      const inputSafety = await assessConversationText(ctx.user.id, input.text, input.fromLanguage);
+      if (!inputSafety.allowed) {
+        return { translation: "", wordByWord: [] };
       }
 
       const prompt = `Translate "${input.text}" from ${input.fromLanguage} to ${input.toLanguage}.
@@ -414,6 +420,10 @@ Words: [word1]=[translation1], [word2]=[translation2]...`;
       });
 
       const result = (String(response.choices[0]?.message?.content ?? ""))?.trim() || "";
+      const outputSafety = await assessConversationText(ctx.user.id, result, input.toLanguage);
+      if (!outputSafety.allowed) {
+        return { translation: "", wordByWord: [] };
+      }
       const lines = result.split("\n");
       const translation = lines[0]?.replace("Translation:", "").trim() || input.text;
       const wordsLine = lines[1]?.replace("Words:", "").trim() || "";
