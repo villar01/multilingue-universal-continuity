@@ -494,7 +494,9 @@ export default function SceneLesson({
                 <div style={{ fontSize: 14, color: '#aaa', textAlign: 'center', marginBottom: 8 }}>= {selectedHotspot.translation}</div>
                 <div style={{ fontSize: 13, color: '#FFD700', textAlign: 'center', marginBottom: 4, fontStyle: 'italic' }}>'{selectedHotspot.pronunciation}'</div>
                 <div style={{ fontSize: 13, color: '#ddd', textAlign: 'center', marginBottom: 12 }}>{selectedHotspot.example}</div>
-                <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{selectedHotspot.examplePt}</div>
+                {profile.nativeCode?.startsWith('pt') && (
+                  <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{selectedHotspot.examplePt}</div>
+                )}
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
                   <button onClick={() => speakWord(selectedHotspot.label)} style={{ background: selectedHotspot.color, border: 'none', borderRadius: 50, width: 44, height: 44, fontSize: 18, cursor: 'pointer' }}>🔊</button>
                   <button onClick={startPronunciation} disabled={isRecording} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 50, width: 44, height: 44, fontSize: 18, cursor: 'pointer' }}>🎤</button>
