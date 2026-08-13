@@ -642,12 +642,14 @@ function LimitsTab({ childId }: { childId: number }) {
   });
 
   const [timeLimit, setTimeLimit] = useState(60);
+  const [aiConversationsEnabled, setAiConversationsEnabled] = useState(false);
   const [allowedDays, setAllowedDays] = useState<boolean[]>([true, true, true, true, true, false, false]);
   const [levels, setLevels] = useState<ParentalCefrLevel[]>(['A1']);
 
   useEffect(() => {
     if (settings) {
       setTimeLimit(settings.timeLimitMinutes || 60);
+      setAiConversationsEnabled(settings.aiConversationsEnabled === true);
       setAllowedDays(settings.allowedDays || [true, true, true, true, true, false, false]);
       setLevels(normalizeParentalCefrLevels(settings.levelsAllowed));
     }
@@ -657,10 +659,11 @@ function LimitsTab({ childId }: { childId: number }) {
     updateSettings.mutate({
       childId,
       timeLimitMinutes: timeLimit,
+      aiConversationsEnabled,
       allowedDays,
       levelsAllowed: levels,
     });
-  }, [childId, timeLimit, allowedDays, levels, updateSettings]);
+  }, [childId, timeLimit, aiConversationsEnabled, allowedDays, levels, updateSettings]);
 
   return (
     <div className="space-y-4">
@@ -692,6 +695,23 @@ function LimitsTab({ childId }: { childId: number }) {
             </div>
           </div>
           <Progress value={(timeLimit / 240) * 100} className="h-2" />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-900/50 border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Shield className="w-5 h-5 text-amber-400" /> Conversas com IA
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between gap-4 p-3 rounded-lg bg-slate-800/50">
+            <div>
+              <p className="font-medium">Liberar conversas supervisionadas</p>
+              <p className="text-xs text-slate-400">Desativado por padrão. Quando ativado, continuam valendo filtro etário, limites de tempo e alertas ao responsável.</p>
+            </div>
+            <Switch checked={aiConversationsEnabled} onCheckedChange={setAiConversationsEnabled} aria-label="Liberar conversas com IA" />
+          </div>
         </CardContent>
       </Card>
 

@@ -1,0 +1,1 @@
+ALTER TABLE `parental_settings` ADD `aiConversationsEnabled` boolean DEFAULT false NOT NULL;

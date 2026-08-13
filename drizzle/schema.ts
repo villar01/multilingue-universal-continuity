@@ -2304,6 +2304,7 @@ export const parentalSettings = mysqlTable("parental_settings", {
   childId: int("childId").notNull().references(() => childProfiles.id, { onDelete: "cascade" }),
   pinCode: varchar("pinCode", { length: 255 }).notNull(),
   timeLimitMinutes: int("timeLimitMinutes").default(60),
+  aiConversationsEnabled: boolean("aiConversationsEnabled").default(false).notNull(),
   allowedDays: json("allowedDays").$type<boolean[]>(), // [seg, ter, qua, qui, sex, sab, dom]
   levelsAllowed: json("levelsAllowed").$type<string[]>(), // ["beginner", "intermediate", "advanced"]
   createdAt: timestamp("createdAt").defaultNow().notNull(),

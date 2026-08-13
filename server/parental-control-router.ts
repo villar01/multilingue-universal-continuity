@@ -84,6 +84,7 @@ export const parentalControlRouter = router({
         childId: child.id,
         pinCode: hashParentPin(input.pin),
         timeLimitMinutes: 60,
+        aiConversationsEnabled: false,
         allowedDays: [true, true, true, true, true, false, false],
         levelsAllowed: ['A1'],
       });
@@ -192,6 +193,7 @@ export const parentalControlRouter = router({
       childId: z.number(),
       pinCode: z.string().max(4).optional(),
       timeLimitMinutes: z.number().min(1).max(480).optional(),
+      aiConversationsEnabled: z.boolean().optional(),
       allowedDays: z.array(z.boolean()).optional(),
       levelsAllowed: z.array(z.enum(PARENTAL_CEFR_LEVELS)).optional(),
     }))
@@ -202,6 +204,7 @@ export const parentalControlRouter = router({
       const updateData: Record<string, unknown> = {};
       if (input.pinCode) updateData.pinCode = hashParentPin(input.pinCode);
       if (input.timeLimitMinutes) updateData.timeLimitMinutes = input.timeLimitMinutes;
+      if (input.aiConversationsEnabled !== undefined) updateData.aiConversationsEnabled = input.aiConversationsEnabled;
       if (input.allowedDays) updateData.allowedDays = input.allowedDays;
       if (input.levelsAllowed) updateData.levelsAllowed = input.levelsAllowed;
       await database.update(parentalSettings).set(updateData)

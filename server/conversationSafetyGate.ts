@@ -29,6 +29,13 @@ async function enforceChildConversationTimeLimit(userId: number) {
   const [settings] = await db.select().from(parentalSettings)
     .where(eq(parentalSettings.childId, child.id)).limit(1);
   if (!settings) return;
+  if (!settings.aiConversationsEnabled) {
+    await recordConversationSafetyAlert(userId, "ai_conversations_disabled");
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "As conversas com IA estão desativadas pelo responsável.",
+    });
+  }
 
   const now = new Date();
   if (!canUseOnDay(settings.allowedDays, now)) {

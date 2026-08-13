@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { childProfiles, parentalAlerts } from "../drizzle/schema";
 import { getDb } from "./db";
 
-export type ConversationSafetyEvent = "blocked_input" | "blocked_output" | "country_compliance_block" | "daily_time_limit";
+export type ConversationSafetyEvent = "blocked_input" | "blocked_output" | "country_compliance_block" | "daily_time_limit" | "ai_conversations_disabled";
 
 export function buildSafeConversationAlert(event: ConversationSafetyEvent) {
   if (event === "country_compliance_block") {
@@ -18,6 +18,14 @@ export function buildSafeConversationAlert(event: ConversationSafetyEvent) {
       alertType: "daily_time_limit_reached",
       title: "Limite diário de uso atingido",
       detail: "Uma conversa foi bloqueada porque o limite diário definido pelo responsável foi atingido. O conteúdo da conversa não foi armazenado.",
+    };
+  }
+
+  if (event === "ai_conversations_disabled") {
+    return {
+      alertType: "ai_conversations_disabled",
+      title: "Conversas com IA desativadas",
+      detail: "Uma conversa foi bloqueada porque esse recurso está desativado pelo responsável. O conteúdo da conversa não foi armazenado.",
     };
   }
 

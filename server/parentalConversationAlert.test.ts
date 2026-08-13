@@ -14,4 +14,11 @@ describe("parental conversation alert", () => {
     expect(alert.title).toContain("Resposta bloqueada");
     expect(alert.detail).toContain("não foi armazenado");
   });
+
+  it("registra a desativação parental de IA sem expor texto da conversa", () => {
+    const alert = buildSafeConversationAlert("ai_conversations_disabled");
+    expect(alert.alertType).toBe("ai_conversations_disabled");
+    expect(alert.detail).toContain("não foi armazenado");
+    expect(alert.detail).not.toContain("mensagem original");
+  });
 });
