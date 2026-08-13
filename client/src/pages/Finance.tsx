@@ -16,18 +16,21 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
 export default function Finance() {
+  const { user } = useAuth();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const isAdmin = user?.role === "admin";
 
   // Queries
-  const { data: revenues } = trpc.finance.listRevenues.useQuery({ limit: 50 });
-  const { data: expenses } = trpc.finance.listExpenses.useQuery({ limit: 50 });
-  const { data: autoPayments } = trpc.finance.listAutoPayments.useQuery({ isActive: true });
-  const { data: reports } = trpc.finance.listReports.useQuery({ limit: 12 });
-  const { data: receipts } = trpc.finance.listReceipts.useQuery({ limit: 50 });
+  const { data: revenues } = trpc.finance.listRevenues.useQuery({ limit: 50 }, { enabled: isAdmin });
+  const { data: expenses } = trpc.finance.listExpenses.useQuery({ limit: 50 }, { enabled: isAdmin });
+  const { data: autoPayments } = trpc.finance.listAutoPayments.useQuery({ isActive: true }, { enabled: isAdmin });
+  const { data: reports } = trpc.finance.listReports.useQuery({ limit: 12 }, { enabled: isAdmin });
+  const { data: receipts } = trpc.finance.listReceipts.useQuery({ limit: 50 }, { enabled: isAdmin });
 
   // Mutations
   const generateReportMutation = trpc.finance.generateMonthlyReport.useMutation();
@@ -66,6 +69,21 @@ export default function Finance() {
       currency: 'BRL'
     }).format(cents / 100);
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          <Card className="mx-auto max-w-xl border-amber-200 bg-amber-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-900"><AlertCircle className="h-5 w-5" /> Acesso administrativo necessário</CardTitle>
+              <CardDescription>Este painel contém informações financeiras e só é carregado para administradores autorizados.</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
