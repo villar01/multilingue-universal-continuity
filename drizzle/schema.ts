@@ -68,6 +68,17 @@ export const educationalClips = mysqlTable("educational_clips", {
   cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1", "C2"]).notNull(),
   category: varchar("category", { length: 100 }), // grammar, vocabulary, pronunciation, culture
   tags: json("tags").$type<string[]>(),
+  vocabularyData: json("vocabularyData").$type<Array<{
+    word: string;
+    translation: string;
+    examples?: string[];
+  }>>(),
+  subtitlesData: json("subtitlesData").$type<Array<{
+    startTime: number;
+    endTime: number;
+    targetText: string;
+    nativeText: string;
+  }>>(),
   viewCount: int("viewCount").default(0),
   likeCount: int("likeCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
