@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
 import { useParams, Link } from "wouter";
-import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -1285,7 +1284,11 @@ export default function Lesson() {
                       </div>
                       <button
                         onClick={() => {
-                          speakNaturalVoice(speakText, langCode || 'en-US', { rate: 0.9, gender: (teacher as any)?.gender === 'male' ? 'male' : 'female' });
+                          generateTeacherAudio.mutate({
+                            text: speakText,
+                            voiceLang: teacherVoice.voiceLang,
+                            gender: teacherVoice.gender,
+                          });
                         }}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-all active:scale-95 shadow"
                       >

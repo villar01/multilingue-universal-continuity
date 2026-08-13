@@ -385,7 +385,7 @@
 - [x] Testar voz de cada professor (Ricardo, Ingrid, Carlos, Jean)
 - [x] Garantir por teste que uma lição de inglês não pode resolver professor ou voz de português por fallback genérico — `en` feminino resolve Sarah/en-US e rejeita `prof-pt-br`; regressões de catálogo e voz aprovadas
 - [x] Exigir que a voz escolhida compartilhe o idioma-base do professor, sem substituir sotaque ausente por outro idioma — `resolveVoice` recusa idioma desconhecido, seletor filtra a mesma família linguística e regressões de contexto validam a rejeição de voz estrangeira
-- [ ] Usar a variante regional e o gênero do professor escolhido em cada fala neural da lição, sem reduzir a voz a um código genérico do curso
+- [x] Usar a variante regional e o gênero do professor escolhido em cada fala neural da lição, sem reduzir a voz a um código genérico do curso — saudação, feedback, Pareto, conversa e replay do professor usam o contrato central `teacherVoice`; o replay genérico foi removido e a regressão impede seu retorno; TypeScript e 147 testes aprovados
 - [x] Corrigir rejeição do Google Neural TTS quando a voz configurada não corresponde ao gênero solicitado na cena imersiva — com gênero definido e sem voz específica, o Google escolhe voz neural compatível do locale; voz específica passa como neutra para evitar conflito 400; 91 testes e TypeScript aprovados
 - [x] Eliminar timeout externo dos testes Edge TTS, mantendo testes determinísticos de locale, gênero, sotaque, cache e contrato de áudio — transporte Edge foi isolado para teste; síntese real permanece em produção; TypeScript e 101 testes aprovados
 
