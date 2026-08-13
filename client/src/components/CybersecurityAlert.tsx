@@ -17,11 +17,11 @@ interface ThreatInfo {
 }
 
 const THREAT_INFO: Record<ThreatLevel, ThreatInfo> = {
-  safe: { level: 'safe', title: 'Sistema Seguro', description: 'Nenhuma ameaça cibernética detectada. Seu dispositivo está protegido.', action: 'Continue usando o aplicativo normalmente.', icon: ShieldCheck },
-  low: { level: 'low', title: 'Ameaça de Baixo Nível', description: 'Atividade suspeita detectada. Monitorando continuamente.', action: 'Mantenha o aplicativo aberto para monitoramento automático.', icon: Eye },
-  medium: { level: 'medium', title: 'Ameaça Moderada', description: 'Possível tentativa de invasão detectada. Recomenda-se cautela.', action: 'Feche outros aplicativos desnecessários e evite sites desconhecidos.', icon: ShieldAlert },
-  high: { level: 'high', title: 'Ameaça Alta', description: 'Ataque cibernético ativo detectado! Ação imediata recomendada.', action: 'Desligue o notebook imediatamente para desestabilizar qualquer ameaça externa.', icon: ShieldAlert },
-  critical: { level: 'critical', title: 'AMEAÇA CRÍTICA', description: 'Invasão em andamento detectada! Proteja seus dados imediatamente.', action: 'DESLIGUE O NOTEBOOK AGORA! Desligue o Wi-Fi e reinicie somente após 30 segundos.', icon: Power },
+  safe: { level: 'safe', title: 'Sem eventos críticos no app', description: 'Nenhum evento crítico foi registrado pelo aplicativo. Este painel não substitui antivírus, atualizações ou diagnóstico do dispositivo.', action: 'Mantenha o sistema, navegador e aplicativo atualizados.', icon: ShieldCheck },
+  low: { level: 'low', title: 'Evento de Baixa Prioridade', description: 'O aplicativo registrou uma atividade que merece revisão.', action: 'Revise a origem do evento e evite links, extensões ou downloads desconhecidos.', icon: Eye },
+  medium: { level: 'medium', title: 'Evento de Segurança', description: 'O aplicativo registrou uma atividade incomum que requer atenção.', action: 'Atualize o navegador e o sistema, revise extensões e execute a verificação do antivírus instalado.', icon: ShieldAlert },
+  high: { level: 'high', title: 'Evento de Alta Prioridade', description: 'Um evento de alta prioridade foi registrado pelo aplicativo. Isso não confirma, por si só, comprometimento do dispositivo.', action: 'Interrompa atividades sensíveis; se houver sinais reais de comprometimento, desconecte a rede e procure suporte de segurança.', icon: ShieldAlert },
+  critical: { level: 'critical', title: 'Evento Crítico Registrado', description: 'Um evento crítico foi registrado no aplicativo. Trate-o como incidente até revisão, sem presumir diagnóstico completo do dispositivo.', action: 'Desconecte a rede se houver indícios de comprometimento, use uma ferramenta de segurança confiável e altere credenciais por outro dispositivo seguro.', icon: Power },
 };
 
 const LEVEL_COLORS: Record<ThreatLevel, string> = {
@@ -76,12 +76,11 @@ export default function CybersecurityAlert() {
             const el = node as HTMLElement;
             if (el.tagName === 'SCRIPT' && !el.hasAttribute('data-safe')) {
               reportThreat.mutate({
-                threatType: 'dom_injection', severity: 'critical', source: 'DOM Observer',
-                description: 'Tentativa de injeção de script detectada', recommendedAction: 'DESLIGUE O NOTEBOOK',
+                threatType: 'dom_injection', severity: 'medium', source: 'DOM Observer',
+                description: 'Elemento de script inesperado observado pelo aplicativo; revisão necessária', recommendedAction: 'Revisar navegador, extensões e origem do conteúdo antes de continuar',
                 deviceInfo: navigator.userAgent,
               });
-              setCurrentLevel('critical');
-              setShowPowerOffDialog(true);
+              setCurrentLevel('medium');
             }
           }
         }
@@ -91,10 +90,6 @@ export default function CybersecurityAlert() {
     return () => observer.disconnect();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monitoringActive]);
-
-  useEffect(() => {
-    if (currentLevel === 'critical' || currentLevel === 'high') setShowPowerOffDialog(true);
-  }, [currentLevel]);
 
   const handleResolveThreat = useCallback((threatId: number) => {
     resolveThreat.mutate({ threatId, resolvedAction: 'resolved_by_user' }, {
@@ -109,11 +104,11 @@ export default function CybersecurityAlert() {
     reportThreat.mutate({
       threatType: 'user_power_off', severity: currentLevel === 'critical' ? 'critical' : 'high',
       source: 'user_action', description: 'Usuário optou por desligar o notebook',
-      recommendedAction: 'Desligar, aguardar 30s, reiniciar e verificar',
+      recommendedAction: 'Usuário recebeu orientação para isolar a rede se houver indícios reais e buscar verificação de segurança',
       deviceInfo: navigator.userAgent,
     });
     setShowPowerOffDialog(false);
-    alert('INSTRUÇÕES DE EMERGÊNCIA:\n\n1. Salve seus trabalhos\n2. Desligue o notebook\n3. Desconecte Wi-Fi\n4. Aguarde 30 segundos\n5. Ligue novamente\n6. Abra o app para verificação');
+    alert('ORIENTAÇÕES DE SEGURANÇA:\n\n1. Interrompa atividades sensíveis, como pagamentos e troca de senhas.\n2. Se houver indícios reais de comprometimento, desconecte Wi-Fi/cabo de rede.\n3. Atualize o sistema e execute a verificação do antivírus instalado.\n4. Para credenciais sensíveis, use outro dispositivo confiável.\n5. Procure suporte técnico se o alerta persistir.');
   }, [reportThreat, currentLevel]);
 
   const info = THREAT_INFO[currentLevel];
@@ -181,7 +176,7 @@ export default function CybersecurityAlert() {
             </Button>
             {(currentLevel === 'high' || currentLevel === 'critical') && (
               <Button variant="destructive" size="sm" onClick={handlePowerOff} className="flex-1 animate-pulse">
-                <Power className="w-3 h-3 mr-1" /> Desligar Notebook
+                <Power className="w-3 h-3 mr-1" /> Ver medidas urgentes
               </Button>
             )}
           </div>
@@ -224,23 +219,23 @@ export default function CybersecurityAlert() {
                 <AlertTriangle className="w-5 h-5 text-red-400" />
                 <AlertTitle className="text-red-400">Ameaça {currentLevel === 'critical' ? 'Crítica' : 'Alta'} Detectada</AlertTitle>
                 <AlertDescription className="text-sm text-slate-200">
-                  Possível invasão cibernética. Para proteger seus dados e desestabilizar ameaças externas (internet ou infecções nativas do notebook):
+                  Este painel registrou um evento de alta prioridade. Ele não diagnostica sozinho o dispositivo. Siga medidas proporcionais e procure suporte se houver indícios reais de comprometimento:
                 </AlertDescription>
               </Alert>
               <div className="space-y-2 text-sm text-slate-200">
-                <p>1. Salve seus trabalhos</p>
-                <p>2. Desligue o notebook</p>
-                <p>3. Desconecte Wi-Fi/cabo de rede</p>
-                <p>4. Aguarde 30 segundos</p>
-                <p>5. Abra o app para nova verificação</p>
+                <p>1. Interrompa pagamentos e alterações de senha.</p>
+                <p>2. Se houver indícios reais, desconecte Wi-Fi/cabo de rede.</p>
+                <p>3. Atualize o sistema e execute a verificação do antivírus instalado.</p>
+                <p>4. Use outro dispositivo confiável para alterar credenciais sensíveis.</p>
+                <p>5. Procure suporte técnico se o alerta persistir.</p>
               </div>
               <div className="flex gap-2">
                 <Button variant="destructive" className="flex-1" onClick={handlePowerOff}>
-                  <Power className="w-4 h-4 mr-1" /> Confirmar
+                  <Power className="w-4 h-4 mr-1" /> Registrar orientação
                 </Button>
                 <Button variant="outline" className="flex-1" onClick={() => setShowPowerOffDialog(false)}>Ignorar</Button>
               </div>
-              <p className="text-xs text-slate-400 text-center">A IA de segurança continua protegendo seus dados.</p>
+              <p className="text-xs text-slate-400 text-center">O alerta registra eventos do aplicativo; a segurança do dispositivo também depende de atualizações, proteção local e suporte especializado.</p>
             </CardContent>
           </Card>
         </div>

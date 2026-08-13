@@ -616,6 +616,7 @@
 - [x] Remover A1 e inglês fixos da conversa e transcrição da CompleteLesson, usando o CEFR e o idioma-alvo selecionados pelo aluno — conversa recebe CEFR normalizado e o reconhecimento usa a base do locale alvo; TypeScript e 187 testes aprovados
 
 ## 🛡️ IA DE SEGURANÇA CONTRA ATAQUES EXTERNOS
+- [x] Corrigir os avisos de cibersegurança para distinguir evento no app de comprometimento do dispositivo e orientar isolamento, atualização e suporte de forma proporcional — alertas não diagnosticam o notebook nem prometem neutralização; recomendam interrupção de atividade sensível, isolamento de rede diante de indícios, atualização, antivírus e suporte; TypeScript e 192 testes aprovados
 - [x] Detectar e bloquear tentativas de bypass do paywall — security-monitor.ts com eventType "paywall_bypass", systemRouter com logSecurityEvent
 - [x] Rate limiting inteligente — security.ts com rate limiting, systemRouter com eventType "rate_limit_exceeded", "scraping_detected", "bot_detected"
 - [x] Registrar eventos de segurança no banco — systemRouter.ts com logSecurityEvent e getSecurityEvents procedures
