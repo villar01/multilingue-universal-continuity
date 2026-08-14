@@ -876,6 +876,17 @@ function Particles({ active }: { active: boolean }) {
   );
 }
 
+const IMMERSIVE_TEACHER_FACE_POSITIONS: Record<string, { mouthY: number; mouthWidth: number }> = {
+  James: { mouthY: 53, mouthWidth: 0.88 },
+  Sophie: { mouthY: 48, mouthWidth: 0.84 },
+  Priya: { mouthY: 47, mouthWidth: 0.84 },
+  Hans: { mouthY: 47, mouthWidth: 0.88 },
+  Yuki: { mouthY: 52, mouthWidth: 0.78 },
+  Carlos: { mouthY: 49, mouthWidth: 0.87 },
+  Giulia: { mouthY: 49, mouthWidth: 0.82 },
+  Omar: { mouthY: 46, mouthWidth: 0.89 },
+};
+
 // ─── Teacher Component ─────────────────────────────────────────────────────────
 function TeacherAvatar({
   scene,
@@ -898,14 +909,20 @@ function TeacherAvatar({
   overrideName?: string;
   overrideImage?: string;
 }) {
-  const { viseme, mouthStyle } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
+  const { viseme } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
+  const facePosition = IMMERSIVE_TEACHER_FACE_POSITIONS[overrideName || scene.teacherName] || { mouthY: 52, mouthWidth: 0.84 };
+  const fallbackMouthOpen = ["A", "C", "D", "F"].includes(viseme);
   const synchronizedMouthStyle = audioViseme
     ? {
-        width: `${Math.min(34, Math.max(17, audioViseme.mouthWidth * 0.55))}%`,
-        height: `${Math.min(16, Math.max(4.5, audioViseme.mouthHeight * 0.55))}%`,
+        width: `${Math.min(18, Math.max(11, audioViseme.mouthWidth * 0.3)) * facePosition.mouthWidth}%`,
+        height: `${Math.min(7, Math.max(1.8, audioViseme.mouthHeight * 0.24))}%`,
         borderRadius: `${Math.max(38, Math.min(50, 44 + audioViseme.lipRound * 0.55))}%`,
       }
-    : mouthStyle;
+    : {
+        width: `${(fallbackMouthOpen ? 16 : 12) * facePosition.mouthWidth}%`,
+        height: fallbackMouthOpen ? "5.5%" : "1.8%",
+        borderRadius: viseme === "F" ? "45%" : "50%",
+      };
   const jawOffset = audioViseme ? Math.min(4, audioViseme.jawDrop * 0.16) : 0;
   const mouthOpen = audioViseme
     ? audioViseme.mouthHeight >= 14
@@ -1026,13 +1043,14 @@ function TeacherAvatar({
           <div
             style={{
               position: "absolute",
-              top: "31%",
+              top: `${facePosition.mouthY}%`,
               left: "50%",
-              transform: `translateX(-50%) translateY(${jawOffset - 3}%)`,
+              transform: `translate(-50%, -50%) translateY(${jawOffset}px)`,
               ...synchronizedMouthStyle,
-              background: "radial-gradient(ellipse at 50% 48%, rgba(52,12,16,0.96) 0%, rgba(94,30,35,0.92) 53%, rgba(214,105,112,0.46) 76%, rgba(255,180,180,0.08) 100%)",
-              border: "1px solid rgba(82,24,30,0.72)",
-              boxShadow: "0 1px 3px rgba(45,8,12,0.55), inset 0 1px 1px rgba(255,209,209,0.28)",
+              background: "radial-gradient(ellipse at 50% 48%, rgba(48,10,14,0.9) 0%, rgba(88,27,33,0.86) 62%, rgba(175,75,82,0.34) 82%, transparent 100%)",
+              border: "1px solid rgba(82,24,30,0.45)",
+              boxShadow: "0 1px 2px rgba(45,8,12,0.35), inset 0 1px 1px rgba(255,209,209,0.18)",
+              opacity: audioViseme ? Math.min(0.9, Math.max(0.48, audioViseme.mouthHeight / 24)) : 0.72,
               mixBlendMode: "normal",
               overflow: "hidden",
               transition: "width 55ms linear, height 55ms linear, border-radius 55ms linear, transform 55ms linear",
@@ -1068,23 +1086,6 @@ function TeacherAvatar({
               />
             )}
           </div>
-        )}
-        {/* Hand gesture overlay — visible when explaining */}
-        {isSpeaking && (
-          <div
-            style={{
-              position: "absolute",
-              bottom: "15%",
-              right: "10%",
-              width: "15%",
-              height: "20%",
-              background: "rgba(255,255,255,0.1)",
-              borderRadius: "50%",
-              border: "1px solid rgba(255,255,255,0.15)",
-              animation: "hand-gesture 2s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
         )}
         {/* Glow ring when speaking */}
         {isSpeaking && (
@@ -1705,7 +1706,7 @@ export default function ImmersiveScene() {
     const line = scene.dialog[0];
     if (line?.speaker === 'teacher') {
       const words = line.text.split(' ');
-      setDlgWords(words); setDlgWordIdx(0);
+      setDlgWords(words); setDlgWordIdx(isAuthenticated ? 0 : words.length);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(isAuthenticated);
@@ -1746,7 +1747,7 @@ export default function ImmersiveScene() {
     const line = selectedScene.dialog[next];
     if (line.speaker === 'teacher') {
       const words = line.text.split(' ');
-      setDlgWords(words); setDlgWordIdx(0);
+      setDlgWords(words); setDlgWordIdx(isAuthenticated ? 0 : words.length);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(isAuthenticated);
@@ -2478,13 +2479,15 @@ export default function ImmersiveScene() {
         )}
         {(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && selectedScene.dialog[dlgStep] && (
           <div
-            className="immersive-dialog absolute left-0 right-0 z-50"
+            className="immersive-dialog absolute left-0 right-0 z-[70]"
             style={{
-              bottom: "60px",
+              bottom: "clamp(112px, 16vh, 150px)",
               padding: "0 clamp(8px,2vw,24px)",
               paddingRight: "clamp(130px,20vw,240px)",
             }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label="Diálogo da cena"
           >
             <div
               style={{
@@ -2493,8 +2496,26 @@ export default function ImmersiveScene() {
                 borderRadius: "16px",
                 border: "1px solid rgba(255,255,255,0.12)",
                 padding: "16px 20px",
+                maxHeight: "min(52vh, 420px)",
+                overflowY: "auto",
               }}
             >
+              <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 pb-2">
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-indigo-200">Diálogo da cena</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopTeacherAudio();
+                    activeDialogLineRef.current = null;
+                    activeDialogWordCountRef.current = 0;
+                    setDlgAudioClock(false);
+                    setDlgOpen(false);
+                  }}
+                  className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-white hover:bg-white/20"
+                >
+                  Fechar
+                </button>
+              </div>
               {/* Speaker label */}
               <div className="flex items-center gap-2 mb-2">
                 <span style={{ fontSize: "11px", fontWeight: 700, color: selectedScene.dialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -2637,7 +2658,7 @@ export default function ImmersiveScene() {
 
         {/* Bottom bar */}
         <div
-          className="absolute left-0 right-0 flex items-center justify-between px-4 py-3 z-50"
+          className="absolute left-0 right-0 z-40 flex items-center justify-between px-4 py-3"
           style={{
             bottom: "48px",
             background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",

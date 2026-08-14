@@ -1310,3 +1310,9 @@
 - [x] Configurar a retomada única para 14/08/2026 às 21h (BRT), preservando o contexto atual e a prioridade do Pareto guiado por cena
 - [x] Retomar uma sessão única às 21h de 14/08/2026, começando por validar visualmente e publicar o ciclo Pareto guiado por cena antes de avançar para diálogo e demais correções simples — retomada executada; versão publicada `26b28d23`
 - [x] Fechar imediatamente a correção Pareto guiada no mesmo ciclo: validação visual, suíte completa, checkpoint e publicação; não deixar alteração validável somente local — fluxo Observe → Lembre → Escreva → Crie validado na Praia Tropical, TypeScript sem erros e 377 testes aprovados; checkpoint `26b28d23`
+
+## 🐛 REGRESSÃO RELATADA — DIÁLOGO E ANIMAÇÃO
+- [x] Reproduzir no domínio publicado o relato de ausência de diálogo após clicar em **Iniciar Diálogo**, inspecionando interface, console e rede — o painel abria atrás da barra inferior e concorria com o aviso fixo de IA local; console e rede não apresentaram falha no clique
+- [x] Corrigir primeiro o diálogo até o painel, texto bilíngue e avanço por **Continuar** funcionarem de modo verificável — painel elevado e identificado, texto completo sem sessão, aviso de IA removido das rotas imersivas e segunda fala com opções validada visualmente; TypeScript sem erros e 381 testes aprovados
+- [ ] Validar separadamente a reprodução da voz neural no diálogo autenticado, sem aceitar teste estático como confirmação auditiva
+- [ ] Manter a animação labial natural como pendência aberta enquanto o resultado continuar abaixo da qualidade exigida; não confundir visemas aproximados com animação facial natural

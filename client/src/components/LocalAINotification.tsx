@@ -12,14 +12,24 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 
 const STORAGE_KEY = 'local-ai-notification-dismissed';
 
 export default function LocalAINotification() {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [location] = useLocation();
+  const isImmersiveLearningRoute =
+    location.startsWith('/immersive-scene') ||
+    location.startsWith('/immersive-lesson') ||
+    location.startsWith('/dialogue');
 
   useEffect(() => {
+    if (isImmersiveLearningRoute) {
+      setVisible(false);
+      return;
+    }
     try {
       const dismissed = localStorage.getItem(STORAGE_KEY);
       if (!dismissed) {
@@ -30,7 +40,7 @@ export default function LocalAINotification() {
     } catch {
       setVisible(true);
     }
-  }, []);
+  }, [isImmersiveLearningRoute]);
 
   const handleDismiss = () => {
     try {
@@ -43,7 +53,7 @@ export default function LocalAINotification() {
     setExpanded(true);
   };
 
-  if (!visible) return null;
+  if (!visible || isImmersiveLearningRoute) return null;
 
   return (
     <div className="fixed bottom-2 right-2 z-50 w-[calc(100vw-1rem)] max-w-md animate-in slide-in-from-bottom-5 duration-300 sm:bottom-4 sm:right-4 sm:w-auto">
