@@ -14,7 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Shield, Clock, Bell, Plus, Trash2, Lock, TrendingUp, BookOpen, Timer, AlertCircle, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react';
 import CybersecurityAlert from '@/components/CybersecurityAlert';
-import { hasAudibleParentalAlert, playParentalAlertSound } from '@/lib/parentalAlertSound';
+import { hasAudibleParentalAlert, isAudibleParentalAlertType, playParentalAlertSound } from '@/lib/parentalAlertSound';
 import UserGuide from '@/components/UserGuide';
 import { normalizeParentalCefrLevels, PARENTAL_CEFR_LEVEL_DETAILS, PARENTAL_CEFR_LEVELS, type ParentalCefrLevel } from '@shared/parental-cefr';
 
@@ -804,7 +804,7 @@ function AlertsTab({ childId, alerts, onMarkRead }: { childId: number; alerts: a
   });
   useEffect(() => {
     if (!soundEnabled || !hasAudibleParentalAlert(alerts)) return;
-    const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && ["inappropriate_content", "age_content_review", "child_safety", "content_blocked", "country_compliance_blocked"].includes(alert.alertType));
+    const unreadSafetyAlert = alerts.find((alert) => !alert.isRead && isAudibleParentalAlertType(alert.alertType));
     if (!unreadSafetyAlert || soundedAlertIds.current.has(unreadSafetyAlert.id)) return;
     soundedAlertIds.current.add(unreadSafetyAlert.id);
     playParentalAlertSound();

@@ -1496,6 +1496,15 @@ export default function ImmersiveScene() {
     setActiveSpeechText("");
   }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
+  const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
+    void speak(text, language, undefined, gender, purpose).catch(() => {
+      if (activeDialogLineRef.current === text) setDlgAudioClock(false);
+      setIsPreparingNeuralAudio(false);
+      setIsSpeaking(false);
+      setActiveSpeechText("");
+    });
+  }, [speak]);
+
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
   const [practiceHotspot, setPracticeHotspot] = useState<Hotspot | null>(null);
@@ -1674,14 +1683,14 @@ export default function ImmersiveScene() {
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(true);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
-      void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [speak]);
+  }, [requestSpeechSafely]);
   useEffect(() => {
     if (!dlgOpen || dlgAudioClock || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
     dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), 300);
@@ -1706,14 +1715,14 @@ export default function ImmersiveScene() {
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(true);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
-      void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [dlgStep, selectedScene, speak]);
+  }, [dlgStep, requestSpeechSafely, selectedScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
     const scene = selectedScene;
@@ -1734,7 +1743,7 @@ export default function ImmersiveScene() {
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
     const teacherSpeech = getImmersiveDialogTeacherSpeech(`Excellent. ${line.options[line.correctIndex]}`, scene);
-    void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
+    requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     const referencedHotspotId = findReferencedHotspotId(line.options[line.correctIndex], scene.hotspots);
     const referencedHotspot = referencedHotspotId
       ? scene.hotspots.find((hotspot) => hotspot.id === referencedHotspotId) || null
@@ -1745,7 +1754,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [dlgStep, dlgNext, selectedScene, speak]);
+  }, [dlgStep, dlgNext, requestSpeechSafely, selectedScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     validateDialogAnswer(dlgWrittenAnswer);
@@ -1854,9 +1863,9 @@ export default function ImmersiveScene() {
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    void speak(interaction.speech.text, interaction.speech.language, undefined, interaction.speech.gender, interaction.speech.purpose);
+    requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
     setTimeout(() => setShowGreeting(false), 5000);
-  }, [selectedScene, learnedWords, speak, nativeLang]);
+  }, [selectedScene, learnedWords, nativeLang, requestSpeechSafely]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -2477,7 +2486,7 @@ export default function ImmersiveScene() {
                         const correct = selectedScene.dialog[dlgStep].correctIndex === i;
                         if (correct) {
                           const teacherSpeech = getImmersiveDialogTeacherSpeech(`✅ ${opt}`, selectedScene);
-                          void speak(teacherSpeech.text, teacherSpeech.language, undefined, teacherSpeech.gender, teacherSpeech.purpose);
+                          requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                         }
                         setTimeout(() => dlgNext(), 1400);
                       }}

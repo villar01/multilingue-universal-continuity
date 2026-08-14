@@ -4,16 +4,27 @@ export interface ParentalAlertSignal {
   isRead: boolean;
 }
 
-const AUDIBLE_ALERT_TYPES = new Set([
+export const AUDIBLE_ALERT_TYPES = new Set([
   "inappropriate_content",
   "age_content_review",
   "child_safety",
   "content_blocked",
   "country_compliance_blocked",
+  "adult_content",
+  "violence",
+  "drugs",
+  "cyberbullying",
+  "phishing",
+  "grooming",
+  "cyber_threat",
 ]);
 
+export function isAudibleParentalAlertType(alertType: string): boolean {
+  return AUDIBLE_ALERT_TYPES.has(alertType);
+}
+
 export function hasAudibleParentalAlert(alerts: ParentalAlertSignal[]): boolean {
-  return alerts.some((alert) => !alert.isRead && AUDIBLE_ALERT_TYPES.has(alert.alertType));
+  return alerts.some((alert) => !alert.isRead && isAudibleParentalAlertType(alert.alertType));
 }
 
 /** Two-tone local signal; it is enabled only after an explicit parent gesture. */
