@@ -1244,9 +1244,11 @@ function FillBlankGame({ cards, onComplete }: { cards: MemoryCard[]; onComplete:
 // ─── Scene Lesson ──────────────────────────────────────────────────────────────
 function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: { scene: VisualScene; cefrLevel: CEFRLevel; curricularLessonNumber: number; onComplete: (xp: number) => void }) {
   const [revealed, setRevealed] = useState<string[]>([]);
-  const [showDialogue, setShowDialogue] = useState(false);
-  const [activeTab, setActiveTab] = useState<"vocab"|"dialogue">("vocab");
-  const [, setLocation] = useLocation();
+  const [lessonStep, setLessonStep] = useState<"intro" | "vocabulary" | "dialogue" | "practice" | "review">("intro");
+  const [dialogueIndex, setDialogueIndex] = useState(0);
+  const [practiceIndex, setPracticeIndex] = useState(0);
+  const [practiceAnswer, setPracticeAnswer] = useState("");
+  const [practiceResult, setPracticeResult] = useState<"correct" | "retry" | null>(null);
 
   function revealWord(id: string) {
     if (!revealed.includes(id)) setRevealed(r => [...r, id]);
@@ -1256,9 +1258,31 @@ function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: {
     speakNaturalVoice(text, 'en-US', { rate: 0.85 });
   }
 
-  const done = revealed.length >= scene.words.length;
+  const vocabularyDone = revealed.length >= scene.words.length;
   const progress = Math.round((revealed.length / scene.words.length) * 100);
   const cefrDisplay = CEFR_DISPLAY[cefrLevel];
+  const practiceWord = scene.words[practiceIndex];
+  const lessonSteps = [
+    { id: "intro", label: "1. Apresentação" },
+    { id: "vocabulary", label: "2. Vocabulário" },
+    { id: "dialogue", label: "3. Diálogo" },
+    { id: "practice", label: "4. Prática" },
+    { id: "review", label: "5. Revisão" },
+  ] as const;
+
+  function checkPracticeAnswer() {
+    if (!practiceWord || !practiceAnswer.trim()) return;
+    const isCorrect = practiceAnswer.trim().toLocaleLowerCase() === practiceWord.word.toLocaleLowerCase();
+    setPracticeResult(isCorrect ? "correct" : "retry");
+    if (!isCorrect) return;
+    speakWord(practiceWord.word);
+    window.setTimeout(() => {
+      setPracticeResult(null);
+      setPracticeAnswer("");
+      if (practiceIndex < scene.words.length - 1) setPracticeIndex(index => index + 1);
+      else setLessonStep("review");
+    }, 700);
+  }
 
   return (
     <div className="space-y-4">
@@ -1308,34 +1332,32 @@ function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: {
         </div>
       </div>
 
-      {/* Tabs: Vocabulary / Dialogue */}
-      {scene.dialogues && scene.dialogues.length > 0 && (
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveTab("vocab")}
-            className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
-              activeTab === "vocab"
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            📚 Vocabulário
-          </button>
-          <button
-            onClick={() => setActiveTab("dialogue")}
-            className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
-              activeTab === "dialogue"
-                ? "bg-purple-600 text-white shadow"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            💬 Diálogo
-          </button>
+      {/* Roteiro didático contínuo: a aula segue uma ordem única e visível. */}
+      <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-3">
+        <div className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-700">Roteiro desta aula</div>
+        <div className="flex flex-wrap gap-1.5">
+          {lessonSteps.map((item, index) => {
+            const isActive = item.id === lessonStep;
+            const isDone = lessonSteps.findIndex(step => step.id === lessonStep) > index;
+            return (
+              <span key={item.id} className={`rounded-full px-2 py-1 text-[11px] font-semibold ${isActive ? "bg-blue-600 text-white" : isDone ? "bg-green-100 text-green-700" : "bg-white text-gray-400"}`}>
+                {item.label}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+
+      {lessonStep === "intro" && (
+        <div className="rounded-2xl border border-purple-100 bg-purple-50 p-4 text-center">
+          <div className="mb-2 text-sm font-bold text-purple-800">{scene.teacher || "Professor"} apresenta a aula</div>
+          <p className="mb-3 text-sm leading-6 text-purple-900">Nesta cena, você vai aprender as palavras dos objetos, acompanhar um diálogo curto e responder perguntas usando o vocabulário estudado.</p>
+          <Button onClick={() => setLessonStep("vocabulary")} className="bg-purple-600 text-white hover:bg-purple-700">Começar vocabulário</Button>
         </div>
       )}
 
       {/* Vocabulary Grid */}
-      {activeTab === "vocab" && (
+      {lessonStep === "vocabulary" && (
         <>
           <p className="text-sm text-gray-500 text-center">Toque em cada palavra para revelar a tradução</p>
           <div className="grid grid-cols-2 gap-3">
@@ -1373,11 +1395,10 @@ function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: {
         </>
       )}
 
-      {/* Dialogue Tab */}
-      {activeTab === "dialogue" && scene.dialogues && (
+      {lessonStep === "dialogue" && scene.dialogues && scene.dialogues.length > 0 && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-500 text-center">Diálogo típico nesta situação</p>
-          {scene.dialogues.map((d, i) => (
+          <p className="text-sm text-gray-500 text-center">Acompanhe cada fala antes de avançar</p>
+          {scene.dialogues.slice(0, dialogueIndex + 1).map((d, i) => (
             <div
               key={i}
               className={`flex gap-3 ${
@@ -1402,30 +1423,47 @@ function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: {
               </div>
             </div>
           ))}
+          <div className="flex justify-between gap-3 pt-2">
+            <Button variant="outline" onClick={() => dialogueIndex > 0 && setDialogueIndex(index => index - 1)} disabled={dialogueIndex === 0}>Repetir fala</Button>
+            {dialogueIndex < scene.dialogues.length - 1 ? (
+              <Button onClick={() => setDialogueIndex(index => index + 1)} className="bg-purple-600 text-white hover:bg-purple-700">Próxima fala</Button>
+            ) : (
+              <Button onClick={() => setLessonStep("practice")} className="bg-green-600 text-white hover:bg-green-700">Praticar vocabulário</Button>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Completion */}
-      {done && activeTab === "vocab" && (
+      {lessonStep === "vocabulary" && vocabularyDone && (
         <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-4 text-center">
           <div className="text-3xl mb-2">🎉</div>
-          <div className="text-green-700 font-bold text-lg mb-1">Parabéns!</div>
-          <div className="text-green-600 text-sm mb-4">Você aprendeu todas as {scene.words.length} palavras desta cena!</div>
-          <div className="flex gap-3 justify-center flex-wrap">
-            <Button
-              onClick={() => setLocation("/immersive-scene")}
-              variant="outline"
-              className="border-blue-300 text-blue-600"
-            >
-              🌍 Cena Imersiva
-            </Button>
-            <Button
-              onClick={() => onComplete(25)}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              +25 XP → Próxima Aula
-            </Button>
+          <div className="text-green-700 font-bold text-lg mb-1">Vocabulário concluído</div>
+          <div className="text-green-600 text-sm mb-4">Agora use as mesmas palavras no diálogo da cena.</div>
+          <Button onClick={() => setLessonStep("dialogue")} className="bg-green-600 hover:bg-green-700 text-white">Continuar para o diálogo</Button>
+        </div>
+      )}
+
+      {lessonStep === "practice" && practiceWord && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="mb-1 text-xs font-bold uppercase tracking-wide text-amber-700">Prática de memorização {practiceIndex + 1}/{scene.words.length}</div>
+          <div className="mb-2 text-lg font-bold text-amber-900">Como se diz “{practiceWord.translation}” em inglês?</div>
+          <p className="mb-4 text-sm text-amber-800">Responda usando a palavra estudada nesta cena.</p>
+          <div className="flex gap-2">
+            <input value={practiceAnswer} onChange={event => setPracticeAnswer(event.target.value)} onKeyDown={event => event.key === "Enter" && checkPracticeAnswer()} placeholder="Digite a palavra" className="min-w-0 flex-1 rounded-xl border border-amber-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-amber-500" />
+            <Button onClick={checkPracticeAnswer} className="bg-amber-600 text-white hover:bg-amber-700">Conferir</Button>
           </div>
+          <button onClick={() => speakWord(practiceWord.word)} className="mt-3 text-sm font-semibold text-amber-700 hover:text-amber-900">🔊 Ouvir novamente</button>
+          {practiceResult === "correct" && <p className="mt-3 font-semibold text-green-700">Correto. Muito bem!</p>}
+          {practiceResult === "retry" && <p className="mt-3 font-semibold text-red-700">Ainda não. Ouça novamente e tente outra vez.</p>}
+        </div>
+      )}
+
+      {lessonStep === "review" && (
+        <div className="rounded-2xl border-2 border-green-300 bg-green-50 p-5 text-center">
+          <div className="mb-2 text-3xl">🏁</div>
+          <div className="text-lg font-bold text-green-800">Revisão concluída</div>
+          <p className="mt-2 text-sm text-green-700">Você estudou {scene.words.length} palavras, acompanhou o diálogo e respondeu à prática de memorização desta aula.</p>
+          <Button onClick={() => onComplete(35)} className="mt-4 bg-green-600 text-white hover:bg-green-700">Concluir aula e continuar</Button>
         </div>
       )}
     </div>

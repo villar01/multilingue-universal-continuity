@@ -1387,6 +1387,7 @@ export default function ImmersiveScene() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
+  const activeSpeechRequestRef = useRef<string | null>(null);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { syncWithAudio, stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
@@ -1402,14 +1403,18 @@ export default function ImmersiveScene() {
     setIsSpeaking(false);
     setIsPreparingNeuralAudio(false);
     setActiveSpeechText("");
+    activeSpeechRequestRef.current = null;
   }, [stopVisemeSync]);
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
-  const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, revokeOnEnd = false) => {
+  const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, requestKey: string, revokeOnEnd = false) => {
     const audio = new Audio();
     audio.src = source;
     audioRef.current = audio;
+    const releaseRequest = () => {
+      if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
+    };
     const updatesActiveDialog = () => activeDialogLineRef.current === phrase && activeDialogWordCountRef.current > 0;
     const updateDialogWordsFromAudio = () => {
       if (!updatesActiveDialog() || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
@@ -1436,6 +1441,7 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
+      releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     audio.onerror = () => {
@@ -1448,6 +1454,7 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
+      releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     syncWithAudio(audio, phrase, language);
@@ -1457,10 +1464,15 @@ export default function ImmersiveScene() {
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (!text?.trim()) return;
+    const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
+    const requestKey = `${purpose}:${lang}:${teacherGender}:${text}`;
+    // A mesma linha pode ser solicitada por clique e atualização visual quase ao
+    // mesmo tempo. Mantemos um único pedido até o áudio encerrar ou falhar.
+    if (activeSpeechRequestRef.current === requestKey) return;
     // A troca de fala deve também encerrar o relógio de visemas anterior.
     stopTeacherAudio();
     stopEdgeTTS();
-    const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
+    activeSpeechRequestRef.current = requestKey;
     setActiveSpeechText(text);
     setIsPreparingNeuralAudio(true);
 
@@ -1469,7 +1481,7 @@ export default function ImmersiveScene() {
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
       const bytes = Uint8Array.from(atob(edgeAudio.audioBase64), (char) => char.charCodeAt(0));
       const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
-      await playTeacherAudio(url, text, lang, true);
+      await playTeacherAudio(url, text, lang, requestKey, true);
       return true;
     };
 
@@ -1487,7 +1499,7 @@ export default function ImmersiveScene() {
         gender: teacherGender === "male" ? "MALE" : "FEMALE",
       });
       if (googleAudio.audioUrl) {
-        await playTeacherAudio(googleAudio.audioUrl, text, lang);
+        await playTeacherAudio(googleAudio.audioUrl, text, lang, requestKey);
         return;
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
@@ -1499,6 +1511,7 @@ export default function ImmersiveScene() {
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setActiveSpeechText("");
+    if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
   }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {

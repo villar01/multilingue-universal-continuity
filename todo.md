@@ -190,6 +190,21 @@
 - [x] Publicar a correção candidata do diálogo imersivo para validação autenticada na versão pública — versão bc2cac7b publicada com bloqueio explícito de visitante, regressões de áudio/visemas e 367 testes aprovados; a validação real após login permanece pendente
 - [ ] Exigir validação comportamental de diálogo, áudio neural e visemas antes de salvar novas correções da cena imersiva
 - [ ] Substituir a aproximação labial por sincronização de visemas guiada pela atividade real do áudio neural, mantendo Ricardo com boca estática
+- [ ] Substituir a animação de boca estimada por arquitetura facial sincronizada ao áudio e fonemas reais, com validação visual obrigatória antes de entrega
+- [ ] Integrar motor facial local guiado por áudio real, com contrato de disponibilidade, fallback seguro e exceção permanente para Ricardo
+- [ ] Preparar modo de motor facial por GPU local com detecção de disponibilidade e experiência degradada honesta quando não houver GPU
+- [ ] Selecionar motor de vídeo facial local com licença compatível e substituir o viseme de navegador apenas após validação visual por professor
+- [ ] Documentar e integrar papéis distintos: Qwen local para linguagem e diagnóstico; serviço facial por GPU para animação de face sincronizada
+- [ ] Conectar o aplicativo ao Ollama/Qwen local para prática escrita e explicações, com detecção explícita, consentimento e fallback seguro
+- [ ] Auditar e uniformizar a dicção das cenas por idioma, voz regional e professor, eliminando fallback com sotaque ou idioma divergente
+- [ ] Catalogar e preservar as cenas com dicção natural como referência antes de corrigir as cenas divergentes
+- [ ] Concluir a correção isolada de consistência de dicção antes de iniciar qualquer nova frente de desenvolvimento
+- [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
+- [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
+- [ ] Unificar apresentação guiada, objetos, vocabulário, diálogo, prática Pareto, perguntas, repetição e revisão em um roteiro contínuo por cena e CEFR
+- [ ] Criar módulo de aperfeiçoamento assistido que registre erros, evidências e propostas de correção, sem modificar ou publicar código autonomamente
+- [ ] Substituir a integração externa de aperfeiçoamento sem credenciais por um diagnóstico estruturado com provedor configurado e fallback explícito
+- [ ] Exigir versões candidatas, verificação de saúde, aprovação humana e retorno seguro antes de qualquer melhoria afetar alunos ativos
 - [x] Alinhar o alerta sonoro opt-in às categorias de risco já exibidas visualmente no painel parental, sem tocar em conteúdo sensível — política central cobre conteúdo adulto, violência, drogas, cyberbullying, phishing, grooming e ameaça cibernética; o painel usa a mesma regra visual/sonora; TypeScript sem erros e 362 testes aprovados
 - [x] Migrar o Treino Diário para seleção e geração por A1, A2, B1, B2, C1 e C2 — interface mostra os seis níveis, o componente envia CEFR canônico e a geração diária valida/orienta vocabulário pelo estágio explícito; TypeScript, regressão e validação visual aprovados com 275 testes
 - [x] Migrar o Livro da Lição para usar o CEFR calculado da aula e gerar capítulos pelo estágio explícito — a página encaminha o nível central, o componente aceita apenas CEFR e a rota valida A1–C2 ao construir objetivos, gramática e vocabulário; TypeScript, regressão e página da lição validados com 277 testes
