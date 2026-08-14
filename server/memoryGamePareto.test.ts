@@ -11,8 +11,9 @@ describe("jogos de memorização com ciclo Pareto", () => {
     expect(source).toContain("Próxima palavra Pareto");
   });
 
-  it("envia a palavra pelo TTS neural do idioma da lição e aplica CEFR por nível", () => {
+  it("envia a palavra pelo TTS neural do idioma da lição e preserva a etapa CEFR canônica", () => {
     expect(source).toContain("voiceLang: languageCode");
-    expect(source).toContain("level={resolvePracticeCEFRLevel(level)}");
+    expect(source).toContain("level={level}");
+    expect(source).not.toContain("resolvePracticeCEFRLevel(level)");
   });
 });

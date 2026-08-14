@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { speakText } from "@/hooks/useNaturalVoice";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { trpc } from "@/lib/trpc";
-import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
+import type { CEFRLevel } from "@/lib/lesson-levels";
 import { toast } from "sonner";
 import {
   Brain, RotateCcw, CheckCircle, XCircle, Volume2,
@@ -34,7 +34,7 @@ interface MemoryGameLessonProps {
   vocabulary: VocabItem[];
   languageCode: string;
   nativeLanguage?: string;
-  level?: "beginner" | "intermediate" | "advanced";
+  level?: CEFRLevel;
   onComplete?: (score: number, total: number) => void;
 }
 
@@ -391,7 +391,7 @@ export default function MemoryGameLesson({
   vocabulary,
   languageCode,
   nativeLanguage = "pt",
-  level = "beginner",
+  level = "A1",
   onComplete,
 }: MemoryGameLessonProps) {
   const [mode, setMode] = useState<GameMode | null>(null);
@@ -532,7 +532,7 @@ export default function MemoryGameLesson({
             onClose={() => setMode(null)}
             onSpeak={speakPareto}
             embedded
-            level={resolvePracticeCEFRLevel(level)}
+            level={level}
           />
           {vocabulary.length > 1 && (
             <Button

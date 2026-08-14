@@ -18,13 +18,17 @@ describe("resolução CEFR para modalidades de prática", () => {
   });
 
   it("impede desvios de nível nos fluxos Pareto ampliados", () => {
-    for (const relativePath of [
+    const legacyCompatibleSources = [
       "../client/src/components/DailyMemoryTrainer.tsx",
-      "../client/src/components/MemoryGameLesson.tsx",
       "../client/src/pages/ImmersiveScene.tsx",
-    ]) {
+    ];
+    for (const relativePath of legacyCompatibleSources) {
       const source = readFileSync(new URL(relativePath, import.meta.url), "utf8");
       expect(source).toContain("resolvePracticeCEFRLevel");
     }
+
+    const memoryGameSource = readFileSync(new URL("../client/src/components/MemoryGameLesson.tsx", import.meta.url), "utf8");
+    expect(memoryGameSource).toContain("level?: CEFRLevel;");
+    expect(memoryGameSource).toContain("level={level}");
   });
 });
