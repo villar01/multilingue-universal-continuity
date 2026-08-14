@@ -1713,6 +1713,11 @@ export default function ImmersiveScene() {
     }
   }, [isAuthenticated, isAuthLoading, requestSpeechSafely]);
   useEffect(() => {
+    if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
+      setDlgOpen(true);
+    }
+  }, [dlgOpen, isSpeaking]);
+  useEffect(() => {
     if (!dlgOpen || dlgAudioClock || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
     dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), 300);
     return () => { if (dlgTimerRef.current) clearTimeout(dlgTimerRef.current); };
@@ -2427,7 +2432,7 @@ export default function ImmersiveScene() {
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
-        {!dlgOpen && (
+        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && (
           <button
             onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
             className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
@@ -2455,7 +2460,7 @@ export default function ImmersiveScene() {
             </div>
           </div>
         )}
-        {dlgOpen && selectedScene.dialog[dlgStep] && (
+        {(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && selectedScene.dialog[dlgStep] && (
           <div
             className="immersive-dialog absolute left-0 right-0 z-50"
             style={{

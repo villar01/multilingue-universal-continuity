@@ -183,8 +183,9 @@
 - [x] Migrar o jogo de memória curricular para receber A1–C2 explícito e encaminhar o mesmo estágio à prática Pareto — contrato usa o tipo CEFR central, padrão A1 e entrega direta ao ciclo Pareto; TypeScript sem erros e 360 testes aprovados
 - [x] Eliminar a contagem de 40 erros exibida na cena imersiva, preservando voz, diálogos, hotspots e controles de segurança — disparos de fala do diálogo, hotspot e botões agora passam por proteção contra rejeições assíncronas; prévia da cena não gerou falhas novas de console/rede, TypeScript sem erros e 362 testes aprovados
 - [ ] Restaurar diálogo, fala neural e movimentos labiais da cena imersiva após a regressão reportada com 28 erros
+- [ ] Manter o painel inferior do diálogo visível durante a fala autenticada do professor, junto da animação labial natural
 - [ ] Bloquear de forma explícita o início do diálogo imersivo sem sessão e evitar o redirecionamento/falhas repetidas das mutações de voz protegidas
-- [ ] Publicar a correção candidata do diálogo imersivo para validação autenticada na versão pública
+- [x] Publicar a correção candidata do diálogo imersivo para validação autenticada na versão pública — versão bc2cac7b publicada com bloqueio explícito de visitante, regressões de áudio/visemas e 367 testes aprovados; a validação real após login permanece pendente
 - [ ] Exigir validação comportamental de diálogo, áudio neural e visemas antes de salvar novas correções da cena imersiva
 - [ ] Substituir a aproximação labial por sincronização de visemas guiada pela atividade real do áudio neural, mantendo Ricardo com boca estática
 - [x] Alinhar o alerta sonoro opt-in às categorias de risco já exibidas visualmente no painel parental, sem tocar em conteúdo sensível — política central cobre conteúdo adulto, violência, drogas, cyberbullying, phishing, grooming e ameaça cibernética; o painel usa a mesma regra visual/sonora; TypeScript sem erros e 362 testes aprovados
