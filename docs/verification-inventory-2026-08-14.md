@@ -14,10 +14,10 @@ Também permanecem documentos de validação em `docs/`, incluindo auditorias de
 
 O histórico do repositório mantém os checkpoints recentes de batalha CEFR, hub de lições, clipes, backup/restauração, progresso persistido, painel parental, jogo de memória, diálogo imersivo e deduplicação de áudio. As verificações funcionais que falharam ou continuam pendentes foram reabertas no `todo.md`; não foram marcadas como concluídas apenas por teste estático.
 
-## Estado atual não publicado
+## Estado publicado
 
-As alterações locais em andamento para o Pareto guiado por cena, documentação de diálogo e seus testes ainda não foram publicadas. Elas permanecem separadas das verificações históricas até passarem em validação completa.
+O Pareto guiado por cena foi publicado no checkpoint `26b28d23`. A documentação de diálogo permanece como evidência de regressão, sem afirmar qualidade de voz ou animação labial ainda não confirmada pelo usuário.
 
 ## Validação visual do Pareto guiado por cena
 
-Na rota `/immersive-scene`, o painel Pareto apresentou as instruções de uso da cena, o contador **0/122 palavras concluídas** e o botão **Começar ciclo da cena**. Ao iniciar, a primeira palavra abriu na sequência **Observe → Lembre → Escreva → Crie**, com enunciado bilíngue e transição comprovada do passo de observação para a memória ativa. A publicação ainda depende da suíte completa.
+Na rota `/immersive-scene`, o painel Pareto apresentou as instruções de uso da cena, o contador **0/122 palavras concluídas** e o botão **Começar ciclo da cena**. Ao iniciar, a primeira palavra abriu na sequência **Observe → Lembre → Escreva → Crie**, com enunciado bilíngue e transição comprovada do passo de observação para a memória ativa. A suíte completa terminou com **168 arquivos e 377 testes aprovados**, sem erros de TypeScript, antes do checkpoint `26b28d23`.

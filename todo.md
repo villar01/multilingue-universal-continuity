@@ -1308,5 +1308,5 @@
 
 ## ⏰ RETOMADA PROGRAMADA
 - [x] Configurar a retomada única para 14/08/2026 às 21h (BRT), preservando o contexto atual e a prioridade do Pareto guiado por cena
-- [ ] Retomar uma sessão única às 21h de 14/08/2026, começando por validar visualmente e publicar o ciclo Pareto guiado por cena antes de avançar para diálogo e demais correções simples
-- [ ] Fechar imediatamente a correção Pareto guiada no mesmo ciclo: validação visual, suíte completa, checkpoint e publicação; não deixar alteração validável somente local
+- [x] Retomar uma sessão única às 21h de 14/08/2026, começando por validar visualmente e publicar o ciclo Pareto guiado por cena antes de avançar para diálogo e demais correções simples — retomada executada; versão publicada `26b28d23`
+- [x] Fechar imediatamente a correção Pareto guiada no mesmo ciclo: validação visual, suíte completa, checkpoint e publicação; não deixar alteração validável somente local — fluxo Observe → Lembre → Escreva → Crie validado na Praia Tropical, TypeScript sem erros e 377 testes aprovados; checkpoint `26b28d23`
