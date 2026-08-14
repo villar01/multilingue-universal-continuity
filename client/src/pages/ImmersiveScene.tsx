@@ -1687,13 +1687,6 @@ export default function ImmersiveScene() {
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
-    if (isAuthLoading) return;
-    if (!isAuthenticated) {
-      setDialogAuthRequired(true);
-      setGreetingText("Entre para iniciar o diálogo com voz neural e movimentos labiais sincronizados.");
-      setShowGreeting(true);
-      return;
-    }
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null);
     const line = scene.dialog[0];
@@ -1702,16 +1695,20 @@ export default function ImmersiveScene() {
       setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(true);
-      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      setDlgAudioClock(isAuthenticated);
+      if (isAuthenticated) {
+        const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
+        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      } else {
+        setDlgFeedback("Diálogo roteirizado ativo. Entre para ouvir a voz neural e ativar a resposta por microfone.");
+      }
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [isAuthenticated, isAuthLoading, requestSpeechSafely]);
+  }, [isAuthenticated, requestSpeechSafely]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1739,16 +1736,20 @@ export default function ImmersiveScene() {
       setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(true);
-      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      setDlgAudioClock(isAuthenticated);
+      if (isAuthenticated) {
+        const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
+        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      } else {
+        setDlgFeedback("A próxima fala está disponível no painel. Entre para ativar a voz neural.");
+      }
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [dlgStep, requestSpeechSafely, selectedScene]);
+  }, [dlgStep, isAuthenticated, requestSpeechSafely, selectedScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
     const scene = selectedScene;
@@ -1768,8 +1769,10 @@ export default function ImmersiveScene() {
     }
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
-    const teacherSpeech = getImmersiveDialogTeacherSpeech(`Excellent. ${line.options[line.correctIndex]}`, scene);
-    requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+    if (isAuthenticated) {
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(`Excellent. ${line.options[line.correctIndex]}`, scene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+    }
     const referencedHotspotId = findReferencedHotspotId(line.options[line.correctIndex], scene.hotspots);
     const referencedHotspot = referencedHotspotId
       ? scene.hotspots.find((hotspot) => hotspot.id === referencedHotspotId) || null
@@ -1780,7 +1783,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [dlgStep, dlgNext, requestSpeechSafely, selectedScene]);
+  }, [dlgStep, dlgNext, isAuthenticated, requestSpeechSafely, selectedScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     validateDialogAnswer(dlgWrittenAnswer);

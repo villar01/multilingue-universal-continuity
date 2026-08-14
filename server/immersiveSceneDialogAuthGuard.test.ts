@@ -3,17 +3,16 @@ import { readFileSync } from "node:fs";
 
 const source = readFileSync(new URL("../client/src/pages/ImmersiveScene.tsx", import.meta.url), "utf8");
 
-describe("bloqueio de sessão do diálogo imersivo", () => {
-  it("interrompe o diálogo antes das mutações de voz quando não há sessão", () => {
-    expect(source).toContain("const { isAuthenticated, loading: isAuthLoading } = useAuth();");
-    expect(source).toContain("if (!isAuthenticated) {");
-    expect(source).toContain("setDialogAuthRequired(true);");
-    expect(source).toContain("Entre para iniciar o diálogo com voz neural e movimentos labiais sincronizados.");
+describe("diálogo roteirizado e sessão da cena imersiva", () => {
+  it("abre o diálogo roteirizado sem transformar a sessão em pré-requisito do painel", () => {
+    expect(source).toContain("setDlgOpen(true); setDlgStep(0);");
+    expect(source).toContain("Diálogo roteirizado ativo. Entre para ouvir a voz neural");
+    expect(source).toContain("setDlgAudioClock(isAuthenticated);");
   });
 
-  it("mantém a escolha de autenticar no visitante sem esconder a cena", () => {
+  it("mantém as mutações de voz neural condicionadas à sessão", () => {
+    expect(source).toContain("if (isAuthenticated) {");
+    expect(source).toContain("requestSpeechSafely(teacherSpeech.text");
     expect(source).toContain("O diálogo com voz neural requer uma sessão protegida.");
-    expect(source).toContain("window.location.href = getLoginUrl();");
-    expect(source).toContain("As cenas e o vocabulário continuam visíveis");
   });
 });

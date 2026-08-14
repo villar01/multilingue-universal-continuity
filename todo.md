@@ -184,7 +184,9 @@
 - [x] Eliminar a contagem de 40 erros exibida na cena imersiva, preservando voz, diálogos, hotspots e controles de segurança — disparos de fala do diálogo, hotspot e botões agora passam por proteção contra rejeições assíncronas; prévia da cena não gerou falhas novas de console/rede, TypeScript sem erros e 362 testes aprovados
 - [ ] Restaurar diálogo, fala neural e movimentos labiais da cena imersiva após a regressão reportada com 28 erros
 - [ ] Manter o painel inferior do diálogo visível durante a fala autenticada do professor, junto da animação labial natural
-- [ ] Bloquear de forma explícita o início do diálogo imersivo sem sessão e evitar o redirecionamento/falhas repetidas das mutações de voz protegidas
+- [ ] Bloquear de forma explícita o início do diálogo imersivo sem sessão e evitar o redirecionamento/falhas repetidas das mutações de voz protegidas — o visitante foi validado, mas o clique autenticado reportado continua sem abrir o diálogo e exige correção
+- [x] Instrumentar o clique autenticado de Iniciar Diálogo até o estado visual do painel para identificar a interrupção real do fluxo — o bloqueio indevido de sessão no painel roteirizado foi identificado e removido
+- [x] Restaurar o painel e a sequência do diálogo roteirizado sem exigir sessão, mantendo sessão apenas para voz neural, transcrição e respostas geradas por IA — clique validado diretamente no navegador abre painel, texto-alvo, tradução e próxima etapa; TypeScript sem erros e 369 testes aprovados
 - [x] Publicar a correção candidata do diálogo imersivo para validação autenticada na versão pública — versão bc2cac7b publicada com bloqueio explícito de visitante, regressões de áudio/visemas e 367 testes aprovados; a validação real após login permanece pendente
 - [ ] Exigir validação comportamental de diálogo, áudio neural e visemas antes de salvar novas correções da cena imersiva
 - [ ] Substituir a aproximação labial por sincronização de visemas guiada pela atividade real do áudio neural, mantendo Ricardo com boca estática
