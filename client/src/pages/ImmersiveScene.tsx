@@ -11,6 +11,8 @@ import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import { getImmersiveHotspotSpeech } from "@/lib/immersiveHotspotSpeech";
 import { createImmersiveHotspotInteraction } from "@/lib/immersiveHotspotInteraction";
@@ -1269,6 +1271,7 @@ export default function ImmersiveScene() {
   const [, setLocation] = useLocation();
   // ── Single source of truth: LanguageContext ──
   const { profile, setProfile, immersionMode } = useLanguage();
+  const { isAuthenticated, loading: isAuthLoading } = useAuth();
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -1376,6 +1379,7 @@ export default function ImmersiveScene() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeSpeechText, setActiveSpeechText] = useState("");
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
+  const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
@@ -1385,7 +1389,7 @@ export default function ImmersiveScene() {
   const activeDialogWordCountRef = useRef(0);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
-  const { syncWithAudio, stop: stopVisemeSync } = useTTSVisemeSync(handleAudioViseme);
+  const { syncWithAudio, stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
 
   const stopTeacherAudio = useCallback(() => {
     if (audioRef.current) {
@@ -1403,7 +1407,8 @@ export default function ImmersiveScene() {
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
   const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, revokeOnEnd = false) => {
-    const audio = new Audio(source);
+    const audio = new Audio();
+    audio.src = source;
     audioRef.current = audio;
     const updatesActiveDialog = () => activeDialogLineRef.current === phrase && activeDialogWordCountRef.current > 0;
     const updateDialogWordsFromAudio = () => {
@@ -1497,13 +1502,21 @@ export default function ImmersiveScene() {
   }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
+    if (isAuthLoading) return;
+    if (!isAuthenticated) {
+      setDialogAuthRequired(true);
+      setGreetingText("Entre para ativar a fala neural e o diálogo com o professor.");
+      setShowGreeting(true);
+      return;
+    }
+    primeVisemeAudio();
     void speak(text, language, undefined, gender, purpose).catch(() => {
       if (activeDialogLineRef.current === text) setDlgAudioClock(false);
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(false);
       setActiveSpeechText("");
     });
-  }, [speak]);
+  }, [isAuthenticated, isAuthLoading, primeVisemeAudio, speak]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
@@ -1674,6 +1687,14 @@ export default function ImmersiveScene() {
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
+    if (isAuthLoading) return;
+    if (!isAuthenticated) {
+      setDialogAuthRequired(true);
+      setGreetingText("Entre para iniciar o diálogo com voz neural e movimentos labiais sincronizados.");
+      setShowGreeting(true);
+      return;
+    }
+    setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null);
     const line = scene.dialog[0];
     if (line?.speaker === 'teacher') {
@@ -1690,7 +1711,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [requestSpeechSafely]);
+  }, [isAuthenticated, isAuthLoading, requestSpeechSafely]);
   useEffect(() => {
     if (!dlgOpen || dlgAudioClock || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
     dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), 300);
@@ -2334,7 +2355,7 @@ export default function ImmersiveScene() {
               nativeLang={nativeLang}
               nativeLangFlag={nativeLangInfo?.flag || "🇧🇷"}
               onClose={() => setActiveHotspot(null)}
-              onSpeak={(text, language) => speak(text, language, undefined, selectedScene.teacherGender, "hotspot")}
+              onSpeak={(text, language) => requestSpeechSafely(text, language, selectedScene.teacherGender, "hotspot")}
               onPractice={() => setPracticeHotspot(activeHotspot)}
             />
           </div>
@@ -2344,7 +2365,7 @@ export default function ImmersiveScene() {
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
-            onSpeak={(text) => speak(text, selectedScene.teacherLang, undefined, selectedScene.teacherGender, "hotspot")}
+            onSpeak={(text) => requestSpeechSafely(text, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot")}
             level={sceneCefrLevel(selectedScene)}
           />
         )}
@@ -2419,6 +2440,20 @@ export default function ImmersiveScene() {
           >
             💬 Iniciar Diálogo
           </button>
+        )}
+        {dialogAuthRequired && !isAuthenticated && (
+          <div
+            className="absolute left-1/2 z-[60] w-[min(92vw,420px)] -translate-x-1/2 rounded-2xl border p-4 text-center shadow-2xl"
+            style={{ bottom: "148px", background: "rgba(15,23,42,.94)", borderColor: "rgba(129,140,248,.72)", backdropFilter: "blur(14px)" }}
+            role="status"
+          >
+            <p className="text-sm font-semibold text-white">O diálogo com voz neural requer uma sessão protegida.</p>
+            <p className="mt-1 text-xs text-slate-300">As cenas e o vocabulário continuam visíveis; entre para ativar fala, resposta e sincronização labial.</p>
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <button type="button" onClick={() => { window.location.href = getLoginUrl(); }} className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">Entrar</button>
+              <button type="button" onClick={() => setDialogAuthRequired(false)} className="rounded-full border border-slate-500 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-300">Agora não</button>
+            </div>
+          </div>
         )}
         {dlgOpen && selectedScene.dialog[dlgStep] && (
           <div

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ADVANCED_VISEME_MAP, extractPhonemesWithTiming } from '../client/src/lib/tts-viseme-sync';
+import { ADVANCED_VISEME_MAP, blendVisemeWithAudioActivity, extractPhonemesWithTiming } from '../client/src/lib/tts-viseme-sync';
 
 describe('audio-clock viseme mouth poses', () => {
   it('keeps visibly distinct open, rounded, closed, teeth, and tongue mouth signals', () => {
@@ -14,5 +14,13 @@ describe('audio-clock viseme mouth poses', () => {
     const sequence = extractPhonemesWithTiming('a e u tom');
     expect(sequence.map((entry) => entry.phoneme)).toEqual(expect.arrayContaining(['A', 'E', 'U', 'T', 'O', 'M']));
     expect(sequence.every((entry) => entry.duration > 0)).toBe(true);
+  });
+
+  it('closes the mouth on actual silence and preserves an open vowel shape while audio is active', () => {
+    const silent = blendVisemeWithAudioActivity(ADVANCED_VISEME_MAP.A, 0);
+    const voiced = blendVisemeWithAudioActivity(ADVANCED_VISEME_MAP.A, 0.8);
+    expect(silent).toEqual(ADVANCED_VISEME_MAP.NEUTRAL);
+    expect(voiced.mouthHeight).toBeGreaterThan(ADVANCED_VISEME_MAP.NEUTRAL.mouthHeight);
+    expect(voiced.jawDrop).toBeGreaterThan(0);
   });
 });

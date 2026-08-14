@@ -63,6 +63,25 @@ export const ADVANCED_VISEME_MAP: Record<string, VisemeData> = {
 };
 
 /**
+ * Mantém a forma do fonema, mas abre e fecha a boca conforme a energia real
+ * da faixa de áudio. Assim, pausas e sílabas fracas não usam uma abertura
+ * estimada apenas pelo texto.
+ */
+export function blendVisemeWithAudioActivity(viseme: VisemeData, activity: number): VisemeData {
+  const normalizedActivity = Math.max(0, Math.min(1, activity));
+  if (normalizedActivity < 0.035) return { ...ADVANCED_VISEME_MAP.NEUTRAL };
+
+  const articulation = 0.28 + normalizedActivity * 0.72;
+  return {
+    mouthWidth: viseme.mouthWidth,
+    mouthHeight: Math.max(3, viseme.mouthHeight * articulation),
+    jawDrop: viseme.jawDrop * articulation,
+    lipRound: viseme.lipRound,
+    tongueVisible: viseme.tongueVisible && normalizedActivity >= 0.12,
+  };
+}
+
+/**
  * Extrai phonemes do texto com duração estimada
  */
 export function extractPhonemesWithTiming(text: string, language: string = "pt-BR"): PhonemeTimestamp[] {
@@ -152,6 +171,10 @@ export class TTSVisemeSync {
   private isPlaying: boolean = false;
   private audioElement: HTMLAudioElement | null = null;
   private audioTimelineScale: number = 1;
+  private audioContext: AudioContext | null = null;
+  private audioSource: MediaElementAudioSourceNode | null = null;
+  private audioAnalyser: AnalyserNode | null = null;
+  private amplitudeBuffer: Uint8Array<ArrayBuffer> | null = null;
   
   constructor(onVisemeChange: (viseme: VisemeData) => void) {
     this.onVisemeChange = onVisemeChange;
@@ -178,11 +201,61 @@ export class TTSVisemeSync {
   stop() {
     this.isPlaying = false;
     this.audioElement = null;
+    this.disconnectAudioAnalysis();
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
     }
     this.onVisemeChange(ADVANCED_VISEME_MAP.NEUTRAL);
+  }
+
+  private disconnectAudioAnalysis() {
+    this.audioSource?.disconnect();
+    this.audioAnalyser?.disconnect();
+    this.audioSource = null;
+    this.audioAnalyser = null;
+    this.amplitudeBuffer = null;
+  }
+
+  primeAudioContext() {
+    if (typeof window === "undefined" || typeof AudioContext === "undefined") return;
+    this.audioContext ??= new AudioContext();
+    if (this.audioContext.state !== "running") {
+      void this.audioContext.resume().catch(() => undefined);
+    }
+  }
+
+  private connectAudioAnalysis(audioElement: HTMLAudioElement) {
+    if (typeof window === "undefined" || typeof AudioContext === "undefined") return;
+    try {
+      this.disconnectAudioAnalysis();
+      this.primeAudioContext();
+      if (!this.audioContext || this.audioContext.state !== "running") return;
+      const analyser = this.audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.72;
+      const source = this.audioContext.createMediaElementSource(audioElement);
+      source.connect(analyser);
+      analyser.connect(this.audioContext.destination);
+      this.audioSource = source;
+      this.audioAnalyser = analyser;
+      this.amplitudeBuffer = new Uint8Array(analyser.fftSize);
+    } catch {
+      // CORS ou WebAudio indisponível: a linha temporal de fonemas continua ativa.
+      this.disconnectAudioAnalysis();
+    }
+  }
+
+  private getAudioActivity(): number | null {
+    if (!this.audioAnalyser || !this.amplitudeBuffer) return null;
+    this.audioAnalyser.getByteTimeDomainData(this.amplitudeBuffer);
+    let sumSquares = 0;
+    for (const sample of this.amplitudeBuffer) {
+      const normalized = (sample - 128) / 128;
+      sumSquares += normalized * normalized;
+    }
+    const rms = Math.sqrt(sumSquares / this.amplitudeBuffer.length);
+    return Math.min(1, rms * 8);
   }
   
   /**
@@ -222,6 +295,10 @@ export class TTSVisemeSync {
     );
     
     if (currentPhoneme) {
+      const applyAudioActivity = (viseme: VisemeData) => {
+        const activity = this.getAudioActivity();
+        this.onVisemeChange(activity === null ? viseme : blendVisemeWithAudioActivity(viseme, activity));
+      };
       // Interpolar visema para transição suave
       const nextPhoneme = this.phonemes.find(
         (p) => p.start === currentPhoneme.start + currentPhoneme.duration
@@ -238,12 +315,12 @@ export class TTSVisemeSync {
             nextPhoneme.viseme,
             transitionProgress
           );
-          this.onVisemeChange(interpolatedViseme);
+          applyAudioActivity(interpolatedViseme);
         } else {
-          this.onVisemeChange(currentPhoneme.viseme);
+          applyAudioActivity(currentPhoneme.viseme);
         }
       } else {
-        this.onVisemeChange(currentPhoneme.viseme);
+        applyAudioActivity(currentPhoneme.viseme);
       }
     } else {
       // Fim da animação
@@ -288,6 +365,7 @@ export class TTSVisemeSync {
     updateAudioTimelineScale();
     
     audioElement.addEventListener("play", () => {
+      this.connectAudioAnalysis(audioElement);
       this.startTime = Date.now() - (audioElement.currentTime * 1000);
       this.isPlaying = true;
       this.animate();
@@ -320,15 +398,16 @@ export function useTTSVisemeSync(onVisemeChange: (viseme: VisemeData) => void) {
       syncRef.current?.stop();
     };
   }, [onVisemeChange]);
-  
-  return {
-    start: (text: string, language?: string) => syncRef.current?.start(text, language),
-    stop: () => syncRef.current?.stop(),
-    pause: () => syncRef.current?.pause(),
-    resume: () => syncRef.current?.resume(),
-    syncWithAudio: (audio: HTMLAudioElement, text: string, language?: string) =>
-      syncRef.current?.syncWithAudio(audio, text, language),
-  };
+
+  const start = React.useCallback((text: string, language?: string) => syncRef.current?.start(text, language), []);
+  const stop = React.useCallback(() => syncRef.current?.stop(), []);
+  const pause = React.useCallback(() => syncRef.current?.pause(), []);
+  const resume = React.useCallback(() => syncRef.current?.resume(), []);
+  const syncWithAudio = React.useCallback((audio: HTMLAudioElement, text: string, language?: string) =>
+    syncRef.current?.syncWithAudio(audio, text, language), []);
+  const primeAudioContext = React.useCallback(() => syncRef.current?.primeAudioContext(), []);
+
+  return { start, stop, pause, resume, syncWithAudio, primeAudioContext };
 }
 
 // Importar React para hook
