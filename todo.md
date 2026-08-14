@@ -201,6 +201,10 @@
 - [ ] Concluir a correção isolada de consistência de dicção antes de iniciar qualquer nova frente de desenvolvimento
 - [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
+- [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
+- [ ] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível
+- [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
+- [x] Auditar e preservar todas as listas de verificação, testes e pendências antes de qualquer limpeza ou reclassificação — inventário de 2026-08-14 confirma 1.307 linhas no controle mestre, 857 itens concluídos, 136 pendentes, 168 regressões e checkpoints recentes preservados; falhas funcionais foram reabertas sem apagar histórico
 - [ ] Unificar apresentação guiada, objetos, vocabulário, diálogo, prática Pareto, perguntas, repetição e revisão em um roteiro contínuo por cena e CEFR
 - [ ] Criar módulo de aperfeiçoamento assistido que registre erros, evidências e propostas de correção, sem modificar ou publicar código autonomamente
 - [ ] Substituir a integração externa de aperfeiçoamento sem credenciais por um diagnóstico estruturado com provedor configurado e fallback explícito
@@ -1301,3 +1305,8 @@
 
 ## 🐛 PROFESSOR JAMES — OCORRÊNCIA RESIDUAL
 - [x] Localizar e corrigir a segunda seção que ainda exibe foto feminina para o Professor James — perfil regional canônico aplicado; teste e validação visual da lição confirmam retrato masculino, origem London e en-GB
+
+## ⏰ RETOMADA PROGRAMADA
+- [x] Configurar a retomada única para 14/08/2026 às 21h (BRT), preservando o contexto atual e a prioridade do Pareto guiado por cena
+- [ ] Retomar uma sessão única às 21h de 14/08/2026, começando por validar visualmente e publicar o ciclo Pareto guiado por cena antes de avançar para diálogo e demais correções simples
+- [ ] Fechar imediatamente a correção Pareto guiada no mesmo ciclo: validação visual, suíte completa, checkpoint e publicação; não deixar alteração validável somente local

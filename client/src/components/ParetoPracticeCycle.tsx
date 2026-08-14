@@ -11,6 +11,8 @@ import type { CEFRLevel } from "@/lib/lesson-levels";
 interface ParetoPracticeCycleProps {
   term: ParetoPracticeTerm;
   onClose: () => void;
+  onComplete?: () => void;
+  onNext?: () => void;
   onSpeak?: (text: string) => void;
   embedded?: boolean;
   level?: CEFRLevel;
@@ -23,12 +25,13 @@ const STEP_LABEL: Record<ParetoPracticeStep, string> = {
   create: "4. Crie",
 };
 
-export function ParetoPracticeCycle({ term, onClose, onSpeak, embedded = false, level = "A1" }: ParetoPracticeCycleProps) {
+export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak, embedded = false, level = "A1" }: ParetoPracticeCycleProps) {
   const [step, setStep] = useState<ParetoPracticeStep>("observe");
   const [recall, setRecall] = useState("");
   const [written, setWritten] = useState("");
   const [sentence, setSentence] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [completed, setCompleted] = useState(false);
   const activeStep = useMemo(() => ["observe", "recall", "write", "create"].indexOf(step), [step]);
   const levelRequirement = useMemo(() => getParetoLevelRequirement(level), [level]);
 
@@ -41,7 +44,10 @@ export function ParetoPracticeCycle({ term, onClose, onSpeak, embedded = false, 
   const checkSentence = () => {
     const result = checkParetoSentence(sentence, term, levelRequirement);
     setFeedback(result.message);
-    if (result.correct) setStep("create");
+    if (result.correct) {
+      setCompleted(true);
+      onComplete?.();
+    }
   };
 
   return (
@@ -87,11 +93,20 @@ export function ParetoPracticeCycle({ term, onClose, onSpeak, embedded = false, 
         </div>
       )}
 
-      {step === "create" && (
+      {step === "create" && !completed && (
         <div className="space-y-3">
           <p className="text-sm text-slate-200">{levelRequirement.guidance} Use <strong>{term.word}</strong> em uma nova frase de {levelRequirement.minSentenceWords} a {levelRequirement.maxSentenceWords} palavras.</p>
           <textarea value={sentence} onChange={(event) => setSentence(event.target.value)} rows={2} className="w-full resize-none rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white outline-none focus:border-amber-300" placeholder={`I see ${term.word}.`} />
           <button type="button" onClick={checkSentence} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Concluir prática</button>
+        </div>
+      )}
+
+      {completed && (
+        <div className="space-y-3 rounded-2xl border border-emerald-300/35 bg-emerald-400/10 p-3">
+          <p className="font-bold text-emerald-100">Memória concluída: você lembrou, escreveu e criou uma frase com <strong>{term.word}</strong>.</p>
+          <button type="button" onClick={onNext || onClose} className="rounded-xl bg-emerald-300 px-3 py-2 text-sm font-bold text-slate-950">
+            {onNext ? "Praticar próxima palavra" : "Concluir ciclo"}
+          </button>
         </div>
       )}
 

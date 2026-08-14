@@ -102,6 +102,7 @@ export default function ParetoPanel({
   const [page, setPage] = useState(0);
   const [sceneFilter, setSceneFilter] = useState(false); // default: show ALL words, not just scene words
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
+  const [completedSceneWords, setCompletedSceneWords] = useState<Set<string>>(() => new Set());
   const practiceTtsMut = trpc.tts.speak.useMutation();
   const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
   const [starred, setStarred] = useState<Set<string>>(() => {
@@ -136,6 +137,30 @@ export default function ParetoPanel({
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const pageWords = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const sceneWords = useMemo(
+    () => currentScene ? PARETO_VOCAB.filter((word) => word.scene === currentScene).sort((a, b) => b.frequency - a.frequency) : [],
+    [currentScene],
+  );
+  const nextSceneWord = useMemo(
+    () => sceneWords.find((word) => !completedSceneWords.has(word.id)) ?? null,
+    [completedSceneWords, sceneWords],
+  );
+
+  const openSceneCycle = useCallback(() => {
+    if (!nextSceneWord) return;
+    setSceneFilter(true);
+    setPracticeWord(nextSceneWord);
+  }, [nextSceneWord]);
+
+  const completePracticeWord = useCallback(() => {
+    if (!practiceWord || !sceneWords.some((word) => word.id === practiceWord.id)) return;
+    setCompletedSceneWords((previous) => new Set(previous).add(practiceWord.id));
+  }, [practiceWord, sceneWords]);
+
+  const practiceNextSceneWord = useCallback(() => {
+    const next = sceneWords.find((word) => !completedSceneWords.has(word.id) && word.id !== practiceWord?.id) ?? null;
+    setPracticeWord(next);
+  }, [completedSceneWords, practiceWord?.id, sceneWords]);
 
   const handleSearch = (v: string) => {
     setSearch(v);
@@ -214,6 +239,26 @@ export default function ParetoPanel({
           </div>
         </div>
 
+        {currentScene && (
+          <div className="mx-4 mb-2 rounded-xl border border-amber-300/35 bg-amber-300/10 p-3 text-sm text-amber-50">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="font-bold">Como praticar esta cena</p>
+                <p className="mt-1 text-xs text-amber-100/85">1. Observe a palavra. 2. Ouça. 3. Lembre sem olhar. 4. Escreva. 5. Crie uma frase.</p>
+                <p className="mt-1 text-xs font-semibold text-amber-200">Progresso da cena: {completedSceneWords.size}/{sceneWords.length || 0} palavras concluídas</p>
+              </div>
+              <button
+                type="button"
+                disabled={!nextSceneWord}
+                onClick={openSceneCycle}
+                className="rounded-lg bg-amber-300 px-3 py-2 text-xs font-bold text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {nextSceneWord ? "Começar ciclo da cena" : "Cena concluída"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Category tabs */}
         <div className="flex gap-1 px-4 py-2 overflow-x-auto border-b border-gray-700 scrollbar-hide">
           {CATEGORIES.map(cat => (
@@ -286,6 +331,8 @@ export default function ParetoPanel({
                 example: targetLang.split("-")[0].toLowerCase() === "pt" ? practiceWord.examplePt : practiceWord.example,
               }}
               onClose={() => setPracticeWord(null)}
+              onComplete={completePracticeWord}
+              onNext={nextSceneWord && sceneWords.some((word) => word.id !== practiceWord.id && !completedSceneWords.has(word.id)) ? practiceNextSceneWord : undefined}
               onSpeak={speakPractice}
               embedded
               level={practiceLevel}

@@ -9,3 +9,10 @@
 ## Critério de correção
 
 O clique deve abrir o painel de diálogo sem gerar `UNAUTHORIZED`. Para visitantes, a interface deve pedir autenticação antes de iniciar recursos de IA. Para uma sessão autenticada, deve manter o fluxo de áudio neural e visemas sem redirecionamento.
+
+## Reprodução na versão publicada — 2026-08-14
+
+- **URL verificada:** `https://multilingua-qfeb6mgx.manus.space/immersive-scene`.
+- **Ação:** clique único em **Iniciar Diálogo**, seguido de 250 ms para renderização.
+- **Resultado:** o painel `.immersive-dialog` foi renderizado com James, tradução PT, primeira linha em inglês e botão **Continuar**.
+- **Sessão visitante:** a sequência roteirizada abre sem redirecionamento; voz neural e resposta por microfone permanecem explicitamente protegidas.
