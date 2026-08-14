@@ -72,6 +72,19 @@ export interface Scene {
   teacherAnimation?: "professor-wave" | "professor-nod" | "professor-celebrate"; // Optional animation for professor
 }
 
+type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+const IMMERSIVE_CEFR_LEVELS: Array<{ value: ImmersiveCEFRLevel; label: string }> = [
+  { value: "A1", label: "A1 · Início" },
+  { value: "A2", label: "A2 · Básico" },
+  { value: "B1", label: "B1 · Independente" },
+  { value: "B2", label: "B2 · Intermediário alto" },
+  { value: "C1", label: "C1 · Avançado" },
+  { value: "C2", label: "C2 · Domínio" },
+];
+
+const sceneCefrLevel = (scene: Scene): ImmersiveCEFRLevel => resolvePracticeCEFRLevel(scene.difficulty) as ImmersiveCEFRLevel;
+
 // ─── Scene Data (25 scenes with CDN images) ───────────────────────────────────
 export const IMMERSIVE_SCENES: Scene[] = [
   // ══════════════════════════════════════════════════════════════
@@ -1276,8 +1289,8 @@ export default function ImmersiveScene() {
       if (!targetCode) targetCode = localStorage.getItem("ml_target_lang") || "";
       if (targetCode) {
         const base = targetCode.split("-")[0].toLowerCase();
-        // Prefer beginner difficulty scene for the target language (first lesson should be easy)
-        const beginnerMatch = IMMERSIVE_SCENES.find(s => (s.langCode === base || s.teacherLang.startsWith(base)) && s.difficulty === "beginner");
+        // Prioriza a etapa A1 da língua escolhida ao iniciar a primeira lição.
+        const beginnerMatch = IMMERSIVE_SCENES.find(s => (s.langCode === base || s.teacherLang.startsWith(base)) && sceneCefrLevel(s) === "A1");
         if (beginnerMatch) return beginnerMatch;
         // Fallback to any scene matching the language
         const match = IMMERSIVE_SCENES.find(s => s.langCode === base || s.teacherLang.startsWith(base));
@@ -1493,7 +1506,7 @@ export default function ImmersiveScene() {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState<"correct" | "wrong" | null>(null);
   const sceneXpMut = trpc.gamification.addXP.useMutation();
-  const [filter, setFilter] = useState<"all" | "beginner" | "intermediate" | "advanced">("all");
+  const [filter, setFilter] = useState<"all" | ImmersiveCEFRLevel>("all");
   const [search, setSearch] = useState("");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1855,7 +1868,7 @@ export default function ImmersiveScene() {
   }, []);
 
   const filteredScenes = IMMERSIVE_SCENES.filter(s => {
-    if (filter !== "all" && s.difficulty !== filter) return false;
+    if (filter !== "all" && sceneCefrLevel(s) !== filter) return false;
     if (search && !s.name.toLowerCase().includes(search.toLowerCase()) &&
         !s.nameEn.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
@@ -1867,10 +1880,9 @@ export default function ImmersiveScene() {
     return aMatch - bMatch;
   });
 
-  const difficultyColor = (d: string) =>
-    d === "beginner" ? "#22c55e" : d === "intermediate" ? "#f59e0b" : "#ef4444";
-  const difficultyLabel = (d: string) =>
-    d === "beginner" ? "A1-A2 · Iniciante" : d === "intermediate" ? "B1-B2 · Intermediário" : "C1-C2 · Avançado";
+  const cefrColor = (level: ImmersiveCEFRLevel) =>
+    level === "A1" || level === "A2" ? "#22c55e" : level === "B1" || level === "B2" ? "#f59e0b" : "#ef4444";
+  const cefrLabel = (level: ImmersiveCEFRLevel) => IMMERSIVE_CEFR_LEVELS.find((item) => item.value === level)?.label || level;
 
   // ── Scene View ──
   if (selectedScene) {
@@ -2324,7 +2336,7 @@ export default function ImmersiveScene() {
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
             onSpeak={(text) => speak(text, selectedScene.teacherLang, undefined, selectedScene.teacherGender, "hotspot")}
-            level={selectedScene.difficulty === "beginner" ? "A1" : selectedScene.difficulty === "intermediate" ? "B1" : "C1"}
+            level={sceneCefrLevel(selectedScene)}
           />
         )}
 
@@ -2611,7 +2623,7 @@ export default function ImmersiveScene() {
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
           currentScene={selectedScene?.id}
-          practiceLevel={resolvePracticeCEFRLevel(selectedScene?.difficulty)}
+          practiceLevel={selectedScene ? sceneCefrLevel(selectedScene) : "A1"}
           voiceGender={selectedScene?.teacherGender}
           onAddToNotebook={handleAddParetoToNotebook}
         />
@@ -2707,7 +2719,7 @@ export default function ImmersiveScene() {
             className="flex-1 min-w-32 px-3 py-2 rounded-full text-white text-sm outline-none"
             style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "white" }}
           />
-          {(["all", "beginner", "intermediate", "advanced"] as const).map((f) => (
+          {(["all", ...IMMERSIVE_CEFR_LEVELS.map((item) => item.value)] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -2718,7 +2730,7 @@ export default function ImmersiveScene() {
                 border: filter === f ? "1px solid #6366f1" : "1px solid rgba(255,255,255,0.1)",
               }}
             >
-              {f === "all" ? "Todos" : f === "beginner" ? "A1-A2 Iniciante" : f === "intermediate" ? "B1-B2 Médio" : "C1-C2 Avançado"}
+              {f === "all" ? "Todos" : cefrLabel(f)}
             </button>
           ))}
         </div>
@@ -2773,9 +2785,9 @@ export default function ImmersiveScene() {
             <div className="absolute top-2 left-2 flex gap-1">
               <span
                 className="px-2 py-0.5 rounded-full text-white font-bold"
-                style={{ background: difficultyColor(scene.difficulty), fontSize: "clamp(8px, 1vw, 11px)" }}
+                style={{ background: cefrColor(sceneCefrLevel(scene)), fontSize: "clamp(8px, 1vw, 11px)" }}
               >
-                {difficultyLabel(scene.difficulty)}
+                {cefrLabel(sceneCefrLevel(scene))}
               </span>
               {scene.premium && (
                 <span
