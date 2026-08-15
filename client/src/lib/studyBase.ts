@@ -242,6 +242,14 @@ export function searchStudyBase(
   });
 }
 
+export function getStudyUnits(level: CEFRLevel = "A1"): string[] {
+  return [...new Set(STUDY_BASE_A1_ENTRIES.filter((entry) => entry.cefr === level).map((entry) => entry.unit))];
+}
+
+export function filterStudyEntriesByUnit(entries: StudyEntry[], unit: string | "all"): StudyEntry[] {
+  return unit === "all" ? entries : entries.filter((entry) => entry.unit === unit);
+}
+
 const UNSAFE_PATTERN = /\b(idiot|stupid|hate|kill|suicide|sex|nude|weapon|drug|drogas?|matar|morte|sexo|nudez|arma|ofensa)\b/i;
 
 export function getStudyBaseTeacherReply(entry: StudyEntry, question: string): string {

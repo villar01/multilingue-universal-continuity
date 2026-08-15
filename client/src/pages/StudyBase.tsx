@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CEFRLevel } from "@/lib/lesson-levels";
 import {
+  filterStudyEntriesByUnit,
   getStudyBaseTeacherReply,
+  getStudyUnits,
   getSentenceStarter,
   reviewStudySentence,
   searchStudyBase,
@@ -45,6 +47,7 @@ function getStoredLevel(): CEFRLevel {
 export default function StudyBase() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<StudyEntryKind | "all">("all");
+  const [unit, setUnit] = useState<string | "all">("all");
   const [level] = useState<CEFRLevel>(getStoredLevel);
   const [selectedEntry, setSelectedEntry] = useState<StudyEntry | null>(null);
   const [practiceEntry, setPracticeEntry] = useState<StudyEntry | null>(null);
@@ -61,7 +64,11 @@ export default function StudyBase() {
     return destination?.startsWith("/") ? destination : "/dashboard";
   }, []);
 
-  const entries = useMemo(() => searchStudyBase(query, kind, level), [kind, level, query]);
+  const units = useMemo(() => getStudyUnits(level), [level]);
+  const entries = useMemo(
+    () => filterStudyEntriesByUnit(searchStudyBase(query, kind, level), unit),
+    [kind, level, query, unit],
+  );
   const activeEntry = selectedEntry && entries.some((entry) => entry.id === selectedEntry.id)
     ? selectedEntry
     : entries[0] ?? null;
@@ -174,6 +181,29 @@ export default function StudyBase() {
               ))}
             </div>
 
+            <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-3">
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-cyan-100">Progressão A1 · palavra → frase → conversa</p>
+              <div className="mt-2 flex flex-wrap gap-2" aria-label="Selecionar unidade curricular">
+                <button
+                  type="button"
+                  onClick={() => setUnit("all")}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${unit === "all" ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-200 hover:border-cyan-300/60"}`}
+                >
+                  Todo A1
+                </button>
+                {units.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setUnit(item)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${unit === item ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-200 hover:border-cyan-300/60"}`}
+                  >
+                    {item.replace("Unidade ", "U")}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="mt-6 space-y-3" aria-live="polite">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{entries.length} resultado{entries.length === 1 ? "" : "s"}</p>
               {entries.map((entry) => (
@@ -189,6 +219,7 @@ export default function StudyBase() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
+                      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-cyan-200">{entry.unit}</p>
                       <p className="text-sm font-black text-white">{entry.title}</p>
                       <p className="mt-1 text-sm text-slate-300">{entry.subtitle}</p>
                     </div>
@@ -215,6 +246,7 @@ export default function StudyBase() {
                   </div>
                   <span className="rounded-full border border-violet-300/30 bg-violet-300/10 px-3 py-1 text-xs font-bold text-violet-100">Cena: {activeEntry.relatedScene}</span>
                 </div>
+                <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-cyan-200">{activeEntry.unit} · Pareto: lembrar, escrever e criar</p>
                 <h2 className="mt-5 text-2xl font-black sm:text-3xl">{activeEntry.title}</h2>
                 <p className="mt-2 text-slate-300">{activeEntry.subtitle}</p>
 

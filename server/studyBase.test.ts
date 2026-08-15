@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSentenceStarter, getStudyBaseTeacherReply, reviewStudySentence, searchStudyBase } from "../client/src/lib/studyBase";
+import { filterStudyEntriesByUnit, getSentenceStarter, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, searchStudyBase } from "../client/src/lib/studyBase";
 
 describe("Base de Estudos A1", () => {
   it("encontra conhecimento por termo em português e inglês", () => {
@@ -18,6 +18,17 @@ describe("Base de Estudos A1", () => {
     expect(searchStudyBase("preço").map((entry) => entry.id)).toContain("a1-ask-price");
     expect(searchStudyBase("perto").map((entry) => entry.id)).toContain("a1-near-location");
     expect(searchStudyBase("manhã").map((entry) => entry.id)).toContain("a1-morning-routine");
+  });
+
+  it("expõe a progressão curricular e filtra cada unidade sem perder a busca", () => {
+    expect(getStudyUnits("A1")).toEqual([
+      "Unidade 1 · Cumprimentos e identidade",
+      "Unidade 2 · Necessidades imediatas",
+      "Unidade 3 · Lugares e localização",
+      "Unidade 4 · Pessoas e rotina",
+    ]);
+    const locationUnit = filterStudyEntriesByUnit(searchStudyBase("", "all", "A1"), "Unidade 3 · Lugares e localização");
+    expect(locationUnit.map((entry) => entry.id)).toEqual(["a1-where-is", "a1-near-location"]);
   });
 
   it("oferece orientação contextual sem repetir conteúdo ofensivo", () => {
