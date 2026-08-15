@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import type { CEFRLevel } from "@/lib/lesson-levels";
 import {
   getStudyBaseTeacherReply,
+  getSentenceStarter,
+  reviewStudySentence,
   searchStudyBase,
   type StudyEntry,
   type StudyEntryKind,
@@ -48,6 +50,8 @@ export default function StudyBase() {
   const [practiceEntry, setPracticeEntry] = useState<StudyEntry | null>(null);
   const [teacherQuestion, setTeacherQuestion] = useState("");
   const [teacherReply, setTeacherReply] = useState("");
+  const [sentenceDraft, setSentenceDraft] = useState("");
+  const [sentenceFeedback, setSentenceFeedback] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const returnTo = useMemo(() => {
@@ -90,10 +94,17 @@ export default function StudyBase() {
     setTeacherReply(getStudyBaseTeacherReply(activeEntry, teacherQuestion));
   }, [activeEntry, teacherQuestion]);
 
+  const reviewSentence = useCallback(() => {
+    if (!activeEntry) return;
+    setSentenceFeedback(reviewStudySentence(activeEntry, sentenceDraft));
+  }, [activeEntry, sentenceDraft]);
+
   const openEntry = (entry: StudyEntry) => {
     setSelectedEntry(entry);
     setTeacherQuestion("");
     setTeacherReply("");
+    setSentenceDraft("");
+    setSentenceFeedback("");
   };
 
   return (
@@ -251,6 +262,27 @@ export default function StudyBase() {
                     <span><strong className="block text-violet-100">Pedir orientação</strong><span className="text-sm text-slate-300">Professor explica o próximo passo</span></span>
                   </button>
                 </div>
+
+                <section className="mt-5 rounded-2xl border border-cyan-300/25 bg-cyan-300/5 p-4" aria-labelledby="sentence-workshop-heading">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-cyan-200" />
+                    <h3 id="sentence-workshop-heading" className="font-bold text-white">Criar frases novas com Pareto</h3>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300">Use a mesma palavra em outra situação. Primeiro siga o modelo; depois altere uma informação e crie sua própria frase.</p>
+                  <p className="mt-3 rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-cyan-100">Modelo: {getSentenceStarter(activeEntry)}</p>
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      value={sentenceDraft}
+                      onChange={(event) => setSentenceDraft(event.target.value)}
+                      onKeyDown={(event) => { if (event.key === "Enter") reviewSentence(); }}
+                      placeholder={`Crie uma frase com ${activeEntry.paretoWord}`}
+                      className="border-white/15 bg-slate-950 text-white placeholder:text-slate-500"
+                    />
+                    <Button type="button" onClick={reviewSentence} className="bg-cyan-300 font-bold text-slate-950 hover:bg-cyan-200">Revisar frase</Button>
+                    <Button type="button" variant="outline" disabled={!sentenceDraft.trim() || speakMutation.isPending} onClick={() => playTargetVoice(sentenceDraft)} className="border-cyan-300/45 text-cyan-100 hover:bg-cyan-300/10 hover:text-cyan-50">Ouvir frase</Button>
+                  </div>
+                  {sentenceFeedback && <p role="status" className="mt-3 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm text-amber-100">{sentenceFeedback}</p>}
+                </section>
 
                 <section className="mt-5 rounded-2xl border border-white/10 bg-slate-950/60 p-4" aria-labelledby="study-teacher-heading">
                   <div className="flex items-center gap-2">

@@ -171,3 +171,34 @@ export function getStudyBaseTeacherReply(entry: StudyEntry, question: string): s
   }
   return `${entry.nativeExplanation} Tente responder com uma frase curta usando “${entry.paretoWord}”.`;
 }
+
+export function getSentenceStarter(entry: StudyEntry): string {
+  const starters: Record<string, string> = {
+    "a1-introduce-yourself": "My name is ___.",
+    "a1-ask-for-help": "Can you help me with ___, please?",
+    "a1-where-is": "Where is the ___?",
+    "a1-this-is": "This is a ___.",
+    "a1-family-mom": "My mom is ___.",
+    "a1-routine-now": "I need ___ now.",
+  };
+  return starters[entry.id] || entry.targetText;
+}
+
+export function reviewStudySentence(entry: StudyEntry, sentence: string): string {
+  const normalized = NORMALIZE(sentence);
+  if (!normalized) return "Escreva uma frase curta para receber orientação.";
+  if (UNSAFE_PATTERN.test(normalized)) {
+    return "Vamos manter a prática respeitosa e ligada à lição. Tente uma frase simples com a palavra Pareto.";
+  }
+  if (normalized.split(/\s+/).length < 3) {
+    return "Acrescente mais palavras para formar uma frase completa. Use o modelo como apoio.";
+  }
+  const paretoWord = NORMALIZE(entry.paretoWord);
+  if (!normalized.includes(paretoWord)) {
+    return `Boa tentativa. Agora inclua a palavra Pareto “${entry.paretoWord}” para ligar sua frase ao conteúdo estudado.`;
+  }
+  if (normalized === NORMALIZE(entry.targetText) || normalized === NORMALIZE(entry.example)) {
+    return "Você reproduziu o modelo corretamente. Agora troque uma informação e crie uma frase nova com a mesma estrutura.";
+  }
+  return `Boa criação. Sua frase reutiliza “${entry.paretoWord}”. Ouça-a, revise uma palavra se desejar e crie mais uma variação.`;
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getStudyBaseTeacherReply, searchStudyBase } from "../client/src/lib/studyBase";
+import { getSentenceStarter, getStudyBaseTeacherReply, reviewStudySentence, searchStudyBase } from "../client/src/lib/studyBase";
 
 describe("Base de Estudos A1", () => {
   it("encontra conhecimento por termo em português e inglês", () => {
@@ -18,5 +18,13 @@ describe("Base de Estudos A1", () => {
     const reply = getStudyBaseTeacherReply(entry, "you are stupid");
     expect(reply).toContain("prática respeitosa");
     expect(reply.toLowerCase()).not.toContain("stupid");
+  });
+
+  it("orienta criação de frases novas a partir da palavra Pareto", () => {
+    const entry = searchStudyBase("where")[0]!;
+    expect(getSentenceStarter(entry)).toBe("Where is the ___?");
+    expect(reviewStudySentence(entry, "Where is the pool?")).toContain("modelo corretamente");
+    expect(reviewStudySentence(entry, "Where is the hotel?")).toContain("Boa criação");
+    expect(reviewStudySentence(entry, "I like the hotel")).toContain("inclua a palavra Pareto");
   });
 });
