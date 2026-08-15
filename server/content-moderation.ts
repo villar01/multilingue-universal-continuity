@@ -73,6 +73,10 @@ export function canUseEducationalAI(input: {
   return input.hasSafetyProfile && (input.ageGroup === "adulto" || input.hasFormalParentalConsent);
 }
 
+export function createRestrictiveSafetyContext(userId: number): UserContext {
+  return { userId, ageGroup: "infantil", moderationLevel: "strict" };
+}
+
 export async function getUserSafetyContext(userId: number): Promise<{
   context: UserContext;
   hasSafetyProfile: boolean;
@@ -80,12 +84,12 @@ export async function getUserSafetyContext(userId: number): Promise<{
 }> {
   const db = await getDb();
   if (!db) {
-    return { context: { userId, ageGroup: "adulto" }, hasSafetyProfile: false, hasParentalConsent: false };
+    return { context: createRestrictiveSafetyContext(userId), hasSafetyProfile: false, hasParentalConsent: false };
   }
   const [profile] = await db.select().from(userSafetyProfile)
     .where(eq(userSafetyProfile.userId, userId)).limit(1);
   if (!profile) {
-    return { context: { userId, ageGroup: "adulto" }, hasSafetyProfile: false, hasParentalConsent: false };
+    return { context: createRestrictiveSafetyContext(userId), hasSafetyProfile: false, hasParentalConsent: false };
   }
   return {
     context: {
@@ -217,10 +221,15 @@ export async function moderateAIResponse(
   try {
     const db = await getDb();
     if (!db) {
+      const blockedForMinor = userContext.ageGroup !== "adulto";
       return {
-        isAllowed: true,
-        moderationScore: 0,
-        flaggedContent: [],
+        isAllowed: !blockedForMinor,
+        moderationScore: blockedForMinor ? 100 : 0,
+        flaggedContent: blockedForMinor ? [{
+          word: "perfil indisponível",
+          reason: "Moderação indisponível para menor sem perfil verificável",
+          severity: "critical",
+        }] : [],
       };
     }
 

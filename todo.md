@@ -1337,7 +1337,8 @@
 - [ ] Preparar o assistente para retomar após reinicialização apenas quando o cliente habilitar essa opção e mostrar status, histórico e última execução
 
 ## 🛡️ CONTEXTO ETÁRIO DO NÚCLEO DE IA
-- [ ] Remover contextos adultos fixos do núcleo de IA e bloquear geração quando o perfil menor não tiver consentimento parental confirmado
+- [x] Remover contextos adultos fixos do núcleo de IA e bloquear geração quando o perfil menor não tiver consentimento parental confirmado — conversa, exercício, história, gramática e pronúncia exigem perfil; menores dependem de todos os aceites parentais formais; rotas retornam FORBIDDEN explícito; TypeScript sem erros e 391 testes aprovados
+- [x] Tratar ausência de banco ou de perfil de segurança como contexto infantil restritivo, nunca como adulto, nas rotas de moderação — contexto seguro infantil/estrito centralizado e moderação sem banco bloqueia menores; TypeScript sem erros e 391 testes aprovados
 
 ## 🔁 RETOMADA — VALIDAÇÃO PUBLICADA ANTES DE NOVA CORREÇÃO
 - [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { canUseEducationalAI } from "./content-moderation";
+import { canUseEducationalAI, createRestrictiveSafetyContext } from "./content-moderation";
 
 const coreSource = fs.readFileSync(path.resolve(process.cwd(), "server/_core/ai.ts"), "utf8");
 const moderationSource = fs.readFileSync(path.resolve(process.cwd(), "server/content-moderation.ts"), "utf8");
@@ -13,6 +13,12 @@ describe("núcleo de IA com contexto etário confirmado", () => {
     expect(canUseEducationalAI({ hasSafetyProfile: true, ageGroup: "infantil", hasFormalParentalConsent: false })).toBe(false);
     expect(canUseEducationalAI({ hasSafetyProfile: true, ageGroup: "adolescente", hasFormalParentalConsent: true })).toBe(true);
     expect(canUseEducationalAI({ hasSafetyProfile: true, ageGroup: "adulto", hasFormalParentalConsent: false })).toBe(true);
+  });
+
+  it("trata qualquer perfil ausente como infantil estrito, nunca como adulto", () => {
+    expect(createRestrictiveSafetyContext(42)).toEqual({ userId: 42, ageGroup: "infantil", moderationLevel: "strict" });
+    expect(moderationSource).not.toContain('context: { userId, ageGroup: "adulto" }');
+    expect(moderationSource).toContain("Moderação indisponível para menor sem perfil verificável");
   });
 
   it("exige perfil conhecido e consentimento formal completo antes de gerar conteúdo para menores", () => {
