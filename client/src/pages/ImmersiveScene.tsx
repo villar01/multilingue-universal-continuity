@@ -986,11 +986,9 @@ function TeacherAvatar({
         style={{
           position: "relative",
           width: "100%",
-          animation: isSpeaking
-            ? "teacher-breathe 5s ease-in-out infinite"
-            : (scene.teacherAnimation
-              ? `${scene.teacherAnimation} 4s ease-in-out infinite, teacher-breathe 4s ease-in-out infinite`
-              : "teacher-breathe 4s ease-in-out infinite, head-sway 5s ease-in-out infinite"),
+          // A foto permanece estável até existir um motor facial guiado por áudio.
+          // Não simulamos gestos ou tremores como se fossem fala natural.
+          animation: "none",
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
             : "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",
@@ -1470,6 +1468,12 @@ export default function ImmersiveScene() {
   const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, requestKey: string, revokeOnEnd = false) => {
     const audio = new Audio();
     audio.src = source;
+    audio.preload = "auto";
+    audio.setAttribute("playsinline", "");
+    audio.muted = false;
+    audio.volume = 1;
+    audio.setAttribute("aria-hidden", "true");
+    document.body.appendChild(audio);
     audioRef.current = audio;
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
@@ -1500,6 +1504,7 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
+      audio.remove();
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
@@ -1513,6 +1518,7 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
+      audio.remove();
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
@@ -1527,7 +1533,7 @@ export default function ImmersiveScene() {
     );
     if (!result.success || !("audioBase64" in result)) return false;
     const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
-    const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
     await playTeacherAudio(url, text, language, requestKey, true);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
@@ -1551,7 +1557,7 @@ export default function ImmersiveScene() {
       const edgeAudio = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
       const bytes = Uint8Array.from(atob(edgeAudio.audioBase64), (char) => char.charCodeAt(0));
-      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
       await playTeacherAudio(url, text, lang, requestKey, true);
       return true;
     };

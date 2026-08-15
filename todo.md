@@ -201,6 +201,7 @@
 - [ ] Conectar o aplicativo ao Ollama/Qwen local para prática escrita e explicações, com detecção explícita, consentimento e fallback seguro
 - [ ] Auditar e uniformizar a dicção das cenas por idioma, voz regional e professor, eliminando fallback com sotaque ou idioma divergente
 - [ ] Catalogar e preservar as cenas com dicção natural como referência antes de corrigir as cenas divergentes
+- [ ] Registrar a cena e voz natural confirmadas pelo aluno como referência regional obrigatória para auditoria das demais cenas
 - [ ] Concluir a correção isolada de consistência de dicção antes de iniciar qualquer nova frente de desenvolvimento
 - [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
@@ -1325,6 +1326,8 @@
 - [x] Remover a combinação de tremor `teacher-talk` com `head-sway` durante a fala e manter somente respiração discreta; a animação facial natural permanece aberta
 - [x] Impedir que o botão Ouvir inglês permaneça em preparação quando a voz pública exceder o tempo de espera ou falhar, devolvendo feedback e nova tentativa — limite de 12 segundos encerra espera excessiva e devolve fallback/feedback; painel e controle validados visualmente; TypeScript sem erros e 393 testes aprovados
 - [x] Validar no domínio publicado que Ouvir inglês recebe um áudio neural carregável — `sceneDialogueVoice.speak` retornou 112.651 bytes em cerca de 1,7 segundo e o controle voltou ao estado de nova tentativa; a audição humana no dispositivo do aluno continua pendente
+- [ ] Corrigir a reprodução audível real de inglês no navegador do aluno; geração e transferência de áudio não contam como conclusão
+- [x] Remover o tremor visual residual do retrato de James — retrato estabilizado, sem onda, balanço, respiração artificial ou gesto sintético; TypeScript sem erros e 397 testes aprovados. A animação labial natural permanece aberta até existir motor facial sincronizado por áudio
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
 - [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente

@@ -16,10 +16,12 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("window.speechSynthesis.speak(utterance);");
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
     expect(source).toContain('"Ouvir inglês"');
+    expect(source).toContain('type: "audio/mpeg"');
+    expect(source).toContain("document.body.appendChild(audio)");
   });
 
-  it("não usa mais o tremor combinado durante a fala", () => {
-    expect(source).toContain('? "teacher-breathe 5s ease-in-out infinite"');
-    expect(source).not.toContain('? "teacher-talk 1.2s ease-in-out infinite, head-sway 3s ease-in-out infinite"');
+  it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
+    expect(source).toContain('animation: "none"');
+    expect(source).not.toContain("scene.teacherAnimation\n              ?");
   });
 });

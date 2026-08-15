@@ -47,3 +47,7 @@ A validação final da implementação terminou com **TypeScript sem erros, 173 
 O diálogo continuou abrindo com **Ouvir inglês** disponível após a inclusão do limite de espera de 12 segundos para a síntese pública. A tela não apresentou erro de inicialização e o controle permaneceu pronto para nova tentativa; a confirmação de som audível no dispositivo do usuário continua pendente.
 
 No domínio publicado, o clique em **Ouvir inglês** acionou `sceneDialogueVoice.speak` e recebeu uma resposta de áudio de **112.651 bytes** em aproximadamente **1,7 segundo**; o botão retornou a **Ouvir inglês** depois da reprodução curta. Isso confirma solicitação e carga de áudio, mas não substitui confirmar que o som está audível no dispositivo do aluno.
+
+Na prévia posterior, o retrato de James permaneceu sem a oscilação automática de cena. O botão de inglês ainda concluiu a tentativa rapidamente, removendo o elemento de áudio ao terminar ou falhar; será observada a sequência `play`/`playing`/`error` diretamente antes de classificar a reprodução como audível.
+
+Com o elemento `audio` conectado ao documento e MIME `audio/mpeg`, a prévia registrou `loadedmetadata`, `canplay`, `playing`, `play-resolved`, progresso contínuo de `0` a `7,032` segundos e `ended`, sem erro. Isso comprova reprodução técnica efetiva no navegador de validação, mas não substitui a confirmação humana de volume e saída de som no navegador do aluno.
