@@ -50,6 +50,12 @@ export default function StudyBase() {
   const [teacherReply, setTeacherReply] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
+  const returnTo = useMemo(() => {
+    const destination = typeof window === "undefined"
+      ? null
+      : new URLSearchParams(window.location.search).get("returnTo");
+    return destination?.startsWith("/") ? destination : "/dashboard";
+  }, []);
 
   const entries = useMemo(() => searchStudyBase(query, kind, level), [kind, level, query]);
   const activeEntry = selectedEntry && entries.some((entry) => entry.id === selectedEntry.id)
@@ -94,10 +100,10 @@ export default function StudyBase() {
     <main className="min-h-screen bg-slate-950 text-white">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/95 backdrop-blur">
         <div className="container flex items-center justify-between gap-4 py-4">
-          <Link href="/dashboard">
+          <Link href={returnTo}>
             <Button variant="ghost" className="gap-2 text-slate-200 hover:bg-white/10 hover:text-white">
               <ArrowLeft className="h-4 w-4" />
-              Voltar ao painel
+              {returnTo === "/immersive-scene" ? "Voltar à cena" : "Voltar ao painel"}
             </Button>
           </Link>
           <div className="flex items-center gap-2 text-sm text-cyan-200">

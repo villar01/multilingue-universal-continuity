@@ -1372,6 +1372,16 @@
 - [x] Adicionar fechamento explícito e acessível ao painel Pareto para que ele nunca bloqueie o acesso ao diálogo ou à cena — botão textual Fechar, rótulo acessível, encerramento de áudio/prática e validação visual na Praia Tropical; TypeScript sem erros e 383 testes aprovados
 - [ ] Corrigir bloqueios publicados: primeira fala Hello! My name is James… sem áudio e pergunta escrita sem retorno visível ou falado do professor
 - [ ] Corrigir perguntas livres com gramática inicial incorreta — por exemplo, “where are this beach?” deve receber correção “Where is this beach?” e resposta contextual da cena, nunca retorno genérico
+- [ ] Corrigir pergunta geográfica e fala do professor na Praia Tropical — “Where is the beach?” deve informar a localização geográfica cadastrada ou declarar imagem genérica sem país real; a primeira fala e a resposta após Perguntar devem tocar em voz natural
+- [ ] Substituir respostas por padrões isolados por tutor conversacional livre na Cena Imersiva — professor deve responder, corrigir e continuar a prática sobre qualquer assunto pedagógico permitido da lição, com texto bilíngue e voz natural
+- [ ] Recuperar resposta imediata da conversa da Cena Imersiva sem regressão — unificar o caminho do professor e impedir que novas correções estáticas deixem respostas mais lentas, genéricas ou silenciosas
+- [ ] Permitir que o tutor da cena amplie a lição além da imagem — responder dúvidas permitidas sobre país, cultura, gramática, vocabulário relacionado e formação de frases, preservando objetivo pedagógico e segurança
+- [ ] Criar modo opcional Palavras Pareto no diálogo — iniciante pode ficar no ABC do idioma com palavra, tradução, pronúncia figurativa, áudio, escrita e revisão antes de avançar para frases e conversa
+- [ ] Organizar múltiplos processos adaptativos de estudo — palavra, imagem, áudio, escrita, montagem, transformação e criação de frases novas reutilizando o mesmo vocabulário Pareto em situações diferentes
+- [ ] Construir cartilha original com cobertura pedagógica equivalente ou superior à referência enviada, sem reprodução de texto, imagens, exercícios ou ordenação distintiva protegida
+- [ ] Tornar Consulta Rápida e Total um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita
+- [ ] Tornar Consulta Rápida um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita
+- [x] Implementar o piloto de Consulta Rápida e Total na Cena Imersiva — diálogo oferece acesso direto à Base de Estudos, retorno validado à cena, consulta livre ao professor com contexto, proteção, voz do idioma-alvo, tradução, histórico curto e entrada opcional por palavras Pareto; TypeScript sem erros, 7 regressões dedicadas e validação visual aprovados. Cobertura global de todas as telas permanece aberta
 
 ## 📘 CARTILHA CURRICULAR ORIGINAL — REFERÊNCIA PEDAGÓGICA
 - [ ] Mapear o PDF enviado apenas para objetivos, cobertura, progressão e tipos de atividade, sem reproduzir texto, exemplos distintivos, exercícios, figuras ou ordenação protegida

@@ -41,6 +41,7 @@ import { updatesRouter } from './updates-router';
 import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
+import { immersiveSceneTutorRouter } from './immersive-scene-tutor-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
@@ -122,6 +123,7 @@ export const appRouter = router({
   controlCenter: controlCenterRouter,
   liveTeacher: liveTeacherRouter,
   parentalControl: parentalControlRouter,
+  immersiveSceneTutor: immersiveSceneTutorRouter,
   offlineAI: router({
     generate: protectedProcedure
       .input(z.object({
