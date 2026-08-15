@@ -1,4 +1,4 @@
-import { pipeline } from '@xenova/transformers';
+import { pipeline } from '@huggingface/transformers';
 import { createAudioRecorder, requestMicrophoneStream } from './microphoneAccess';
 
 let transcriber: any = null;
