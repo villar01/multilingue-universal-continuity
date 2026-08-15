@@ -162,6 +162,16 @@ export default function ParetoPanel({
     setPracticeWord(next);
   }, [completedSceneWords, practiceWord?.id, sceneWords]);
 
+  const closePanel = useCallback(() => {
+    if (practiceAudioRef.current) {
+      practiceAudioRef.current.pause();
+      practiceAudioRef.current.currentTime = 0;
+      practiceAudioRef.current = null;
+    }
+    setPracticeWord(null);
+    onClose();
+  }, [onClose]);
+
   const handleSearch = (v: string) => {
     setSearch(v);
     setPage(0);
@@ -219,8 +229,15 @@ export default function ParetoPanel({
                 🎬 Cena atual
               </button>
             )}
-            <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <button
+              type="button"
+              onClick={closePanel}
+              aria-label="Fechar vocabulário Pareto"
+              title="Fechar vocabulário Pareto"
+              className="inline-flex items-center gap-1 rounded-md border border-gray-600 px-2 py-1 text-xs font-semibold text-gray-200 transition-colors hover:border-teal-300 hover:text-white"
+            >
               <X className="w-5 h-5" />
+              <span>Fechar</span>
             </button>
           </div>
         </div>

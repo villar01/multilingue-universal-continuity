@@ -29,3 +29,7 @@ No domínio publicado, o painel Pareto continua disponível com **1.130 palavras
 ## Revalidação publicada do diálogo — 2026-08-15
 
 Com o painel Pareto fechado, o botão **Iniciar Diálogo** abriu o painel identificado como **Diálogo da cena** acima dos controles inferiores. A primeira fala de James mostrou texto-alvo em inglês, apoio em PT-BR, aviso honesto de que a voz neural e resposta por microfone exigem sessão e o controle **Continuar**. A presença de voz autenticada e de animação facial natural não foi inferida nesta verificação visual sem sessão.
+
+## Fechamento acessível do Pareto — prévia 2026-08-15
+
+O painel Pareto passou a apresentar um botão textual **Fechar**, com rótulo acessível e dica explícita **Fechar vocabulário Pareto**, ao lado do filtro da cena. Na prévia, o clique fechou integralmente a sobreposição e devolveu o foco à cena, com **Iniciar Diálogo** novamente disponível. O botão encerra qualquer prática e áudio da palavra antes de devolver o foco à cena. A suíte completa terminou com **170 arquivos e 383 testes aprovados**, sem erros de TypeScript.

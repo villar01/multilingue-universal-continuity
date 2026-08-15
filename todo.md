@@ -1335,3 +1335,4 @@
 
 ## 🔁 RETOMADA — VALIDAÇÃO PUBLICADA ANTES DE NOVA CORREÇÃO
 - [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas
+- [x] Adicionar fechamento explícito e acessível ao painel Pareto para que ele nunca bloqueie o acesso ao diálogo ou à cena — botão textual Fechar, rótulo acessível, encerramento de áudio/prática e validação visual na Praia Tropical; TypeScript sem erros e 383 testes aprovados
