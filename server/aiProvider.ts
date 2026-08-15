@@ -21,6 +21,8 @@ export interface AIGenerateOptions {
   preferredProvider?: LocalAIProvider;
   useCache?: boolean;
   userId?: number;
+  /** When false, reject after local providers fail instead of spending on the integrated model. */
+  allowRemoteFallback?: boolean;
 }
 
 export interface AIGenerateResult {
@@ -385,6 +387,10 @@ export async function generateAI(options: AIGenerateOptions): Promise<AIGenerate
       console.error(`[AI] ${provider} failed:`, error);
       lastError = error instanceof Error ? error : new Error(String(error));
     }
+  }
+
+  if (options.allowRemoteFallback === false) {
+    throw new Error(`Local AI providers unavailable. Last error: ${lastError?.message || "No local provider available"}`);
   }
 
   // Local providers are unavailable: preserve application continuity through the

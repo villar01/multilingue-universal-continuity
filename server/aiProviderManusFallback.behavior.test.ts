@@ -44,4 +44,14 @@ describe("generateAI integrated fallback", () => {
       cacheHit: false,
     });
   });
+
+  it("does not call the integrated model when remote fallback is explicitly disabled", async () => {
+    await expect(generateAI({
+      messages: [{ role: "user", content: "Diagnostique telemetria local." }],
+      useCache: false,
+      allowRemoteFallback: false,
+    })).rejects.toThrow("Local AI providers unavailable");
+
+    expect(mocks.invokeIntegrated).not.toHaveBeenCalled();
+  });
 });

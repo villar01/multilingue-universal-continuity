@@ -8,7 +8,7 @@
  */
 
 import { getDb } from "../db";
-import { invokeLLM } from "../_core/llm";
+import { generateAI } from "../aiProvider";
 import { notifyOwner } from "../_core/notification";
 
 interface TelemetryRow {
@@ -56,7 +56,7 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
       .reduce((sum: number, r: TelemetryRow) => sum + Number(r.count), 0);
 
     // 3. Análise com LLM
-    const llmResponse = await invokeLLM({
+    const localDiagnosis = await generateAI({
       messages: [
         {
           role: "system",
@@ -78,41 +78,14 @@ IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permiss�
           content: `Telemetria das últimas 24h (${telemetryRows.length} tipos de evento, ${totalErrors} erros totais):\n\n${telemetrySummary}`
         }
       ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "ai_diagnosis",
-          strict: true,
-          schema: {
-            type: "object",
-            properties: {
-              topIssue: { type: "string" },
-              diagnosis: { type: "string" },
-              recommendations: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    action: { type: "string" },
-                    priority: { type: "string" },
-                    isSecurity: { type: "boolean" },
-                    estimatedImpact: { type: "string" }
-                  },
-                  required: ["action", "priority", "isSecurity", "estimatedImpact"],
-                  additionalProperties: false
-                }
-              },
-              autoFixable: { type: "array", items: { type: "string" } },
-              securityAlerts: { type: "array", items: { type: "string" } }
-            },
-            required: ["topIssue", "diagnosis", "recommendations", "autoFixable", "securityAlerts"],
-            additionalProperties: false
-          }
-        }
-      }
+      temperature: 0.1,
+      max_tokens: 1400,
+      preferredProvider: "ollama",
+      useCache: false,
+      allowRemoteFallback: false,
     });
 
-    const content = llmResponse?.choices?.[0]?.message?.content;
+    const content = localDiagnosis.content;
     if (!content) throw new Error("LLM não retornou conteúdo");
 
     const diagnosis = typeof content === "string" ? JSON.parse(content) : content;

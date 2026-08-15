@@ -157,6 +157,7 @@
 - [x] Ollama instalado e modelos Qwen2.5:3b e 1.5b disponíveis no sandbox
 - [x] Teste real de geração offline com Qwen2.5:1.5b concluido com sucesso (resposta: "Hello! How can I assist you today?")
 - [x] Fechar a rota pública do diagnóstico contínuo e aceitar execução somente por tarefa agendada autenticada — `/api/scheduled/ai-self-improve` exige identidade cron e `taskUid` antes de carregar o módulo; chamada pública recebe `403 cron-only`; TypeScript sem erros e 175 arquivos/394 testes aprovados
+- [x] Fazer o diagnóstico contínuo usar Qwen/Ollama local sem recorrer automaticamente ao provedor remoto quando o notebook ou servidor local estiver indisponível — `generateAI` aceita bloqueio explícito de fallback remoto e `runAISelfImprove` exige Ollama local; indisponibilidade retorna diagnóstico não executado, sem consumo remoto automático; TypeScript sem erros e 176 arquivos/396 testes aprovados
 
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
