@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveVoice } from "./edge-tts";
 
 const sceneSource = fs.readFileSync(path.resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
 const edgeSource = fs.readFileSync(path.resolve(process.cwd(), "server/edge-tts.ts"), "utf8");
@@ -20,5 +21,17 @@ describe("contrato regional de voz das cenas imersivas", () => {
     expect(voicedEntries).toHaveLength(teacherEntries.length);
     expect(edgeSource).toContain("resolveVoice(voiceLang, gender)");
     expect(edgeSource).toContain("Nenhuma voz neural compatível está disponível");
+  });
+
+  it("resolve uma voz neural regional para cada locale e gênero declarado pelas cenas", () => {
+    const declaredVoices = Array.from(
+      sceneData.matchAll(/teacherName:"[^"]+", teacherLang:"([^"]+)", langCode:"[^"]+", teacherGender:"(male|female)"/g),
+      ([, language, gender]) => ({ language, gender: gender as "male" | "female" }),
+    );
+
+    expect(declaredVoices).not.toHaveLength(0);
+    for (const { language, gender } of declaredVoices) {
+      expect(resolveVoice(language, gender)).toBeTruthy();
+    }
   });
 });

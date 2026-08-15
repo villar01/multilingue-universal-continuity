@@ -201,7 +201,7 @@
 - [ ] Conectar o aplicativo ao Ollama/Qwen local para prática escrita e explicações, com detecção explícita, consentimento e fallback seguro
 - [ ] Auditar e uniformizar a dicção das cenas por idioma, voz regional e professor, eliminando fallback com sotaque ou idioma divergente
 - [ ] Catalogar e preservar as cenas com dicção natural como referência antes de corrigir as cenas divergentes
-- [x] Registrar a cena e voz natural confirmadas pelo aluno como referência regional obrigatória para auditoria das demais cenas — Praia Tropical, James, inglês en-US masculino, fala neural natural; todas as 27 cenas agora declaram locale e gênero explícitos, com contrato contra fallback de voz incompatível; TypeScript sem erros e 178 arquivos/399 testes aprovados
+- [x] Registrar a cena e voz natural confirmadas pelo aluno como referência regional obrigatória para auditoria das demais cenas — Praia Tropical, James, inglês en-US masculino, fala neural natural; todas as 27 cenas declaram locale e gênero explícitos e cada combinação resolve uma voz neural regional real; TypeScript sem erros e 178 arquivos/400 testes aprovados
 - [ ] Concluir a correção isolada de consistência de dicção antes de iniciar qualquer nova frente de desenvolvimento
 - [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
