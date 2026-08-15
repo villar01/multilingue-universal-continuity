@@ -1767,6 +1767,7 @@ export default function ImmersiveScene() {
     nativeHelpAudioRef.current?.pause();
     nativeHelpAudioRef.current = null;
     const nativeSpeech = getNativeHelpSpeechRequest(helpText, nativeLang);
+    const helpGender = selectedScene?.teacherGender === "male" ? "MALE" : "FEMALE";
     const playHelpAudio = async (source: string, revokeOnEnd = false) => {
       const audio = new Audio(source);
       nativeHelpAudioRef.current = audio;
@@ -1779,7 +1780,7 @@ export default function ImmersiveScene() {
       await audio.play();
     };
     try {
-      const neural = await googleTtsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), languageCode: nativeSpeech.language, gender: "FEMALE" });
+      const neural = await googleTtsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), languageCode: nativeSpeech.language, gender: helpGender });
       if (neural.audioUrl) {
         await playHelpAudio(neural.audioUrl);
         return;
