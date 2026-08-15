@@ -2,6 +2,7 @@ import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CEFRLevel } from "@/lib/lesson-levels";
+import { getLanguageBlocks, reviewLanguageBlock, type LanguageBlock } from "@/lib/languageBlocks";
 import {
   filterStudyEntriesByUnit,
   getStudyBaseTeacherReply,
@@ -64,6 +65,9 @@ export default function StudyBase() {
   const [sentenceFeedback, setSentenceFeedback] = useState("");
   const [transformationDraft, setTransformationDraft] = useState("");
   const [transformationFeedback, setTransformationFeedback] = useState("");
+  const [selectedBlock, setSelectedBlock] = useState<LanguageBlock | null>(null);
+  const [blockDraft, setBlockDraft] = useState("");
+  const [blockFeedback, setBlockFeedback] = useState("");
   const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -76,6 +80,7 @@ export default function StudyBase() {
   }, []);
 
   const units = useMemo(() => getStudyUnits(level), [level]);
+  const languageBlocks = useMemo(() => getLanguageBlocks(level), [level]);
   const entries = useMemo(
     () => filterStudyEntriesByUnit(searchStudyBase(query, kind, level), unit),
     [kind, level, query, unit],
@@ -137,6 +142,17 @@ export default function StudyBase() {
     if (!activeEntry) return;
     setTransformationFeedback(reviewStudyTransformation(activeEntry, transformationDraft));
   }, [activeEntry, transformationDraft]);
+
+  const selectBlock = useCallback((block: LanguageBlock) => {
+    setSelectedBlock(block);
+    setBlockDraft("");
+    setBlockFeedback("");
+  }, []);
+
+  const reviewBlock = useCallback(() => {
+    if (!selectedBlock) return;
+    setBlockFeedback(reviewLanguageBlock(selectedBlock, blockDraft));
+  }, [blockDraft, selectedBlock]);
 
   const openEntry = (entry: StudyEntry) => {
     setSelectedEntry(entry);
@@ -263,6 +279,25 @@ export default function StudyBase() {
               </div>
             </div>
 
+            {languageBlocks.length > 0 && (
+              <div className="mt-5 rounded-2xl border border-violet-300/20 bg-violet-300/5 p-3">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-violet-100">Blocos úteis do nível {level}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-300">Aprenda expressões completas apenas quando forem adequadas ao seu nível.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {languageBlocks.map((block) => (
+                    <button
+                      key={block.id}
+                      type="button"
+                      onClick={() => selectBlock(block)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${selectedBlock?.id === block.id ? "border-violet-300 bg-violet-300 text-slate-950" : "border-violet-300/30 bg-slate-950/50 text-violet-100 hover:bg-violet-300/15"}`}
+                    >
+                      {block.english}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="mt-6 space-y-3" aria-live="polite">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{entries.length} resultado{entries.length === 1 ? "" : "s"}</p>
               {entries.map((entry) => (
@@ -296,6 +331,26 @@ export default function StudyBase() {
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-xl sm:p-7">
+            {selectedBlock && (
+              <section className="mb-6 rounded-2xl border border-violet-300/30 bg-violet-300/10 p-5" aria-labelledby="language-block-heading">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-violet-100">Bloco de linguagem · {selectedBlock.cefr}</p>
+                <h2 id="language-block-heading" className="mt-2 text-2xl font-black text-white">{selectedBlock.english}</h2>
+                <p className="mt-2 font-semibold text-violet-100">{selectedBlock.portuguese}</p>
+                <p className="mt-2 text-sm text-amber-100">Pronúncia figurativa: {selectedBlock.figurativePronunciation}</p>
+                <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/55 p-3">
+                  <p className="font-semibold text-white">{selectedBlock.example}</p>
+                  <p className="mt-1 text-sm text-slate-300">{selectedBlock.examplePortuguese}</p>
+                </div>
+                {selectedBlock.safetyNote && <p className="mt-3 text-xs leading-5 text-amber-100">Uso responsável: {selectedBlock.safetyNote}</p>}
+                <Button type="button" onClick={() => playTargetVoice(selectedBlock.example)} disabled={speakMutation.isPending} className="mt-4 gap-2 bg-violet-300 font-bold text-slate-950 hover:bg-violet-200"><Headphones className="h-4 w-4" />Ouvir expressão</Button>
+                <p className="mt-4 text-sm font-semibold text-slate-100">Escrita para fixar: {selectedBlock.writingPrompt}</p>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                  <Input value={blockDraft} onChange={(event) => setBlockDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") reviewBlock(); }} placeholder={`Crie uma frase com ${selectedBlock.english}`} className="border-white/15 bg-slate-950 text-white placeholder:text-slate-500" />
+                  <Button type="button" onClick={reviewBlock} className="bg-violet-300 font-bold text-slate-950 hover:bg-violet-200">Revisar bloco</Button>
+                </div>
+                {blockFeedback && <p role="status" className="mt-3 rounded-lg border border-violet-300/25 bg-violet-300/10 px-3 py-2 text-sm text-violet-50">{blockFeedback}</p>}
+              </section>
+            )}
             {activeEntry ? (
               <article>
                 <div className="flex flex-wrap items-center justify-between gap-3">

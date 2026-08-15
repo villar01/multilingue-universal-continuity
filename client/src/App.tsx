@@ -80,6 +80,7 @@ const Pareto1000 = lazy(() => import("./pages/Pareto1000"));
 import LocalAINotification from "./components/LocalAINotification";
 import ConnectivityIndicator from "./components/ConnectivityIndicator";
 import { QuickStudyAccess } from "./components/QuickStudyAccess";
+import { LearningAccessGate } from "./components/LearningAccessGate";
 
 // Loading fallback component
 const PageLoader = () => (
@@ -189,7 +190,9 @@ function App() {
           <OfflineStatusBar />
           <UpdatesNotificationBanner />
           <Suspense fallback={<PageLoader />}>
-            <Router />
+            <LearningAccessGate>
+              <Router />
+            </LearningAccessGate>
           </Suspense>
           <QuickStudyAccess />
           <LocalAINotification />
