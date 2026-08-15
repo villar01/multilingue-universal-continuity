@@ -42,6 +42,8 @@ import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { immersiveSceneTutorRouter } from './immersive-scene-tutor-router';
+import { filterLessonsForEntitlement, getAuthorizedTrialLessonIds, getLearningContentEntitlement, trialAccessRouter } from './trial-access-router';
+import { curriculumRouter } from './curriculum-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
@@ -99,6 +101,7 @@ export const appRouter = router({
   translate: translateRouter,
   musetalk: musetalKRouter,
   voice: voiceRouter,
+  curriculum: curriculumRouter,
   sceneDialogueVoice: router({
     speak: publicProcedure
       .input(z.object({
@@ -123,6 +126,7 @@ export const appRouter = router({
   controlCenter: controlCenterRouter,
   liveTeacher: liveTeacherRouter,
   parentalControl: parentalControlRouter,
+  trialAccess: trialAccessRouter,
   immersiveSceneTutor: immersiveSceneTutorRouter,
   offlineAI: router({
     generate: protectedProcedure
@@ -1480,7 +1484,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // Lições
   lessons: router({
     // Buscar lições de um curso
-    getByCourse: publicProcedure
+    getByCourse: protectedProcedure
       .input(
         z.object({
           courseId: z.number(),
@@ -1488,65 +1492,58 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           offset: z.number().optional().default(0),
         })
       )
-      .query(async ({ input }) => {
-        const { cache } = await import("./_core/cache");
-        const cacheKey = `lessons:course:${input.courseId}`;
-        const cached = cache.get(cacheKey);
-        if (cached) return cached;
-        
+      .query(async ({ ctx, input }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
         const allLessons = await db.getLessonsByCourse(input.courseId);
+        const authorizedLessons = filterLessonsForEntitlement(allLessons, authorizedIds);
         
         // Apply pagination
         const offset = input.offset || 0;
         const limit = input.limit || 20;
-        const paginatedLessons = allLessons.slice(offset, offset + limit);
+        const paginatedLessons = authorizedLessons.slice(offset, offset + limit);
         
         const result = {
           lessons: paginatedLessons,
-          total: allLessons.length,
-          hasMore: offset + limit < allLessons.length,
+          total: authorizedLessons.length,
+          hasMore: offset + limit < authorizedLessons.length,
         };
         
-        cache.set(cacheKey, result, 3 * 60 * 1000); // 3 min cache
         return result;
       }),
     
     // Listar todas as lições (simplificado)
-    list: publicProcedure
-      .query(async () => {
-        // Usar cache inteligente
-        const { cached } = await import('./cache');
-        
-        return await cached('lessons:all', async () => {
-          console.log('[Cache MISS] Buscando todas as lições do banco');
-          const lessons = await db.getAllLessons();
-          console.log(`[DB] ${lessons?.length || 0} lições retornadas`);
-          return lessons || [];
-        });
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
+        const lessons = await db.getAllLessons();
+        return filterLessonsForEntitlement(lessons || [], authorizedIds);
       }),
 
     // Buscar lições por nível de curso
-    listByLevel: publicProcedure
+    listByLevel: protectedProcedure
       .input(z.object({
         courseLevel: z.enum(['basico', 'intermediario', 'avancado', 'negocios_tecnologia']),
       }))
-      .query(async ({ input }) => {
-        const { cached } = await import('./cache');
-        return await cached(`lessons:level:${input.courseLevel}`, async () => {
-          const lessons = await db.getLessonsByCourseLevel(input.courseLevel);
-          return lessons || [];
-        });
+      .query(async ({ ctx, input }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
+        const lessons = await db.getLessonsByCourseLevel(input.courseLevel);
+        return filterLessonsForEntitlement(lessons || [], authorizedIds);
       }),
     
     // Buscar lições por idioma
-    getByLanguage: publicProcedure
+    getByLanguage: protectedProcedure
       .input(
         z.object({
           languageId: z.number(),
           limit: z.number().optional().default(50),
         })
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
         console.log('=== lessons.getByLanguage CHAMADO ===');
         console.log('input.languageId:', input.languageId);
         console.log('input.limit:', input.limit);
@@ -1581,17 +1578,22 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         console.log('lessons encontradas:', lessons?.length);
         console.log('primeiras 3 lições:', lessons?.slice(0, 3));
         
-        return lessons || [];
+        return filterLessonsForEntitlement(lessons || [], authorizedIds);
       }),
     
     // Buscar lição por ID com áudio
-    getById: publicProcedure
+    getById: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
         })
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
+        if (authorizedIds !== null && !authorizedIds.includes(input.lessonId)) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Inicie esta lição pelo fluxo autorizado do período gratuito." });
+        }
         const lesson = await db.getLessonById(input.lessonId);
         
         if (!lesson) {
@@ -1621,13 +1623,18 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
     
     // Buscar exercícios de uma lição (auto-gera via IA se não existirem)
-    getExercises: publicProcedure
+    getExercises: protectedProcedure
       .input(
         z.object({
           lessonId: z.number(),
         })
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const entitlement = await getLearningContentEntitlement(ctx.user.id);
+        const authorizedIds = await getAuthorizedTrialLessonIds(ctx.user.id, entitlement);
+        if (authorizedIds !== null && !authorizedIds.includes(input.lessonId)) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Os exercícios só podem ser acessados dentro de uma lição autorizada." });
+        }
         const existing = await db.getExercisesByLesson(input.lessonId);
         if (existing && existing.length > 0) return existing;
 

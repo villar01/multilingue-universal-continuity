@@ -22,3 +22,9 @@ export function requiresLearningEnrollment(pathname: string): boolean {
 export function hasLearningAccess(input: { isAuthenticated: boolean; acceptedProtectionTerms: boolean }): boolean {
   return input.isAuthenticated && input.acceptedProtectionTerms;
 }
+
+export function createTrialLessonKey(pathname: string): string {
+  const normalizedPath = pathname.split("?")[0].replace(/\/+$/, "") || "/";
+  const lessonMatch = normalizedPath.match(/^\/lesson\/(\d+)$/);
+  return lessonMatch ? `lesson:${lessonMatch[1]}` : normalizedPath;
+}

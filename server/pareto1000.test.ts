@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getParetoProgramWords, PARETO_PROGRAM_WORD_COUNT, TOTAL_PARETO_WORDS } from "../client/src/lib/vocab-pareto";
+import { getParetoProgramWords, PARETO_PROGRAM_WORD_COUNT, TOTAL_PARETO_WORDS } from "./curriculum/paretoContent";
 
 describe("Programa Pareto de mil palavras", () => {
   it("expõe termos ingleses únicos sem misturar progresso de entradas legadas repetidas", () => {

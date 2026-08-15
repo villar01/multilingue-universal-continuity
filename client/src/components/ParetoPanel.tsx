@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { X, BookOpen, Volume2, Search, Star, ChevronLeft, ChevronRight, BookMarked } from "lucide-react";
-import { PARETO_VOCAB, searchWords, getWordsByScene, type ParetoWord } from "@/lib/vocab-pareto";
+import type { ParetoWord } from "@/lib/curriculum-types";
 import { HOTSPOT_TRANSLATIONS } from "@/lib/hotspot-translations";
 import { trpc } from "@/lib/trpc";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
@@ -103,6 +103,9 @@ export default function ParetoPanel({
   const [sceneFilter, setSceneFilter] = useState(false); // default: show ALL words, not just scene words
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
   const [completedSceneWords, setCompletedSceneWords] = useState<Set<string>>(() => new Set());
+  const lessonKey = typeof window === "undefined" ? "/immersive-scene" : window.location.pathname;
+  const paretoQuery = trpc.curriculum.pareto.useQuery({ lessonKey });
+  const allWords = paretoQuery.data ?? [];
   const practiceTtsMut = trpc.tts.speak.useMutation();
   const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
   const [starred, setStarred] = useState<Set<string>>(() => {
@@ -122,9 +125,10 @@ export default function ParetoPanel({
   }, []);
 
   const filtered = useMemo(() => {
-    let words = search.trim()
-      ? searchWords(search)
-      : PARETO_VOCAB;
+    const normalizedSearch = search.trim().toLocaleLowerCase("pt-BR");
+    let words = normalizedSearch
+      ? allWords.filter((word) => [word.ptBR, word.enUS, word.enGB, word.example, word.examplePt].filter(Boolean).some((value) => value!.toLocaleLowerCase("pt-BR").includes(normalizedSearch)))
+      : allWords;
 
     if (category !== "all") {
       words = words.filter((w: ParetoWord) => w.category === category);
@@ -133,13 +137,13 @@ export default function ParetoPanel({
       words = words.filter((w: ParetoWord) => w.scene === currentScene);
     }
     return words.sort((a: ParetoWord, b: ParetoWord) => b.frequency - a.frequency);
-  }, [search, category, sceneFilter, currentScene]);
+  }, [allWords, search, category, sceneFilter, currentScene]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const pageWords = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const sceneWords = useMemo(
-    () => currentScene ? PARETO_VOCAB.filter((word) => word.scene === currentScene).sort((a, b) => b.frequency - a.frequency) : [],
-    [currentScene],
+    () => currentScene ? allWords.filter((word) => word.scene === currentScene).sort((a, b) => b.frequency - a.frequency) : [],
+    [allWords, currentScene],
   );
   const nextSceneWord = useMemo(
     () => sceneWords.find((word) => !completedSceneWords.has(word.id)) ?? null,
@@ -213,7 +217,7 @@ export default function ParetoPanel({
             <BookOpen className="w-5 h-5 text-teal-400" />
             <span className="text-white font-bold text-sm">Vocabulário Pareto</span>
             <span className="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full">
-              {filtered.length} / {PARETO_VOCAB.length} palavras
+              {filtered.length} / {allWords.length} palavras
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -295,7 +299,11 @@ export default function ParetoPanel({
 
         {/* Word list */}
         <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-          {pageWords.length === 0 ? (
+          {paretoQuery.isLoading ? (
+            <div className="text-center text-gray-400 py-8"><p className="text-sm">Carregando vocabulário protegido…</p></div>
+          ) : paretoQuery.isError ? (
+            <div className="text-center text-amber-200 py-8"><p className="text-sm">Não foi possível autorizar a entrega do vocabulário.</p></div>
+          ) : pageWords.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
               <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-40" />
               <p className="text-sm">Nenhuma palavra encontrada</p>

@@ -2166,6 +2166,32 @@ export const termsAcceptances = mysqlTable("terms_acceptances", {
 export type TermsAcceptance = typeof termsAcceptances.$inferSelect;
 export type InsertTermsAcceptance = typeof termsAcceptances.$inferInsert;
 
+// ── Período gratuito protegido ────────────────────────────────────────────────
+// O acesso de teste é individual por conta e registra apenas a chave da lição,
+// sem guardar conteúdo de estudo ou conversas do aluno.
+export const learningTrials = mysqlTable("learning_trials", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id").notNull().references(() => users.id).unique(),
+  lessonLimit: int("lesson_limit").notNull().default(10),
+  lessonsUsed: int("lessons_used").notNull().default(0),
+  status: mysqlEnum("status", ["active", "limit_reached", "converted", "expired"]).notNull().default("active"),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  limitReachedAt: timestamp("limit_reached_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+});
+export type LearningTrial = typeof learningTrials.$inferSelect;
+
+export const trialLessonAccesses = mysqlTable("trial_lesson_accesses", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id").notNull().references(() => users.id),
+  lessonKey: varchar("lesson_key", { length: 160 }).notNull(),
+  accessedAt: timestamp("accessed_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueTrialLesson: uniqueIndex("trial_lesson_user_key_unique").on(table.userId, table.lessonKey),
+}));
+export type TrialLessonAccess = typeof trialLessonAccesses.$inferSelect;
+
 // ── Autorização Parental (menores de 18 anos) ─────────────────────────────────
 export const parentalConsents = mysqlTable("parental_consents", {
   id: int("id").primaryKey().autoincrement(),

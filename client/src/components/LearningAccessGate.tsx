@@ -1,10 +1,11 @@
 import { LockKeyhole } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { hasLearningAccess, requiresLearningEnrollment } from "@/lib/learningAccess";
+import { createTrialLessonKey, hasLearningAccess, requiresLearningEnrollment } from "@/lib/learningAccess";
 
 export function LearningAccessGate({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -14,6 +15,25 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     enabled: isAuthenticated && isLearningRoute,
     retry: false,
   });
+  const [trialState, setTrialState] = useState<"idle" | "checking" | "allowed" | "blocked" | "error">("idle");
+  const trialAccess = trpc.trialAccess.authorizeLesson.useMutation();
+
+  const canCheckTrial = hasLearningAccess({ isAuthenticated, acceptedProtectionTerms: acceptanceQuery.data?.accepted === true });
+
+  useEffect(() => {
+    if (!isLearningRoute || !canCheckTrial) return;
+    let active = true;
+    setTrialState("checking");
+    trialAccess.mutate({ lessonKey: createTrialLessonKey(location) }, {
+      onSuccess: (result) => {
+        if (active) setTrialState(result.allowed ? "allowed" : "blocked");
+      },
+      onError: () => {
+        if (active) setTrialState("error");
+      },
+    });
+    return () => { active = false; };
+  }, [canCheckTrial, isLearningRoute, location]);
 
   if (!isLearningRoute) return <>{children}</>;
 
@@ -62,7 +82,37 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     );
   }
 
-  if (hasLearningAccess({ isAuthenticated, acceptedProtectionTerms: acceptanceQuery.data?.accepted === true })) return <>{children}</>;
+  if (canCheckTrial && trialState === "allowed") return <>{children}</>;
+
+  if (canCheckTrial && trialState === "checking") {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-300">
+        Verificando sua lição de teste protegida…
+      </main>
+    );
+  }
+
+  if (canCheckTrial && trialState === "blocked") {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 px-5 py-10">
+        <section className="w-full max-w-lg rounded-3xl border border-amber-300/30 bg-white/10 p-7 text-center shadow-2xl backdrop-blur-sm">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-300 text-slate-950"><LockKeyhole className="h-7 w-7" aria-hidden="true" /></div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Período gratuito concluído</p>
+          <h1 className="mt-2 text-2xl font-bold text-white">As 10 lições iniciais foram utilizadas</h1>
+          <p className="mt-3 text-sm leading-relaxed text-slate-200">Para proteger o conteúdo e continuar o aprendizado, novas lições ficam bloqueadas após o período de teste.</p>
+          <Button className="mt-6 w-full bg-amber-300 font-bold text-slate-950 hover:bg-amber-200" onClick={() => window.location.assign("/pricing")}>Ver opções de continuidade</Button>
+        </section>
+      </main>
+    );
+  }
+
+  if (canCheckTrial && trialState === "error") {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-300">
+        Não foi possível autorizar esta lição protegida. Tente novamente.
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 px-5 py-10">

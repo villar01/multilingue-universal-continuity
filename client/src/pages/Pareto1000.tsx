@@ -1,6 +1,6 @@
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
-import { getParetoProgramWords, TOTAL_PARETO_WORDS, type ParetoWord } from "@/lib/vocab-pareto";
+import type { ParetoWord } from "@/lib/curriculum-types";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -27,7 +27,8 @@ function saveCompletedWords(words: Set<string>) {
 }
 
 export default function Pareto1000() {
-  const words = useMemo(() => getParetoProgramWords(), []);
+  const paretoQuery = trpc.curriculum.pareto.useQuery({ lessonKey: "/pareto-1000" });
+  const words = useMemo(() => paretoQuery.data ?? [], [paretoQuery.data]);
   const [completed, setCompleted] = useState<Set<string>>(loadCompletedWords);
   const [page, setPage] = useState(0);
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
@@ -39,6 +40,14 @@ export default function Pareto1000() {
   const completedCount = words.filter((word) => completed.has(word.id)).length;
   const nextWord = words.find((word) => !completed.has(word.id)) ?? null;
   const programReadyCount = words.length;
+
+  if (paretoQuery.isLoading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
+  }
+
+  if (paretoQuery.isError) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Não foi possível autorizar a entrega do vocabulário Pareto.</main>;
+  }
 
   const speak = useCallback(async (text: string) => {
     if (!text.trim()) return;
@@ -94,7 +103,7 @@ export default function Pareto1000() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/35 bg-amber-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-amber-100"><Target className="h-4 w-4" />Programa de memorização ativo</div>
             <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">Rumo a mil palavras para lembrar, escrever e usar.</h1>
-            <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. O banco legado tem {TOTAL_PARETO_WORDS.toLocaleString("pt-BR")} entradas; {programReadyCount} termos ingleses únicos já estão liberados. O complemento original até mil termos continua em produção.</p>
+            <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. {programReadyCount.toLocaleString("pt-BR")} termos ingleses únicos foram autorizados para esta trilha. O complemento original até mil termos continua em produção.</p>
           </div>
           <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Progresso de memória</p><p className="mt-1 text-2xl font-black">{completedCount} <span className="text-base font-semibold text-slate-300">/ {programReadyCount} palavras únicas liberadas</span></p><p className="mt-1 text-xs text-slate-400">Meta do programa: 1.000 palavras únicas.</p></div><Button type="button" onClick={() => setPracticeWord(nextWord)} disabled={!nextWord} className="gap-2 bg-amber-300 font-bold text-slate-950 hover:bg-amber-200"><Sparkles className="h-4 w-4" />{nextWord ? "Continuar memorização" : "Trilha atual concluída"}</Button></div>

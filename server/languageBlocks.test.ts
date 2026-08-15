@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getLanguageBlocks, getLanguageBlocksUpTo, reviewLanguageBlock } from "../client/src/lib/languageBlocks";
+import { getLanguageBlocks, getLanguageBlocksUpTo } from "./curriculum/languageBlocksContent";
+import { reviewLanguageBlock } from "../client/src/lib/languageBlocks";
 
 describe("Blocos de linguagem por progressão", () => {
   it("mantém A1 em frases essenciais curtas", () => {

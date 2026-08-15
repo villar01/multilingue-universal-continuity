@@ -2,7 +2,7 @@ import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CEFRLevel } from "@/lib/lesson-levels";
-import { getLanguageBlocks, reviewLanguageBlock, type LanguageBlock } from "@/lib/languageBlocks";
+import { reviewLanguageBlock } from "@/lib/languageBlocks";
 import {
   filterStudyEntriesByUnit,
   getStudyBaseTeacherReply,
@@ -13,10 +13,8 @@ import {
   reviewStudySentence,
   reviewStudyTransformation,
   searchStudyBase,
-  STUDY_BASE_A1_ENTRIES,
-  type StudyEntry,
-  type StudyEntryKind,
 } from "@/lib/studyBase";
+import type { LanguageBlock, StudyEntry, StudyEntryKind } from "@/lib/curriculum-types";
 import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft,
@@ -72,6 +70,8 @@ export default function StudyBase() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
+  const studyContentQuery = trpc.curriculum.studyBase.useQuery({ lessonKey: "/base-de-estudos" });
+  const languageBlocksQuery = trpc.curriculum.languageBlocks.useQuery({ lessonKey: "/base-de-estudos", level });
   const returnTo = useMemo(() => {
     const destination = typeof window === "undefined"
       ? null
@@ -79,16 +79,18 @@ export default function StudyBase() {
     return destination?.startsWith("/") ? destination : "/dashboard";
   }, []);
 
-  const units = useMemo(() => getStudyUnits(level), [level]);
-  const languageBlocks = useMemo(() => getLanguageBlocks(level), [level]);
+  const studyEntries = studyContentQuery.data?.entries ?? [];
+  const structuredStudyUnits = studyContentQuery.data?.structuredUnits ?? [];
+  const units = useMemo(() => getStudyUnits(studyEntries, level), [level, studyEntries]);
+  const languageBlocks = languageBlocksQuery.data ?? [];
   const entries = useMemo(
-    () => filterStudyEntriesByUnit(searchStudyBase(query, kind, level), unit),
-    [kind, level, query, unit],
+    () => filterStudyEntriesByUnit(searchStudyBase(studyEntries, query, kind, level), unit),
+    [kind, level, query, studyEntries, unit],
   );
   const activeEntry = selectedEntry && entries.some((entry) => entry.id === selectedEntry.id)
     ? selectedEntry
     : entries[0] ?? null;
-  const structuredUnit = getStructuredStudyUnit(activeEntry?.unit);
+  const structuredUnit = getStructuredStudyUnit(structuredStudyUnits, activeEntry?.unit);
 
   const chooseStudyPath = useCallback((path: StudyPath) => {
     if (path === "consulta") {
@@ -165,6 +167,14 @@ export default function StudyBase() {
     setComprehensionAnswers({});
   };
 
+  if (studyContentQuery.isLoading || languageBlocksQuery.isLoading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando conteúdo curricular protegido…</main>;
+  }
+
+  if (studyContentQuery.isError || languageBlocksQuery.isError) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Não foi possível autorizar a entrega deste conteúdo protegido.</main>;
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/95 backdrop-blur">
@@ -210,7 +220,7 @@ export default function StudyBase() {
           <button type="button" onClick={() => chooseStudyPath("pareto")} className="rounded-2xl border border-amber-300/35 bg-amber-300/10 p-4 text-left transition hover:bg-amber-300/20">
             <BrainCircuit className="h-5 w-5 text-amber-100" />
             <strong className="mt-3 block text-amber-50">Pareto · 1.000 palavras</strong>
-            <span className="mt-1 block text-sm leading-5 text-slate-200">Memorizar, escrever, recuperar e revisar. Piloto atual: {STUDY_BASE_A1_ENTRIES.length} entradas.</span>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Memorizar, escrever, recuperar e revisar. Piloto atual: {studyEntries.length} entradas.</span>
           </button>
           <button type="button" onClick={() => chooseStudyPath("unidade")} className="rounded-2xl border border-cyan-300/35 bg-cyan-300/10 p-4 text-left transition hover:bg-cyan-300/20">
             <Sparkles className="h-5 w-5 text-cyan-100" />

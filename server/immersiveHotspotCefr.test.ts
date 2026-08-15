@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
-import { PARETO_VOCAB } from "../client/src/lib/vocab-pareto";
+import { PARETO_VOCAB } from "./curriculum/paretoContent";
 
 function normalize(value: string) {
   return value.toLocaleLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
