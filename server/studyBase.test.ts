@@ -13,6 +13,13 @@ describe("Base de Estudos A1", () => {
     expect(searchStudyBase("", "all", "A2")).toHaveLength(0);
   });
 
+  it("cobre unidades A1 autorais de identidade, necessidades, localização e rotina", () => {
+    expect(searchStudyBase("water").map((entry) => entry.id)).toContain("a1-order-water");
+    expect(searchStudyBase("preço").map((entry) => entry.id)).toContain("a1-ask-price");
+    expect(searchStudyBase("perto").map((entry) => entry.id)).toContain("a1-near-location");
+    expect(searchStudyBase("manhã").map((entry) => entry.id)).toContain("a1-morning-routine");
+  });
+
   it("oferece orientação contextual sem repetir conteúdo ofensivo", () => {
     const entry = searchStudyBase("mom")[0]!;
     const reply = getStudyBaseTeacherReply(entry, "you are stupid");

@@ -4,6 +4,7 @@ export type StudyEntryKind = "vocabulary" | "grammar" | "situation";
 
 export interface StudyEntry {
   id: string;
+  unit: string;
   kind: StudyEntryKind;
   cefr: CEFRLevel;
   title: string;
@@ -22,6 +23,7 @@ export interface StudyEntry {
 export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   {
     id: "a1-introduce-yourself",
+    unit: "Unidade 1 · Cumprimentos e identidade",
     kind: "situation",
     cefr: "A1",
     title: "Apresentar-se com clareza",
@@ -38,6 +40,7 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
   {
     id: "a1-ask-for-help",
+    unit: "Unidade 2 · Necessidades imediatas",
     kind: "situation",
     cefr: "A1",
     title: "Pedir ajuda em uma situação real",
@@ -54,6 +57,7 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
   {
     id: "a1-where-is",
+    unit: "Unidade 3 · Lugares e localização",
     kind: "grammar",
     cefr: "A1",
     title: "Perguntar onde algo está",
@@ -70,6 +74,7 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
   {
     id: "a1-this-is",
+    unit: "Unidade 1 · Cumprimentos e identidade",
     kind: "grammar",
     cefr: "A1",
     title: "Apontar e identificar um objeto",
@@ -86,6 +91,7 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
   {
     id: "a1-family-mom",
+    unit: "Unidade 4 · Pessoas e rotina",
     kind: "vocabulary",
     cefr: "A1",
     title: "Falar sobre família: mom",
@@ -102,6 +108,7 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
   {
     id: "a1-routine-now",
+    unit: "Unidade 2 · Necessidades imediatas",
     kind: "vocabulary",
     cefr: "A1",
     title: "Falar do momento atual: now",
@@ -115,6 +122,91 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
     paretoTranslation: "Agora",
     relatedScene: "Praia Tropical",
     searchTerms: ["agora", "now", "preciso", "need", "água", "water", "rotina"],
+  },
+  {
+    id: "a1-order-water",
+    unit: "Unidade 2 · Necessidades imediatas",
+    kind: "situation",
+    cefr: "A1",
+    title: "Pedir água com educação",
+    subtitle: "Fazer um pedido essencial em restaurante, aeroporto ou viagem",
+    targetText: "I would like water, please.",
+    nativeExplanation: "Use I would like para pedir algo com educação. Depois acrescente o item desejado e finalize com please quando quiser soar cordial.",
+    figurativePronunciation: "ai uúd láik uóter, plíiz.",
+    example: "I would like cold water, please.",
+    exampleTranslation: "Eu gostaria de água gelada, por favor.",
+    paretoWord: "Water",
+    paretoTranslation: "Água",
+    relatedScene: "Restaurante Brasileiro",
+    searchTerms: ["água", "water", "pedido", "restaurante", "please", "would like"],
+  },
+  {
+    id: "a1-ask-price",
+    unit: "Unidade 2 · Necessidades imediatas",
+    kind: "grammar",
+    cefr: "A1",
+    title: "Perguntar o preço",
+    subtitle: "Usar how much para descobrir valor de um item",
+    targetText: "How much is this ticket?",
+    nativeExplanation: "Use how much antes de is quando perguntar o preço de um item singular. This ticket pode ser trocado por qualquer objeto que esteja perto de você.",
+    figurativePronunciation: "ráu mâtch iz dís tíkit?",
+    example: "How much is this book?",
+    exampleTranslation: "Quanto custa este livro?",
+    paretoWord: "How much",
+    paretoTranslation: "Quanto custa",
+    relatedScene: "Aeroporto Internacional",
+    searchTerms: ["preço", "quanto", "how much", "ticket", "ingresso", "comprar"],
+  },
+  {
+    id: "a1-near-location",
+    unit: "Unidade 3 · Lugares e localização",
+    kind: "grammar",
+    cefr: "A1",
+    title: "Dizer que algo fica perto",
+    subtitle: "Usar near para descrever localização simples",
+    targetText: "The hotel is near the beach.",
+    nativeExplanation: "Near significa perto de. Use the antes de um lugar específico e troque hotel e beach para falar de outros lugares da cena.",
+    figurativePronunciation: "dêi rrotél iz nír dê bíitch.",
+    example: "The restaurant is near the hotel.",
+    exampleTranslation: "O restaurante fica perto do hotel.",
+    paretoWord: "Near",
+    paretoTranslation: "Perto de",
+    relatedScene: "Praia Tropical",
+    searchTerms: ["perto", "near", "hotel", "praia", "beach", "localização"],
+  },
+  {
+    id: "a1-repeat-please",
+    unit: "Unidade 1 · Cumprimentos e identidade",
+    kind: "situation",
+    cefr: "A1",
+    title: "Pedir repetição para continuar aprendendo",
+    subtitle: "Não ficar parado quando uma palavra ainda não foi entendida",
+    targetText: "Please repeat that.",
+    nativeExplanation: "Use esta frase curta quando não entender uma fala. Ela mantém a conversa ativa e permite ouvir novamente sem vergonha.",
+    figurativePronunciation: "plíiz ripít dét.",
+    example: "Please repeat that slowly.",
+    exampleTranslation: "Por favor, repita isso devagar.",
+    paretoWord: "Repeat",
+    paretoTranslation: "Repetir",
+    relatedScene: "Sala de Aula",
+    searchTerms: ["repita", "repeat", "devagar", "não entendi", "aula", "professor"],
+  },
+  {
+    id: "a1-morning-routine",
+    unit: "Unidade 4 · Pessoas e rotina",
+    kind: "vocabulary",
+    cefr: "A1",
+    title: "Falar da rotina da manhã",
+    subtitle: "Usar morning para organizar uma ação cotidiana",
+    targetText: "I study English in the morning.",
+    nativeExplanation: "Morning significa manhã. Use in the morning depois da ação para dizer quando algo acontece regularmente.",
+    figurativePronunciation: "ai stâdi ínglish in dê mórnin.",
+    example: "My mom works in the morning.",
+    exampleTranslation: "Minha mãe trabalha de manhã.",
+    paretoWord: "Morning",
+    paretoTranslation: "Manhã",
+    relatedScene: "Cozinha Moderna",
+    searchTerms: ["manhã", "morning", "rotina", "estudar", "study", "trabalho"],
   },
 ];
 
@@ -180,6 +272,11 @@ export function getSentenceStarter(entry: StudyEntry): string {
     "a1-this-is": "This is a ___.",
     "a1-family-mom": "My mom is ___.",
     "a1-routine-now": "I need ___ now.",
+    "a1-order-water": "I would like ___, please.",
+    "a1-ask-price": "How much is this ___?",
+    "a1-near-location": "The ___ is near the ___.",
+    "a1-repeat-please": "Please repeat ___.",
+    "a1-morning-routine": "I ___ in the morning.",
   };
   return starters[entry.id] || entry.targetText;
 }
