@@ -11,6 +11,13 @@ describe("tutor contextual da cena imersiva", () => {
     expect(getSceneTutorReply("what is pool?", beachObjects)?.text).toContain("piscina");
   });
 
+  it("responde imediatamente a um cumprimento e apresentação do aluno", () => {
+    const reply = getSceneTutorReply("Hello James, my name is Renato. Thank you very much.", beachObjects);
+    expect(reply?.immediate).toBe(true);
+    expect(reply?.text).toContain("Nice to meet you");
+    expect(reply?.nativeText).toContain("Prazer em conhecer");
+  });
+
   it("explica objetos visíveis pelo vocabulário da cena", () => {
     expect(getSceneTutorReply("what is ocean?", beachObjects)?.text).toContain("oceano");
   });

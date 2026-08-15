@@ -1963,8 +1963,14 @@ export default function ImmersiveScene() {
     const requestId = ++dlgTutorRequestRef.current;
     primeDialogAudioFromGesture();
     setDlgTutorLoading(true);
-    setDlgFeedback(`${scene.teacherName} está preparando uma resposta para sua consulta...`);
     const fallback = getFreeDialogQuestionReply(question, scene.hotspots);
+    const immediateReply = fallback?.immediate
+      ? fallback.text.replace(/^[^:]+:\s*/, "")
+      : `${scene.teacherName}: I heard you. I will help you practise this lesson step by step.`;
+    const immediateFeedback = `${scene.teacherName}: ${immediateReply.replace(/^[^:]+:\s*/, "")}${fallback?.immediate && fallback.nativeText ? `\n${nativeLangLabel}: ${fallback.nativeText}` : ""}`;
+    setDlgFeedback(immediateFeedback);
+    setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
+    requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher");
     try {
       const result = await immersiveSceneTutorMut.mutateAsync({
         teacherName: scene.teacherName,
@@ -1982,7 +1988,7 @@ export default function ImmersiveScene() {
       const targetReply = result.targetReply.trim() || fallback?.text.replace(/^[^:]+:\s*/, "") || "I can help you practise this lesson. What would you like to learn?";
       const feedbackPrefix = `${scene.teacherName}: ${targetReply}`;
       setDlgFeedback(feedbackPrefix);
-      setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: targetReply }].slice(-8));
+      setDlgTutorHistory((history) => [...history, { role: "assistant" as const, content: targetReply }].slice(-8));
       const relatedHotspot = fallback?.hotspotId
         ? scene.hotspots.find((hotspot) => hotspot.id === fallback.hotspotId) || null
         : null;
@@ -2863,6 +2869,11 @@ export default function ImmersiveScene() {
                       {dlgTutorLoading ? "Respondendo…" : "Perguntar"}
                     </button>
                   </div>
+                  {dlgFeedback && (
+                    <div role="status" className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
+                      {dlgFeedback}
+                    </div>
+                  )}
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">
                     <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-violet-100">Começar só pelas palavras Pareto</p>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -2882,11 +2893,6 @@ export default function ImmersiveScene() {
                       ))}
                     </div>
                   </div>
-                  {dlgFeedback && (
-                    <div role="status" className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
-                      {dlgFeedback}
-                    </div>
-                  )}
                 </div>
               )}
               {/* Multiple choice — only for user turns */}
