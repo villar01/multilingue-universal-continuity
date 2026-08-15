@@ -1341,7 +1341,9 @@
 - [ ] Medir o sinal do MP3 de cinco segundos entregue no diálogo e trocar o provedor se o conteúdo for silencioso
 - [ ] Restaurar a resposta do professor quando o aluno escreve pergunta em inglês, como “what is pool?”, no diálogo da Praia Tropical
 - [ ] Aplicar progressivamente o contrato de professor real: perguntas livres, objetos da tela, vocabulário, correção, repetição e guia CEFR em todas as atividades do aplicativo
+- [ ] Permitir conversa livre contextual entre aluno e professor, bloqueando ofensas, abuso, assédio, conteúdo impróprio à idade e instruções perigosas antes de gerar resposta
 - [x] Implementar a primeira resposta livre contextual por objeto na Praia Tropical — perguntas como “what is pool?” recebem explicação de James sobre “pool/piscina”; perguntas por itens visíveis usam nome, tradução, pronúncia e exemplo do hotspot; TypeScript sem erros e 181 arquivos/406 testes aprovados
+- [x] Tornar a conversa contextual imediatamente visível no campo Responder — James responde perguntas livres fora das alternativas, incluindo localização de casa e objetos da cena, e recusa abuso sem repetir ofensa; resposta agora aparece junto ao campo de texto; TypeScript sem erros e 181 arquivos/408 testes aprovados
 - [ ] Integrar motor facial local por GPU com sincronização de áudio real; manter retrato estável e Ricardo sem movimento labial até a validação visual natural
 - [x] Remover o tremor visual residual do retrato de James — retrato estabilizado, sem onda, balanço, respiração artificial ou gesto sintético; TypeScript sem erros e 397 testes aprovados. A animação labial natural permanece aberta até existir motor facial sincronizado por áudio
 
@@ -1368,3 +1370,11 @@
 ## 🔁 RETOMADA — VALIDAÇÃO PUBLICADA ANTES DE NOVA CORREÇÃO
 - [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas
 - [x] Adicionar fechamento explícito e acessível ao painel Pareto para que ele nunca bloqueie o acesso ao diálogo ou à cena — botão textual Fechar, rótulo acessível, encerramento de áudio/prática e validação visual na Praia Tropical; TypeScript sem erros e 383 testes aprovados
+- [ ] Corrigir bloqueios publicados: primeira fala Hello! My name is James… sem áudio e pergunta escrita sem retorno visível ou falado do professor
+
+## 📘 CARTILHA CURRICULAR ORIGINAL — REFERÊNCIA PEDAGÓGICA
+- [ ] Mapear o PDF enviado apenas para objetivos, cobertura, progressão e tipos de atividade, sem reproduzir texto, exemplos distintivos, exercícios, figuras ou ordenação protegida
+- [ ] Projetar uma matriz curricular autoral com Pareto como pilar: vocabulário útil, recuperação ativa, escrita, fala, criação de frases e revisão espaçada por CEFR
+- [ ] Definir a adaptação linguística própria por idioma, preservando arquitetura técnica comum sem reutilizar gramática, exemplos ou traduções de um par de idiomas em outro
+- [ ] Integrar a cartilha original à sequência cena → professor → diálogo → prática → revisão → gamificação, mantendo controles parentais e progressão de nível
+- [ ] Criar um atalho de Base de Estudos com busca por termo, tema, gramática, exemplo, nível CEFR e vocabulário Pareto, conectado a áudio, prática, professor virtual e gamificação

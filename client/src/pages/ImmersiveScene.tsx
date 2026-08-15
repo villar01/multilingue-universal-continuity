@@ -2787,6 +2787,11 @@ export default function ImmersiveScene() {
                         Responder
                       </button>
                     </div>
+                    {dlgFeedback && (
+                      <div role="status" className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
+                        {dlgFeedback}
+                      </div>
+                    )}
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         type="button"

@@ -14,4 +14,14 @@ describe("tutor contextual da cena imersiva", () => {
   it("explica objetos visíveis pelo vocabulário da cena", () => {
     expect(getSceneTutorReply("what is ocean?", beachObjects)?.text).toContain("oceano");
   });
+
+  it("responde perguntas livres fora das alternativas usando o contexto da cena", () => {
+    expect(getSceneTutorReply("where is my house near to the beach?", beachObjects)?.text).toContain("can’t see a house");
+  });
+
+  it("recusa linguagem abusiva sem repetir ofensa ao aluno", () => {
+    const reply = getSceneTutorReply("you are an asshole", beachObjects);
+    expect(reply?.blocked).toBe(true);
+    expect(reply?.text).toContain("respectful");
+  });
 });

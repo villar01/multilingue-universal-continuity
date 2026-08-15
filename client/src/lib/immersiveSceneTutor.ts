@@ -9,6 +9,7 @@ export type SceneTutorHotspot = {
 export type SceneTutorReply = {
   text: string;
   hotspotId?: string;
+  blocked?: boolean;
 };
 
 const normalize = (value: string) => value.toLocaleLowerCase().replace(/[^a-zà-ÿ0-9 ]/gi, " ").replace(/\s+/g, " ").trim();
@@ -16,6 +17,13 @@ const normalize = (value: string) => value.toLocaleLowerCase().replace(/[^a-zà-
 export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot[]): SceneTutorReply | null {
   const normalizedQuestion = normalize(question);
   if (!normalizedQuestion) return null;
+
+  if (/\b(fuck|bitch|asshole|porn|nude|kill yourself)\b/.test(normalizedQuestion)) {
+    return {
+      text: "James: Let’s keep this conversation respectful and focused on the lesson. Ask me about an object or phrase in this scene.",
+      blocked: true,
+    };
+  }
 
   if (/\bwhat is (a |an |the )?pool\b|\bpool\b/.test(normalizedQuestion)) {
     return {
@@ -38,9 +46,21 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     };
   }
 
+  if (/\bwhere is\b/.test(normalizedQuestion)) {
+    const house = /\bhouse\b|\bhome\b/.test(normalizedQuestion);
+    const visibleObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");
+    return {
+      text: house
+        ? `James: I can’t see a house in this scene. I can see ${visibleObjects}.`
+        : `James: Let’s look at the objects in this scene: ${visibleObjects}.`,
+    };
+  }
+
   if (/\bwhat is\b|\bwhat does\b|\bmeaning\b|\bmeaning of\b/.test(normalizedQuestion)) {
     const availableObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");
     return { text: `James: Ask me about an object you can see here, such as ${availableObjects}.` };
   }
-  return null;
+
+  const availableObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");
+  return { text: `James: I’m here to help with this lesson. Ask me about ${availableObjects}, or try a sentence in English.` };
 }
