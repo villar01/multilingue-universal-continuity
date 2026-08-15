@@ -1339,6 +1339,9 @@
 - [ ] Resolver a tela publicada da Praia Tropical: diálogo aberto com James, frase Hello! My name is James… e botão Reiniciar inglês, porém sem som confirmado pelo aluno
 - [ ] Exibir controle de áudio nativo no diálogo publicado para que a reprodução neural tenha saída diretamente acionável e verificável pelo aluno
 - [ ] Medir o sinal do MP3 de cinco segundos entregue no diálogo e trocar o provedor se o conteúdo for silencioso
+- [ ] Restaurar a resposta do professor quando o aluno escreve pergunta em inglês, como “what is pool?”, no diálogo da Praia Tropical
+- [ ] Aplicar progressivamente o contrato de professor real: perguntas livres, objetos da tela, vocabulário, correção, repetição e guia CEFR em todas as atividades do aplicativo
+- [x] Implementar a primeira resposta livre contextual por objeto na Praia Tropical — perguntas como “what is pool?” recebem explicação de James sobre “pool/piscina”; perguntas por itens visíveis usam nome, tradução, pronúncia e exemplo do hotspot; TypeScript sem erros e 181 arquivos/406 testes aprovados
 - [ ] Integrar motor facial local por GPU com sincronização de áudio real; manter retrato estável e Ricardo sem movimento labial até a validação visual natural
 - [x] Remover o tremor visual residual do retrato de James — retrato estabilizado, sem onda, balanço, respiração artificial ou gesto sintético; TypeScript sem erros e 397 testes aprovados. A animação labial natural permanece aberta até existir motor facial sincronizado por áudio
 

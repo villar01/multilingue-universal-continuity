@@ -25,6 +25,7 @@ import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
+import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
 
 function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number): Promise<T> {
@@ -1909,6 +1910,19 @@ export default function ImmersiveScene() {
     const provided = answer.trim();
     if (!provided) {
       setDlgFeedback("Diga ou escreva sua resposta no idioma estudado antes de conferir.");
+      return;
+    }
+    const tutorReply = getSceneTutorReply(provided, scene.hotspots);
+    if (tutorReply) {
+      setDlgFeedback(tutorReply.text);
+      const relatedHotspot = tutorReply.hotspotId
+        ? scene.hotspots.find((hotspot) => hotspot.id === tutorReply.hotspotId) || null
+        : null;
+      setDlgSuggestedHotspot(relatedHotspot);
+      if (isAuthenticated) {
+        const teacherSpeech = getImmersiveDialogTeacherSpeech(tutorReply.text.replace(/^James:\s*/, ""), scene);
+        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      }
       return;
     }
     const correct = matchesImmersiveDialogAnswer(expected, provided);
