@@ -24,4 +24,11 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
   });
+
+  it("oferece escolha direta da voz do navegador para visitante após o gesto do aluno", () => {
+    expect(source).toContain("const playGuestBrowserVoice");
+    expect(source).toContain("browser-dialog:");
+    expect(source).toContain("Usar voz do navegador");
+    expect(source).toContain("playGuestBrowserVoice(teacherSpeech.text");
+  });
 });

@@ -55,3 +55,5 @@ Com o elemento `audio` conectado ao documento e MIME `audio/mpeg`, a prévia reg
 Praia Tropical com James (`en-US`, masculino) foi registrada como referência regional de voz natural. O contrato de cenas passou a exigir idioma BCP-47 e gênero explícitos em todas as 27 cenas; Parque da Cidade e Metrô de Paris receberam o perfil feminino explícito de Sophie, impedindo seleção implícita de voz.
 
 No modo de imersão, auxiliares em português foram ocultados, enquanto os controles essenciais permaneceram visíveis. Como visitante, o acionamento de **Ouvir inglês** exibiu o aviso de sessão protegida e os botões **Entrar** e **Agora não**, preservando também **Voltar**, **Fechar** e a ajuda discreta `?`.
+
+Para visitante, o diálogo passou a oferecer **Browser voice** separado de **Ouvir inglês**. Esse controle chama diretamente a voz local disponível após o gesto do aluno, enquanto **Ouvir inglês** continua priorizando a fala neural da cena. A interface e a regressão foram validadas; a audição humana ainda depende das vozes instaladas e da saída de som do dispositivo do aluno.

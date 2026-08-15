@@ -1470,6 +1470,19 @@ export default function ImmersiveScene() {
     return true;
   }, [stopVisemeSync]);
 
+  const playGuestBrowserVoice = useCallback((text: string, language: string, gender?: 'male' | 'female') => {
+    const requestKey = `browser-dialog:${language}:${gender || "female"}:${text}`;
+    stopTeacherAudio();
+    activeSpeechRequestRef.current = requestKey;
+    setActiveSpeechText(text);
+    setIsPreparingNeuralAudio(true);
+    if (!playLocalDialogFallback(text, language, requestKey)) {
+      setIsPreparingNeuralAudio(false);
+      setActiveSpeechText("");
+      setDlgFeedback("A voz do navegador não está disponível. Entre para usar a voz neural da cena.");
+    }
+  }, [playLocalDialogFallback, stopTeacherAudio]);
+
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
   const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, requestKey: string, revokeOnEnd = false) => {
@@ -2649,17 +2662,32 @@ export default function ImmersiveScene() {
                 )}
               </div>
               {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
-                    requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-                  }}
-                  className="mb-3 rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
-                  title="Repetir a fala do professor em inglês"
-                >
-                  {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
-                </button>
+                <div className="mb-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
+                      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+                    }}
+                    className="rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
+                    title="Repetir a fala do professor em inglês"
+                  >
+                    {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
+                  </button>
+                  {!isAuthenticated && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
+                        playGuestBrowserVoice(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender);
+                      }}
+                      className="rounded-full border border-emerald-300/45 bg-emerald-400/10 px-3 py-1.5 text-xs font-extrabold text-emerald-100 transition hover:bg-emerald-400/20"
+                      title="Usar a voz disponível neste navegador"
+                    >
+                      {immersionMode ? "Browser voice" : "Usar voz do navegador"}
+                    </button>
+                  )}
+                </div>
               )}
               {/* Scrolling text word by word */}
               {selectedScene.dialog[dlgStep].speaker === 'teacher' && (

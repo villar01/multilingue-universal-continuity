@@ -1330,6 +1330,7 @@
 - [x] Impedir que o botão Ouvir inglês permaneça em preparação quando a voz pública exceder o tempo de espera ou falhar, devolvendo feedback e nova tentativa — limite de 12 segundos encerra espera excessiva e devolve fallback/feedback; painel e controle validados visualmente; TypeScript sem erros e 393 testes aprovados
 - [x] Validar no domínio publicado que Ouvir inglês recebe um áudio neural carregável — `sceneDialogueVoice.speak` retornou 112.651 bytes em cerca de 1,7 segundo e o controle voltou ao estado de nova tentativa; a audição humana no dispositivo do aluno continua pendente
 - [ ] Corrigir a reprodução audível real de inglês no navegador do aluno; geração e transferência de áudio não contam como conclusão
+- [x] Corrigir o fallback de visitante para que a fala inglesa seja realmente audível após um gesto do aluno quando a voz neural exigir sessão — botão explícito **Browser voice** chama `speechSynthesis` diretamente após gesto do aluno, sem depender da tentativa neural; TypeScript sem erros e 179 arquivos/402 testes aprovados. A confirmação auditiva no dispositivo do aluno continua aberta
 - [x] Remover o tremor visual residual do retrato de James — retrato estabilizado, sem onda, balanço, respiração artificial ou gesto sintético; TypeScript sem erros e 397 testes aprovados. A animação labial natural permanece aberta até existir motor facial sincronizado por áudio
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
