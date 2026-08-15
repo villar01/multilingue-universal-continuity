@@ -1316,3 +1316,22 @@
 - [x] Corrigir primeiro o diálogo até o painel, texto bilíngue e avanço por **Continuar** funcionarem de modo verificável — painel elevado e identificado, texto completo sem sessão, aviso de IA removido das rotas imersivas e segunda fala com opções validada visualmente; TypeScript sem erros e 381 testes aprovados
 - [ ] Validar separadamente a reprodução da voz neural no diálogo autenticado, sem aceitar teste estático como confirmação auditiva
 - [ ] Manter a animação labial natural como pendência aberta enquanto o resultado continuar abaixo da qualidade exigida; não confundir visemas aproximados com animação facial natural
+
+## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
+- [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente
+- [ ] Definir responsabilidades separadas: Qwen 2.5 para conteúdo e diagnóstico local, GitHub para histórico/CI e revisão assistida para propostas de código
+- [ ] Estruturar ciclo contínuo seguro: observar métricas e erros, gerar sugestão, abrir alteração revisável, executar TypeScript/testes, validar visualmente e somente então criar checkpoint
+- [ ] Impedir que o módulo de autoaperfeiçoamento altere produção, banco ou segurança diretamente sem validação e ponto de retorno
+- [ ] Documentar implantação gradual sem custos iniciais e indicar quando uma GPU local ou hospedada passa a ser necessária para animação facial natural
+- [ ] Tornar o autoaperfeiçoamento permanente e retomável após reinicializações, com diagnóstico agendado, histórico auditável e estado persistido, sem execução autônoma destrutiva
+- [ ] Executar cada melhoria diretamente no ciclo erro → correção → teste → validação → checkpoint, sem reabrir auditorias já concluídas nem apresentar trabalho local como entrega
+
+## 💻 ASSISTENTE LOCAL MULTILINGUE NO NOTEBOOK DO CLIENTE
+- [ ] Criar cliente local opcional para Windows que use Qwen 2.5/Ollama e, quando houver GPU compatível, MuseTalk/LivePortrait sem custo de processamento remoto
+- [ ] Exigir consentimento explícito, pasta autorizada e controles claros de iniciar, pausar e desinstalar; não acessar documentos pessoais nem outras pastas
+- [ ] Usar conexão de saída autenticada e revogável entre o notebook e o aplicativo, sem abrir porta pública de entrada no computador do cliente
+- [ ] Enviar ao servidor somente diagnósticos minimizados, resultados de testes e propostas revisáveis; nunca enviar conteúdo pessoal ou executar alteração direta na produção
+- [ ] Preparar o assistente para retomar após reinicialização apenas quando o cliente habilitar essa opção e mostrar status, histórico e última execução
+
+## 🔁 RETOMADA — VALIDAÇÃO PUBLICADA ANTES DE NOVA CORREÇÃO
+- [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas

@@ -21,3 +21,11 @@ O Pareto guiado por cena foi publicado no checkpoint `26b28d23`. A documentaçã
 ## Validação visual do Pareto guiado por cena
 
 Na rota `/immersive-scene`, o painel Pareto apresentou as instruções de uso da cena, o contador **0/122 palavras concluídas** e o botão **Começar ciclo da cena**. Ao iniciar, a primeira palavra abriu na sequência **Observe → Lembre → Escreva → Crie**, com enunciado bilíngue e transição comprovada do passo de observação para a memória ativa. A suíte completa terminou com **168 arquivos e 377 testes aprovados**, sem erros de TypeScript, antes do checkpoint `26b28d23`.
+
+## Revalidação publicada — 2026-08-15
+
+No domínio publicado, o painel Pareto continua disponível com **1.130 palavras**, filtra **122 palavras** relacionadas à Praia Tropical, mostra a orientação de cinco passos e abre o ciclo na palavra **Hello — Olá**. Os checkpoints `26b28d23`/`9299c2dc` permanecem no histórico. A verificação do diálogo deve ser feita com o painel Pareto fechado para impedir que a sobreposição capture o clique; a qualidade de voz e animação labial natural continua aberta e não foi reclassificada como concluída.
+
+## Revalidação publicada do diálogo — 2026-08-15
+
+Com o painel Pareto fechado, o botão **Iniciar Diálogo** abriu o painel identificado como **Diálogo da cena** acima dos controles inferiores. A primeira fala de James mostrou texto-alvo em inglês, apoio em PT-BR, aviso honesto de que a voz neural e resposta por microfone exigem sessão e o controle **Continuar**. A presença de voz autenticada e de animação facial natural não foi inferida nesta verificação visual sem sessão.
