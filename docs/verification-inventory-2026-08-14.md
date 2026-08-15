@@ -53,3 +53,5 @@ Na prévia posterior, o retrato de James permaneceu sem a oscilação automátic
 Com o elemento `audio` conectado ao documento e MIME `audio/mpeg`, a prévia registrou `loadedmetadata`, `canplay`, `playing`, `play-resolved`, progresso contínuo de `0` a `7,032` segundos e `ended`, sem erro. Isso comprova reprodução técnica efetiva no navegador de validação, mas não substitui a confirmação humana de volume e saída de som no navegador do aluno.
 
 Praia Tropical com James (`en-US`, masculino) foi registrada como referência regional de voz natural. O contrato de cenas passou a exigir idioma BCP-47 e gênero explícitos em todas as 27 cenas; Parque da Cidade e Metrô de Paris receberam o perfil feminino explícito de Sophie, impedindo seleção implícita de voz.
+
+No modo de imersão, auxiliares em português foram ocultados, enquanto os controles essenciais permaneceram visíveis. Como visitante, o acionamento de **Ouvir inglês** exibiu o aviso de sessão protegida e os botões **Entrar** e **Agora não**, preservando também **Voltar**, **Fechar** e a ajuda discreta `?`.

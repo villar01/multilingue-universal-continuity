@@ -114,9 +114,9 @@
 - [x] Certificados de conclusão — Certificates.tsx existe com rota /certificates (validacao completa pendente)
 - [ ] Integração com calendário para lembretes — ui/calendar.tsx existe mas sem agendamento/persistência de lembretes
 - [ ] Modo imersão total — preferência persistente e controle presentes em Dashboard, ImmersiveScene e Lesson; ocultação/tradução integral dos textos auxiliares de todos os subcomponentes ainda pendente
-- [ ] Concluir o modo de imersão da cena: ocultar auxiliares em português sem esconder Voltar, Fechar, ajuda, segurança ou a saída da atividade — oculta tradução, feedback, Voz, Caderno, Pareto, pontuação e quiz; saída, fechamento e ajuda foram validados, mas falta provar visualmente os avisos de segurança quando necessários
+- [x] Concluir o modo de imersão da cena: ocultar auxiliares em português sem esconder Voltar, Fechar, ajuda, segurança ou a saída da atividade — oculta tradução, feedback, Voz, Caderno, Pareto, pontuação e quiz; saída, fechamento, ajuda e aviso de sessão protegida foram validados visualmente; TypeScript sem erros e 179 arquivos/401 testes aprovados
 - [x] Manter uma ajuda explícita e acessível no modo de imersão sem reexibir tradução nativa na interface principal, com regressão e validação visual — botão `?` mantém leitura da ajuda nativa, com rótulo acessível, sem texto auxiliar na tela
-- [ ] Validar no modo de imersão que aviso de sessão/voz protegida e controles de segurança continuam acessíveis sem reexibir auxiliares em português
+- [x] Validar no modo de imersão que aviso de sessão/voz protegida e controles de segurança continuam acessíveis sem reexibir auxiliares em português — visitante acionou Ouvir inglês, recebeu aviso protegido e botões Entrar/Agora não, enquanto Voltar, Fechar e ajuda `?` permaneceram acessíveis
 
 ## 🎯 MELHORIAS URGENTES - LIÇÃO 390001
 - [x] Adicionar "mom" ao vocabulário
