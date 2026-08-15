@@ -8,6 +8,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import { sdk } from "./sdk";
 import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
@@ -77,9 +78,14 @@ async function startServer() {
     } catch (_e) { /* silencioso */ }
     res.json({ ok: true });
   });
-  // IA de Autoaperfeiçoamento — análise diária via cron ou manual pelo admin
+  // IA de Autoaperfeiçoamento — somente tarefa agendada autenticada.
   app.post("/api/scheduled/ai-self-improve", async (req, res) => {
     try {
+      const user = await sdk.authenticateRequest(req);
+      if (!user.isCron || !user.taskUid) {
+        res.status(403).json({ error: "cron-only" });
+        return;
+      }
       const { runAISelfImprove } = await import("../scheduled/ai-self-improve");
       const result = await runAISelfImprove();
       res.json(result);

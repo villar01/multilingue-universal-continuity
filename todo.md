@@ -156,6 +156,7 @@
 - [x] Ativar fallback automático: Online → Ollama → LM Studio (já implementado em aiProvider.ts)
 - [x] Ollama instalado e modelos Qwen2.5:3b e 1.5b disponíveis no sandbox
 - [x] Teste real de geração offline com Qwen2.5:1.5b concluido com sucesso (resposta: "Hello! How can I assist you today?")
+- [x] Fechar a rota pública do diagnóstico contínuo e aceitar execução somente por tarefa agendada autenticada — `/api/scheduled/ai-self-improve` exige identidade cron e `taskUid` antes de carregar o módulo; chamada pública recebe `403 cron-only`; TypeScript sem erros e 175 arquivos/394 testes aprovados
 
 ## ⚡ OTIMIZAÇÃO DE VELOCIDADE (TEACHER POLI)
 - [x] Implementar lazy loading para componentes pesados (VoiceConversation, InteractiveVideoPlayer, VirtualTeacher3D)
