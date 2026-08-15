@@ -16,6 +16,46 @@ const vocabularySchema = z.object({
 
 const safeTargetReply = "I can help you practise vocabulary, grammar, places, and new sentences from this lesson. What would you like to practise?";
 
+const normalizeTutorText = (value: string) => value.toLocaleLowerCase().replace(/[^a-z0-9 ]/gi, " ").replace(/\s+/g, " ").trim();
+
+export function getImmediateImmersiveTutorReply(input: {
+  studentMessage: string;
+  locationDisclosure: string;
+  vocabulary: Array<{ label: string; translation: string; example?: string }>;
+}): string | null {
+  const question = normalizeTutorText(input.studentMessage);
+  const asksLocation = /\bwhere\s+(is|are)\b/.test(question);
+  const asksMeaning = /\bwhat is\b|\bwhat does\b|\bmeaning\b/.test(question);
+  const asksSentence = /\bmake (a )?sentence\b|\bcreate (a )?sentence\b|\buse .* in a sentence\b/.test(question);
+  const genericIllustration = /generic|not assigned|illustration/.test(input.locationDisclosure.toLowerCase());
+  const beach = /\bbeach\b|\bpraia\b/.test(question);
+  const mentionedWord = input.vocabulary.find((word) => {
+    const label = normalizeTutorText(word.label);
+    const translation = normalizeTutorText(word.translation);
+    return label.length > 1 && (question.includes(label) || question.includes(translation));
+  });
+
+  if (asksLocation && (beach || mentionedWord)) {
+    const noun = mentionedWord?.label || "this beach";
+    const correction = /\bwhere are\b/.test(question) ? `Say: “Where is ${noun}?” ` : "";
+    if (genericIllustration) {
+      return `${correction}This is a generic learning scene, not a real beach in a specific country. Let’s practise: “The beach is near the hotel.”`;
+    }
+    return `${correction}${input.locationDisclosure} Let’s practise: “Where is ${noun}?”`;
+  }
+
+  if (asksMeaning && mentionedWord) {
+    const example = mentionedWord.example ? ` Example: “${mentionedWord.example}”` : "";
+    return `“${mentionedWord.label}” means “${mentionedWord.translation}”.${example} Now make one short sentence with “${mentionedWord.label}”.`;
+  }
+
+  if (asksSentence && mentionedWord) {
+    return `Try this model: “I can see the ${mentionedWord.label}.” Now change one detail and create your own sentence with “${mentionedWord.label}”.`;
+  }
+
+  return null;
+}
+
 export function buildImmersiveTutorPrompt(input: {
   teacherName: string;
   targetLanguage: string;
@@ -64,6 +104,11 @@ export const immersiveSceneTutorRouter = router({
         return blockedReply;
       }
       if (!inputSafety.allowed) return blockedReply;
+
+      const immediateReply = getImmediateImmersiveTutorReply(input);
+      if (immediateReply) {
+        return { targetReply: immediateReply, blocked: false, provider: "contextual" as const };
+      }
 
       const messages = [
         { role: "system" as const, content: buildImmersiveTutorPrompt(input) },

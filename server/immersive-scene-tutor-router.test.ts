@@ -17,7 +17,7 @@ vi.mock("./aiProvider", async (importOriginal) => ({
 }));
 
 import { appRouter } from "./routers";
-import { buildImmersiveTutorPrompt } from "./immersive-scene-tutor-router";
+import { buildImmersiveTutorPrompt, getImmediateImmersiveTutorReply } from "./immersive-scene-tutor-router";
 
 const allowed = { allowed: true, context: { userId: 7, ageGroup: "adulto", moderationLevel: "standard" } };
 const blocked = { allowed: false, reason: "blocked_content", flaggedContent: ["blocked"] };
@@ -47,6 +47,23 @@ describe("tutor conversacional da Cena Imersiva", () => {
     expect(prompt).toContain("Do not limit the student to visible objects");
   });
 
+  it("responde imediatamente e com honestidade a perguntas geográficas da ilustração genérica", async () => {
+    const direct = getImmediateImmersiveTutorReply(input);
+    expect(direct).toContain("generic learning scene");
+    expect(direct).toContain("not a real beach in a specific country");
+    mocks.assessConversationText.mockResolvedValue(allowed);
+    const result = await createCaller().immersiveSceneTutor.chat(input);
+    expect(result).toMatchObject({ provider: "contextual", blocked: false });
+    expect(mocks.generateAI).not.toHaveBeenCalled();
+  });
+
+  it("corrige where are e ensina significado ou nova frase com vocabulário da cena", () => {
+    const wordInput = { ...input, vocabulary: [{ label: "Pool", translation: "Piscina", example: "The pool is blue." }] };
+    expect(getImmediateImmersiveTutorReply({ ...wordInput, studentMessage: "Where are this beach?" })).toContain("Where is this beach?");
+    expect(getImmediateImmersiveTutorReply({ ...wordInput, studentMessage: "What is pool?" })).toContain("means “Piscina”");
+    expect(getImmediateImmersiveTutorReply({ ...wordInput, studentMessage: "Make a sentence with pool" })).toContain("I can see the Pool");
+  });
+
   it("bloqueia entrada insegura antes de chamar o modelo", async () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
     const result = await createCaller().immersiveSceneTutor.chat({ ...input, studentMessage: "unsafe" });
@@ -55,20 +72,22 @@ describe("tutor conversacional da Cena Imersiva", () => {
   });
 
   it("devolve resposta livre segura e mantém Ollama como provedor preferencial", async () => {
+    const freeConversationInput = { ...input, studentMessage: "Can you explain a useful beach word for my lesson?" };
     mocks.assessConversationText.mockResolvedValue(allowed);
     mocks.assessConversationOutput.mockResolvedValue(allowed);
     mocks.generateAI.mockResolvedValue({ content: "This illustration is a generic tropical beach lesson. Let us practise the word ocean.", provider: "ollama" });
-    const result = await createCaller().immersiveSceneTutor.chat(input);
+    const result = await createCaller().immersiveSceneTutor.chat(freeConversationInput);
     expect(mocks.generateAI).toHaveBeenCalledWith(expect.objectContaining({ preferredProvider: "ollama", allowRemoteFallback: true }));
     expect(result).toMatchObject({ blocked: false, provider: "ollama" });
     expect(result.targetReply).toContain("generic tropical beach lesson");
   });
 
   it("substitui saída insegura por uma continuidade segura de estudo", async () => {
+    const freeConversationInput = { ...input, studentMessage: "Can you explain a useful beach word for my lesson?" };
     mocks.assessConversationText.mockResolvedValue(allowed);
     mocks.assessConversationOutput.mockResolvedValue(blocked);
     mocks.generateAI.mockResolvedValue({ content: "unsafe", provider: "ollama" });
-    const result = await createCaller().immersiveSceneTutor.chat(input);
+    const result = await createCaller().immersiveSceneTutor.chat(freeConversationInput);
     expect(result).toMatchObject({ blocked: true, provider: "safety" });
     expect(result.targetReply).toContain("vocabulary");
   });

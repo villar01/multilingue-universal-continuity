@@ -1698,11 +1698,27 @@ export default function ImmersiveScene() {
       return;
     }
     primeVisemeAudio();
+    const requestKey = `dialog-recovery:${language}:${gender || selectedScene?.teacherGender || "female"}:${text}`;
     void speak(text, language, undefined, gender, purpose).catch(() => {
       if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-      setIsPreparingNeuralAudio(false);
-      setIsSpeaking(false);
-      setActiveSpeechText("");
+      stopTeacherAudio();
+      activeSpeechRequestRef.current = requestKey;
+      setIsPreparingNeuralAudio(true);
+      void playPublicSceneDialogue(text, language, gender || selectedScene?.teacherGender || "female", requestKey)
+        .then((played) => {
+          if (played || playLocalDialogFallback(text, language, requestKey, gender || selectedScene?.teacherGender)) return;
+          setIsPreparingNeuralAudio(false);
+          setIsSpeaking(false);
+          setActiveSpeechText("");
+          setDlgFeedback((feedback) => feedback || "A resposta está visível. A voz não ficou disponível nesta tentativa; use o controle de áudio ou pergunte novamente.");
+        })
+        .catch(() => {
+          if (playLocalDialogFallback(text, language, requestKey, gender || selectedScene?.teacherGender)) return;
+          setIsPreparingNeuralAudio(false);
+          setIsSpeaking(false);
+          setActiveSpeechText("");
+          setDlgFeedback((feedback) => feedback || "A resposta está visível. A voz não ficou disponível nesta tentativa; use o controle de áudio ou pergunte novamente.");
+        });
     });
   }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, speak, stopTeacherAudio]);
 
