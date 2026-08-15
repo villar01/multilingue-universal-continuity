@@ -75,6 +75,7 @@ const MasterLesson = lazy(() => import("./pages/MasterLesson"));
 const IANativa = lazy(() => import("./pages/IANativa"));
 const SmartReview = lazy(() => import("./pages/SmartReview"));
 const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
+const StudyBase = lazy(() => import("./pages/StudyBase"));
 import LocalAINotification from "./components/LocalAINotification";
 import ConnectivityIndicator from "./components/ConnectivityIndicator";
 
@@ -155,6 +156,7 @@ function Router() {
         <Route path="/ia-nativa" component={IANativa} />
         <Route path="/smart-review" component={SmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
+        <Route path="/base-de-estudos" component={StudyBase} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

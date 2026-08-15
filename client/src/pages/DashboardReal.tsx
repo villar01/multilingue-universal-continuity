@@ -646,6 +646,15 @@ export default function DashboardReal() {
                     <span className="ml-auto text-xs bg-yellow-400 text-black font-bold px-1.5 py-0.5 rounded-full">NOVO</span>
                   </button>
                 </Link>
+                <Link href="/base-de-estudos">
+                  <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all text-left shadow-md">
+                    <span className="text-xl">📚</span>
+                    <div>
+                      <div className="font-semibold text-white text-sm">Base de Estudos</div>
+                      <div className="text-xs text-cyan-100">Buscar, ouvir, praticar Pareto e perguntar</div>
+                    </div>
+                  </button>
+                </Link>
                 <Link href="/my-teacher">
                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all text-left shadow-md">
                     <span className="text-xl">👨‍🏫</span>
