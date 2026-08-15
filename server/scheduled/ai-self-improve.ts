@@ -14,8 +14,6 @@ import { notifyOwner } from "../_core/notification";
 interface TelemetryRow {
   event_type: string;
   context: string | null;
-  message: string | null;
-  url: string | null;
   count: number;
 }
 
@@ -32,12 +30,10 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
       SELECT 
         event_type,
         context,
-        message,
-        url,
         COUNT(*) as count
       FROM app_telemetry
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-      GROUP BY event_type, context, message, url
+      GROUP BY event_type, context
       ORDER BY count DESC
       LIMIT 50
     `) as [TelemetryRow[], unknown];
@@ -48,7 +44,7 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
 
     // 2. Formatar dados para o LLM
     const telemetrySummary = telemetryRows.map((r: TelemetryRow) =>
-      `[${r.event_type}] ${r.context || ""}: "${r.message || ""}" (${r.count}x) — URL: ${r.url || "N/A"}`
+      `[${r.event_type}] contexto técnico: ${r.context || "não informado"} (${r.count}x)`
     ).join("\n");
 
     const totalErrors = telemetryRows
