@@ -20,6 +20,7 @@ import { getImmersiveDialogTeacherSpeech } from "@/lib/immersiveDialogSpeech";
 import { getNativeDialogueTranslation, isPortugueseLocale } from "@/lib/immersiveDialogTranslation";
 import { getNativeHelpSpeechRequest } from "@/lib/immersiveSpeechChannels";
 import { type ImmersiveSpeechPurpose } from "@/lib/immersiveSpeechPolicy";
+import { formatSceneTutorFeedback, getFreeDialogQuestionReply, shouldStartSceneTeacherAudio } from "@/lib/immersiveDialogFlow";
 import { useVisemeSequence } from "@/hooks/useVisemeSequence";
 import { useTTSVisemeSync, type VisemeData } from "@/lib/tts-viseme-sync";
 import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
@@ -1413,6 +1414,7 @@ export default function ImmersiveScene() {
   const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
+  const dialogAudioContextRef = useRef<AudioContext | null>(null);
   const activeSpeechRequestRef = useRef<string | null>(null);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
@@ -1559,8 +1561,32 @@ export default function ImmersiveScene() {
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     syncWithAudio(audio, phrase, language);
-    await audio.play();
+    try {
+      await audio.play();
+    } catch (error) {
+      if (updatesActiveDialog()) setDlgAudioClock(false);
+      audio.remove();
+      if (audioRef.current === audio) audioRef.current = null;
+      if (revokeOnEnd) URL.revokeObjectURL(source);
+      releaseRequest();
+      throw error;
+    }
   }, [stopVisemeSync, syncWithAudio]);
+
+  const primeDialogAudioFromGesture = useCallback(() => {
+    try {
+      const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextConstructor) return;
+      const context = dialogAudioContextRef.current || new AudioContextConstructor();
+      dialogAudioContextRef.current = context;
+      // Resume happens synchronously in the visitor's click. The actual neural
+      // MP3 arrives asynchronously, so this preserves playback eligibility for
+      // the first scripted line instead of relying on a later autoplay attempt.
+      void context.resume();
+    } catch {
+      // The visible Ouvir inglês control remains available as an explicit retry.
+    }
+  }, []);
 
   const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string) => {
     const result = await waitForSpeechResult(
@@ -1645,12 +1671,14 @@ export default function ImmersiveScene() {
       void playPublicSceneDialogue(text, language, gender || "female", requestKey)
         .then((played) => {
           if (played) return;
+          if (activeDialogLineRef.current === text) setDlgAudioClock(false);
           if (playLocalDialogFallback(text, language, requestKey, gender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
           setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
         })
         .catch(() => {
+          if (activeDialogLineRef.current === text) setDlgAudioClock(false);
           if (playLocalDialogFallback(text, language, requestKey, gender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
@@ -1837,28 +1865,27 @@ export default function ImmersiveScene() {
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
+    primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null);
     const line = scene.dialog[0];
-    if (line?.speaker === 'teacher') {
+    if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
-      setDlgWords(words); setDlgWordIdx(isAuthenticated ? 0 : words.length);
+      setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(isAuthenticated);
-      if (isAuthenticated) {
-        const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
-        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-      } else {
-        setDlgFeedback("Diálogo roteirizado ativo. Entre para ouvir a voz neural e ativar a resposta por microfone.");
-      }
+      setDlgAudioClock(true);
+      // This runs directly from the Iniciar Diálogo click. Guests use the public
+      // scene voice; authenticated students keep the protected neural path.
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [isAuthenticated, requestSpeechSafely]);
+  }, [primeDialogAudioFromGesture, requestSpeechSafely]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1881,18 +1908,14 @@ export default function ImmersiveScene() {
     }
     setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgIsRecording(false); setDlgIsProcessingSpeech(false);
     const line = selectedScene.dialog[next];
-    if (line.speaker === 'teacher') {
+    if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
-      setDlgWords(words); setDlgWordIdx(isAuthenticated ? 0 : words.length);
+      setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(isAuthenticated);
-      if (isAuthenticated) {
-        const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
-        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-      } else {
-        setDlgFeedback("A próxima fala está disponível no painel. Entre para ativar a voz neural.");
-      }
+      setDlgAudioClock(true);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -1905,26 +1928,28 @@ export default function ImmersiveScene() {
     const scene = selectedScene;
     if (!scene) return;
     const line = scene.dialog[dlgStep];
-    if (!line?.options || line.correctIndex === undefined) return;
-    const expected = line.options[line.correctIndex].trim();
+    if (!line) return;
     const provided = answer.trim();
     if (!provided) {
       setDlgFeedback("Diga ou escreva sua resposta no idioma estudado antes de conferir.");
       return;
     }
-    const tutorReply = getSceneTutorReply(provided, scene.hotspots);
+    const tutorReply = getFreeDialogQuestionReply(provided, scene.hotspots);
     if (tutorReply) {
-      setDlgFeedback(tutorReply.text);
+      setDlgFeedback(formatSceneTutorFeedback(tutorReply));
       const relatedHotspot = tutorReply.hotspotId
         ? scene.hotspots.find((hotspot) => hotspot.id === tutorReply.hotspotId) || null
         : null;
       setDlgSuggestedHotspot(relatedHotspot);
-      if (isAuthenticated) {
-        const teacherSpeech = getImmersiveDialogTeacherSpeech(tutorReply.text.replace(/^James:\s*/, ""), scene);
-        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-      }
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(tutorReply.text.replace(/^James:\s*/, ""), scene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
       return;
     }
+    if (!line.options || line.correctIndex === undefined) {
+      setDlgFeedback("Pergunte sobre a cena, uma palavra ou uma frase. O professor responderá antes de você continuar o diálogo.");
+      return;
+    }
+    const expected = line.options[line.correctIndex].trim();
     const correct = matchesImmersiveDialogAnswer(expected, provided);
     if (!correct) {
       setDlgFeedback(`Tente novamente. A resposta deve usar a ideia: “${expected}”.`);
@@ -2738,6 +2763,33 @@ export default function ImmersiveScene() {
                   )}
                 </div>
               )}
+              {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
+                <div className="mt-3 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
+                  <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre esta fala, a cena ou uma palavra:</p>
+                  <div className="flex gap-2">
+                    <input
+                      value={dlgWrittenAnswer}
+                      onChange={(event) => setDlgWrittenAnswer(event.target.value)}
+                      onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
+                      placeholder="Ex.: What is pool?"
+                      className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
+                      autoComplete="off"
+                    />
+                    <button
+                      type="button"
+                      onClick={submitWrittenDialogAnswer}
+                      className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950"
+                    >
+                      Perguntar
+                    </button>
+                  </div>
+                  {dlgFeedback && (
+                    <div role="status" className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
+                      {dlgFeedback}
+                    </div>
+                  )}
+                </div>
+              )}
               {/* Multiple choice — only for user turns */}
               {selectedScene.dialog[dlgStep].speaker === 'user' && selectedScene.dialog[dlgStep].options && (
                 <div className="flex flex-col gap-2 mt-1">
@@ -2788,7 +2840,7 @@ export default function ImmersiveScene() {
                       </button>
                     </div>
                     {dlgFeedback && (
-                      <div role="status" className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
+                      <div role="status" className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
                         {dlgFeedback}
                       </div>
                     )}
@@ -2827,7 +2879,7 @@ export default function ImmersiveScene() {
                 </div>
               )}
               {!immersionMode && dlgFeedback && (
-                <p className="mt-3 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
+                  <p className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
                   {dlgFeedback}
                 </p>
               )}

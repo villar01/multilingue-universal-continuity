@@ -8,6 +8,7 @@ export type SceneTutorHotspot = {
 
 export type SceneTutorReply = {
   text: string;
+  nativeText?: string;
   hotspotId?: string;
   blocked?: boolean;
 };
@@ -29,6 +30,13 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     return {
       text: 'James: “Pool” means “piscina”. A pool is a place where people swim. Repeat: pool.',
       hotspotId: hotspots.find((hotspot) => normalize(hotspot.label).includes("pool"))?.id,
+    };
+  }
+
+  if (/\bwhere\s+are\s+(this|that)\s+beach\b/.test(normalizedQuestion)) {
+    return {
+      text: "James: Good question. Say: ‘Where is this beach?’ This is our tropical beach scene.",
+      nativeText: "Correção: use ‘is’ porque ‘beach’ é singular. Em português: ‘Onde fica esta praia?’",
     };
   }
 

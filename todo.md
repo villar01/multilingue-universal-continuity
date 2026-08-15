@@ -1371,6 +1371,7 @@
 - [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas
 - [x] Adicionar fechamento explícito e acessível ao painel Pareto para que ele nunca bloqueie o acesso ao diálogo ou à cena — botão textual Fechar, rótulo acessível, encerramento de áudio/prática e validação visual na Praia Tropical; TypeScript sem erros e 383 testes aprovados
 - [ ] Corrigir bloqueios publicados: primeira fala Hello! My name is James… sem áudio e pergunta escrita sem retorno visível ou falado do professor
+- [ ] Corrigir perguntas livres com gramática inicial incorreta — por exemplo, “where are this beach?” deve receber correção “Where is this beach?” e resposta contextual da cena, nunca retorno genérico
 
 ## 📘 CARTILHA CURRICULAR ORIGINAL — REFERÊNCIA PEDAGÓGICA
 - [ ] Mapear o PDF enviado apenas para objetivos, cobertura, progressão e tipos de atividade, sem reproduzir texto, exemplos distintivos, exercícios, figuras ou ordenação protegida

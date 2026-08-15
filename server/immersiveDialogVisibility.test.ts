@@ -19,8 +19,9 @@ describe("visibilidade do diálogo imersivo", () => {
     expect(sceneSource).toContain('className="absolute left-0 right-0 z-40 flex items-center justify-between px-4 py-3"');
   });
 
-  it("mostra a fala completa imediatamente quando a voz protegida não está autenticada", () => {
-    expect(sceneSource.match(/setDlgWordIdx\(isAuthenticated \? 0 : words\.length\)/g)).toHaveLength(2);
+  it("mantém a fala visível quando a voz pública estiver indisponível", () => {
+    expect(sceneSource.match(/setDlgWords\(words\); setDlgWordIdx\(0\);/g)).toHaveLength(2);
+    expect(sceneSource).toContain("if (activeDialogLineRef.current === text) setDlgAudioClock(false);");
   });
 
   it("não permite que o aviso de IA local cubra rotas imersivas", () => {
