@@ -1320,6 +1320,7 @@
 - [ ] Corrigir a ausência de áudio em inglês no diálogo autenticado da Praia Tropical e reduzir o tremor do professor sem anunciar isso como gesticulação natural
 - [x] Implementar voz neural Edge para as falas roteirizadas do diálogo sem sessão, com controle explícito **Ouvir inglês**, rota limitada a 500 caracteres e estado visual de reprodução validado; TypeScript sem erros e 390 testes aprovados
 - [x] Remover a combinação de tremor `teacher-talk` com `head-sway` durante a fala e manter somente respiração discreta; a animação facial natural permanece aberta
+- [x] Impedir que o botão Ouvir inglês permaneça em preparação quando a voz pública exceder o tempo de espera ou falhar, devolvendo feedback e nova tentativa — limite de 12 segundos encerra espera excessiva e devolve fallback/feedback; painel e controle validados visualmente; TypeScript sem erros e 393 testes aprovados
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
 - [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente

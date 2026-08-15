@@ -27,6 +27,22 @@ import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } 
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
 
+function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeoutId = setTimeout(() => reject(new Error("scene-dialogue-speech-timeout")), timeoutMs);
+    task.then(
+      (result) => {
+        clearTimeout(timeoutId);
+        resolve(result);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      },
+    );
+  });
+}
+
 const HOTSPOT_ICON_COMPONENTS: Array<[string, LucideIcon]> = [
   ["sun", Sun], ["wave", Waves], ["ocean", Waves], ["sea", Waves], ["palm", TreePalm],
   ["tree", TreePalm], ["shell", Shell], ["sand", Umbrella], ["umbrella", Umbrella],
@@ -1505,7 +1521,10 @@ export default function ImmersiveScene() {
   }, [stopVisemeSync, syncWithAudio]);
 
   const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string) => {
-    const result = await sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender });
+    const result = await waitForSpeechResult(
+      sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender }),
+      12_000,
+    );
     if (!result.success || !("audioBase64" in result)) return false;
     const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
     const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));

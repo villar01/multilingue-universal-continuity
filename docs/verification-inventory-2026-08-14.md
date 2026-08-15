@@ -43,3 +43,5 @@ Após corrigir a ordem de inicialização da voz pública, a cena carregou sem e
 O teste sem sessão acionou a fala roteirizada por Edge e o botão mudou de **Preparando inglês…** para **Reiniciar inglês**, que é o estado visual controlado por `isSpeaking` após o início de `HTMLAudioElement.play()`. O painel permaneceu aberto, com texto bilíngue e sem erro de inicialização; a percepção auditiva final ainda deve ser confirmada pelo usuário no navegador com volume ativo.
 
 A validação final da implementação terminou com **TypeScript sem erros, 173 arquivos e 390 testes aprovados**. A checagem auditiva no navegador do usuário continua propositalmente aberta, pois os testes e o estado de reprodução não substituem escutar a fala.
+
+O diálogo continuou abrindo com **Ouvir inglês** disponível após a inclusão do limite de espera de 12 segundos para a síntese pública. A tela não apresentou erro de inicialização e o controle permaneceu pronto para nova tentativa; a confirmação de som audível no dispositivo do usuário continua pendente.

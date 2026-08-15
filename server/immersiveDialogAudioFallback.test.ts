@@ -9,6 +9,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   it("oferece repetição explícita em inglês e fallback local quando a voz neural não responde", () => {
     expect(source).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
     expect(source).toContain("const playPublicSceneDialogue = useCallback");
+    expect(source).toContain("function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number)");
+    expect(source).toContain("12_000,");
+    expect(source).toContain("scene-dialogue-speech-timeout");
     expect(source).toContain("const playLocalDialogFallback = useCallback");
     expect(source).toContain("window.speechSynthesis.speak(utterance);");
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
