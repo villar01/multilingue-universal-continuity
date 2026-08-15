@@ -2343,7 +2343,7 @@ export default function ImmersiveScene() {
                   }}
                   onClick={e => e.stopPropagation()}
                 >
-                  <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, padding: "4px 8px 8px", textTransform: "uppercase", letterSpacing: 1 }}>Estudar idioma</div>
+                  <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, padding: "4px 8px 8px", textTransform: "uppercase", letterSpacing: 1 }}>{immersionMode ? "Target language" : "Estudar idioma"}</div>
                   {Object.entries(LANG_LABELS).map(([code, info]) => (
                     <button
                       key={code}
@@ -2366,42 +2366,43 @@ export default function ImmersiveScene() {
                 </div>
               )}
             </div>
-            {/* Voice selector compact button */}
-            <VoiceSelector
-              langCode={targetLang || effectiveLang(selectedScene)}
-              langName={currentLangInfo.name || selectedScene.name}
-              compact
-            />
             <ImmersionModeToggle compact />
-            <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
-            <button
-              onClick={() => setParetoOpen(true)}
-              className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
-              style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
-              title="Vocabulário Pareto 1000+"
-            >
-              📚 Pareto
-            </button>
-            <div
-              className="flex items-center gap-1 text-yellow-400 font-bold px-3 py-1.5 rounded-full"
-              style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
-            >
-              ⭐ {score}
-            </div>
-            <button
-              type="button"
-              onClick={(event) => { event.stopPropagation(); setQuizFeedback(null); setQuizOpen((open) => !open); }}
-              className="rounded-full px-3 py-1.5 text-xs font-bold text-white transition hover:scale-105"
-              style={{ background: "rgba(99,102,241,.88)", backdropFilter: "blur(8px)" }}
-            >
-              {quizOpen ? "Fechar quiz" : "Quiz da cena"}
-            </button>
-            <div
-              className="text-white px-3 py-1.5 rounded-full"
-              style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
-            >
-              {learnedWords.size}/{selectedScene.hotspots.length}
-            </div>
+            {!immersionMode && <>
+              <VoiceSelector
+                langCode={targetLang || effectiveLang(selectedScene)}
+                langName={currentLangInfo.name || selectedScene.name}
+                compact
+              />
+              <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
+              <button
+                onClick={() => setParetoOpen(true)}
+                className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
+                style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
+                title="Vocabulário Pareto 1000+"
+              >
+                📚 Pareto
+              </button>
+              <div
+                className="flex items-center gap-1 text-yellow-400 font-bold px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
+              >
+                ⭐ {score}
+              </div>
+              <button
+                type="button"
+                onClick={(event) => { event.stopPropagation(); setQuizFeedback(null); setQuizOpen((open) => !open); }}
+                className="rounded-full px-3 py-1.5 text-xs font-bold text-white transition hover:scale-105"
+                style={{ background: "rgba(99,102,241,.88)", backdropFilter: "blur(8px)" }}
+              >
+                {quizOpen ? "Fechar quiz" : "Quiz da cena"}
+              </button>
+              <div
+                className="text-white px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
+              >
+                {learnedWords.size}/{selectedScene.hotspots.length}
+              </div>
+            </>}
           </div>
         </div>
 
@@ -2566,7 +2567,7 @@ export default function ImmersiveScene() {
               boxShadow: "0 4px 20px rgba(99,102,241,0.4)",
             }}
           >
-            💬 Iniciar Diálogo
+            {immersionMode ? "💬 Start dialogue" : "💬 Iniciar Diálogo"}
           </button>
         )}
         {dialogAuthRequired && !isAuthenticated && (
@@ -2607,7 +2608,7 @@ export default function ImmersiveScene() {
               }}
             >
               <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 pb-2">
-                <span className="text-xs font-black uppercase tracking-[0.16em] text-indigo-200">Diálogo da cena</span>
+                {!immersionMode && <span className="text-xs font-black uppercase tracking-[0.16em] text-indigo-200">Diálogo da cena</span>}
                 <button
                   type="button"
                   onClick={() => {
@@ -2627,10 +2628,10 @@ export default function ImmersiveScene() {
                 <span style={{ fontSize: "11px", fontWeight: 700, color: selectedScene.dialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   {selectedScene.dialog[dlgStep].speaker === 'teacher' ? `🏫 ${selectedScene.teacherName}` : '👤 Você'}
                 </span>
-                {dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
+                {!immersionMode && dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
                   <span className="text-[11px] text-cyan-100/65">Traduzindo para {nativeLangLabel}…</span>
                 )}
-{getDlgTranslation(selectedScene.dialog[dlgStep]) && (
+{!immersionMode && getDlgTranslation(selectedScene.dialog[dlgStep]) && (
                   <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
                     — {getDlgTranslation(selectedScene.dialog[dlgStep])}
                   </span>
@@ -2641,8 +2642,9 @@ export default function ImmersiveScene() {
                     onClick={() => speakNativeHelp(getDlgTranslation(selectedScene.dialog[dlgStep]))}
                     className="ml-auto rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2 py-1 text-[10px] font-bold text-cyan-100 hover:bg-cyan-400/20"
                     title="Ouvir ajuda na língua nativa"
+                    aria-label="Ouvir ajuda na língua nativa"
                   >
-                    Ouvir ajuda {nativeLangLabel}
+                    {immersionMode ? "?" : `Ouvir ajuda ${nativeLangLabel}`}
                   </button>
                 )}
               </div>
@@ -2753,7 +2755,7 @@ export default function ImmersiveScene() {
                   </button>
                 </div>
               )}
-              {dlgFeedback && (
+              {!immersionMode && dlgFeedback && (
                 <p className="mt-3 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
                   {dlgFeedback}
                 </p>
@@ -2764,7 +2766,7 @@ export default function ImmersiveScene() {
                   onClick={dlgNext}
                   style={{ marginTop: '12px', padding: '8px 20px', borderRadius: '8px', background: 'rgba(99,102,241,0.7)', color: '#fff', fontWeight: 600, fontSize: '14px', border: '1px solid rgba(99,102,241,0.5)', cursor: 'pointer' }}
                 >
-                  Continuar →
+                  {immersionMode ? "Next →" : "Continuar →"}
                 </button>
               )}
             </div>
@@ -2811,7 +2813,7 @@ export default function ImmersiveScene() {
             className="flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full btn-press"
             style={{ background: "rgba(99,102,241,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(99,102,241,0.5)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
           >
-            Próxima →
+            {immersionMode ? "Next →" : "Próxima →"}
           </button>
         </div>
         {/* Notebook Modal */}
