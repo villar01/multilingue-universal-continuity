@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterStudyEntriesByUnit, getSentenceStarter, getSentenceTransformation, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, reviewStudyTransformation, searchStudyBase } from "../client/src/lib/studyBase";
+import { filterStudyEntriesByUnit, getSentenceStarter, getSentenceTransformation, getStructuredStudyUnit, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, reviewStudyTransformation, searchStudyBase } from "../client/src/lib/studyBase";
 
 describe("Base de Estudos A1", () => {
   it("encontra conhecimento por termo em português e inglês", () => {
@@ -29,6 +29,14 @@ describe("Base de Estudos A1", () => {
     ]);
     const locationUnit = filterStudyEntriesByUnit(searchStudyBase("", "all", "A1"), "Unidade 3 · Lugares e localização");
     expect(locationUnit.map((entry) => entry.id)).toEqual(["a1-where-is", "a1-near-location"]);
+  });
+
+  it("oferece cartilha original com texto, gramática, compreensão e escrita antes da revisão Pareto", () => {
+    const unit = getStructuredStudyUnit("Unidade 1 · Cumprimentos e identidade");
+    expect(unit?.reading).toContain("My name is James");
+    expect(unit?.grammarExplanation).toContain("My name is");
+    expect(unit?.questions).toHaveLength(2);
+    expect(unit?.writingPrompt).toContain("Escreva duas frases");
   });
 
   it("oferece orientação contextual sem repetir conteúdo ofensivo", () => {

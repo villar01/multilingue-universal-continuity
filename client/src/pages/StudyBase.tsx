@@ -8,9 +8,11 @@ import {
   getStudyUnits,
   getSentenceStarter,
   getSentenceTransformation,
+  getStructuredStudyUnit,
   reviewStudySentence,
   reviewStudyTransformation,
   searchStudyBase,
+  STUDY_BASE_A1_ENTRIES,
   type StudyEntry,
   type StudyEntryKind,
 } from "@/lib/studyBase";
@@ -36,6 +38,8 @@ const FILTERS: Array<{ id: StudyEntryKind | "all"; label: string }> = [
   { id: "situation", label: "Situações reais" },
 ];
 
+type StudyPath = "cartilha" | "pareto" | "unidade" | "consulta";
+
 function getStoredLevel(): CEFRLevel {
   try {
     const saved = localStorage.getItem("multilingue_cefr_level");
@@ -59,7 +63,9 @@ export default function StudyBase() {
   const [sentenceFeedback, setSentenceFeedback] = useState("");
   const [transformationDraft, setTransformationDraft] = useState("");
   const [transformationFeedback, setTransformationFeedback] = useState("");
+  const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const returnTo = useMemo(() => {
     const destination = typeof window === "undefined"
@@ -76,6 +82,22 @@ export default function StudyBase() {
   const activeEntry = selectedEntry && entries.some((entry) => entry.id === selectedEntry.id)
     ? selectedEntry
     : entries[0] ?? null;
+  const structuredUnit = getStructuredStudyUnit(activeEntry?.unit);
+
+  const chooseStudyPath = useCallback((path: StudyPath) => {
+    if (path === "consulta") {
+      window.setTimeout(() => searchInputRef.current?.focus(), 0);
+      return;
+    }
+    if (path === "pareto") {
+      if (activeEntry) setPracticeEntry(activeEntry);
+      return;
+    }
+    setQuery("");
+    setKind("all");
+    setUnit(path === "cartilha" ? "all" : "Unidade 1 · Cumprimentos e identidade");
+    setSelectedEntry(null);
+  }, [activeEntry]);
 
   const playTargetVoice = useCallback(async (text: string) => {
     if (!text.trim()) return;
@@ -123,6 +145,7 @@ export default function StudyBase() {
     setSentenceFeedback("");
     setTransformationDraft("");
     setTransformationFeedback("");
+    setComprehensionAnswers({});
   };
 
   return (
@@ -161,6 +184,29 @@ export default function StudyBase() {
           </div>
         </section>
 
+        <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Escolha como estudar">
+          <button type="button" onClick={() => chooseStudyPath("cartilha")} className="rounded-2xl border border-fuchsia-300/35 bg-fuchsia-300/10 p-4 text-left transition hover:bg-fuchsia-300/20">
+            <BookOpen className="h-5 w-5 text-fuchsia-100" />
+            <strong className="mt-3 block text-fuchsia-50">Cartilha Completa</strong>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Textos, gramática, compreensão, escrita e exercícios por unidade.</span>
+          </button>
+          <button type="button" onClick={() => chooseStudyPath("pareto")} className="rounded-2xl border border-amber-300/35 bg-amber-300/10 p-4 text-left transition hover:bg-amber-300/20">
+            <BrainCircuit className="h-5 w-5 text-amber-100" />
+            <strong className="mt-3 block text-amber-50">Pareto · 1.000 palavras</strong>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Memorizar, escrever, recuperar e revisar. Piloto atual: {STUDY_BASE_A1_ENTRIES.length} entradas.</span>
+          </button>
+          <button type="button" onClick={() => chooseStudyPath("unidade")} className="rounded-2xl border border-cyan-300/35 bg-cyan-300/10 p-4 text-left transition hover:bg-cyan-300/20">
+            <Sparkles className="h-5 w-5 text-cyan-100" />
+            <strong className="mt-3 block text-cyan-50">Estudar por unidade</strong>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Avançar por texto, explicação, treino e criação de frases.</span>
+          </button>
+          <button type="button" onClick={() => chooseStudyPath("consulta")} className="rounded-2xl border border-violet-300/35 bg-violet-300/10 p-4 text-left transition hover:bg-violet-300/20">
+            <Search className="h-5 w-5 text-violet-100" />
+            <strong className="mt-3 block text-violet-50">Consulta Rápida e Total</strong>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Pesquisar palavra, gramática, frase ou situação e voltar ao estudo.</span>
+          </button>
+        </section>
+
         <section className="mt-7 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
             <label htmlFor="study-search" className="text-sm font-bold text-slate-100">O que você quer estudar?</label>
@@ -168,6 +214,7 @@ export default function StudyBase() {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="study-search"
+                ref={searchInputRef}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Ex.: pool, mãe, onde, apresentação..."
@@ -260,6 +307,51 @@ export default function StudyBase() {
                 <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-cyan-200">{activeEntry.unit} · Pareto: lembrar, escrever e criar</p>
                 <h2 className="mt-5 text-2xl font-black sm:text-3xl">{activeEntry.title}</h2>
                 <p className="mt-2 text-slate-300">{activeEntry.subtitle}</p>
+
+                {structuredUnit && (
+                  <section className="mt-5 rounded-2xl border border-fuchsia-300/25 bg-fuchsia-300/5 p-4" aria-labelledby="structured-unit-heading">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-fuchsia-200">Cartilha original · texto → gramática → escrita</p>
+                        <h3 id="structured-unit-heading" className="mt-1 text-lg font-black text-white">{structuredUnit.readingTitle}</h3>
+                      </div>
+                      <span className="rounded-full border border-fuchsia-300/30 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100">Objetivo A1</span>
+                    </div>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-fuchsia-50">{structuredUnit.objective}</p>
+                    <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/60 p-4">
+                      <p className="text-base font-semibold leading-7 text-white">{structuredUnit.reading}</p>
+                      <p className="mt-3 border-l-2 border-fuchsia-300 pl-3 text-sm leading-6 text-slate-300">{structuredUnit.readingTranslation}</p>
+                      <Button type="button" onClick={() => playTargetVoice(structuredUnit.reading)} disabled={speakMutation.isPending} className="mt-4 gap-2 bg-fuchsia-300 font-bold text-slate-950 hover:bg-fuchsia-200">
+                        <Headphones className="h-4 w-4" />
+                        Ouvir o texto
+                      </Button>
+                    </div>
+                    <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4">
+                      <p className="text-sm font-bold text-cyan-100">{structuredUnit.grammarTitle}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-200">{structuredUnit.grammarExplanation}</p>
+                    </div>
+                    <div className="mt-4 space-y-3">
+                      <p className="text-sm font-bold text-white">Compreensão do texto</p>
+                      {structuredUnit.questions.map((question) => {
+                        const selected = comprehensionAnswers[question.id];
+                        return (
+                          <div key={question.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                            <p className="text-sm font-semibold text-slate-100">{question.prompt}</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {question.options.map((option, index) => (
+                                <button key={option} type="button" onClick={() => setComprehensionAnswers((answers) => ({ ...answers, [question.id]: index }))} className={`rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${selected === index ? (index === question.correctIndex ? "border-emerald-300 bg-emerald-300/15 text-emerald-100" : "border-rose-300 bg-rose-300/15 text-rose-100") : "border-white/15 bg-slate-950/50 text-slate-200 hover:border-fuchsia-300/60"}`}>
+                                  {option}
+                                </button>
+                              ))}
+                            </div>
+                            {selected !== undefined && <p role="status" className="mt-2 text-sm text-slate-300">{selected === question.correctIndex ? `Correto. ${question.explanation}` : `Revise o texto. ${question.explanation}`}</p>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-4 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm leading-6 text-amber-100"><strong>Escrita para fixar:</strong> {structuredUnit.writingPrompt}</p>
+                  </section>
+                )}
 
                 <div className="mt-6 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
                   <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Frase-alvo</p>

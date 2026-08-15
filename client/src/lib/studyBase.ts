@@ -20,6 +20,45 @@ export interface StudyEntry {
   searchTerms: string[];
 }
 
+export interface StudyComprehensionQuestion {
+  id: string;
+  prompt: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface StructuredStudyUnit {
+  id: string;
+  unit: string;
+  objective: string;
+  readingTitle: string;
+  reading: string;
+  readingTranslation: string;
+  grammarTitle: string;
+  grammarExplanation: string;
+  writingPrompt: string;
+  questions: StudyComprehensionQuestion[];
+}
+
+export const STRUCTURED_A1_UNITS: StructuredStudyUnit[] = [
+  {
+    id: "a1-unit-identity",
+    unit: "Unidade 1 · Cumprimentos e identidade",
+    objective: "Cumprimentar, dizer o próprio nome, compreender uma apresentação curta e responder com uma frase pessoal.",
+    readingTitle: "Texto guiado · Conhecendo James",
+    reading: "Hello! My name is James. I am your English teacher. This is a tropical beach. The ocean is blue. What is your name? Nice to meet you.",
+    readingTranslation: "Olá! Meu nome é James. Sou seu professor de inglês. Esta é uma praia tropical. O oceano é azul. Qual é o seu nome? Prazer em conhecer você.",
+    grammarTitle: "Gramática útil · I am, My name is e This is",
+    grammarExplanation: "Use My name is + nome para se apresentar. Use I am + profissão ou característica para dizer quem você é. Use This is + nome ou objeto para apresentar algo que está perto. Não memorize regras isoladas: use as três estruturas para falar de você e do que vê.",
+    writingPrompt: "Escreva duas frases: cumprimente James e diga seu nome. Depois, acrescente uma frase com This is sobre algo que você vê.",
+    questions: [
+      { id: "a1-identity-james", prompt: "Who is James?", options: ["He is the English teacher.", "He is the student's brother.", "He is at a restaurant."], correctIndex: 0, explanation: "James says: “I am your English teacher.”" },
+      { id: "a1-identity-place", prompt: "Where is the lesson?", options: ["At a tropical beach.", "At an airport.", "At a school."], correctIndex: 0, explanation: "The text says: “This is a tropical beach.”" },
+    ],
+  },
+];
+
 export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   {
     id: "a1-introduce-yourself",
@@ -244,6 +283,10 @@ export function searchStudyBase(
 
 export function getStudyUnits(level: CEFRLevel = "A1"): string[] {
   return [...new Set(STUDY_BASE_A1_ENTRIES.filter((entry) => entry.cefr === level).map((entry) => entry.unit))];
+}
+
+export function getStructuredStudyUnit(unit: string | null | undefined): StructuredStudyUnit | null {
+  return STRUCTURED_A1_UNITS.find((item) => item.unit === unit) || null;
 }
 
 export function filterStudyEntriesByUnit(entries: StudyEntry[], unit: string | "all"): StudyEntry[] {
