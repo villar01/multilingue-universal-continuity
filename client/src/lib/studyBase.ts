@@ -289,6 +289,29 @@ export function getSentenceStarter(entry: StudyEntry): string {
   return starters[entry.id] || entry.targetText;
 }
 
+export type SentenceTransformation = {
+  source: string;
+  instruction: string;
+  hint: string;
+};
+
+export function getSentenceTransformation(entry: StudyEntry): SentenceTransformation {
+  const transformations: Record<string, SentenceTransformation> = {
+    "a1-introduce-yourself": { source: "My name is Ana.", instruction: "Troque Ana pelo seu nome.", hint: "Mantenha: My name is ___." },
+    "a1-ask-for-help": { source: "Can you help me, please?", instruction: "Acrescente o que você precisa, sem tirar help.", hint: "Can you help me with ___, please?" },
+    "a1-where-is": { source: "Where is the pool?", instruction: "Troque pool por outro lugar singular.", hint: "Where is the hotel?" },
+    "a1-this-is": { source: "This is a book.", instruction: "Troque book por outro objeto próximo.", hint: "This is a table." },
+    "a1-family-mom": { source: "My mom is at home.", instruction: "Troque at home por outro lugar ou situação.", hint: "My mom is at work." },
+    "a1-routine-now": { source: "I need water now.", instruction: "Troque water pelo que você precisa agora.", hint: "I need help now." },
+    "a1-order-water": { source: "I would like water, please.", instruction: "Acrescente uma qualidade ao pedido.", hint: "I would like cold water, please." },
+    "a1-ask-price": { source: "How much is this ticket?", instruction: "Troque ticket por outro item singular.", hint: "How much is this book?" },
+    "a1-near-location": { source: "The hotel is near the beach.", instruction: "Troque um dos lugares e mantenha near.", hint: "The restaurant is near the hotel." },
+    "a1-repeat-please": { source: "Please repeat that.", instruction: "Acrescente como você quer ouvir novamente.", hint: "Please repeat that slowly." },
+    "a1-morning-routine": { source: "I study English in the morning.", instruction: "Troque a ação, mas mantenha morning.", hint: "I work in the morning." },
+  };
+  return transformations[entry.id] || { source: entry.targetText, instruction: "Mude uma informação e mantenha a palavra Pareto.", hint: getSentenceStarter(entry) };
+}
+
 export function reviewStudySentence(entry: StudyEntry, sentence: string): string {
   const normalized = NORMALIZE(sentence);
   if (!normalized) return "Escreva uma frase curta para receber orientação.";
@@ -306,4 +329,15 @@ export function reviewStudySentence(entry: StudyEntry, sentence: string): string
     return "Você reproduziu o modelo corretamente. Agora troque uma informação e crie uma frase nova com a mesma estrutura.";
   }
   return `Boa criação. Sua frase reutiliza “${entry.paretoWord}”. Ouça-a, revise uma palavra se desejar e crie mais uma variação.`;
+}
+
+export function reviewStudyTransformation(entry: StudyEntry, sentence: string): string {
+  const normalized = NORMALIZE(sentence);
+  const transformation = getSentenceTransformation(entry);
+  if (!normalized) return "Escreva a frase transformada para receber orientação.";
+  if (UNSAFE_PATTERN.test(normalized)) return "Vamos manter a prática respeitosa e ligada à lição. Transforme a frase usando a palavra Pareto.";
+  if (normalized.split(/\s+/).length < 3) return "Use uma frase completa. Siga a estrutura do modelo e mude apenas uma informação.";
+  if (normalized === NORMALIZE(transformation.source)) return "Você manteve o modelo. Agora altere uma informação para criar uma nova situação.";
+  if (!normalized.includes(NORMALIZE(entry.paretoWord))) return `Mantenha a palavra Pareto “${entry.paretoWord}” para praticar o conteúdo desta unidade.`;
+  return `Boa transformação. Você preservou “${entry.paretoWord}” e criou uma situação nova. Ouça a frase e depois faça mais uma variação.`;
 }

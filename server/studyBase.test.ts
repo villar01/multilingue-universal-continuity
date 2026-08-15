@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterStudyEntriesByUnit, getSentenceStarter, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, searchStudyBase } from "../client/src/lib/studyBase";
+import { filterStudyEntriesByUnit, getSentenceStarter, getSentenceTransformation, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, reviewStudyTransformation, searchStudyBase } from "../client/src/lib/studyBase";
 
 describe("Base de Estudos A1", () => {
   it("encontra conhecimento por termo em português e inglês", () => {
@@ -44,5 +44,12 @@ describe("Base de Estudos A1", () => {
     expect(reviewStudySentence(entry, "Where is the pool?")).toContain("modelo corretamente");
     expect(reviewStudySentence(entry, "Where is the hotel?")).toContain("Boa criação");
     expect(reviewStudySentence(entry, "I like the hotel")).toContain("inclua a palavra Pareto");
+  });
+
+  it("ensina a transformar o modelo mantendo a palavra Pareto", () => {
+    const entry = searchStudyBase("pool")[0]!;
+    expect(getSentenceTransformation(entry)).toMatchObject({ source: "Where is the pool?", hint: "Where is the hotel?" });
+    expect(reviewStudyTransformation(entry, "Where is the pool?")).toContain("altere uma informação");
+    expect(reviewStudyTransformation(entry, "Where is the hotel?")).toContain("Boa transformação");
   });
 });

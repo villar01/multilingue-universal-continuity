@@ -7,7 +7,9 @@ import {
   getStudyBaseTeacherReply,
   getStudyUnits,
   getSentenceStarter,
+  getSentenceTransformation,
   reviewStudySentence,
+  reviewStudyTransformation,
   searchStudyBase,
   type StudyEntry,
   type StudyEntryKind,
@@ -55,6 +57,8 @@ export default function StudyBase() {
   const [teacherReply, setTeacherReply] = useState("");
   const [sentenceDraft, setSentenceDraft] = useState("");
   const [sentenceFeedback, setSentenceFeedback] = useState("");
+  const [transformationDraft, setTransformationDraft] = useState("");
+  const [transformationFeedback, setTransformationFeedback] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const returnTo = useMemo(() => {
@@ -106,12 +110,19 @@ export default function StudyBase() {
     setSentenceFeedback(reviewStudySentence(activeEntry, sentenceDraft));
   }, [activeEntry, sentenceDraft]);
 
+  const reviewTransformation = useCallback(() => {
+    if (!activeEntry) return;
+    setTransformationFeedback(reviewStudyTransformation(activeEntry, transformationDraft));
+  }, [activeEntry, transformationDraft]);
+
   const openEntry = (entry: StudyEntry) => {
     setSelectedEntry(entry);
     setTeacherQuestion("");
     setTeacherReply("");
     setSentenceDraft("");
     setSentenceFeedback("");
+    setTransformationDraft("");
+    setTransformationFeedback("");
   };
 
   return (
@@ -314,6 +325,28 @@ export default function StudyBase() {
                     <Button type="button" variant="outline" disabled={!sentenceDraft.trim() || speakMutation.isPending} onClick={() => playTargetVoice(sentenceDraft)} className="border-cyan-300/45 text-cyan-100 hover:bg-cyan-300/10 hover:text-cyan-50">Ouvir frase</Button>
                   </div>
                   {sentenceFeedback && <p role="status" className="mt-3 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm text-amber-100">{sentenceFeedback}</p>}
+                </section>
+
+                <section className="mt-5 rounded-2xl border border-emerald-300/25 bg-emerald-300/5 p-4" aria-labelledby="sentence-transform-heading">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-emerald-200" />
+                    <h3 id="sentence-transform-heading" className="font-bold text-white">Transformar a frase</h3>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300">{getSentenceTransformation(activeEntry).instruction}</p>
+                  <p className="mt-3 rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-emerald-100">Modelo: {getSentenceTransformation(activeEntry).source}</p>
+                  <p className="mt-2 text-sm text-slate-300">Pista: {getSentenceTransformation(activeEntry).hint}</p>
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      value={transformationDraft}
+                      onChange={(event) => setTransformationDraft(event.target.value)}
+                      onKeyDown={(event) => { if (event.key === "Enter") reviewTransformation(); }}
+                      placeholder="Escreva a frase transformada"
+                      className="border-white/15 bg-slate-950 text-white placeholder:text-slate-500"
+                    />
+                    <Button type="button" onClick={reviewTransformation} className="bg-emerald-300 font-bold text-slate-950 hover:bg-emerald-200">Conferir mudança</Button>
+                    <Button type="button" variant="outline" disabled={!transformationDraft.trim() || speakMutation.isPending} onClick={() => playTargetVoice(transformationDraft)} className="border-emerald-300/45 text-emerald-100 hover:bg-emerald-300/10 hover:text-emerald-50">Ouvir mudança</Button>
+                  </div>
+                  {transformationFeedback && <p role="status" className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-100">{transformationFeedback}</p>}
                 </section>
 
                 <section className="mt-5 rounded-2xl border border-white/10 bg-slate-950/60 p-4" aria-labelledby="study-teacher-heading">
