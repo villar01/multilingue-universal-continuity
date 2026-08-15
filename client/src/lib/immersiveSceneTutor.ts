@@ -33,10 +33,33 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     };
   }
 
-  if (/\bwhere\s+are\s+(this|that)\s+beach\b/.test(normalizedQuestion)) {
+  const isLocationQuestion = /\bwhere\s+(is|are)\b/.test(normalizedQuestion);
+  if (isLocationQuestion && /\bhouse\b|\bhome\b/.test(normalizedQuestion)) {
+    const visibleObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");
     return {
-      text: "James: Good question. Say: ‘Where is this beach?’ This is our tropical beach scene.",
-      nativeText: "Correção: use ‘is’ porque ‘beach’ é singular. Em português: ‘Onde fica esta praia?’",
+      text: `James: I can’t see a house in this scene. I can see ${visibleObjects}.`,
+      nativeText: "Nesta cena não há uma casa visível. Pergunte sobre um objeto ou lugar que apareça na imagem.",
+    };
+  }
+  const mentionedHotspot = hotspots.find((item) => {
+    const label = normalize(item.label);
+    const translation = normalize(item.translation);
+    return normalizedQuestion.includes(label) || normalizedQuestion.includes(translation);
+  });
+  const mentionsBeach = /\bbeach\b/.test(normalizedQuestion);
+  if (isLocationQuestion && (mentionedHotspot || mentionsBeach)) {
+    const subject = mentionedHotspot ? `the ${mentionedHotspot.label}` : "this beach";
+    const correctedQuestion = `Where is ${subject}?`;
+    const needsSingularCorrection = /\bwhere\s+are\b/.test(normalizedQuestion);
+    const location = mentionedHotspot
+      ? `I can see ${subject} in this scene.`
+      : "This is our tropical beach scene.";
+    return {
+      text: `James: ${needsSingularCorrection ? `Say: ‘${correctedQuestion}’ ` : ""}${location}`,
+      nativeText: needsSingularCorrection
+        ? `Correção: use ‘is’ porque “${mentionedHotspot?.label || "beach"}” é singular. Em português: “Onde fica ${mentionedHotspot ? `a/o ${mentionedHotspot.translation}` : "esta praia"}?”`
+        : `Em português: “Onde fica ${mentionedHotspot ? `a/o ${mentionedHotspot.translation}` : "esta praia"}?”`,
+      hotspotId: mentionedHotspot?.id,
     };
   }
 
