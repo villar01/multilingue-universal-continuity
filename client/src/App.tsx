@@ -78,6 +78,7 @@ const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
 const StudyBase = lazy(() => import("./pages/StudyBase"));
 import LocalAINotification from "./components/LocalAINotification";
 import ConnectivityIndicator from "./components/ConnectivityIndicator";
+import { QuickStudyAccess } from "./components/QuickStudyAccess";
 
 // Loading fallback component
 const PageLoader = () => (
@@ -188,6 +189,7 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <Router />
           </Suspense>
+          <QuickStudyAccess />
           <LocalAINotification />
           <ConnectivityIndicator />
           <TourButton />
