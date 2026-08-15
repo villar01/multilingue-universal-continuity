@@ -1401,6 +1401,7 @@ export default function ImmersiveScene() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeSpeechText, setActiveSpeechText] = useState("");
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
+  const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
@@ -1507,6 +1508,7 @@ export default function ImmersiveScene() {
     audio.volume = 1;
     audio.setAttribute("aria-hidden", "true");
     document.body.appendChild(audio);
+    setDialogAudioSource(source);
     audioRef.current = audio;
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
@@ -2699,6 +2701,14 @@ export default function ImmersiveScene() {
                     >
                       {immersionMode ? "Browser voice" : "Usar voz do navegador"}
                     </button>
+                  )}
+                  {dialogAudioSource && (
+                    <audio
+                      controls
+                      src={dialogAudioSource}
+                      className="h-8 max-w-[220px]"
+                      aria-label="Áudio da fala em inglês"
+                    />
                   )}
                 </div>
               )}

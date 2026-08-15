@@ -1334,6 +1334,8 @@
 - [x] Corrigir o fallback de visitante para que a fala inglesa seja realmente audível após um gesto do aluno quando a voz neural exigir sessão — botão explícito **Browser voice** chama `speechSynthesis` diretamente após gesto do aluno, sem depender da tentativa neural; TypeScript sem erros e 179 arquivos/402 testes aprovados. A confirmação auditiva no dispositivo do aluno continua aberta
 - [x] Corrigir a voz feminina indevida de James no fallback Browser voice — fallback agora seleciona apenas voz inglesa masculina reconhecida para James e não reproduz voz feminina quando a voz masculina local estiver ausente; TypeScript sem erros e 179 arquivos/403 testes aprovados
 - [ ] Substituir o caminho atual do áudio do diálogo, pois o aluno confirmou ausência total de som mesmo com arquivo gerado e eventos de reprodução técnicos
+- [ ] Resolver a tela publicada da Praia Tropical: diálogo aberto com James, frase Hello! My name is James… e botão Reiniciar inglês, porém sem som confirmado pelo aluno
+- [ ] Exibir controle de áudio nativo no diálogo publicado para que a reprodução neural tenha saída diretamente acionável e verificável pelo aluno
 - [x] Remover o tremor visual residual do retrato de James — retrato estabilizado, sem onda, balanço, respiração artificial ou gesto sintético; TypeScript sem erros e 397 testes aprovados. A animação labial natural permanece aberta até existir motor facial sincronizado por áudio
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
