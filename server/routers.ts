@@ -33,6 +33,7 @@ import { musetalKRouter } from './musetalk-router';
 import { voiceRouter } from './routers-tts';
 import { synthesizeEdgeTTS, resolveVoice } from './edge-tts';
 import { integratedFeaturesRouter } from './integrated-features';
+import { AISafetyAccessError } from './content-moderation';
 import { referralRouter } from './referral-system';
 import { gamificationUIRouter } from './gamification-ui-integration';
 import { complianceRouter } from './compliance-router';
@@ -97,6 +98,23 @@ export const appRouter = router({
   translate: translateRouter,
   musetalk: musetalKRouter,
   voice: voiceRouter,
+  sceneDialogueVoice: router({
+    speak: publicProcedure
+      .input(z.object({
+        text: z.string().trim().min(1).max(500),
+        language: z.string().min(2).max(10),
+        gender: z.enum(["male", "female"]),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const audio = await synthesizeEdgeTTS(input.text, input.language, undefined, input.gender);
+          return { success: true, ...audio };
+        } catch (error) {
+          console.warn("[Scene dialogue voice] Edge synthesis unavailable", error);
+          return { success: false, error: "Voz neural da cena indisponível." };
+        }
+      }),
+  }),
   features: integratedFeaturesRouter,
   referral: referralRouter,
   compliance: complianceRouter,
@@ -611,18 +629,21 @@ export const appRouter = router({
       )
       .mutation(async ({ input, ctx }) => {
         const { generateConversation } = await import("./_core/ai");
-        
-        const response = await generateConversation(
-          {
-            userId: ctx.user.id,
-            languageCode: input.languageCode,
-            userLevel: "A2", // TODO: calcular baseado no progresso
-          },
-          input.message,
-          input.conversationHistory || []
-        );
-        
-        return { response };
+        try {
+          const response = await generateConversation(
+            {
+              userId: ctx.user.id,
+              languageCode: input.languageCode,
+              userLevel: "A2", // TODO: calcular baseado no progresso
+            },
+            input.message,
+            input.conversationHistory || []
+          );
+          return { response };
+        } catch (error) {
+          if (error instanceof AISafetyAccessError) throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+          throw error;
+        }
       }),
 
     // Gerar exercício personalizado
@@ -635,14 +656,16 @@ export const appRouter = router({
       )
       .mutation(async ({ input, ctx }) => {
         const { generatePersonalizedExercise } = await import("./_core/ai");
-        
-        const exercise = await generatePersonalizedExercise({
-          userId: ctx.user.id,
-          languageCode: input.languageCode,
-          userLevel: "A2",
-        }, input.topic);
-        
-        return exercise;
+        try {
+          return await generatePersonalizedExercise({
+            userId: ctx.user.id,
+            languageCode: input.languageCode,
+            userLevel: "A2",
+          }, input.topic);
+        } catch (error) {
+          if (error instanceof AISafetyAccessError) throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+          throw error;
+        }
       }),
 
     // Explicar gramática
@@ -656,18 +679,21 @@ export const appRouter = router({
       )
       .mutation(async ({ input, ctx }) => {
         const { explainGrammar } = await import("./_core/ai");
-        
-        const explanation = await explainGrammar(
-          {
-            userId: ctx.user.id,
-            languageCode: input.languageCode,
-            userLevel: "A2",
-          },
-          input.topic,
-          input.question
-        );
-        
-        return { explanation };
+        try {
+          const explanation = await explainGrammar(
+            {
+              userId: ctx.user.id,
+              languageCode: input.languageCode,
+              userLevel: "A2",
+            },
+            input.topic,
+            input.question
+          );
+          return { explanation };
+        } catch (error) {
+          if (error instanceof AISafetyAccessError) throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+          throw error;
+        }
       }),
 
     // Traduzir palavra
@@ -1085,15 +1111,17 @@ IMPORTANT: For ALL "phonetic" fields, write how the word SOUNDS in Portuguese le
       )
       .mutation(async ({ input, ctx }) => {
         const { analyzePronunciation } = await import("./_core/ai");
-        
-        const feedback = await analyzePronunciation(
-          input.expectedText,
-          input.transcribedText,
-          input.languageCode,
-          ctx.user?.id
-        );
-        
-        return feedback;
+        try {
+          return await analyzePronunciation(
+            input.expectedText,
+            input.transcribedText,
+            input.languageCode,
+            ctx.user.id
+          );
+        } catch (error) {
+          if (error instanceof AISafetyAccessError) throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+          throw error;
+        }
       }),
 
     // Gerar palavras do dia para memorização

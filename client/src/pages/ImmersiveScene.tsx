@@ -971,7 +971,7 @@ function TeacherAvatar({
           position: "relative",
           width: "100%",
           animation: isSpeaking
-            ? "teacher-talk 1.2s ease-in-out infinite, head-sway 3s ease-in-out infinite"
+            ? "teacher-breathe 5s ease-in-out infinite"
             : (scene.teacherAnimation
               ? `${scene.teacherAnimation} 4s ease-in-out infinite, teacher-breathe 4s ease-in-out infinite`
               : "teacher-breathe 4s ease-in-out infinite, head-sway 5s ease-in-out infinite"),
@@ -1383,9 +1383,11 @@ export default function ImmersiveScene() {
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
+  const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
   const activeSpeechRequestRef = useRef<string | null>(null);
@@ -1399,12 +1401,52 @@ export default function ImmersiveScene() {
       audioRef.current.currentTime = 0;
       audioRef.current = null;
     }
+    if (localSpeechRef.current && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      localSpeechRef.current = null;
+    }
     stopVisemeSync();
     setAudioViseme(null);
     setIsSpeaking(false);
     setIsPreparingNeuralAudio(false);
     setActiveSpeechText("");
     activeSpeechRequestRef.current = null;
+  }, [stopVisemeSync]);
+
+  const playLocalDialogFallback = useCallback((text: string, language: string, requestKey: string) => {
+    if (!("speechSynthesis" in window) || !text.trim()) return false;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 0.88;
+    utterance.pitch = 1;
+    const releaseRequest = () => {
+      if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
+    };
+    const finish = () => {
+      stopVisemeSync();
+      setAudioViseme(null);
+      setIsSpeaking(false);
+      setIsPreparingNeuralAudio(false);
+      if (localSpeechRef.current === utterance) {
+        localSpeechRef.current = null;
+        setActiveSpeechText("");
+      }
+      releaseRequest();
+    };
+    utterance.onstart = () => {
+      setIsPreparingNeuralAudio(false);
+      setIsSpeaking(true);
+      if (activeDialogLineRef.current === text) setDlgAudioClock(false);
+    };
+    utterance.onend = finish;
+    utterance.onerror = () => {
+      finish();
+      setDlgFeedback("Não foi possível iniciar o áudio neste navegador. Leia a fala em inglês e tente novamente.");
+    };
+    localSpeechRef.current = utterance;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    return true;
   }, [stopVisemeSync]);
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
@@ -1462,6 +1504,15 @@ export default function ImmersiveScene() {
     await audio.play();
   }, [stopVisemeSync, syncWithAudio]);
 
+  const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string) => {
+    const result = await sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender });
+    if (!result.success || !("audioBase64" in result)) return false;
+    const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" }));
+    await playTeacherAudio(url, text, language, requestKey, true);
+    return true;
+  }, [playTeacherAudio, sceneDialogueVoiceMut]);
+
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (!text?.trim()) return;
@@ -1507,20 +1558,43 @@ export default function ImmersiveScene() {
     try {
       if (await playEdgeNeural()) return;
     } catch { /* fallback below */ }
+    if (playLocalDialogFallback(text, lang, requestKey)) {
+      setDlgFeedback("A voz neural não respondeu. A fala está usando a voz disponível neste navegador; toque em Ouvir inglês para repetir.");
+      return;
+    }
     if (activeDialogLineRef.current === text) setDlgAudioClock(false);
     setGreetingText("A voz neural não está disponível agora. Toque novamente para ouvir a pronúncia natural.");
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setActiveSpeechText("");
     if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
-  }, [googleTtsMut, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
+  }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (isAuthLoading) return;
     if (!isAuthenticated) {
       setDialogAuthRequired(true);
-      setGreetingText("Entre para ativar a fala neural e o diálogo com o professor.");
+      const requestKey = `local-dialog:${language}:${gender || "female"}:${text}`;
+      stopTeacherAudio();
+      activeSpeechRequestRef.current = requestKey;
+      setGreetingText("A sessão ativa a voz neural. Enquanto isso, a fala em inglês usa a voz disponível neste navegador.");
       setShowGreeting(true);
+      setActiveSpeechText(text);
+      setIsPreparingNeuralAudio(true);
+      void playPublicSceneDialogue(text, language, gender || "female", requestKey)
+        .then((played) => {
+          if (played) return;
+          if (playLocalDialogFallback(text, language, requestKey)) return;
+          setIsPreparingNeuralAudio(false);
+          setActiveSpeechText("");
+          setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
+        })
+        .catch(() => {
+          if (playLocalDialogFallback(text, language, requestKey)) return;
+          setIsPreparingNeuralAudio(false);
+          setActiveSpeechText("");
+          setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
+        });
       return;
     }
     primeVisemeAudio();
@@ -1530,7 +1604,7 @@ export default function ImmersiveScene() {
       setIsSpeaking(false);
       setActiveSpeechText("");
     });
-  }, [isAuthenticated, isAuthLoading, primeVisemeAudio, speak]);
+  }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, speak, stopTeacherAudio]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
@@ -2540,6 +2614,19 @@ export default function ImmersiveScene() {
                   </button>
                 )}
               </div>
+              {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
+                    requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+                  }}
+                  className="mb-3 rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
+                  title="Repetir a fala do professor em inglês"
+                >
+                  {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
+                </button>
+              )}
               {/* Scrolling text word by word */}
               {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
                 <div style={{ fontSize: "clamp(16px,2vw,22px)", fontWeight: 600, color: "#fff", lineHeight: 1.5, minHeight: "2em", letterSpacing: "0.01em" }}>

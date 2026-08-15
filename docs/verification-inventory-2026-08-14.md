@@ -33,3 +33,13 @@ Com o painel Pareto fechado, o botão **Iniciar Diálogo** abriu o painel identi
 ## Fechamento acessível do Pareto — prévia 2026-08-15
 
 O painel Pareto passou a apresentar um botão textual **Fechar**, com rótulo acessível e dica explícita **Fechar vocabulário Pareto**, ao lado do filtro da cena. Na prévia, o clique fechou integralmente a sobreposição e devolveu o foco à cena, com **Iniciar Diálogo** novamente disponível. O botão encerra qualquer prática e áudio da palavra antes de devolver o foco à cena. A suíte completa terminou com **170 arquivos e 383 testes aprovados**, sem erros de TypeScript.
+
+## Repetição da fala inglesa — prévia 2026-08-15
+
+Na Praia Tropical, o painel de diálogo passou a mostrar o controle explícito **Ouvir inglês**, ao lado de **Ouvir ajuda PT**. A prévia sem sessão apresentou corretamente o texto bilíngue e o aviso de que a voz neural requer sessão; nessa condição, o botão aciona a fala disponível no navegador como alternativa, sem afirmar que ela equivale à voz neural. A verificação auditiva autenticada continua necessária.
+
+Após corrigir a ordem de inicialização da voz pública, a cena carregou sem erro de referência e o painel continuou mostrando **Ouvir inglês** com o professor estável, sem a combinação anterior de `teacher-talk` e `head-sway` durante a fala. A confirmação auditiva da rota neural Edge continua pendente de sessão ou de resposta bem-sucedida do provedor.
+
+O teste sem sessão acionou a fala roteirizada por Edge e o botão mudou de **Preparando inglês…** para **Reiniciar inglês**, que é o estado visual controlado por `isSpeaking` após o início de `HTMLAudioElement.play()`. O painel permaneceu aberto, com texto bilíngue e sem erro de inicialização; a percepção auditiva final ainda deve ser confirmada pelo usuário no navegador com volume ativo.
+
+A validação final da implementação terminou com **TypeScript sem erros, 173 arquivos e 390 testes aprovados**. A checagem auditiva no navegador do usuário continua propositalmente aberta, pois os testes e o estado de reprodução não substituem escutar a fala.

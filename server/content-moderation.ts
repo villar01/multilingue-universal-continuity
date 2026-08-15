@@ -16,6 +16,7 @@ import {
   moderationAlerts,
   blockedContent,
   userSafetyProfile,
+  parentalConsents,
   type InsertConversationLog,
   type InsertModerationAlert,
 } from "../drizzle/schema";
@@ -57,6 +58,21 @@ export interface UserContext {
   moderationLevel?: "strict" | "moderate" | "relaxed";
 }
 
+export class AISafetyAccessError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AISafetyAccessError";
+  }
+}
+
+export function canUseEducationalAI(input: {
+  hasSafetyProfile: boolean;
+  ageGroup: AgeGroup;
+  hasFormalParentalConsent: boolean;
+}): boolean {
+  return input.hasSafetyProfile && (input.ageGroup === "adulto" || input.hasFormalParentalConsent);
+}
+
 export async function getUserSafetyContext(userId: number): Promise<{
   context: UserContext;
   hasSafetyProfile: boolean;
@@ -82,6 +98,43 @@ export async function getUserSafetyContext(userId: number): Promise<{
     hasSafetyProfile: true,
     hasParentalConsent: Boolean(profile.parentalConsentGiven),
   };
+}
+
+/**
+ * A geração individual só pode iniciar com perfil etário conhecido. Para menores,
+ * a autorização formal precisa registrar todos os aceites exigidos no onboarding.
+ */
+export async function requireVerifiedAISafetyContext(userId: number): Promise<UserContext> {
+  const { context, hasSafetyProfile } = await getUserSafetyContext(userId);
+  if (!hasSafetyProfile) {
+    throw new AISafetyAccessError("Perfil etário obrigatório antes de usar a IA educacional.");
+  }
+
+  if (context.ageGroup === "adulto" && canUseEducationalAI({ hasSafetyProfile, ageGroup: context.ageGroup, hasFormalParentalConsent: false })) return context;
+
+  const db = await getDb();
+  if (!db) {
+    throw new AISafetyAccessError("Não foi possível confirmar a autorização parental no momento.");
+  }
+
+  const [consent] = await db
+    .select({ id: parentalConsents.id })
+    .from(parentalConsents)
+    .where(and(
+      eq(parentalConsents.userId, userId),
+      eq(parentalConsents.isMinor, true),
+      eq(parentalConsents.confirmedTerms, true),
+      eq(parentalConsents.confirmedMoralConduct, true),
+      eq(parentalConsents.confirmedParentalControl, true),
+      eq(parentalConsents.confirmedLegalCompliance, true),
+    ))
+    .limit(1);
+
+  if (!canUseEducationalAI({ hasSafetyProfile, ageGroup: context.ageGroup, hasFormalParentalConsent: Boolean(consent) })) {
+    throw new AISafetyAccessError("Autorização parental obrigatória antes de usar a IA educacional.");
+  }
+
+  return context;
 }
 
 // ============================================================
@@ -543,7 +596,7 @@ export async function createUserSafetyProfile(
       dateOfBirth: dateOfBirth || null,
       country: country || null,
       religion: religion || null,
-      parentalConsentGiven: ageGroup === "infantil" ? false : true,
+      parentalConsentGiven: ageGroup === "adulto",
       parentEmail: null,
       parentConsentDate: null,
       moderationLevel: ageGroup === "infantil" ? "strict" : "moderate",

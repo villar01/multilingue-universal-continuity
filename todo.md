@@ -1316,6 +1316,9 @@
 - [x] Corrigir primeiro o diálogo até o painel, texto bilíngue e avanço por **Continuar** funcionarem de modo verificável — painel elevado e identificado, texto completo sem sessão, aviso de IA removido das rotas imersivas e segunda fala com opções validada visualmente; TypeScript sem erros e 381 testes aprovados
 - [ ] Validar separadamente a reprodução da voz neural no diálogo autenticado, sem aceitar teste estático como confirmação auditiva
 - [ ] Manter a animação labial natural como pendência aberta enquanto o resultado continuar abaixo da qualidade exigida; não confundir visemas aproximados com animação facial natural
+- [ ] Corrigir a ausência de áudio em inglês no diálogo autenticado da Praia Tropical e reduzir o tremor do professor sem anunciar isso como gesticulação natural
+- [x] Implementar voz neural Edge para as falas roteirizadas do diálogo sem sessão, com controle explícito **Ouvir inglês**, rota limitada a 500 caracteres e estado visual de reprodução validado; TypeScript sem erros e 390 testes aprovados
+- [x] Remover a combinação de tremor `teacher-talk` com `head-sway` durante a fala e manter somente respiração discreta; a animação facial natural permanece aberta
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
 - [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente
@@ -1332,6 +1335,9 @@
 - [ ] Usar conexão de saída autenticada e revogável entre o notebook e o aplicativo, sem abrir porta pública de entrada no computador do cliente
 - [ ] Enviar ao servidor somente diagnósticos minimizados, resultados de testes e propostas revisáveis; nunca enviar conteúdo pessoal ou executar alteração direta na produção
 - [ ] Preparar o assistente para retomar após reinicialização apenas quando o cliente habilitar essa opção e mostrar status, histórico e última execução
+
+## 🛡️ CONTEXTO ETÁRIO DO NÚCLEO DE IA
+- [ ] Remover contextos adultos fixos do núcleo de IA e bloquear geração quando o perfil menor não tiver consentimento parental confirmado
 
 ## 🔁 RETOMADA — VALIDAÇÃO PUBLICADA ANTES DE NOVA CORREÇÃO
 - [x] Confirmar no domínio publicado o ciclo Pareto guiado e o diálogo imersivo já entregues — Pareto abriu instruções, 122 palavras da Praia Tropical e ciclo Hello → Observe/Lembre/Escreva/Crie; diálogo abriu texto bilíngue de James e avançou às três respostas do aluno. Checkpoints `26b28d23`, `9299c2dc` e `e4b20350` preservados; voz autenticada e animação facial natural continuam abertas

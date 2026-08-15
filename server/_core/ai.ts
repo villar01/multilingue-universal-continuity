@@ -6,6 +6,7 @@
 
 import { invokeLLM } from "./llm";
 import type { Message } from "./llm";
+import { requireVerifiedAISafetyContext } from "../content-moderation";
 
 export interface AIConversationContext {
   userId: number;
@@ -50,6 +51,7 @@ export async function generateConversation(
   userMessage: string,
   conversationHistory: Message[] = []
 ): Promise<string> {
+  await requireVerifiedAISafetyContext(context.userId);
   const systemPrompt = `You are an expert language teacher for ${context.languageCode}.
 The student is at ${context.userLevel} level.
 ${context.learningStyle ? `Their learning style is ${context.learningStyle}.` : ""}
@@ -82,6 +84,7 @@ export async function generatePersonalizedExercise(
   context: AIConversationContext,
   topic?: string
 ): Promise<GeneratedExercise> {
+  await requireVerifiedAISafetyContext(context.userId);
   const systemPrompt = `You are an expert language exercise creator for ${context.languageCode}.
 Create a ${context.userLevel} level exercise${topic ? ` about "${topic}"` : ""}.
 ${context.weaknesses?.length ? `Focus on improving: ${context.weaknesses.join(", ")}.` : ""}
@@ -149,6 +152,7 @@ export async function generateStory(
   vocabulary: string[],
   theme?: string
 ): Promise<{ title: string; story: string; questions: string[] }> {
+  await requireVerifiedAISafetyContext(context.userId);
   const systemPrompt = `You are a creative storyteller for ${context.languageCode} learners at ${context.userLevel} level.
 Create an engaging story that naturally uses these words: ${vocabulary.join(", ")}.
 ${theme ? `Theme: ${theme}` : ""}
@@ -203,6 +207,7 @@ export async function explainGrammar(
   grammarTopic: string,
   userQuestion?: string
 ): Promise<string> {
+  const safetyContext = await requireVerifiedAISafetyContext(context.userId);
   const systemPrompt = `You are a grammar expert for ${context.languageCode}.
 Explain "${grammarTopic}" to a ${context.userLevel} level student.
 ${context.learningStyle === "visual" ? "Use examples and visual descriptions." : ""}
@@ -230,10 +235,7 @@ Use simple language appropriate for ${context.userLevel}.`;
   const { moderateAIResponse } = await import("../content-moderation");
   const moderationResult = await moderateAIResponse(
     {
-      userId: context.userId,
-      ageGroup: "adulto", // TODO: pegar do perfil
-      country: undefined,
-      religion: undefined,
+      ...safetyContext,
     },
     content,
     userQuestion || `Explain ${grammarTopic}`
@@ -255,8 +257,9 @@ export async function analyzePronunciation(
   expectedText: string,
   transcribedText: string,
   languageCode: string,
-  userId?: number
+  userId: number
 ): Promise<PronunciationFeedback> {
+  const safetyContext = await requireVerifiedAISafetyContext(userId);
   const systemPrompt = `You are a pronunciation expert for ${languageCode}.
 Compare the expected text with what the student actually said.
 Provide detailed, encouraging feedback.
@@ -334,15 +337,10 @@ Return a JSON object with:
   const feedback = JSON.parse(content) as PronunciationFeedback;
   
   // MODERAÇÃO: Validar feedback antes de enviar
-  if (userId) {
+  {
     const { moderateAIResponse } = await import("../content-moderation");
     const moderationResult = await moderateAIResponse(
-      {
-        userId,
-        ageGroup: "adulto", // TODO: pegar do perfil
-        country: undefined,
-        religion: undefined,
-      },
+      safetyContext,
       feedback.detailedFeedback,
       `Expected: ${expectedText}, Transcribed: ${transcribedText}`
     );
