@@ -31,4 +31,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("Usar voz do navegador");
     expect(source).toContain("playGuestBrowserVoice(teacherSpeech.text");
   });
+
+  it("nunca troca James por voz feminina quando o fallback local não encontra inglês masculino", () => {
+    expect(source).toContain("const maleVoicePattern");
+    expect(source).toContain("if (gender && !preferredVoice) return false;");
+    expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
+  });
 });

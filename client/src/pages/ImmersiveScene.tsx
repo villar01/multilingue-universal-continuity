@@ -1434,12 +1434,25 @@ export default function ImmersiveScene() {
     activeSpeechRequestRef.current = null;
   }, [stopVisemeSync]);
 
-  const playLocalDialogFallback = useCallback((text: string, language: string, requestKey: string) => {
+  const playLocalDialogFallback = useCallback((text: string, language: string, requestKey: string, gender?: 'male' | 'female') => {
     if (!("speechSynthesis" in window) || !text.trim()) return false;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return false;
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language;
     utterance.rate = 0.88;
     utterance.pitch = 1;
+    const languagePrefix = language.toLowerCase().split("-")[0];
+    const regionalVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(languagePrefix));
+    const maleVoicePattern = /(^|\s)(david|mark|guy|daniel|george|james|ryan|andrew|matthew|eric|brian|michael|christopher|male)(\s|$)/i;
+    const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
+    const preferredVoice = gender === "male"
+      ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name))
+      : gender === "female"
+        ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
+        : regionalVoices[0];
+    if (gender && !preferredVoice) return false;
+    if (preferredVoice) utterance.voice = preferredVoice;
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
     };
@@ -1476,7 +1489,7 @@ export default function ImmersiveScene() {
     activeSpeechRequestRef.current = requestKey;
     setActiveSpeechText(text);
     setIsPreparingNeuralAudio(true);
-    if (!playLocalDialogFallback(text, language, requestKey)) {
+    if (!playLocalDialogFallback(text, language, requestKey, gender)) {
       setIsPreparingNeuralAudio(false);
       setActiveSpeechText("");
       setDlgFeedback("A voz do navegador não está disponível. Entre para usar a voz neural da cena.");
@@ -1603,7 +1616,7 @@ export default function ImmersiveScene() {
     try {
       if (await playEdgeNeural()) return;
     } catch { /* fallback below */ }
-    if (playLocalDialogFallback(text, lang, requestKey)) {
+    if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
       setDlgFeedback("A voz neural não respondeu. A fala está usando a voz disponível neste navegador; toque em Ouvir inglês para repetir.");
       return;
     }
@@ -1629,13 +1642,13 @@ export default function ImmersiveScene() {
       void playPublicSceneDialogue(text, language, gender || "female", requestKey)
         .then((played) => {
           if (played) return;
-          if (playLocalDialogFallback(text, language, requestKey)) return;
+          if (playLocalDialogFallback(text, language, requestKey, gender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
           setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
         })
         .catch(() => {
-          if (playLocalDialogFallback(text, language, requestKey)) return;
+          if (playLocalDialogFallback(text, language, requestKey, gender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
           setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
