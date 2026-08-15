@@ -51,3 +51,5 @@ No domínio publicado, o clique em **Ouvir inglês** acionou `sceneDialogueVoice
 Na prévia posterior, o retrato de James permaneceu sem a oscilação automática de cena. O botão de inglês ainda concluiu a tentativa rapidamente, removendo o elemento de áudio ao terminar ou falhar; será observada a sequência `play`/`playing`/`error` diretamente antes de classificar a reprodução como audível.
 
 Com o elemento `audio` conectado ao documento e MIME `audio/mpeg`, a prévia registrou `loadedmetadata`, `canplay`, `playing`, `play-resolved`, progresso contínuo de `0` a `7,032` segundos e `ended`, sem erro. Isso comprova reprodução técnica efetiva no navegador de validação, mas não substitui a confirmação humana de volume e saída de som no navegador do aluno.
+
+Praia Tropical com James (`en-US`, masculino) foi registrada como referência regional de voz natural. O contrato de cenas passou a exigir idioma BCP-47 e gênero explícitos em todas as 27 cenas; Parque da Cidade e Metrô de Paris receberam o perfil feminino explícito de Sophie, impedindo seleção implícita de voz.

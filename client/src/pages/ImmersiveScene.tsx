@@ -104,6 +104,13 @@ const IMMERSIVE_CEFR_LEVELS: Array<{ value: ImmersiveCEFRLevel; label: string }>
 const sceneCefrLevel = (scene: Scene): ImmersiveCEFRLevel => resolvePracticeCEFRLevel(scene.difficulty) as ImmersiveCEFRLevel;
 
 // ─── Scene Data (25 scenes with CDN images) ───────────────────────────────────
+export const IMMERSIVE_VOICE_REFERENCE = {
+  sceneId: "beach",
+  teacherName: "James",
+  language: "en-US",
+  gender: "male" as const,
+} as const;
+
 export const IMMERSIVE_SCENES: Scene[] = [
   // ══════════════════════════════════════════════════════════════
   // CENAS COMPLETAS (5+ diálogos) — aparecem primeiro
@@ -426,7 +433,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"park", name:"Parque da Cidade", nameEn:"City Park", flag:"🌳",
     bgImage:"/manus-storage/scene_park_22801348.jpg",
     teacherImage:"/manus-storage/prof_sophie_a6324ef6.png",
-    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr",
+    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr", teacherGender:"female",
     teacherGreeting:"Bienvenue au parc! Profitons de la nature!",
     greetingPt:"Bem-vindo ao parque! Vamos aproveitar a natureza!",
     difficulty:"beginner", premium:false,
@@ -659,7 +666,7 @@ export const IMMERSIVE_SCENES: Scene[] = [
     id:"metro", name:"Metrô de Paris", nameEn:"Paris Metro", flag:"🚇",
     bgImage:"/manus-storage/scene_metro_5fffc615.jpg",
     teacherImage:"/manus-storage/prof_sophie_a6324ef6.png",
-    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr",
+    teacherName:"Sophie", teacherLang:"fr-FR", langCode:"fr", teacherGender:"female",
     teacherGreeting:"Bienvenue dans le métro! Apprenons à voyager!",
     greetingPt:"Bem-vindo ao metrô! Vamos aprender a viajar!",
     difficulty:"intermediate", premium:false,
