@@ -1323,6 +1323,7 @@
 - [x] Implementar voz neural Edge para as falas roteirizadas do diálogo sem sessão, com controle explícito **Ouvir inglês**, rota limitada a 500 caracteres e estado visual de reprodução validado; TypeScript sem erros e 390 testes aprovados
 - [x] Remover a combinação de tremor `teacher-talk` com `head-sway` durante a fala e manter somente respiração discreta; a animação facial natural permanece aberta
 - [x] Impedir que o botão Ouvir inglês permaneça em preparação quando a voz pública exceder o tempo de espera ou falhar, devolvendo feedback e nova tentativa — limite de 12 segundos encerra espera excessiva e devolve fallback/feedback; painel e controle validados visualmente; TypeScript sem erros e 393 testes aprovados
+- [x] Validar no domínio publicado que Ouvir inglês recebe um áudio neural carregável — `sceneDialogueVoice.speak` retornou 112.651 bytes em cerca de 1,7 segundo e o controle voltou ao estado de nova tentativa; a audição humana no dispositivo do aluno continua pendente
 
 ## 🤖 ARQUITETURA GRATUITA E AUTOAPERFEIÇOAMENTO CONTÍNUO
 - [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente

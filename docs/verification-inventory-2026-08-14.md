@@ -45,3 +45,5 @@ O teste sem sessão acionou a fala roteirizada por Edge e o botão mudou de **Pr
 A validação final da implementação terminou com **TypeScript sem erros, 173 arquivos e 390 testes aprovados**. A checagem auditiva no navegador do usuário continua propositalmente aberta, pois os testes e o estado de reprodução não substituem escutar a fala.
 
 O diálogo continuou abrindo com **Ouvir inglês** disponível após a inclusão do limite de espera de 12 segundos para a síntese pública. A tela não apresentou erro de inicialização e o controle permaneceu pronto para nova tentativa; a confirmação de som audível no dispositivo do usuário continua pendente.
+
+No domínio publicado, o clique em **Ouvir inglês** acionou `sceneDialogueVoice.speak` e recebeu uma resposta de áudio de **112.651 bytes** em aproximadamente **1,7 segundo**; o botão retornou a **Ouvir inglês** depois da reprodução curta. Isso confirma solicitação e carga de áudio, mas não substitui confirmar que o som está audível no dispositivo do aluno.
