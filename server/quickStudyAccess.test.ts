@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getQuickStudyHref } from "../client/src/components/QuickStudyAccess";
+import { getQuickStudyHref, getQuickTeacherHref } from "../client/src/components/QuickStudyAccess";
 
 describe("Consulta Rápida e Total global", () => {
   it("preserva a página de estudo como destino de retorno", () => {
@@ -10,5 +10,11 @@ describe("Consulta Rápida e Total global", () => {
     expect(getQuickStudyHref("/base-de-estudos")).toBeNull();
     expect(getQuickStudyHref("/immersive-scene")).toBeNull();
     expect(getQuickStudyHref("/admin/updates")).toBeNull();
+  });
+
+  it("leva ao professor e preserva o retorno ao setor de estudo", () => {
+    expect(getQuickTeacherHref("/word-game?mode=daily")).toBe("/free-talk?returnTo=%2Fword-game");
+    expect(getQuickTeacherHref("/free-talk")).toBeNull();
+    expect(getQuickTeacherHref("/immersive-scene")).toBeNull();
   });
 });

@@ -29,7 +29,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 const FILTERS: Array<{ id: StudyEntryKind | "all"; label: string }> = [
   { id: "all", label: "Tudo" },
@@ -51,6 +51,7 @@ function getStoredLevel(): CEFRLevel {
 }
 
 export default function StudyBase() {
+  const [, setLocation] = useLocation();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<StudyEntryKind | "all">("all");
   const [unit, setUnit] = useState<string | "all">("all");
@@ -90,14 +91,14 @@ export default function StudyBase() {
       return;
     }
     if (path === "pareto") {
-      if (activeEntry) setPracticeEntry(activeEntry);
+      setLocation("/pareto-1000");
       return;
     }
     setQuery("");
     setKind("all");
     setUnit(path === "cartilha" ? "all" : "Unidade 1 · Cumprimentos e identidade");
     setSelectedEntry(null);
-  }, [activeEntry]);
+  }, [setLocation]);
 
   const playTargetVoice = useCallback(async (text: string) => {
     if (!text.trim()) return;

@@ -1258,6 +1258,29 @@ export function searchWords(query: string): ParetoWord[] {
 
 export const TOTAL_PARETO_WORDS = PARETO_VOCAB.length;
 
+export const PARETO_PROGRAM_WORD_COUNT = 1000;
+
+export function getParetoProgramWords(): ParetoWord[] {
+  const seenEnglish = new Set<string>();
+  const uniqueWords = [...PARETO_VOCAB]
+    .sort((a, b) => b.frequency - a.frequency || a.enUS.localeCompare(b.enUS))
+    .filter((word) => {
+      const normalized = word.enUS.trim().toLocaleLowerCase("en-US");
+      if (seenEnglish.has(normalized)) return false;
+      seenEnglish.add(normalized);
+      return true;
+    });
+
+  return uniqueWords
+    .slice(0, PARETO_PROGRAM_WORD_COUNT)
+    .map((word, index) => ({
+      ...word,
+      // Alguns blocos legados reutilizam o mesmo id curto. A trilha precisa de
+      // uma identidade estável e única para não misturar o progresso do aluno.
+      id: `pareto-${String(index + 1).padStart(4, "0")}-${word.category}-${word.id}`,
+    }));
+}
+
 // ─── Randomização (Sistema de Autodesenvolvimento) ────────────────────────────
 
 // Embaralha array usando Fisher-Yates

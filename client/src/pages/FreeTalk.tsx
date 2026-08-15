@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,10 @@ type Message = {
 export default function FreeTalk() {
   const [, navigate] = useLocation();
   const t = useI18n();
+  const returnTo = useMemo(() => {
+    const destination = new URLSearchParams(window.location.search).get("returnTo");
+    return destination?.startsWith("/") ? destination : "/dashboard";
+  }, []);
 
   const nativeLang = localStorage.getItem("ml_native_lang") || "pt-BR";
   const targetLang = localStorage.getItem("ml_target_lang") || "en-US";
@@ -164,7 +168,7 @@ export default function FreeTalk() {
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">
             <button
-              onClick={() => navigate("/ar-teacher")}
+              onClick={() => navigate(returnTo)}
               className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
             >
               <ArrowLeft className="w-5 h-5" />
