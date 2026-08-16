@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { localizeSceneDialogue, parseLocalizedSceneMaterial } from "./curriculum/localizedSceneMaterial";
 
@@ -35,5 +36,12 @@ describe("material localizado de cena", () => {
       nativeLanguage: "pt-BR",
       userId: 1,
     })).resolves.toEqual({ status: "planned_language_block", turns: [], objects: [] });
+  });
+
+  it("usa uma semente canônica do servidor quando a cena já iniciou migração protegida", () => {
+    const source = readFileSync("server/curriculum/localizedSceneMaterial.ts", "utf8");
+    expect(source).toContain('import { getSecureSceneSeed } from "./secureSceneSeeds"');
+    expect(source).toContain("const canonicalSeed = getSecureSceneSeed(input.sceneId)");
+    expect(source).toContain("canonical source material for semantic fidelity");
   });
 });

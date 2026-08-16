@@ -1,5 +1,6 @@
 import { generateAI } from "../aiProvider";
 import { isInitialCommercialTargetLanguage } from "../../shared/commercialLanguageBlocks";
+import { getSecureSceneSeed } from "./secureSceneSeeds";
 
 export type LocalizedSceneDialogueTurn = {
   targetText: string;
@@ -57,6 +58,11 @@ export async function localizeSceneDialogue(input: {
     return { status: "planned_language_block", turns: [], objects: [] };
   }
 
+  const canonicalSeed = getSecureSceneSeed(input.sceneId);
+  const canonicalContext = canonicalSeed
+    ? `Use this canonical source material for semantic fidelity: ${JSON.stringify(canonicalSeed)}.`
+    : "Use an age-appropriate original scene pack without borrowing content from another scene.";
+
   try {
     const response = await generateAI({
       messages: [
@@ -66,7 +72,7 @@ export async function localizeSceneDialogue(input: {
         },
         {
           role: "user",
-          content: `Create a small A1 material pack for the learning scene "${input.sceneId}". The target language is ${input.targetLanguage}; the native learner support language is ${input.nativeLanguage}. Use only these two languages. Return a JSON object with: "turns" (2 to 4 concise dialogue turns) and "objects" (3 to 8 visible everyday vocabulary objects). Every item must contain targetText and nativeHelp. Keep every item suitable for all ages.`,
+          content: `Create a small A1 material pack for the learning scene "${input.sceneId}". The target language is ${input.targetLanguage}; the native learner support language is ${input.nativeLanguage}. Use only these two languages. ${canonicalContext} Return a JSON object with: "turns" (2 to 4 concise dialogue turns) and "objects" (3 to 8 visible everyday vocabulary objects). Every item must contain targetText and nativeHelp. Keep every item suitable for all ages.`,
         },
       ],
       temperature: 0,
