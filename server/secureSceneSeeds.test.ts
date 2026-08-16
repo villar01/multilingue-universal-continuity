@@ -20,6 +20,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(forest?.hotspots.map((hotspot) => hotspot.id)).toEqual(["tree", "mushroom", "bird", "flower", "river", "sun"]);
   });
 
+  it("mantém o conteúdo de Paris, França disponível somente no contrato do servidor", () => {
+    const paris = getSecureSceneSeed("paris");
+    expect(paris?.dialog).toHaveLength(7);
+    expect(paris?.hotspots.map((hotspot) => hotspot.id)).toEqual(["tower", "cafe", "rue", "fleur", "immeuble", "ciel", "boulangerie", "pont"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

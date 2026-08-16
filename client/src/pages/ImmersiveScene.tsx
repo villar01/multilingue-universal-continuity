@@ -142,25 +142,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Bienvenue à Paris! Cliquez sur les objets pour apprendre!",
     greetingPt:"Bem-vindo a Paris! Clique nos objetos para aprender!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Bonjour! Je m'appelle Sophie. Bienvenue à Paris!", textPt:"Olá! Meu nome é Sophie. Bem-vindo a Paris!"},
-      {speaker:"user", text:"Bonjour Sophie! C'est magnifique ici!", textPt:"Olá Sophie! É magnífico aqui!", options:["Bonjour Sophie! C'est magnifique ici!","Je ne comprends pas.","Au revoir!"], correctIndex:0},
-      {speaker:"teacher", text:"Oui! Voilà la Tour Eiffel. C'est le symbole de Paris.", textPt:"Sim! Ali está a Torre Eiffel. É o símbolo de Paris."},
-      {speaker:"user", text:"Elle est très belle! Je voudrais prendre une photo.", textPt:"Ela é muito bonita! Eu gostaria de tirar uma foto.", options:["Elle est très belle! Je voudrais prendre une photo.","Non, je n'aime pas.","Où est le métro?"], correctIndex:0},
-      {speaker:"teacher", text:"Bien sûr! Et regardez ce café — on dit 'café' en français.", textPt:"Claro! E olhe este café — dizemos 'café' em francês."},
-      {speaker:"user", text:"Je voudrais un café, s'il vous plaît!", textPt:"Eu gostaria de um café, por favor!", options:["Je voudrais un café, s'il vous plaît!","Je n'aime pas le café.","Où est la boulangerie?"], correctIndex:0},
-      {speaker:"teacher", text:"Parfait! Votre français est excellent! Continuez comme ça!", textPt:"Perfeito! Seu francês está excelente! Continue assim!"},
-    ],
-    hotspots:[
-      {id:"tower", x:72, y:18, label:"Tour Eiffel", translation:"Torre Eiffel", pronunciation:"tur-e-FEL", example:"La Tour Eiffel est magnifique.", examplePt:"A Torre Eiffel é magnífica.", icon:"🗼", color:"#6366f1"},
-      {id:"cafe", x:18, y:58, label:"Café", translation:"Café", pronunciation:"ka-FÉ", example:"Je prends un café.", examplePt:"Eu tomo um café.", icon:"☕", color:"#f59e0b"},
-      {id:"rue", x:50, y:78, label:"Rue", translation:"Rua", pronunciation:"RÜ", example:"La rue est longue.", examplePt:"A rua é longa.", icon:"🛣️", color:"#10b981"},
-      {id:"fleur", x:30, y:42, label:"Fleur", translation:"Flor", pronunciation:"FLÖR", example:"La fleur est belle.", examplePt:"A flor é bonita.", icon:"🌸", color:"#ec4899"},
-      {id:"immeuble", x:85, y:32, label:"Immeuble", translation:"Prédio", pronunciation:"i-MÖBL", example:"L'immeuble est grand.", examplePt:"O prédio é grande.", icon:"🏢", color:"#8b5cf6"},
-      {id:"ciel", x:55, y:12, label:"Ciel", translation:"Céu", pronunciation:"SJEL", example:"Le ciel est bleu.", examplePt:"O céu é azul.", icon:"☁️", color:"#3b82f6"},
-      {id:"boulangerie", x:25, y:68, label:"Boulangerie", translation:"Padaria", pronunciation:"bu-lon-JRHI", example:"La boulangerie est ouverte.", examplePt:"A padaria está aberta.", icon:"🥖", color:"#d97706"},
-      {id:"pont", x:60, y:55, label:"Pont", translation:"Ponte", pronunciation:"PON", example:"Le pont est ancien.", examplePt:"A ponte é antiga.", icon:"🌉", color:"#0891b2"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"beach", name:"Praia Tropical", nameEn:"Tropical Beach", flag:"🌊",
@@ -1509,7 +1493,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1518,7 +1502,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
