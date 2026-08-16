@@ -1532,3 +1532,5 @@
 - [x] Isolar o progresso do Pareto por dupla de idiomas — mudança de idioma estudado ou nativo recarrega somente a memória daquela trilha, reinicia a página e fecha a prática ativa; TypeScript e suíte completa com 219 arquivos/529 testes aprovados
 - [ ] Verificar e corrigir o envio de pergunta livre ao professor na Cena Praia Tropical, assegurando que campo e botão respondam sem alterar diálogo, áudio, clipes, hotspots ou controles
 - [ ] Adicionar controle de velocidade para fala do professor e ajuda nativa, com resposta escrita persistente e opções de estudo lento e normal na Cena Praia Tropical
+- [ ] Garantir que a expansão aos 143 idiomas ocorra em blocos isolados, sem liberar, substituir ou reduzir a oferta comercial protegida dos seis idiomas iniciais
+- [x] Criar resolvedor seguro de professor por idioma-alvo para cenas imersivas — seleciona retrato e voz regionais somente quando o material da cena já pertence à mesma família linguística; em qualquer outro caso preserva a foto original até a localização real do conteúdo; TypeScript e seis regressões aprovados
