@@ -377,23 +377,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Benvenuto al museo! Scopriamo l'arte insieme!",
     greetingPt:"Bem-vindo ao museu! Vamos descobrir a arte juntos!",
     difficulty:"advanced", premium:true,
-    dialog:[
-      {speaker:"teacher", text:"Benvenuto al museo! Sono Giulia. Che quadro bellissimo, vero?", textPt:"Bem-vindo ao museu! Sou Giulia. Que quadro lindo, não é?"},
-      {speaker:"user", text:"Sì, è un vero capolavoro! Chi è l'artista?", textPt:"Sim, é uma verdadeira obra-prima! Quem é o artista?", options:["Sì, è un vero capolavoro! Chi è l'artista?","Non mi piace l'arte.","Voglio andare via."], correctIndex:0},
-      {speaker:"teacher", text:"È un pittore del Rinascimento. La cornice dorata è bellissima, no?", textPt:"É um pintor do Renascimento. A moldura dourada é linda, não é?"},
-      {speaker:"user", text:"Sì! E quella scultura in marmo è incredibile!", textPt:"Sim! E aquela escultura de mármore é incrível!", options:["Sì! E quella scultura in marmo è incredibile!","Non vedo la scultura.","Preferisco la fotografia."], correctIndex:0},
-      {speaker:"teacher", text:"Esatto! La galleria ha molte opere d'arte. I visitatori vengono da tutto il mondo.", textPt:"Exato! A galeria tem muitas obras de arte. Os visitantes vêm do mundo todo."},
-      {speaker:"user", text:"Che luce meravigliosa in questa galleria! Illumina i quadri perfettamente.", textPt:"Que luz maravilhosa nesta galeria! Ilumina os quadros perfeitamente.", options:["Che luce meravigliosa in questa galleria! Illumina i quadri perfettamente.","È troppo luminoso.","Voglio vedere altro."], correctIndex:0},
-      {speaker:"teacher", text:"Bravissima! Il tuo italiano è eccellente. Continua così!", textPt:"Muito bem! Seu italiano está excelente. Continue assim!"},
-    ],
-    hotspots:[
-      {id:"quadro", x:40, y:35, label:"Quadro", translation:"Quadro", pronunciation:"KWA-dro", example:"Il quadro è antico.", examplePt:"O quadro é antigo.", icon:"🖼️", color:"#a16207"},
-      {id:"scultura", x:65, y:50, label:"Scultura", translation:"Escultura", pronunciation:"skul-TU-ra", example:"La scultura è in marmo.", examplePt:"A escultura é de mármore.", icon:"🗿", color:"#64748b"},
-      {id:"cornice", x:20, y:40, label:"Cornice", translation:"Moldura", pronunciation:"KOR-ni-tche", example:"La cornice è dorata.", examplePt:"A moldura é dourada.", icon:"🖼️", color:"#eab308"},
-      {id:"visitatore", x:80, y:60, label:"Visitatore", translation:"Visitante", pronunciation:"vi-zi-TA-to-re", example:"Il visitatore guarda.", examplePt:"O visitante olha.", icon:"👤", color:"#6366f1"},
-      {id:"galleria", x:50, y:20, label:"Galleria", translation:"Galeria", pronunciation:"gal-LE-ria", example:"La galleria è grande.", examplePt:"A galeria é grande.", icon:"🏛️", color:"#8b5cf6"},
-      {id:"luce", x:75, y:25, label:"Luce", translation:"Luz", pronunciation:"LU-tche", example:"La luce illumina il quadro.", examplePt:"A luz ilumina o quadro.", icon:"💡", color:"#fbbf24"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"cinema", name:"Cinema Moderno", nameEn:"Modern Cinema", flag:"🎬",
@@ -1353,7 +1339,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1362,7 +1348,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

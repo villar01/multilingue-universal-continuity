@@ -86,6 +86,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(hospital?.hotspots.map((hotspot) => hotspot.id)).toEqual(["doctor", "medicine", "bed", "xray", "nurse", "ambulance"]);
   });
 
+  it("mantém o conteúdo do Museu de Arte disponível somente no contrato do servidor", () => {
+    const museum = getSecureSceneSeed("museum");
+    expect(museum?.dialog).toHaveLength(7);
+    expect(museum?.hotspots.map((hotspot) => hotspot.id)).toEqual(["quadro", "scultura", "cornice", "visitatore", "galleria", "luce"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

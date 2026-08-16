@@ -123,4 +123,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("The doctor is kind.");
     expect(clientSceneSource).toContain('selectedScene?.id === "hospital"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Museu de Arte do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Benvenuto al museo! Sono Giulia. Che quadro bellissimo, vero?");
+    expect(clientSceneSource).not.toContain("Il quadro è antico.");
+    expect(serverSeedSource).toContain("Benvenuto al museo! Sono Giulia. Che quadro bellissimo, vero?");
+    expect(serverSeedSource).toContain("Il quadro è antico.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "museum"');
+  });
 });
