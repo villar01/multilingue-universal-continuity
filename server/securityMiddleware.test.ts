@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { __resetSecurityStateForTests, securityMiddleware } from "./securityMiddleware";
+import { __resetAbuseProtectionForTests } from "./_core/abuseProtection";
 
 function createResponse() {
   return {
@@ -25,7 +26,10 @@ function createRequest(ip = "198.51.100.24", query: Record<string, unknown> = {}
 }
 
 describe("securityMiddleware", () => {
-  afterEach(() => __resetSecurityStateForTests());
+  afterEach(() => {
+    __resetSecurityStateForTests();
+    __resetAbuseProtectionForTests();
+  });
 
   it("permite carga legítima de aula com até 300 chamadas de API por minuto", () => {
     const request = createRequest();

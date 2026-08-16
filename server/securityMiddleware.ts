@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 
+import { isTemporarilyAbuseBlocked, recordAbuseSignal } from "./_core/abuseProtection";
+
 // ── Rate Limiting ─────────────────────────────────────────────
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -80,6 +82,19 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   const userAgent = req.headers['user-agent'] || '';
   const now = Date.now();
 
+  if (isTemporarilyAbuseBlocked(clientIp, now)) {
+    res.status(429).json({ error: "Acesso temporariamente limitado por atividade técnica repetida." });
+    return;
+  }
+
+  // A 403 response is treated as a signal only when it repeats. No content,
+  // browser fingerprint or visitor identity is stored by this middleware.
+  res.once?.("finish", () => {
+    if (res.statusCode === 403 && (req.path || req.originalUrl || "").startsWith("/api/")) {
+      recordAbuseSignal(clientIp, "repeated-access-denied");
+    }
+  });
+
   // DDoS Protection
   if (now > globalRequestCounts.resetTime) {
     globalRequestCounts.count = 0;
@@ -102,6 +117,7 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
     } else {
       ipData.count++;
       if (ipData.count > bucket.max) {
+        recordAbuseSignal(clientIp, "rate-limit", now);
         res.status(429).json({ error: 'Limite de requisicoes excedido.' });
         return;
       }
@@ -110,7 +126,8 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
 
   // Suspicious User Agent
   if (isSuspiciousUserAgent(userAgent)) {
-    console.warn(`[SECURITY] Suspicious UA: ${clientIp} - ${userAgent}`);
+    recordAbuseSignal(clientIp, "scanner", now);
+    console.warn("[SECURITY] Suspicious user-agent blocked");
     res.status(403).json({ error: 'Acesso negado.' });
     return;
   }
@@ -121,11 +138,13 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
       const value = obj[key];
       if (typeof value === 'string') {
         if (detectSqlInjection(value)) {
-          console.warn(`[SECURITY] SQL Injection: ${clientIp} - ${path}.${key}`);
+          recordAbuseSignal(clientIp, "malicious-input", now);
+          console.warn(`[SECURITY] SQL injection pattern blocked at ${path}.${key}`);
           return true;
         }
         if (detectXss(value)) {
-          console.warn(`[SECURITY] XSS: ${clientIp} - ${path}.${key}`);
+          recordAbuseSignal(clientIp, "malicious-input", now);
+          console.warn(`[SECURITY] XSS pattern blocked at ${path}.${key}`);
           return true;
         }
         obj[key] = sanitizeInput(value);
