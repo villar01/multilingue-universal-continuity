@@ -11,6 +11,7 @@ import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';
 import { IMMERSIVE_SCENES, type Scene, type Hotspot } from '@/pages/ImmersiveScene';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getScriptedExerciseFeedback } from '@/lib/scriptedExerciseFeedback';
 
 // ── Scene definitions (from ImmersiveScene) ─────────────────────────────────
 const SCENES = IMMERSIVE_SCENES;
@@ -237,20 +238,18 @@ export default function SceneLesson({
       (ex.options && ex.options[0].toLowerCase() === exerciseAnswer.trim().toLowerCase());
 
     setExerciseResult(isCorrect ? 'correct' : 'wrong');
+    const feedback = getScriptedExerciseFeedback(isCorrect ? 'correct' : 'retry', languageCode);
     if (isCorrect) {
       setXp(x => x + 10);
       speakWord(ex.answer);
-      // Professor voice feedback: praise in target language
-      const praise = languageCode.startsWith('pt') ? 'Muito bem! Correto!' : languageCode.startsWith('es') ? '¡Muy bien! ¡Correcto!' : languageCode.startsWith('fr') ? 'Très bien! Correct!' : languageCode.startsWith('de') ? 'Sehr gut! Richtig!' : languageCode.startsWith('it') ? 'Molto bene! Corretto!' : languageCode.startsWith('ja') ? 'よくできました！正解！' : 'Very good! Correct!';
-      speakNaturalVoice(praise, languageCode, { rate: 0.9 });
+      speakNaturalVoice(feedback.teacherText, languageCode, { rate: 0.9 });
     } else {
-      // Professor voice feedback: encourage retry in target language
-      const retry = languageCode.startsWith('pt') ? 'Quase! Tente novamente!' : languageCode.startsWith('es') ? '¡Casi! ¡Intenta de nuevo!' : languageCode.startsWith('fr') ? 'Presque! Essayez encore!' : languageCode.startsWith('de') ? 'Fast! Versuchen Sie es noch einmal!' : languageCode.startsWith('it') ? 'Quasi! Riprova!' : languageCode.startsWith('ja') ? '惜しい！もう一度試して！' : 'Almost! Try again!';
-      speakNaturalVoice(retry, languageCode, { rate: 0.9 });
+      speakNaturalVoice(feedback.teacherText, languageCode, { rate: 0.9 });
     }
     setTimeout(() => {
       setExerciseResult(null);
       setExerciseAnswer('');
+      if (!isCorrect) return;
       if (currentExercise < exercises.length - 1) {
         setCurrentExercise(i => i + 1);
       } else {
@@ -673,7 +672,14 @@ export default function SceneLesson({
                     fontSize: 14, fontWeight: 700,
                     color: exerciseResult === 'correct' ? '#10b981' : '#ef4444',
                   }}>
-                    {exerciseResult === 'correct' ? '✅ Correto! Muito bem!' : `❌ Incorreto. A resposta é: ${exercises[currentExercise].answer}`}
+                    {exerciseResult === 'correct'
+                      ? `✅ ${getScriptedExerciseFeedback('correct', languageCode).learnerText}`
+                      : `❌ ${getScriptedExerciseFeedback('retry', languageCode).learnerText} A resposta é: ${exercises[currentExercise].answer}`}
+                    {exerciseResult === 'wrong' && (
+                      <a href={getScriptedExerciseFeedback('retry', languageCode).studyHref ?? '/base-de-estudos'} style={{ display: 'block', marginTop: 8, color: 'inherit', textDecoration: 'underline' }}>
+                        {getScriptedExerciseFeedback('retry', languageCode).studyPrompt}
+                      </a>
+                    )}
                   </div>
                 )}
 

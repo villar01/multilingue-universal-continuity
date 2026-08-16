@@ -6,6 +6,7 @@ import { Progress } from "./ui/progress";
 import { trpc } from "../lib/trpc";
 import { toast } from "sonner";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
+import { getScriptedExerciseFeedback } from "@/lib/scriptedExerciseFeedback";
 
 interface PronunciationExerciseProps {
   vocabulary: string[];
@@ -242,6 +243,21 @@ export default function PronunciationExercise({
         {/* Pronunciation Result */}
         {pronunciationResult && (
           <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            {(() => {
+              const feedback = getScriptedExerciseFeedback(
+                pronunciationResult.accuracy >= 80 ? "correct" : pronunciationResult.accuracy >= 60 ? "partial" : "retry",
+                languageCode,
+              );
+              return (
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-950">
+                  <p className="font-semibold">{feedback.teacherText}</p>
+                  <p className="mt-1">{feedback.learnerText}</p>
+                  {feedback.studyHref && (
+                    <a className="mt-2 inline-block font-semibold underline" href={feedback.studyHref}>{feedback.studyPrompt}</a>
+                  )}
+                </div>
+              );
+            })()}
             <div className="text-center">
               <div
                 className={`text-6xl font-bold mb-2 ${

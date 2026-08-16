@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
-import { audioBase64ToDataUrl } from "@/lib/audioSource";
+import { audioBase64ToObjectUrl } from "@/lib/audioSource";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
 import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../components/Notebook";
@@ -1424,6 +1424,7 @@ export default function ImmersiveScene() {
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
+  const dialogAudioObjectUrlRef = useRef<string | null>(null);
   const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1440,6 +1441,10 @@ export default function ImmersiveScene() {
       audioRef.current.removeAttribute("src");
       audioRef.current.load();
       audioRef.current = null;
+    }
+    if (dialogAudioObjectUrlRef.current) {
+      URL.revokeObjectURL(dialogAudioObjectUrlRef.current);
+      dialogAudioObjectUrlRef.current = null;
     }
     setDialogAudioSource(null);
     if (localSpeechRef.current && "speechSynthesis" in window) {
@@ -1521,6 +1526,11 @@ export default function ImmersiveScene() {
   const playTeacherAudio = useCallback(async (source: string, phrase: string, _language: string, requestKey: string, revokeOnEnd = false) => {
     const audio = dialogAudioElementRef.current;
     if (!audio) throw new Error("dialogue-audio-control-unavailable");
+    if (dialogAudioObjectUrlRef.current && dialogAudioObjectUrlRef.current !== source) {
+      URL.revokeObjectURL(dialogAudioObjectUrlRef.current);
+      dialogAudioObjectUrlRef.current = null;
+    }
+    if (source.startsWith("blob:")) dialogAudioObjectUrlRef.current = source;
     audio.pause();
     audio.currentTime = 0;
     audio.src = source;
@@ -1577,6 +1587,10 @@ export default function ImmersiveScene() {
       audio.load();
       setDialogAudioSource((current) => current === source ? null : current);
       releaseRequest();
+      if (dialogAudioObjectUrlRef.current === source) {
+        URL.revokeObjectURL(source);
+        dialogAudioObjectUrlRef.current = null;
+      }
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     try {
@@ -1612,7 +1626,7 @@ export default function ImmersiveScene() {
       12_000,
     );
     if (!result.success || !("audioBase64" in result)) return false;
-    const source = audioBase64ToDataUrl(result.audioBase64);
+    const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
     await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
@@ -1635,7 +1649,7 @@ export default function ImmersiveScene() {
     const playEdgeNeural = async () => {
       const edgeAudio = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
-      const source = audioBase64ToDataUrl(edgeAudio.audioBase64);
+      const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mp3");
       await playTeacherAudio(source, text, lang, requestKey);
       return true;
     };
@@ -2844,7 +2858,6 @@ export default function ImmersiveScene() {
                   <audio
                     ref={dialogAudioElementRef}
                     controls={Boolean(dialogAudioSource)}
-                    src={dialogAudioSource || undefined}
                     preload="auto"
                     className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
                     aria-label="Áudio da fala em inglês"

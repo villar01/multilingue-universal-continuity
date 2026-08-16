@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
+import { getScriptedExerciseFeedback } from "@/lib/scriptedExerciseFeedback";
 
 export type LifePhase = 'infancia' | 'crianca' | 'adolescencia' | 'adulto' | 'fluente';
 
@@ -564,6 +565,9 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete, on
   if (stage === 'exercises' && currentExercise) {
     const isWordOrder = currentExercise.type === 'word_order';
     const isMatchPairs = currentExercise.type === 'match_pairs';
+    const exerciseFeedback = selectedAnswer === null
+      ? null
+      : getScriptedExerciseFeedback(isCorrect ? 'correct' : 'retry', languageCode);
 
     return (
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 12px' }}>
@@ -655,8 +659,13 @@ export default function PedagogicalLesson({ lesson, languageCode, onComplete, on
               fontWeight: 600,
             }}>
             {isCorrect
-                ? '🎉 Correto! Muito bem!'
-                : `❌ Resposta correta: "${currentExercise.answer}". Agora tente novamente para reforçar.`}
+                ? `🎉 ${exerciseFeedback?.learnerText}`
+                : `❌ ${exerciseFeedback?.learnerText} Resposta correta: "${currentExercise.answer}".`}
+            {!isCorrect && exerciseFeedback?.studyHref && (
+              <a href={exerciseFeedback.studyHref} style={{ display: 'block', marginTop: 8, color: 'inherit', textDecoration: 'underline', fontSize: 13 }}>
+                {exerciseFeedback.studyPrompt}
+              </a>
+            )}
             </div>
           )}
         </div>
