@@ -98,7 +98,7 @@ describe("securityMiddleware", () => {
     expect(response.statusCode).toBe(429);
   });
 
-  it("emite política de conteúdo restritiva sem bloquear recursos já usados pelo aplicativo", () => {
+  it("emite política restritiva e permite somente o enquadramento pela plataforma oficial", () => {
     const response = createResponse();
     let continued = false;
     securityMiddleware(createRequest("198.51.100.31", {}, "/immersive-scene") as any, response as any, () => { continued = true; });
@@ -106,8 +106,9 @@ describe("securityMiddleware", () => {
     expect(continued).toBe(true);
     expect(response.headers["Content-Security-Policy"]).toContain("default-src 'self'");
     expect(response.headers["Content-Security-Policy"]).toContain("object-src 'none'");
-    expect(response.headers["Content-Security-Policy"]).toContain("frame-ancestors 'none'");
+    expect(response.headers["Content-Security-Policy"]).toContain("frame-ancestors 'self' https://manus.im https://*.manus.im https://*.manus.computer");
     expect(response.headers["Content-Security-Policy"]).toContain("media-src 'self' data: blob: https:");
+    expect(response.headers["X-Frame-Options"]).toBeUndefined();
     expect(response.headers["X-Permitted-Cross-Domain-Policies"]).toBe("none");
   });
 });

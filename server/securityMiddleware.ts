@@ -98,7 +98,7 @@ export function buildContentSecurityPolicy(): string {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self' https://manus.im https://*.manus.im https://*.manus.computer",
   ];
 
   if (!isDevelopment) directives.push("upgrade-insecure-requests");
@@ -201,7 +201,6 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   // Security Headers
   res.setHeader('Content-Security-Policy', buildContentSecurityPolicy());
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=(self)');
