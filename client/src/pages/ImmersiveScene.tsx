@@ -29,6 +29,7 @@ import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } 
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
+import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 import { isInitialCommercialTargetLanguage } from "@shared/commercialLanguageBlocks";
 import { JAMES_TROPICAL_PILOT_CLIPS, type JamesTropicalPilotClip, type JamesTropicalPilotClipId } from "@shared/jamesTropicalPilotClips";
 import { SOPHIE_CAFE_PILOT_CLIPS, type SophieCafePilotClip, type SophieCafePilotClipId } from "@shared/sophieCafePilotClips";
@@ -80,29 +81,6 @@ function audioBlobToDataUrl(blob: Blob): Promise<string> {
     reader.onloadend = () => resolve(String(reader.result || ""));
     reader.readAsDataURL(blob);
   });
-}
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-export interface Hotspot {
-  id: string; x: number; y: number;
-  label: string; translation: string; pronunciation: string;
-  example: string; examplePt: string; icon: string; color: string;
-}
-interface DialogLine {
-  speaker: "teacher" | "user";
-  text: string; textPt: string;
-  options?: string[]; correctIndex?: number;
-}
-export interface Scene {
-  id: string; name: string; nameEn: string;
-  bgImage: string; teacherImage: string; teacherName: string;
-  teacherLang: string; langCode: string; flag: string;
-  teacherGender?: 'male' | 'female';
-  teacherGreeting: string; greetingPt: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
-  premium: boolean; hotspots: Hotspot[];
-  dialog: DialogLine[];
-  teacherAnimation?: "professor-wave" | "professor-nod" | "professor-celebrate"; // Optional animation for professor
 }
 
 function getSceneLocationDisclosure(scene: Scene): string {

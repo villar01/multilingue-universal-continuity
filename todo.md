@@ -207,7 +207,7 @@
 - [x] Registrar a cena e voz natural confirmadas pelo aluno como referência regional obrigatória para auditoria das demais cenas — Praia Tropical, James, inglês en-US masculino, fala neural natural; todas as 27 cenas declaram locale e gênero explícitos e cada combinação resolve uma voz neural regional real; TypeScript sem erros e 178 arquivos/400 testes aprovados
 - [ ] Concluir a correção isolada de consistência de dicção antes de iniciar qualquer nova frente de desenvolvimento
 - [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
-- [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
+- [x] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor — uma chave ativa bloqueia a mesma fala concorrente e é liberada em encerramento, falha ou ausência de voz; painel e sequência permanecem preservados; regressão dedicada e suíte completa aprovadas
 - [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
 - [x] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível — o painel apresenta Observe, Lembre, Escreva e Crie, explica cada ação, mostra o progresso e confirma a conclusão; TypeScript e suíte completa com 228 arquivos/554 testes aprovados
 - [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
@@ -1546,5 +1546,6 @@
 - [ ] Restringir diálogo, hotspots, Pareto, áudio e materiais pedagógicos das cenas a alunos autenticados, deixando aos visitantes apenas uma tela de acesso sem currículo
 - [x] Restringir diálogo, hotspots, Pareto, áudio e materiais pedagógicos das cenas a alunos autenticados, deixando aos visitantes apenas uma tela de acesso sem currículo — a rota sem sessão redireciona para login, e a própria página possui bloqueio antes de renderizar cena; TypeScript e suíte completa com 227 arquivos/552 testes aprovados
 - [ ] Migrar o catálogo pedagógico das cenas imersivas para entrega protegida no servidor e remover diálogos, exercícios e vocabulário estático do pacote do navegador
+- [x] Extrair os contratos tipados de cena para módulo compartilhado sem conteúdo curricular, preparando a transferência posterior do catálogo ao servidor — Hotspot, DialogLine e Scene agora são contratos compartilhados; a Cena Imersiva e a lição de cena os reutilizam sem mover dados pedagógicos; TypeScript e suíte completa com 229 arquivos/556 testes aprovados
 - [x] Isolar clipes roteirizados pelo professor ativo para que vídeo de James ou Sophie nunca seja sobreposto ao retrato de outro professor selecionado — concluído e detalhado no registro de validação subsequente
 - [x] Isolar clipes roteirizados pelo professor ativo para que vídeo de James ou Sophie nunca seja sobreposto ao retrato de outro professor selecionado — abertura, objeto, acerto e nova tentativa agora verificam o professor ativo antes de tocar vídeo; TypeScript e suíte completa com 226 arquivos/548 testes aprovados
