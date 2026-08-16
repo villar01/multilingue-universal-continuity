@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
-import { Shield, AlertTriangle, CheckCircle, Globe, Users, Lock, Heart, Camera, RefreshCw } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle, Globe, Users, Lock, Heart } from "lucide-react";
 
 const TERMS_VERSION = "1.0";
 
@@ -11,19 +11,11 @@ export default function TermsOfUse() {
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
-  // Steps: age → terms → selfie → (if minor) parental → done
-  const [step, setStep] = useState<"age" | "terms" | "selfie" | "parental" | "done">("age");
+  // Steps: age → terms → (if minor) parental → done
+  const [step, setStep] = useState<"age" | "terms" | "parental" | "done">("age");
   const [isMinor, setIsMinor] = useState(false);
   const [isUnder12, setIsUnder12] = useState(false);
   const [userAge, setUserAge] = useState("");
-
-  // Selfie state
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selfieDataUrl, setSelfieDataUrl] = useState<string | null>(null);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [cameraError, setCameraError] = useState("");
-  const streamRef = useRef<MediaStream | null>(null);
 
   // Aceites de termos
   const [checks, setChecks] = useState({
@@ -73,11 +65,6 @@ export default function TermsOfUse() {
     }
   }, [user, loading]);
 
-  // Cleanup camera on unmount
-  useEffect(() => {
-    return () => { stopCamera(); };
-  }, []);
-
   const [showMinorWarning, setShowMinorWarning] = useState(false);
 
   const handleAgeSubmit = () => {
@@ -102,53 +89,8 @@ export default function TermsOfUse() {
     setStep("terms");
   };
 
-  const handleTermsAccept = () => {
+  const handleTermsAccept = async () => {
     if (!allChecked) return;
-    setStep("selfie");
-  };
-
-  // Camera helpers
-  const startCamera = async () => {
-    setCameraError("");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-      setCameraActive(true);
-    } catch {
-      setCameraError("Não foi possível acessar a câmera. Verifique as permissões do navegador e tente novamente.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
-      streamRef.current = null;
-    }
-    setCameraActive(false);
-  };
-
-  const takeSelfie = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    const ctx = canvasRef.current.getContext("2d")!;
-    canvasRef.current.width = videoRef.current.videoWidth || 640;
-    canvasRef.current.height = videoRef.current.videoHeight || 480;
-    ctx.drawImage(videoRef.current, 0, 0);
-    const dataUrl = canvasRef.current.toDataURL("image/jpeg", 0.8);
-    setSelfieDataUrl(dataUrl);
-    stopCamera();
-  };
-
-  const retakeSelfie = () => {
-    setSelfieDataUrl(null);
-    startCamera();
-  };
-
-  const handleSelfieConfirm = async () => {
-    if (!selfieDataUrl) return;
     setSaving(true);
     setError("");
     try {
@@ -271,31 +213,31 @@ export default function TermsOfUse() {
           </div>
         )}
 
-        {/* BLOCKING MODAL: MENOR DE 21 ANOS */}
+        {/* BLOCKING MODAL: MENOR DE 18 ANOS */}
         {showMinorWarning && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="bg-gradient-to-br from-red-900 to-red-800 border-2 border-red-400 rounded-3xl p-8 max-w-md w-full shadow-2xl">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">🚨</div>
                 <h2 className="text-2xl font-extrabold text-white mb-2">ATENÇÃO!</h2>
-                <p className="text-red-200 text-sm">Idade inferior a 21 anos detectada</p>
+                <p className="text-red-200 text-sm">Menor de 18 anos detectado</p>
               </div>
               <div className="bg-red-950/60 border border-red-400/40 rounded-2xl p-5 mb-6">
                 <p className="text-white font-bold text-base leading-relaxed mb-3">
-                  O cadastro de menores de 21 anos <span className="text-yellow-300 underline">só é aceito com a presença e identificação do pai, mãe ou responsável legal</span>.
+                  O cadastro de menores de 18 anos <span className="text-yellow-300 underline">só é aceito após a autorização de pai, mãe ou responsável legal</span>.
                 </p>
                 <ul className="text-red-200 text-sm space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-0.5">⚠️</span>
-                    <span>O responsável deverá fornecer seus dados pessoais e tirar uma foto de identificação</span>
+                    <span>O responsável confirma nome, vínculo e os termos aplicáveis à conta do menor.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-0.5">⚠️</span>
-                    <span>O cadastro <strong>não será concluído</strong> sem a autorização e foto do responsável</span>
+                    <span>O cadastro <strong>não será concluído</strong> sem a autorização formal do responsável.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-0.5">⚠️</span>
-                    <span>Dados falsos são rastreados e sujeitos a responsabilidade legal (LGPD / ECA / Código Civil)</span>
+                    <span>As informações devem ser verdadeiras e podem ser revisadas pelo responsável a qualquer momento.</span>
                   </li>
                 </ul>
               </div>
@@ -328,20 +270,20 @@ export default function TermsOfUse() {
               </div>
               <div className="bg-red-950/60 border border-red-400/40 rounded-2xl p-5 mb-6">
                 <p className="text-white font-bold text-base leading-relaxed mb-4">
-                  O cadastro de menores de 18 anos <span className="text-yellow-300 underline">só é aceito com a presença e identificação do pai, mãe ou responsável legal</span>.
+                  O cadastro de menores de 18 anos <span className="text-yellow-300 underline">só é aceito após a autorização de pai, mãe ou responsável legal</span>.
                 </p>
                 <ul className="text-red-200 text-sm space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold">⚠️</span>
-                    <span>O responsável deverá fornecer seus dados e tirar uma foto de identificação</span>
+                    <span>O responsável confirma nome, vínculo e os termos aplicáveis à conta do menor.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold">⚠️</span>
-                    <span>O cadastro <strong>não será concluído</strong> sem autorização e foto do responsável</span>
+                    <span>O cadastro <strong>não será concluído</strong> sem a autorização formal do responsável.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold">⚠️</span>
-                    <span>Dados falsos são rastreados — responsabilidade legal (LGPD / ECA)</span>
+                    <span>As informações devem ser verdadeiras e podem ser revisadas pelo responsável a qualquer momento.</span>
                   </li>
                 </ul>
               </div>
@@ -429,98 +371,12 @@ export default function TermsOfUse() {
               disabled={!allChecked}
               className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white font-semibold py-3 rounded-xl transition-all"
             >
-              {isMinor ? "Continuar para Foto do Pai/Mãe/Responsável →" : "Continuar para Verificação de Identidade →"}
+              {saving ? "Salvando aceite..." : isMinor ? "Continuar para Autorização Parental →" : "Confirmar Termos e Continuar →"}
             </button>
           </div>
         )}
 
-        {/* STEP 3: SELFIE / FOTO DO RESPONSÁVEL */}
-        {step === "selfie" && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <Camera className="h-6 w-6 text-green-400" />
-              <h2 className="text-xl font-bold text-white">
-                {isUnder12 ? "Foto do Pai ou Mãe (Obrigatório)" : isMinor ? "Foto do Responsável Legal" : "Verificação de Identidade"}
-              </h2>
-            </div>
-
-            {/* Legal warning */}
-            <div className="bg-amber-500/10 border border-amber-500/40 rounded-xl p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                <div className="text-amber-200 text-sm leading-relaxed">
-                  {isUnder12 ? (
-                    <>
-                      <strong className="text-amber-300 block mb-1">⚠️ ATENÇÃO — Menor de 12 anos detectado</strong>
-                      O cadastro de crianças menores de 12 anos <strong>só será concluído com a foto do pai ou mãe</strong>. Esta imagem será armazenada como <strong>prova jurídica de autorização parental</strong>, conforme exigido pela LGPD (Lei 13.709/18) e ECA.
-                      <br /><br />
-                      <strong>Peça ao pai ou mãe para tirar a foto agora.</strong>
-                    </>
-                  ) : isMinor ? (
-                    <>
-                      <strong className="text-amber-300 block mb-1">⚠️ ATENÇÃO — Menor de 18 anos</strong>
-                      O cadastro de menores de 18 anos <strong>só é aceito com a foto do pai, mãe ou responsável legal</strong>. Esta imagem é armazenada como <strong>prova jurídica de identificação e autorização</strong>, conforme LGPD (Lei 13.709/18), ECA e Código Civil Brasileiro.
-                    </>
-                  ) : (
-                    <>
-                      <strong className="text-amber-300 block mb-1">📸 Aviso de Coleta de Imagem</strong>
-                      Sua foto será armazenada com segurança como <strong>prova jurídica de identidade</strong>, conforme a LGPD (Lei 13.709/18). Esta imagem é usada exclusivamente para fins de segurança e conformidade legal. Ao continuar, você autoriza expressamente este uso.
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Camera / photo area */}
-            <div className="flex flex-col items-center gap-4 mb-6">
-              {!selfieDataUrl ? (
-                <>
-                  <div className="w-full max-w-sm aspect-video bg-black/40 rounded-xl overflow-hidden border border-white/10 relative">
-                    {cameraActive ? (
-                      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full gap-3 text-white/40">
-                        <Camera className="h-12 w-12" />
-                        <span className="text-sm">{isUnder12 || isMinor ? "Câmera do responsável" : "Sua câmera"}</span>
-                      </div>
-                    )}
-                  </div>
-                  <canvas ref={canvasRef} className="hidden" />
-                  {cameraError && <p className="text-red-400 text-sm text-center">{cameraError}</p>}
-                  {!cameraActive ? (
-                    <button onClick={startCamera} className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-6 py-3 rounded-xl transition-all">
-                      <Camera className="h-5 w-5" />
-                      Ativar Câmera
-                    </button>
-                  ) : (
-                    <button onClick={takeSelfie} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold px-8 py-3 rounded-xl transition-all text-lg">
-                      📸 Tirar Foto
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <div className="w-full max-w-sm rounded-xl overflow-hidden border-2 border-green-500/50">
-                    <img src={selfieDataUrl} alt="Foto capturada" className="w-full" />
-                  </div>
-                  <div className="flex gap-3">
-                    <button onClick={retakeSelfie} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-xl transition-all text-sm">
-                      <RefreshCw className="h-4 w-4" />
-                      Tirar Novamente
-                    </button>
-                    <button onClick={handleSelfieConfirm} disabled={saving} className="flex items-center gap-2 bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">
-                      {saving ? "Salvando..." : "✓ Confirmar e Continuar"}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
-          </div>
-        )}
-
-        {/* STEP 4: AUTORIZAÇÃO PARENTAL */}
+        {/* STEP 3: AUTORIZAÇÃO PARENTAL */}
         {step === "parental" && (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-2">
@@ -529,7 +385,7 @@ export default function TermsOfUse() {
             </div>
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-6">
               <p className="text-blue-300 text-sm">
-                <strong>Atenção:</strong> Como o usuário tem menos de 18 anos, é <strong>obrigatória a identificação e autorização de um pai, mãe ou responsável legal</strong> para concluir o cadastro nesta plataforma.
+                <strong>Atenção:</strong> Como o usuário tem menos de 18 anos, é <strong>obrigatória a autorização de um pai, mãe ou responsável legal</strong> para concluir o cadastro nesta plataforma. São solicitados apenas os dados necessários para registrar esse aceite.
               </p>
             </div>
 
@@ -546,8 +402,8 @@ export default function TermsOfUse() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-white/80 text-sm font-medium block mb-1">CPF / Documento</label>
-                  <input type="text" value={guardian.document} onChange={e => setGuardian(p => ({ ...p, document: e.target.value }))} placeholder="000.000.000-00" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-blue-400" />
+                  <label className="text-white/80 text-sm font-medium block mb-1">CPF / Documento (opcional)</label>
+                  <input type="text" value={guardian.document} onChange={e => setGuardian(p => ({ ...p, document: e.target.value }))} placeholder="Opcional" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-blue-400" />
                 </div>
                 <div>
                   <label className="text-white/80 text-sm font-medium block mb-1">Vínculo *</label>
@@ -560,8 +416,8 @@ export default function TermsOfUse() {
                 </div>
               </div>
               <div>
-                <label className="text-white/80 text-sm font-medium block mb-1">E-mail do responsável</label>
-                <input type="email" value={guardian.email} onChange={e => setGuardian(p => ({ ...p, email: e.target.value }))} placeholder="email@exemplo.com" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-blue-400" />
+                <label className="text-white/80 text-sm font-medium block mb-1">E-mail do responsável (opcional)</label>
+                <input type="email" value={guardian.email} onChange={e => setGuardian(p => ({ ...p, email: e.target.value }))} placeholder="Opcional — contato para revisão do consentimento" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-blue-400" />
               </div>
             </div>
 
