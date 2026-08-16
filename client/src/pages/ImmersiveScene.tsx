@@ -68,6 +68,22 @@ const DIALOG_SPEECH_RATES = [
   { value: 1, label: "Normal" },
 ] as const;
 
+const DIALOG_SPEECH_RATE_STORAGE_KEY = "multilingue_scene_speech_rate";
+
+function isDialogSpeechRate(value: number): value is (typeof DIALOG_SPEECH_RATES)[number]["value"] {
+  return DIALOG_SPEECH_RATES.some((rate) => rate.value === value);
+}
+
+function loadDialogSpeechRate(): number {
+  if (typeof window === "undefined") return 0.85;
+  try {
+    const stored = Number(window.localStorage.getItem(DIALOG_SPEECH_RATE_STORAGE_KEY));
+    return isDialogSpeechRate(stored) ? stored : 0.85;
+  } catch {
+    return 0.85;
+  }
+}
+
 function HotspotVisual({ hotspot, size = 24 }: { hotspot: Hotspot; size?: number }) {
   const source = `${hotspot.id} ${hotspot.label}`.toLowerCase();
   const Icon = HOTSPOT_ICON_COMPONENTS.find(([key]) => source.includes(key))?.[1] || Sparkles;
@@ -1505,7 +1521,7 @@ export default function ImmersiveScene() {
   const [activeSpeechText, setActiveSpeechText] = useState("");
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
   const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
-  const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(0.85);
+  const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(loadDialogSpeechRate);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
@@ -1543,6 +1559,11 @@ export default function ImmersiveScene() {
   useEffect(() => {
     if (dialogAudioElementRef.current) dialogAudioElementRef.current.playbackRate = dialogSpeechRate;
     if (nativeHelpAudioRef.current) nativeHelpAudioRef.current.playbackRate = dialogSpeechRate;
+    try {
+      window.localStorage.setItem(DIALOG_SPEECH_RATE_STORAGE_KEY, String(dialogSpeechRate));
+    } catch {
+      // A preferência continua válida para a sessão quando o armazenamento não está disponível.
+    }
   }, [dialogSpeechRate]);
 
   const stopTeacherAudio = useCallback(() => {
