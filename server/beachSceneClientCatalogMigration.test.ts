@@ -147,4 +147,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("Die Burg ist alt.");
     expect(clientSceneSource).toContain('selectedScene?.id === "medieval"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Cinema Moderno do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Welcome to the cinema! What kind of movie do you want to watch tonight?");
+    expect(clientSceneSource).not.toContain("The screen is huge.");
+    expect(serverSeedSource).toContain("Welcome to the cinema! What kind of movie do you want to watch tonight?");
+    expect(serverSeedSource).toContain("The screen is huge.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "cinema"');
+  });
 });

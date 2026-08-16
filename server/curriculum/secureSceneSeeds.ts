@@ -201,6 +201,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "clock", x: 85, y: 15, label: "Clock", translation: "Relógio", pronunciation: "KLOK", example: "Look at the clock.", examplePt: "Olhe para o relógio.", icon: "🕐", color: "#dc2626" },
     ],
   },
+  cinema: {
+    dialog: [
+      { speaker: "teacher", text: "Welcome to the cinema! What kind of movie do you want to watch tonight?", textPt: "Bem-vindo ao cinema! Que tipo de filme você quer assistir esta noite?" },
+      { speaker: "user", text: "I want to watch an action movie on the big screen!", textPt: "Quero assistir um filme de ação na telona!", options: ["I want to watch an action movie on the big screen!", "I don't know what to watch.", "I prefer staying home."], correctIndex: 0 },
+      { speaker: "teacher", text: "Great choice! First, you need to buy a ticket at the box office.", textPt: "Ótima escolha! Primeiro, você precisa comprar um ingresso na bilheteria." },
+      { speaker: "user", text: "How much is a ticket? And can I buy popcorn?", textPt: "Quanto custa um ingresso? E posso comprar pipoca?", options: ["How much is a ticket? And can I buy popcorn?", "I already have a ticket.", "I don't eat popcorn."], correctIndex: 0 },
+      { speaker: "teacher", text: "Tickets are about fifteen dollars. Popcorn is a must at the cinema!", textPt: "Os ingressos custam cerca de quinze dólares. Pipoca é obrigatória no cinema!" },
+      { speaker: "user", text: "Perfect! Where is my seat? I need to find seat number G7.", textPt: "Perfeito! Onde fica meu assento? Preciso encontrar o assento G7.", options: ["Perfect! Where is my seat? I need to find seat number G7.", "Any seat is fine.", "I'll stand in the back."], correctIndex: 0 },
+      { speaker: "teacher", text: "Check the projector screen for the seat map. Enjoy the movie!", textPt: "Verifique a tela do projetor para o mapa de assentos. Aproveite o filme!" },
+    ],
+    hotspots: [
+      { id: "screen2", x: 50, y: 30, label: "Screen", translation: "Tela", pronunciation: "SKREEN", example: "The screen is huge.", examplePt: "A tela é enorme.", icon: "📽️", color: "#6366f1" },
+      { id: "popcorn", x: 25, y: 65, label: "Popcorn", translation: "Pipoca", pronunciation: "POP-korn", example: "I love popcorn!", examplePt: "Adoro pipoca!", icon: "🍿", color: "#f59e0b" },
+      { id: "seat", x: 65, y: 70, label: "Seat", translation: "Assento", pronunciation: "SIIT", example: "Find your seat.", examplePt: "Encontre seu assento.", icon: "💺", color: "#dc2626" },
+      { id: "ticket", x: 80, y: 45, label: "Ticket", translation: "Ingresso", pronunciation: "TI-ket", example: "Buy a ticket.", examplePt: "Compre um ingresso.", icon: "🎟️", color: "#22c55e" },
+      { id: "projector", x: 50, y: 15, label: "Projector", translation: "Projetor", pronunciation: "pro-DJEK-ter", example: "The projector is on.", examplePt: "O projetor está ligado.", icon: "📽️", color: "#8b5cf6" },
+      { id: "exit", x: 15, y: 55, label: "Exit", translation: "Saída", pronunciation: "EK-sit", example: "Where is the exit?", examplePt: "Onde fica a saída?", icon: "🚪", color: "#0ea5e9" },
+    ],
+  },
   medieval: {
     dialog: [
       { speaker: "teacher", text: "Willkommen auf dem mittelalterlichen Markt! Ich bin Hans. Was möchten Sie kaufen?", textPt: "Bem-vindo ao mercado medieval! Sou Hans. O que você gostaria de comprar?" },

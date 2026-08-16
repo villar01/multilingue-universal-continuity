@@ -104,6 +104,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(medieval?.hotspots.map((hotspot) => hotspot.id)).toEqual(["burg", "markt", "ritter", "fahne", "brunnen", "kerze"]);
   });
 
+  it("mantém o conteúdo do Cinema Moderno disponível somente no contrato do servidor", () => {
+    const cinema = getSecureSceneSeed("cinema");
+    expect(cinema?.dialog).toHaveLength(7);
+    expect(cinema?.hotspots.map((hotspot) => hotspot.id)).toEqual(["screen2", "popcorn", "seat", "ticket", "projector", "exit"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });
