@@ -52,7 +52,7 @@ export function LipSyncSetupGuide() {
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">Preparação opcional do computador</p>
               <h2 id="lip-sync-setup-title" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Guia de IA local e animação facial</h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-200">
-                Este guia evita instalações sem resultado. A animação labial natural é um componente separado da IA de texto e não será simulada por tremores no retrato.
+                Conheça os recursos já disponíveis e as opções que podem ampliar sua experiência no futuro. A animação facial avançada é preparada como uma camada independente, para preservar uma apresentação estável em cada atividade.
               </p>
             </div>
           </div>
@@ -62,7 +62,7 @@ export function LipSyncSetupGuide() {
           <div className="grid gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 sm:grid-cols-[auto_1fr]">
             <ShieldCheck className="h-5 w-5 shrink-0 text-amber-700" aria-hidden="true" />
             <p>
-              <strong>Estado deste notebook:</strong> sem placa NVIDIA confirmada, portanto não há instalação de motor facial local agora. Qwen 2.5 e Llama podem ser usados para texto, mas <strong>não produzem movimento labial</strong>.
+              <strong>Pronto para aprender agora:</strong> as lições, a voz, os exercícios e os clipes pedagógicos já funcionam neste notebook. Uma GPU NVIDIA compatível pode ampliar, em uma etapa opcional futura, os recursos visuais locais.
             </p>
           </div>
 
@@ -91,7 +91,7 @@ export function LipSyncSetupGuide() {
               <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-violet-700" aria-hidden="true" />
               <div className="space-y-3 text-sm text-violet-950">
                 <p><strong>O que uma GPU compatível poderá melhorar:</strong> {GPU_INTERACTION_NOTICE.withCuda}</p>
-                <p><strong>Sem GPU compatível:</strong> {GPU_INTERACTION_NOTICE.withoutCuda}</p>
+                <p><strong>Recursos disponíveis hoje:</strong> {GPU_INTERACTION_NOTICE.withoutCuda}</p>
                 <p className="text-xs text-violet-800">{GPU_INTERACTION_NOTICE.availability}</p>
               </div>
             </div>
@@ -99,7 +99,7 @@ export function LipSyncSetupGuide() {
 
           <div className="flex items-start gap-3 rounded-2xl border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-950">
             <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-800" aria-hidden="true" />
-            <p><strong>Próximo resultado concreto:</strong> a voz e o diálogo serão validados separadamente. A futura prova facial só começa após confirmação técnica de GPU compatível e validação humana de áudio, boca e imagem.</p>
+            <p><strong>Próximo passo:</strong> aproveite a voz, o diálogo e os clipes pedagógicos disponíveis. Quando houver uma configuração facial compatível, ela será apresentada com validação técnica e visual antes de ser ativada.</p>
           </div>
 
           <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
