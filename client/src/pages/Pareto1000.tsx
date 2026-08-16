@@ -4,24 +4,28 @@ import type { ParetoWord } from "@/lib/curriculum-types";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 
 const SESSION_SIZE = 10;
-const PROGRESS_KEY = "multilingue_pareto_1000_completed";
+const PROGRESS_KEY_PREFIX = "multilingue_pareto_1000_completed";
 
-function loadCompletedWords(): Set<string> {
+function progressKey(targetLanguage: string, nativeLanguage: string): string {
+  return `${PROGRESS_KEY_PREFIX}:${targetLanguage.trim().toLowerCase()}:${nativeLanguage.trim().toLowerCase()}`;
+}
+
+function loadCompletedWords(key: string): Set<string> {
   try {
-    const stored = localStorage.getItem(PROGRESS_KEY);
+    const stored = localStorage.getItem(key);
     return stored ? new Set(JSON.parse(stored) as string[]) : new Set();
   } catch {
     return new Set();
   }
 }
 
-function saveCompletedWords(words: Set<string>) {
+function saveCompletedWords(key: string, words: Set<string>) {
   try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify([...words]));
+    localStorage.setItem(key, JSON.stringify([...words]));
   } catch {
     // The active practice stays available when local persistence is unavailable.
   }
@@ -32,6 +36,7 @@ export default function Pareto1000() {
   const { profile } = useLanguage();
   const targetLanguage = profile.targetCode || "en-US";
   const nativeLanguage = profile.nativeCode || "pt-BR";
+  const activeProgressKey = useMemo(() => progressKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
   const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
     lessonKey: "/pareto-1000",
     targetLanguage,
@@ -50,7 +55,7 @@ export default function Pareto1000() {
     examplePt: word.nativeExample,
     scene: word.scene,
   })), [paretoQuery.data]);
-  const [completed, setCompleted] = useState<Set<string>>(loadCompletedWords);
+  const [completed, setCompleted] = useState<Set<string>>(() => loadCompletedWords(activeProgressKey));
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
@@ -60,6 +65,12 @@ export default function Pareto1000() {
   const completedCount = words.filter((word) => completed.has(word.id)).length;
   const nextWord = words.find((word) => !completed.has(word.id)) ?? null;
   const programReadyCount = paretoQuery.data?.total ?? 0;
+
+  useEffect(() => {
+    setCompleted(loadCompletedWords(activeProgressKey));
+    setPage(0);
+    setPracticeWord(null);
+  }, [activeProgressKey]);
 
   if (paretoQuery.isLoading) {
     return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
@@ -100,10 +111,10 @@ export default function Pareto1000() {
     if (!practiceWord) return;
     setCompleted((previous) => {
       const next = new Set(previous).add(practiceWord.id);
-      saveCompletedWords(next);
+      saveCompletedWords(activeProgressKey, next);
       return next;
     });
-  }, [practiceWord]);
+  }, [activeProgressKey, practiceWord]);
 
   const openNextWord = useCallback(() => {
     const currentIndex = practiceWord ? words.findIndex((word) => word.id === practiceWord.id) : -1;

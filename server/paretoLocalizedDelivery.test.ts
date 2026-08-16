@@ -20,4 +20,11 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(pageSource).toContain("voiceLang: targetLanguage");
     expect(pageSource).not.toContain("voiceLang: \"en-US\"");
   });
+
+  it("isola o progresso de memorização por idioma estudado e idioma nativo", () => {
+    expect(pageSource).toContain("const PROGRESS_KEY_PREFIX = \"multilingue_pareto_1000_completed\"");
+    expect(pageSource).toContain("${targetLanguage.trim().toLowerCase()}");
+    expect(pageSource).toContain("${nativeLanguage.trim().toLowerCase()}");
+    expect(pageSource).toContain("setCompleted(loadCompletedWords(activeProgressKey))");
+  });
 });
