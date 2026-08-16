@@ -49,7 +49,7 @@ describe("entrega protegida de diálogo localizado", () => {
   });
 
   it("não inicia cenas migradas até o material autorizado chegar ao cliente", () => {
-    expect(sceneSource).toContain('const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris") && activeSceneDialog.length === 0');
+    expect(sceneSource).toContain('const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork") && activeSceneDialog.length === 0');
     expect(sceneSource).toContain("activeSceneDialog.length > 0 && (");
     expect(sceneSource).toContain("Preparando material protegido da cena…");
   });

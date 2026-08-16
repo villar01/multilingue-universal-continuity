@@ -206,23 +206,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to New York! Click the objects to learn!",
     greetingPt:"Bem-vindo a Nova York! Clique nos objetos para aprender!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Hey! Welcome to New York City — the Big Apple!", textPt:"Ei! Bem-vindo à cidade de Nova York — a Grande Maçã!"},
-      {speaker:"user", text:"This city is absolutely amazing! The skyscrapers are huge!", textPt:"Esta cidade é absolutamente incrível! Os arranha-céus são enormes!", options:["This city is absolutely amazing! The skyscrapers are huge!","I'm lost.","Where is the hotel?"], correctIndex:0},
-      {speaker:"teacher", text:"Yes! Those are skyscrapers. In English: 'sky-scra-per'. Can you say that?", textPt:"Sim! Esses são arranha-céus. Em inglês: 'sky-scra-per'. Você consegue dizer isso?"},
-      {speaker:"user", text:"Skyscraper! And I can see a yellow taxi on the street!", textPt:"Skyscraper! E consigo ver um táxi amarelo na rua!", options:["Skyscraper! And I can see a yellow taxi on the street!","I don't understand.","Is that the subway?"], correctIndex:0},
-      {speaker:"teacher", text:"Perfect! Yellow taxis are iconic in New York. You can also take the subway underground.", textPt:"Perfeito! Os táxis amarelos são icônicos em Nova York. Você também pode pegar o metrô subterrâneo."},
-      {speaker:"user", text:"How do I take the subway? I want to go to Central Park!", textPt:"Como pego o metrô? Quero ir ao Central Park!", options:["How do I take the subway? I want to go to Central Park!","I prefer to walk.","I'll take a taxi."], correctIndex:0},
-      {speaker:"teacher", text:"Great choice! Your English is excellent. Keep it up!", textPt:"Ótima escolha! Seu inglês está excelente. Continue assim!"},
-    ],
-    hotspots:[
-      {id:"statue", x:7, y:48, label:"Statue", translation:"Estátua", pronunciation:"STÉ-tchu", example:"The statue is big.", examplePt:"A estátua é grande.", icon:"🗽", color:"#16a34a"},
-      {id:"building", x:47, y:36, label:"Building", translation:"Prédio", pronunciation:"BIL-ding", example:"The building is tall.", examplePt:"O prédio é alto.", icon:"🏙️", color:"#6366f1"},
-      {id:"city", x:67, y:55, label:"City", translation:"Cidade", pronunciation:"SI-ti", example:"This is a big city.", examplePt:"Esta é uma cidade grande.", icon:"🏙️", color:"#0ea5e9"},
-      {id:"water", x:43, y:72, label:"Water", translation:"Água", pronunciation:"UÓ-ter", example:"The water is blue.", examplePt:"A água é azul.", icon:"🌊", color:"#0891b2"},
-      {id:"sun", x:79, y:29, label:"Sun", translation:"Sol", pronunciation:"SÂN", example:"The sun is yellow.", examplePt:"O sol é amarelo.", icon:"☀️", color:"#f59e0b"},
-      {id:"window", x:79, y:58, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"The window is large.", examplePt:"A janela é grande.", icon:"🪟", color:"#64748b"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"kitchen", name:"Cozinha Moderna", nameEn:"Modern Kitchen", flag:"🍳",
@@ -1493,7 +1479,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1502,7 +1488,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

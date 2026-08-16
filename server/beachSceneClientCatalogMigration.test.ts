@@ -43,4 +43,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("La Tour Eiffel est magnifique.");
     expect(clientSceneSource).toContain('selectedScene?.id === "paris"');
   });
+
+  it("remove também o roteiro e os objetos canônicos de Nova York do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Hey! Welcome to New York City — the Big Apple!");
+    expect(clientSceneSource).not.toContain("The building is tall.");
+    expect(serverSeedSource).toContain("Hey! Welcome to New York City — the Big Apple!");
+    expect(serverSeedSource).toContain("The building is tall.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "newyork"');
+  });
 });
