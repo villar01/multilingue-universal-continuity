@@ -6,6 +6,7 @@
  * - Improve private, local language generation and practice
  * - Reduce reliance on external text-generation requests
  * - Keep compatible AI conversations available offline after initial setup
+ * - Never imply that a text model itself creates facial or lip animation
  * 
  * The notification appears once on first visit and can be dismissed.
  * User can choose: install automatically (guided) or manually.
@@ -132,7 +133,7 @@ export default function LocalAINotification() {
                     <strong>Passo 4:</strong> Quando aparecer <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">&gt;&gt;&gt;</code> significa que está pronto. Digite <code className="rounded bg-blue-200 px-1 dark:bg-blue-800">/bye</code> e tecle Enter para sair. A IA fica instalada permanentemente.
                   </li>
                   <li>
-                    <strong>Passo 5:</strong> O Qwen 2.5 estará disponível no seu computador para prática local pelo Ollama. Nesta versão hospedada, o servidor não detecta automaticamente a porta local do navegador do aluno: a integração direta cliente-local precisa estar configurada antes de o app usar esse modelo. A voz neural e a animação labial continuam sendo produzidas pelos mecanismos próprios de voz e avatar do app.
+                    <strong>Passo 5:</strong> O Qwen 2.5 estará disponível no seu computador para prática local pelo Ollama. Nesta versão hospedada, o servidor não detecta automaticamente a porta local do navegador do aluno: a integração direta cliente-local precisa estar configurada antes de o app usar esse modelo. A voz neural e a animação labial continuam sendo produzidas pelos mecanismos próprios de voz e avatar do app. Qwen e Llama não criam animação facial ou movimento labial; uma futura sincronização natural exige um motor facial próprio e GPU NVIDIA compatível.
                   </li>
                 </ol>
                 <div className="mt-2 rounded-lg bg-amber-100/50 p-2 dark:bg-amber-900/20">
@@ -149,7 +150,7 @@ export default function LocalAINotification() {
                   </p>
                 </div>
                 <p className="text-xs text-blue-600 dark:text-blue-400">
-                  A IA local melhora a autonomia das conversas e práticas de texto. Você pode usar o app sem ela; a qualidade de voz neural e animação não depende do Qwen.
+                  A IA local melhora a autonomia das conversas e práticas de texto. Você pode usar o app sem ela; a qualidade de voz neural e animação não depende do Qwen. Não deixe o notebook ligado esperando movimento de boca após instalar um modelo de texto.
                 </p>
                 <button
                   onClick={handleDismiss}

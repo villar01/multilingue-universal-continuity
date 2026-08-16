@@ -78,6 +78,7 @@ const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
 const StudyBase = lazy(() => import("./pages/StudyBase"));
 const Pareto1000 = lazy(() => import("./pages/Pareto1000"));
 import LocalAINotification from "./components/LocalAINotification";
+import { LipSyncSetupGuide } from "./components/LipSyncSetupGuide";
 import ConnectivityIndicator from "./components/ConnectivityIndicator";
 import { QuickStudyAccess } from "./components/QuickStudyAccess";
 import { LearningAccessGate } from "./components/LearningAccessGate";
@@ -194,6 +195,7 @@ function App() {
               <Router />
             </LearningAccessGate>
           </Suspense>
+          <LipSyncSetupGuide />
           <QuickStudyAccess />
           <LocalAINotification />
           <ConnectivityIndicator />
