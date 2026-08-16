@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
+import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
 
 const NATIVE_LOCALE_BY_TEACHER: Record<string, string> = {
   Ana: "pt-BR",
@@ -40,7 +41,7 @@ describe("catálogo completo de cenas imersivas", () => {
   });
 
   it("mantém a praia limitada aos quatro objetos visíveis validados", () => {
-    const beach = IMMERSIVE_SCENES.find((scene) => scene.id === "beach");
+    const beach = getSecureSceneSeed("beach");
     expect(beach?.hotspots.map((hotspot) => hotspot.id)).toEqual(["palm", "ocean", "wave", "sand"]);
   });
 });

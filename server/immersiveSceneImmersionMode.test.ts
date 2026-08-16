@@ -9,7 +9,7 @@ const sceneSource = fs.readFileSync(
 
 describe("modo de imersão da cena", () => {
   it("oculta auxiliares nativos e preserva idioma-alvo, fechamento e saída", () => {
-    expect(sceneSource).toContain("{!immersionMode && getDlgTranslation(selectedScene.dialog[dlgStep])");
+    expect(sceneSource).toContain("{!immersionMode && getDlgTranslation(activeSceneDialog[dlgStep])");
     expect(sceneSource).toContain("{dlgFeedback && (");
     expect(sceneSource).not.toContain("{!immersionMode && dlgFeedback &&");
     expect(sceneSource).toContain("{!immersionMode && <>");

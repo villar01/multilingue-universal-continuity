@@ -172,21 +172,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to the beach! Click the objects to learn!",
     greetingPt:"Bem-vindo à praia! Clique nos objetos para aprender!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Hello! My name is James. Welcome to this beautiful tropical beach!", textPt:"Ol\u00e1! Meu nome \u00e9 James. Bem-vindo a esta linda praia tropical!"},
-      {speaker:"user", text:"Hello James! The beach is amazing!", textPt:"Ol\u00e1 James! A praia \u00e9 incr\u00edvel!", options:["Hello James! The beach is amazing!","I don't like the beach.","Where is the hotel?"], correctIndex:0},
-      {speaker:"teacher", text:"Look at the ocean! In English we say 'ocean' or 'sea'. The water is blue.", textPt:"Olhe para o oceano! Em ingl\u00eas dizemos 'ocean' ou 'sea'. A \u00e1gua \u00e9 azul."},
-      {speaker:"user", text:"The ocean is beautiful! And the sand is warm.", textPt:"O oceano \u00e9 lindo! E a areia est\u00e1 quente.", options:["The ocean is beautiful! And the sand is warm.","I don't see the ocean.","Where is the pool?"], correctIndex:0},
-      {speaker:"teacher", text:"Perfect! Now look at the palm tree. In English: 'palm tree'. Can you repeat?", textPt:"Perfeito! Agora olhe para a palmeira. Em ingl\u00eas: 'palm tree'. Voc\u00ea consegue repetir?"},
-      {speaker:"user", text:"Palm tree! I can see the palm tree near the beach.", textPt:"Palm tree! Consigo ver a palmeira perto da praia.", options:["Palm tree! I can see the palm tree near the beach.","I don't know this word.","Is that a coconut tree?"], correctIndex:0},
-      {speaker:"teacher", text:"Excellent! Your English is great! Keep practicing every day!", textPt:"Excelente! Seu ingl\u00eas est\u00e1 \u00f3timo! Continue praticando todos os dias!"},
-    ],
-    hotspots:[
-      {id:"palm", x:79, y:24, label:"Palm Tree", translation:"Palmeira", pronunciation:"PAAM-tree", example:"The palm tree is tall.", examplePt:"A palmeira é alta.", icon:"🌴", color:"#22c55e"},
-      {id:"ocean", x:24, y:66, label:"Ocean", translation:"Oceano", pronunciation:"OH-shën", example:"The ocean is deep.", examplePt:"O oceano é profundo.", icon:"🌊", color:"#06b6d4"},
-      {id:"wave", x:38, y:58, label:"Wave", translation:"Onda", pronunciation:"WEYV", example:"The wave is big.", examplePt:"A onda é grande.", icon:"🌊", color:"#14b8a6"},
-      {id:"sand", x:59, y:82, label:"Sand", translation:"Areia", pronunciation:"SÆND", example:"The sand is warm.", examplePt:"A areia está quente.", icon:"🏖️", color:"#f59e0b"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"forest", name:"Floresta Encantada", nameEn:"Enchanted Forest", flag:"🌲",
@@ -1544,6 +1532,42 @@ export default function ImmersiveScene() {
     staleTime: 1000 * 60 * 30,
     retry: false,
   });
+  const canonicalSceneMaterialQuery = trpc.curriculum.sceneCanonicalMaterial.useQuery({
+    lessonKey: authorizedSceneMaterial?.lessonKey || "scene:pending",
+    sceneId: selectedScene?.id || "pending",
+  }, {
+    enabled: isAuthenticated
+      && selectedScene?.id === "beach"
+      && authorizedSceneMaterial?.sceneId === selectedScene?.id
+      && authorizedSceneMaterial?.targetLanguage === targetLang
+      && authorizedSceneMaterial?.nativeLanguage === nativeLang,
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
+  const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
+  const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
+  const sceneMaterialIsPreparing = selectedScene?.id === "beach" && activeSceneDialog.length === 0;
+
+  useEffect(() => {
+    if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
+    let cancelled = false;
+    const lessonKey = `scene:${selectedScene.id}`;
+    void authorizeLessonMut.mutateAsync({ lessonKey })
+      .then((access) => {
+        if (!cancelled) {
+          setAuthorizedSceneMaterial(access.allowed ? {
+            lessonKey,
+            sceneId: selectedScene.id,
+            targetLanguage: targetLang,
+            nativeLanguage: nativeLang,
+          } : null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setAuthorizedSceneMaterial(null);
+      });
+    return () => { cancelled = true; };
+  }, [authorizeLessonMut, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioObjectUrlRef = useRef<string | null>(null);
@@ -2070,23 +2094,13 @@ export default function ImmersiveScene() {
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
-    const materialLessonKey = `scene:${scene.id}`;
-    if (isAuthenticated && isInitialCommercialTargetLanguage(targetLang)) {
-      void authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })
-        .then((access) => setAuthorizedSceneMaterial(access.allowed ? {
-          lessonKey: materialLessonKey,
-          sceneId: scene.id,
-          targetLanguage: targetLang,
-          nativeLanguage: nativeLang,
-        } : null))
-        .catch(() => setAuthorizedSceneMaterial(null));
-    }
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
     if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
     if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
-    const line = scene.dialog[0];
+    const line = activeSceneDialog[0];
+    if (!line) return;
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
@@ -2103,7 +2117,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [authorizeLessonMut, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, targetLang, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -2118,7 +2132,7 @@ export default function ImmersiveScene() {
     if (!selectedScene) return;
     const dialogueScene = teachingScene ?? selectedScene;
     const next = dlgStep + 1;
-    if (next >= selectedScene.dialog.length) {
+    if (next >= activeSceneDialog.length) {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
@@ -2126,7 +2140,7 @@ export default function ImmersiveScene() {
       return;
     }
     setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgIsRecording(false); setDlgIsProcessingSpeech(false); setDlgTutorLoading(false);
-    const line = selectedScene.dialog[next];
+    const line = activeSceneDialog[next];
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
@@ -2141,7 +2155,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [dlgStep, isAuthenticated, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeSceneDialog, dlgStep, requestSpeechSafely, selectedScene, teachingScene]);
 
   const askImmersiveTutor = useCallback(async (answer: string) => {
     const scene = teachingScene ?? selectedScene;
@@ -2817,14 +2831,14 @@ export default function ImmersiveScene() {
                 className="text-white px-3 py-1.5 rounded-full"
                 style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
               >
-                {learnedWords.size}/{selectedScene.hotspots.length}
+                {learnedWords.size}/{activeSceneHotspots.length}
               </div>
             </>}
           </div>
         </div>
 
         {/* AR Hotspots */}
-        {selectedScene.hotspots.map((hotspot) => {
+        {activeSceneHotspots.map((hotspot) => {
           const learned = learnedWords.has(hotspot.id);
           return (
             <div
@@ -2975,7 +2989,7 @@ export default function ImmersiveScene() {
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
-        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && (
+        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
             onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
             className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
@@ -2988,6 +3002,15 @@ export default function ImmersiveScene() {
           >
             {immersionMode ? "💬 Start dialogue" : "💬 Iniciar Diálogo"}
           </button>
+        )}
+        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && sceneMaterialIsPreparing && (
+          <div
+            className="absolute z-50 rounded-full px-4 py-2 text-xs font-bold text-cyan-100"
+            style={{ bottom: "100px", left: "50%", transform: "translateX(-50%)", background: "rgba(8,47,73,.88)", border: "1px solid rgba(103,232,249,.45)" }}
+            role="status"
+          >
+            Preparando material protegido da cena…
+          </div>
         )}
         {dialogAuthRequired && !isAuthenticated && (
           <div
@@ -3003,7 +3026,7 @@ export default function ImmersiveScene() {
             </div>
           </div>
         )}
-        {(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && selectedScene.dialog[dlgStep] && (
+        {(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog[dlgStep] && (
           <div
             className="immersive-dialog absolute left-0 right-0 z-[70]"
             style={{
@@ -3052,21 +3075,21 @@ export default function ImmersiveScene() {
               </div>
               {/* Speaker label */}
               <div className="flex items-center gap-2 mb-2">
-                <span style={{ fontSize: "11px", fontWeight: 700, color: selectedScene.dialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  {selectedScene.dialog[dlgStep].speaker === 'teacher' ? `🏫 ${selectedScene.teacherName}` : '👤 Você'}
+                <span style={{ fontSize: "11px", fontWeight: 700, color: activeSceneDialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  {activeSceneDialog[dlgStep].speaker === 'teacher' ? `🏫 ${selectedScene.teacherName}` : '👤 Você'}
                 </span>
                 {!immersionMode && dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
                   <span className="text-[11px] text-cyan-100/65">Traduzindo para {nativeLangLabel}…</span>
                 )}
-{!immersionMode && getDlgTranslation(selectedScene.dialog[dlgStep]) && (
+{!immersionMode && getDlgTranslation(activeSceneDialog[dlgStep]) && (
                   <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
-                    — {getDlgTranslation(selectedScene.dialog[dlgStep])}
+                    — {getDlgTranslation(activeSceneDialog[dlgStep])}
                   </span>
                 )}
-                {getDlgTranslation(selectedScene.dialog[dlgStep]) && (
+                {getDlgTranslation(activeSceneDialog[dlgStep]) && (
                   <button
                     type="button"
-                    onClick={() => speakNativeHelp(getDlgTranslation(selectedScene.dialog[dlgStep]))}
+                    onClick={() => speakNativeHelp(getDlgTranslation(activeSceneDialog[dlgStep]))}
                     className="ml-auto rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2 py-1 text-[10px] font-bold text-cyan-100 hover:bg-cyan-400/20"
                     title="Ouvir ajuda na língua nativa"
                     aria-label="Ouvir ajuda na língua nativa"
@@ -3075,12 +3098,12 @@ export default function ImmersiveScene() {
                   </button>
                 )}
               </div>
-              {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
+              {activeSceneDialog[dlgStep].speaker === 'teacher' && (
                 <div className="mb-3 flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
+                      const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
                       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                     }}
                     className="rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
@@ -3092,7 +3115,7 @@ export default function ImmersiveScene() {
                     <button
                       type="button"
                       onClick={() => {
-                        const teacherSpeech = getImmersiveDialogTeacherSpeech(selectedScene.dialog[dlgStep].text, selectedScene);
+                        const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
                         playGuestBrowserVoice(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender);
                       }}
                       className="rounded-full border border-emerald-300/45 bg-emerald-400/10 px-3 py-1.5 text-xs font-extrabold text-emerald-100 transition hover:bg-emerald-400/20"
@@ -3137,7 +3160,7 @@ export default function ImmersiveScene() {
                 </div>
               )}
               {/* Scrolling text word by word */}
-              {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
+              {activeSceneDialog[dlgStep].speaker === 'teacher' && (
                 <div style={{ fontSize: "clamp(16px,2vw,22px)", fontWeight: 600, color: "#fff", lineHeight: 1.5, minHeight: "2em", letterSpacing: "0.01em" }}>
                   {dlgWords.slice(0, dlgWordIdx).map((w, i) => (
                     <span key={i} style={{ display: 'inline-block', marginRight: '0.3em', opacity: 1, animation: 'wordFadeIn 0.25s ease' }}>{w}</span>
@@ -3147,7 +3170,7 @@ export default function ImmersiveScene() {
                   )}
                 </div>
               )}
-              {selectedScene.dialog[dlgStep].speaker === 'teacher' && (
+              {activeSceneDialog[dlgStep].speaker === 'teacher' && (
                 <div className="mt-3 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
                   <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre esta fala, a cena ou uma palavra:</p>
                   <div className="flex gap-2">
@@ -3204,7 +3227,7 @@ export default function ImmersiveScene() {
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">
                     <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-violet-100">Começar só pelas palavras Pareto</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {selectedScene.hotspots.slice(0, 6).map((hotspot) => (
+                      {activeSceneHotspots.slice(0, 6).map((hotspot) => (
                         <button
                           key={hotspot.id}
                           type="button"
@@ -3223,15 +3246,15 @@ export default function ImmersiveScene() {
                 </div>
               )}
               {/* Multiple choice — only for user turns */}
-              {selectedScene.dialog[dlgStep].speaker === 'user' && selectedScene.dialog[dlgStep].options && (
+              {activeSceneDialog[dlgStep].speaker === 'user' && activeSceneDialog[dlgStep].options && (
                 <div className="flex flex-col gap-2 mt-1">
-                  {selectedScene.dialog[dlgStep].options!.map((opt, i) => (
+                  {activeSceneDialog[dlgStep].options!.map((opt, i) => (
                     <button
                       key={i}
                       disabled={dlgAnswer !== null}
                       onClick={() => {
                         setDlgAnswer(i);
-                        const correct = selectedScene.dialog[dlgStep].correctIndex === i;
+                        const correct = activeSceneDialog[dlgStep].correctIndex === i;
                         if (correct) {
                           const praiseClip = playJamesTropicalClip("james-tropical-praise") || playSophieCafeClip("sophie-cafe-praise");
                           const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `✅ ${opt}`, selectedScene);
@@ -3244,13 +3267,13 @@ export default function ImmersiveScene() {
                       }}
                       style={{
                         textAlign: 'left', padding: '10px 14px', borderRadius: '10px', fontSize: 'clamp(13px,1.5vw,16px)', fontWeight: 500, cursor: dlgAnswer !== null ? 'default' : 'pointer', transition: 'all 0.2s',
-                        background: dlgAnswer === null ? 'rgba(255,255,255,0.1)' : i === selectedScene.dialog[dlgStep].correctIndex ? 'rgba(34,197,94,0.3)' : dlgAnswer === i ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.06)',
-                        border: dlgAnswer === null ? '1px solid rgba(255,255,255,0.15)' : i === selectedScene.dialog[dlgStep].correctIndex ? '1px solid #22c55e' : dlgAnswer === i ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.08)',
+                        background: dlgAnswer === null ? 'rgba(255,255,255,0.1)' : i === activeSceneDialog[dlgStep].correctIndex ? 'rgba(34,197,94,0.3)' : dlgAnswer === i ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.06)',
+                        border: dlgAnswer === null ? '1px solid rgba(255,255,255,0.15)' : i === activeSceneDialog[dlgStep].correctIndex ? '1px solid #22c55e' : dlgAnswer === i ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.08)',
                         color: '#fff',
                       }}
                     >
-                      {dlgAnswer !== null && i === selectedScene.dialog[dlgStep].correctIndex && <span style={{marginRight:'6px'}}>✅</span>}
-                      {dlgAnswer === i && i !== selectedScene.dialog[dlgStep].correctIndex && <span style={{marginRight:'6px'}}>❌</span>}
+                      {dlgAnswer !== null && i === activeSceneDialog[dlgStep].correctIndex && <span style={{marginRight:'6px'}}>✅</span>}
+                      {dlgAnswer === i && i !== activeSceneDialog[dlgStep].correctIndex && <span style={{marginRight:'6px'}}>❌</span>}
                       {opt}
                     </button>
                   ))}
@@ -3315,7 +3338,7 @@ export default function ImmersiveScene() {
                 </div>
               )}
               {/* Continue button for teacher lines */}
-              {selectedScene.dialog[dlgStep].speaker === 'teacher' && dlgWordIdx >= dlgWords.length && (
+              {activeSceneDialog[dlgStep].speaker === 'teacher' && dlgWordIdx >= dlgWords.length && (
                 <button
                   onClick={dlgNext}
                   style={{ marginTop: '12px', padding: '8px 20px', borderRadius: '8px', background: 'rgba(99,102,241,0.7)', color: '#fff', fontWeight: 600, fontSize: '14px', border: '1px solid rgba(99,102,241,0.5)', cursor: 'pointer' }}
@@ -3343,7 +3366,7 @@ export default function ImmersiveScene() {
         >
           <div />
           <div className="flex gap-2">
-            {selectedScene.hotspots.map((h) => (
+            {activeSceneHotspots.map((h) => (
               <div
                 key={h.id}
                 style={{

@@ -26,7 +26,7 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(sceneSource).toContain("const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation()");
     expect(sceneSource).toContain("const localizedSceneDialogueQuery = trpc.curriculum.localizedSceneDialogue.useQuery");
     expect(sceneSource).toContain("enabled: isAuthenticated");
-    expect(sceneSource).toContain("authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })");
+    expect(sceneSource).toContain("authorizeLessonMut.mutateAsync({ lessonKey })");
     expect(sceneSource).toContain("Material localizado da cena");
     expect(sceneSource).toContain("Objetos para praticar");
     expect(sceneSource).toContain("localizedSceneDialogueQuery.data.objects.map");
@@ -37,7 +37,7 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(sceneSource).toContain("authorizedSceneMaterial?.sceneId === selectedScene?.id");
     expect(sceneSource).toContain("authorizedSceneMaterial?.targetLanguage === targetLang");
     expect(sceneSource).toContain("authorizedSceneMaterial?.nativeLanguage === nativeLang");
-    expect(sceneSource).toContain("sceneId: scene.id,");
+    expect(sceneSource).toContain("sceneId: selectedScene.id,");
     expect(sceneSource).toContain("targetLanguage: targetLang,");
     expect(sceneSource).toContain("nativeLanguage: nativeLang,");
   });
@@ -46,5 +46,11 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(source).toContain("sceneCanonicalMaterial: protectedProcedure");
     expect(source).toContain("getSecureSceneSeed(input.sceneId)");
     expect(source).toContain("O conteúdo canônico desta cena ainda não foi migrado.");
+  });
+
+  it("não inicia a Praia Tropical até o material autorizado chegar ao cliente", () => {
+    expect(sceneSource).toContain('const sceneMaterialIsPreparing = selectedScene?.id === "beach" && activeSceneDialog.length === 0');
+    expect(sceneSource).toContain("activeSceneDialog.length > 0 && (");
+    expect(sceneSource).toContain("Preparando material protegido da cena…");
   });
 });
