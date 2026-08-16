@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { detectNativeLang } from "@/lib/detect-native-lang";
 import { LANGUAGES_57, AVAILABLE_LANGUAGES, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
+import { getTargetLanguageBlockAvailabilityLabel, getTargetLanguageBlockForLocale } from "@/lib/languageBlocks";
 import { Globe, ChevronRight, Search, Sparkles, Clock, Check } from 'lucide-react';
 import TeacherSelector from '@/components/TeacherSelector';
 import UserGuide from '@/components/UserGuide';
@@ -270,6 +271,8 @@ export default function Onboarding() {
             {filteredLanguages.map(lang => {
               const coverage = coverageByLanguage.get(lang.code);
               const isTargetStep = step === STEP_TARGET;
+              const languageBlock = isTargetStep ? getTargetLanguageBlockForLocale(lang.code) : undefined;
+              const languageBlockAvailability = getTargetLanguageBlockAvailabilityLabel(languageBlock);
               const hasVerifiedTeacher = Boolean(coverage?.isAvailable);
               const targetIsSelectable = !isTargetStep || (lang.available && hasVerifiedTeacher && !isTeacherCoverageLoading);
               const targetIsComingSoon = isTargetStep && !lang.available;
@@ -303,6 +306,13 @@ export default function Onboarding() {
                 }`}>
                   {lang.name}
                 </span>
+                {languageBlockAvailability && (
+                  <span className={`text-[9px] font-semibold text-center leading-tight ${
+                    languageBlock?.status === "pilot" ? "text-emerald-700" : "text-amber-700"
+                  }`}>
+                    {languageBlockAvailability}
+                  </span>
+                )}
                 {/* Verified teacher + neural voice badge */}
                 {isTargetStep && hasVerifiedTeacher && !isTeacherCoverageLoading && (
                   <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
