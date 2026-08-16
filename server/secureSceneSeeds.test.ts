@@ -56,6 +56,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(supermarket?.hotspots.map((hotspot) => hotspot.id)).toEqual(["carrito", "fruta", "pan", "leche", "caja", "precio"]);
   });
 
+  it("mantém o conteúdo da Sala de Aula disponível somente no contrato do servidor", () => {
+    const school = getSecureSceneSeed("school");
+    expect(school?.dialog).toHaveLength(7);
+    expect(school?.hotspots.map((hotspot) => hotspot.id)).toEqual(["board", "desk", "book", "pencil", "window", "clock"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

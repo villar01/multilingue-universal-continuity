@@ -292,23 +292,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to the classroom! Let's study together!",
     greetingPt:"Bem-vindo à sala de aula! Vamos estudar juntos!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Good morning class! Please open your books to page ten.", textPt:"Bom dia turma! Por favor, abram seus livros na página dez."},
-      {speaker:"user", text:"Good morning, teacher! I'm ready to learn!", textPt:"Bom dia, professor! Estou pronto para aprender!", options:["Good morning, teacher! I'm ready to learn!","I forgot my book.","Can I sit in the back?"], correctIndex:0},
-      {speaker:"teacher", text:"Excellent attitude! Now look at the blackboard. I will write new vocabulary.", textPt:"Excelente atitude! Agora olhe para a lousa. Vou escrever vocabulário novo."},
-      {speaker:"user", text:"I can see the blackboard clearly from my desk.", textPt:"Consigo ver a lousa claramente da minha carteira.", options:["I can see the blackboard clearly from my desk.","I can't see the board.","Can I move my desk?"], correctIndex:0},
-      {speaker:"teacher", text:"Great! Use your pencil to write these words in your notebook.", textPt:"Ótimo! Use seu lápis para escrever essas palavras no seu caderno."},
-      {speaker:"user", text:"Should I also write the clock time when I take notes?", textPt:"Devo também escrever o horário do relógio quando faço anotações?", options:["Should I also write the clock time when I take notes?","I don't have a pencil.","Can I use a pen instead?"], correctIndex:0},
-      {speaker:"teacher", text:"That's a great habit! Your English is improving every lesson!", textPt:"Esse é um ótimo hábito! Seu inglês melhora a cada aula!"},
-    ],
-    hotspots:[
-      {id:"board", x:50, y:22, label:"Blackboard", translation:"Lousa", pronunciation:"BLÆK-bord", example:"Write on the blackboard.", examplePt:"Escreva na lousa.", icon:"📋", color:"#16a34a"},
-      {id:"desk", x:35, y:68, label:"Desk", translation:"Carteira", pronunciation:"DESK", example:"Sit at your desk.", examplePt:"Sente-se na sua carteira.", icon:"🪑", color:"#a16207"},
-      {id:"book", x:65, y:58, label:"Book", translation:"Livro", pronunciation:"BUK", example:"Read the book.", examplePt:"Leia o livro.", icon:"📖", color:"#6366f1"},
-      {id:"pencil", x:20, y:55, label:"Pencil", translation:"Lápis", pronunciation:"PEN-sil", example:"Use a pencil.", examplePt:"Use um lápis.", icon:"✏️", color:"#eab308"},
-      {id:"window", x:80, y:30, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"Open the window.", examplePt:"Abra a janela.", icon:"🪟", color:"#0ea5e9"},
-      {id:"clock", x:85, y:15, label:"Clock", translation:"Relógio", pronunciation:"KLOK", example:"Look at the clock.", examplePt:"Olhe para o relógio.", icon:"🕐", color:"#dc2626"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"hospital", name:"Hospital", nameEn:"Hospital", flag:"🏥",
@@ -1423,7 +1409,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1432,7 +1418,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

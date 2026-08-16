@@ -83,4 +83,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("El carrito está lleno.");
     expect(clientSceneSource).toContain('selectedScene?.id === "supermarket"');
   });
+
+  it("remove também o roteiro e os objetos canônicos da Sala de Aula do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Good morning class! Please open your books to page ten.");
+    expect(clientSceneSource).not.toContain("Write on the blackboard.");
+    expect(serverSeedSource).toContain("Good morning class! Please open your books to page ten.");
+    expect(serverSeedSource).toContain("Write on the blackboard.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "school"');
+  });
 });

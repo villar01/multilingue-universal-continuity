@@ -1577,3 +1577,5 @@
 - [x] Migrar o diálogo e os objetos da cena Hotel de Luxo para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/585 testes aprovados
 
 - [x] Migrar o diálogo e os objetos da cena Supermercado para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/587 testes aprovados
+
+- [x] Migrar o diálogo e os objetos da cena Sala de Aula para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/589 testes aprovados
