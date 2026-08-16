@@ -28,4 +28,11 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("Bonjour! Je m'appelle Sophie. Bienvenue au café!");
     expect(serverSeedSource).toContain("Le café est chaud.");
   });
+
+  it("remove também o roteiro e os objetos canônicos da Floresta Encantada do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Hello! I'm James. Welcome to this magical enchanted forest!");
+    expect(clientSceneSource).not.toContain("The tree is very tall.");
+    expect(serverSeedSource).toContain("Hello! I'm James. Welcome to this magical enchanted forest!");
+    expect(serverSeedSource).toContain("The tree is very tall.");
+  });
 });

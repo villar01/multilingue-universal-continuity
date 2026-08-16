@@ -184,23 +184,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to the Enchanted Forest! Click the objects to learn!",
     greetingPt:"Bem-vindo à Floresta Encantada! Clique nos objetos para aprender!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Hello! I'm James. Welcome to this magical enchanted forest!", textPt:"Olá! Sou James. Bem-vindo a esta mágica floresta encantada!"},
-      {speaker:"user", text:"Hello James! The forest is so beautiful!", textPt:"Olá James! A floresta é tão bonita!", options:["Hello James! The forest is so beautiful!","I don't like forests.","Where is the hotel?"], correctIndex:0},
-      {speaker:"teacher", text:"Look at that tree! In English we say 'tree'. It's very tall and old.", textPt:"Olhe para aquela árvore! Em inglês dizemos 'tree'. É muito alta e velha."},
-      {speaker:"user", text:"Tree! And what about that red mushroom over there?", textPt:"Tree! E aquele cogumelo vermelho ali?", options:["Tree! And what about that red mushroom over there?","I don't see it.","Is it dangerous?"], correctIndex:0},
-      {speaker:"teacher", text:"That's a mushroom! And the bird singing in the tree — we call it a 'bird'. Can you repeat?", textPt:"Isso é um cogumelo! E o pássaro cantando na árvore — chamamos de 'bird'. Você consegue repetir?"},
-      {speaker:"user", text:"Mushroom and bird! I love learning English in the forest!", textPt:"Mushroom e bird! Adoro aprender inglês na floresta!", options:["Mushroom and bird! I love learning English in the forest!","This is too hard.","I give up."], correctIndex:0},
-      {speaker:"teacher", text:"Excellent! Your English is improving every day! Keep it up!", textPt:"Excelente! Seu inglês está melhorando a cada dia! Continue assim!"},
-    ],
-    hotspots:[
-      {id:"tree", x:25, y:22, label:"Tree", translation:"Árvore", pronunciation:"TREE", example:"The tree is very tall.", examplePt:"A árvore é muito alta.", icon:"🌲", color:"#16a34a"},
-      {id:"mushroom", x:60, y:72, label:"Mushroom", translation:"Cogumelo", pronunciation:"MUSH-rum", example:"The mushroom is red.", examplePt:"O cogumelo é vermelho.", icon:"🍄", color:"#dc2626"},
-      {id:"bird", x:75, y:28, label:"Bird", translation:"Pássaro", pronunciation:"BERD", example:"The bird is singing.", examplePt:"O pássaro está cantando.", icon:"🐦", color:"#2563eb"},
-      {id:"flower", x:40, y:68, label:"Flower", translation:"Flor", pronunciation:"FLAU-er", example:"The flower is beautiful.", examplePt:"A flor é bonita.", icon:"🌺", color:"#db2777"},
-      {id:"river", x:50, y:82, label:"River", translation:"Rio", pronunciation:"RIV-er", example:"The river is cold.", examplePt:"O rio é frio.", icon:"💧", color:"#0891b2"},
-      {id:"sun", x:55, y:15, label:"Sun", translation:"Sol", pronunciation:"SÂN", example:"The sun shines through the trees.", examplePt:"O sol brilha entre as árvores.", icon:"☀️", color:"#ca8a04"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"tokyo", name:"Tóquio, Japão", nameEn:"Tokyo, Japan", flag:"🇯🇵",
@@ -1523,7 +1509,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1532,7 +1518,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
