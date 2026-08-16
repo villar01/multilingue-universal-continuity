@@ -10,7 +10,8 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(routerSource).toContain("localizedPareto: protectedProcedure");
     expect(routerSource).toContain("assertCurriculumDelivery(ctx.user.id, input.lessonKey)");
     expect(routerSource).toContain("pageSize: z.number().int().min(1).max(10)");
-    expect(localizerSource).toContain("allowRemoteFallback: false");
+    expect(localizerSource).toContain("preferredProvider: \"ollama\"");
+    expect(localizerSource).not.toContain("allowRemoteFallback: false");
   });
 
   it("faz a tela solicitar somente a dupla escolhida e usar a voz do idioma estudado", () => {

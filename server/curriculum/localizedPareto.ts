@@ -112,8 +112,9 @@ function parseGeneratedItems(content: string, expectedWords: ParetoWord[]): Loca
 
 /**
  * Produces only the requested, authorized page of Pareto material. English and
- * Portuguese use reviewed canonical content. The other initial languages use
- * the local AI provider only; no other-language fallback is delivered.
+ * Portuguese use reviewed canonical content. Other languages prioritize the
+ * local provider and use the integrated server fallback only when the local
+ * provider is unavailable; no other-language text is ever substituted.
  */
 export async function localizeParetoWords(input: {
   words: ParetoWord[];
@@ -149,7 +150,6 @@ export async function localizeParetoWords(input: {
       preferredProvider: "ollama",
       useCache: true,
       userId: input.userId,
-      allowRemoteFallback: false,
     });
     const items = parseGeneratedItems(response.content, input.words);
     return items ? { status: "ready", items } : { status: "invalid_localization", items: [] };

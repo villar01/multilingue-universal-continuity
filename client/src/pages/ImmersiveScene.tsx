@@ -59,6 +59,12 @@ const HOTSPOT_ICON_COMPONENTS: Array<[string, LucideIcon]> = [
   ["book", BookOpen], ["museum", Landmark], ["apple", Apple], ["dog", Dog], ["shirt", Shirt],
 ];
 
+const DIALOG_SPEECH_RATES = [
+  { value: 0.7, label: "Lento" },
+  { value: 0.85, label: "Estudo" },
+  { value: 1, label: "Normal" },
+] as const;
+
 function HotspotVisual({ hotspot, size = 24 }: { hotspot: Hotspot; size?: number }) {
   const source = `${hotspot.id} ${hotspot.label}`.toLowerCase();
   const Icon = HOTSPOT_ICON_COMPONENTS.find(([key]) => source.includes(key))?.[1] || Sparkles;
@@ -1475,6 +1481,7 @@ export default function ImmersiveScene() {
   const [activeSpeechText, setActiveSpeechText] = useState("");
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
   const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
+  const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(0.85);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
@@ -1493,6 +1500,11 @@ export default function ImmersiveScene() {
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
+
+  useEffect(() => {
+    if (dialogAudioElementRef.current) dialogAudioElementRef.current.playbackRate = dialogSpeechRate;
+    if (nativeHelpAudioRef.current) nativeHelpAudioRef.current.playbackRate = dialogSpeechRate;
+  }, [dialogSpeechRate]);
 
   const stopTeacherAudio = useCallback(() => {
     if (audioRef.current) {
@@ -1525,7 +1537,7 @@ export default function ImmersiveScene() {
     if (!voices.length) return false;
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language;
-    utterance.rate = 0.88;
+    utterance.rate = dialogSpeechRate;
     utterance.pitch = 1;
     const languagePrefix = language.toLowerCase().split("-")[0];
     const regionalVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(languagePrefix));
@@ -1566,7 +1578,7 @@ export default function ImmersiveScene() {
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
     return true;
-  }, [stopVisemeSync]);
+  }, [dialogSpeechRate, stopVisemeSync]);
 
   const playGuestBrowserVoice = useCallback((text: string, language: string, gender?: 'male' | 'female') => {
     const requestKey = `browser-dialog:${language}:${gender || "female"}:${text}`;
@@ -1598,6 +1610,7 @@ export default function ImmersiveScene() {
     audio.setAttribute("playsinline", "");
     audio.muted = false;
     audio.volume = 1;
+    audio.playbackRate = dialogSpeechRate;
     audio.load();
     setDialogAudioSource(source);
     audioRef.current = audio;
@@ -1656,7 +1669,7 @@ export default function ImmersiveScene() {
       setDlgFeedback("A reprodução automática foi bloqueada. Use o controle de áudio visível para tentar novamente.");
       throw error;
     }
-  }, [stopVisemeSync]);
+  }, [dialogSpeechRate, stopVisemeSync]);
 
   const replayVisibleDialogAudio = useCallback(async () => {
     const audio = dialogAudioElementRef.current;
@@ -1667,13 +1680,14 @@ export default function ImmersiveScene() {
     try {
       audio.muted = false;
       audio.volume = 1;
+      audio.playbackRate = dialogSpeechRate;
       audio.currentTime = 0;
       await audio.play();
       setDlgFeedback("");
     } catch {
       setDlgFeedback("Não foi possível iniciar esta voz. Use a voz do navegador para ouvir a fala.");
     }
-  }, [dialogAudioSource]);
+  }, [dialogAudioSource, dialogSpeechRate]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
@@ -1918,6 +1932,7 @@ export default function ImmersiveScene() {
     const helpGender = selectedScene?.teacherGender === "male" ? "MALE" : "FEMALE";
     const playHelpAudio = async (source: string, revokeOnEnd = false) => {
       const audio = new Audio(source);
+      audio.playbackRate = dialogSpeechRate;
       nativeHelpAudioRef.current = audio;
       const clear = () => {
         if (nativeHelpAudioRef.current === audio) nativeHelpAudioRef.current = null;
@@ -1943,7 +1958,7 @@ export default function ImmersiveScene() {
       }
     } catch { /* Do not use browser speech for native guidance either. */ }
     setDlgFeedback("A ajuda por voz neural não está disponível agora. Leia a explicação abaixo e tente novamente.");
-  }, [googleTtsMut, nativeLang, ttsMut]);
+  }, [dialogSpeechRate, googleTtsMut, nativeLang, ttsMut]);
 
   // Scene selection is the sole boundary for a teaching session. Reset every
   // coupled visual/audio state together so no prior scene can bleed into it.
@@ -2024,9 +2039,9 @@ export default function ImmersiveScene() {
   }, [dlgOpen, isSpeaking]);
   useEffect(() => {
     if (!dlgOpen || dlgAudioClock || dlgWords.length === 0 || dlgWordIdx >= dlgWords.length) return;
-    dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), 300);
+    dlgTimerRef.current = setTimeout(() => setDlgWordIdx(i => i + 1), Math.round(300 / dialogSpeechRate));
     return () => { if (dlgTimerRef.current) clearTimeout(dlgTimerRef.current); };
-  }, [dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
+  }, [dialogSpeechRate, dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
   const dlgNext = useCallback(() => {
     if (!selectedScene) return;
     const next = dlgStep + 1;
@@ -2949,6 +2964,22 @@ export default function ImmersiveScene() {
                       {immersionMode ? "Browser voice" : "Usar voz do navegador"}
                     </button>
                   )}
+                  <div className="flex items-center gap-1 rounded-full border border-white/15 bg-slate-950/60 p-1" role="group" aria-label="Velocidade da fala do professor e da ajuda nativa">
+                    {DIALOG_SPEECH_RATES.map((rate) => (
+                      <button
+                        key={rate.value}
+                        type="button"
+                        onClick={() => setDialogSpeechRate(rate.value)}
+                        aria-pressed={dialogSpeechRate === rate.value}
+                        className={dialogSpeechRate === rate.value
+                          ? "rounded-full bg-cyan-300 px-2 py-1 text-[10px] font-extrabold text-slate-950"
+                          : "rounded-full px-2 py-1 text-[10px] font-bold text-slate-200 hover:bg-white/10"}
+                        title={`Ouvir fala e ajuda em ${rate.value}×`}
+                      >
+                        {immersionMode ? `${rate.value}×` : rate.label}
+                      </button>
+                    ))}
+                  </div>
                   <audio
                     ref={dialogAudioElementRef}
                     src={dialogAudioSource || undefined}
@@ -3000,8 +3031,11 @@ export default function ImmersiveScene() {
                     </button>
                   </div>
                   {dlgFeedback && (
-                    <div role="status" className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
-                      {dlgFeedback}
+                    <div className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2">
+                      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Resposta escrita do professor</p>
+                      <div role="status" aria-live="polite" className="whitespace-pre-line text-sm font-medium text-amber-100">
+                        {dlgFeedback}
+                      </div>
                     </div>
                   )}
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">
