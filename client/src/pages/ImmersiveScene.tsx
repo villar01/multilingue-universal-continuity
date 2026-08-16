@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
+import { audioBase64ToDataUrl } from "@/lib/audioSource";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
 import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../components/Notebook";
@@ -1435,6 +1436,7 @@ export default function ImmersiveScene() {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      audioRef.current.remove();
       audioRef.current = null;
     }
     if (localSpeechRef.current && "speechSynthesis" in window) {
@@ -1568,6 +1570,7 @@ export default function ImmersiveScene() {
         setActiveSpeechText("");
       }
       audio.remove();
+      setDialogAudioSource((current) => current === source ? null : current);
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
@@ -1577,6 +1580,7 @@ export default function ImmersiveScene() {
     } catch (error) {
       if (updatesActiveDialog()) setDlgAudioClock(false);
       audio.remove();
+      setDialogAudioSource((current) => current === source ? null : current);
       if (audioRef.current === audio) audioRef.current = null;
       if (revokeOnEnd) URL.revokeObjectURL(source);
       releaseRequest();
@@ -1605,9 +1609,8 @@ export default function ImmersiveScene() {
       12_000,
     );
     if (!result.success || !("audioBase64" in result)) return false;
-    const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
-    const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
-    await playTeacherAudio(url, text, language, requestKey, true);
+    const source = audioBase64ToDataUrl(result.audioBase64);
+    await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
 
@@ -1629,9 +1632,8 @@ export default function ImmersiveScene() {
     const playEdgeNeural = async () => {
       const edgeAudio = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
-      const bytes = Uint8Array.from(atob(edgeAudio.audioBase64), (char) => char.charCodeAt(0));
-      const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
-      await playTeacherAudio(url, text, lang, requestKey, true);
+      const source = audioBase64ToDataUrl(edgeAudio.audioBase64);
+      await playTeacherAudio(source, text, lang, requestKey);
       return true;
     };
 

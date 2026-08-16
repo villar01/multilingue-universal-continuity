@@ -16,7 +16,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("window.speechSynthesis.speak(utterance);");
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
     expect(source).toContain('"Ouvir inglês"');
-    expect(source).toContain('type: "audio/mpeg"');
+    expect(source).toContain("audioBase64ToDataUrl");
+    expect(source).toContain("setDialogAudioSource((current) => current === source ? null : current)");
+    expect(source).not.toContain('URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }))');
     expect(source).toContain("document.body.appendChild(audio)");
   });
 
