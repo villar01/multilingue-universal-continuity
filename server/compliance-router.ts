@@ -8,6 +8,7 @@ import { adminProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { and, desc, eq, sql, type SQL } from "drizzle-orm";
 import { securityEvents } from "../drizzle/schema";
+import { createParentalConsentNotification } from "./parentalConsentPrivacy";
 import { notifyOwner } from "./_core/notification";
 
 export const complianceRouter = router({
@@ -97,9 +98,9 @@ export const complianceRouter = router({
   /** Salvar autorização parental para menores */
   submitParentalConsent: protectedProcedure
     .input(z.object({
-      guardianName: z.string().min(3),
-      guardianDocument: z.string().optional(),
-      guardianEmail: z.string().email().optional(),
+      guardianName: z.string().trim().min(3).max(120),
+      guardianDocument: z.string().trim().min(5).max(50).optional().transform(value => value || undefined),
+      guardianEmail: z.string().trim().email().max(200).optional().transform(value => value || undefined),
       relationship: z.enum(["pai", "mae", "responsavel", "tutor"]),
       confirmedTerms: z.boolean(),
       confirmedMoralConduct: z.boolean(),
@@ -131,21 +132,8 @@ export const complianceRouter = router({
           )`
       );
 
-      // Notificar admin sobre novo menor cadastrado
-      await notifyOwner({
-        title: "👶 Novo usuário menor de idade cadastrado",
-        content: `
-**Usuário menor cadastrado com autorização parental**
-
-- **Usuário ID:** ${ctx.user.id}
-- **Idade:** ${input.userAge} anos
-- **Responsável:** ${input.guardianName} (${input.relationship})
-- **E-mail responsável:** ${input.guardianEmail || "Não informado"}
-- **Data:** ${new Date().toLocaleString("pt-BR")}
-
-Todos os aceites foram confirmados pelo responsável legal.
-        `.trim(),
-      });
+      // The notification channel must not receive guardian identity or contact data.
+      await notifyOwner(createParentalConsentNotification());
 
       return { success: true };
     }),
