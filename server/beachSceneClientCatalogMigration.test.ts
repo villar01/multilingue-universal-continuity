@@ -59,4 +59,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("La nevera está fría.");
     expect(clientSceneSource).toContain('selectedScene?.id === "kitchen"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Restaurante Brasileiro do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Olá! Meu nome é Ana. Bem-vindo ao nosso restaurante brasileiro!");
+    expect(clientSceneSource).not.toContain("A massa está deliciosa.");
+    expect(serverSeedSource).toContain("Olá! Meu nome é Ana. Bem-vindo ao nosso restaurante brasileiro!");
+    expect(serverSeedSource).toContain("A massa está deliciosa.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "restaurant"');
+  });
 });

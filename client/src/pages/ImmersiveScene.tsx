@@ -230,23 +230,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Bem-vindo ao restaurante! Clique nos objetos para aprender!",
     greetingPt:"Bem-vindo ao restaurante! Clique nos objetos para aprender!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Ol\u00e1! Meu nome \u00e9 Ana. Bem-vindo ao nosso restaurante brasileiro!", textPt:"Ol\u00e1! Meu nome \u00e9 Ana. Bem-vindo ao nosso restaurante brasileiro!"},
-      {speaker:"user", text:"Ol\u00e1 Ana! O restaurante \u00e9 muito bonito.", textPt:"Ol\u00e1 Ana! O restaurante \u00e9 muito bonito.", options:["Ol\u00e1 Ana! O restaurante \u00e9 muito bonito.","N\u00e3o gosto de restaurantes.","Onde \u00e9 o banheiro?"], correctIndex:0},
-      {speaker:"teacher", text:"Obrigada! Veja a mesa — em portugu\u00eas dizemos 'mesa'. E a vela se chama 'vela'.", textPt:"Obrigada! Veja a mesa — em portugu\u00eas dizemos 'mesa'. E a vela se chama 'vela'."},
-      {speaker:"user", text:"Entendi! Mesa e vela. Posso ver o card\u00e1pio?", textPt:"Entendi! Mesa e vela. Posso ver o card\u00e1pio?", options:["Entendi! Mesa e vela. Posso ver o card\u00e1pio?","N\u00e3o entendi nada.","Quero ir embora."], correctIndex:0},
-      {speaker:"teacher", text:"Claro! O card\u00e1pio est\u00e1 aqui. Temos massa, vinho e sobremesas deliciosas!", textPt:"Claro! O card\u00e1pio est\u00e1 aqui. Temos massa, vinho e sobremesas deliciosas!"},
-      {speaker:"user", text:"Que \u00f3timo! Vou querer a massa com molho de tomate, por favor.", textPt:"Que \u00f3timo! Vou querer a massa com molho de tomate, por favor.", options:["Que \u00f3timo! Vou querer a massa com molho de tomate, por favor.","N\u00e3o quero nada.","Prefiro comer em casa."], correctIndex:0},
-      {speaker:"teacher", text:"Perfeita escolha! Seu portugu\u00eas est\u00e1 excelente. Parab\u00e9ns!", textPt:"Perfeita escolha! Seu portugu\u00eas est\u00e1 excelente. Parab\u00e9ns!"},
-    ],
-    hotspots:[
-      {id:"massa", x:28, y:77, label:"Massa", translation:"Pasta", pronunciation:"MA-ssa", example:"A massa está deliciosa.", examplePt:"A massa está deliciosa.", icon:"🍝", color:"#f59e0b"},
-      {id:"vinho", x:25, y:45, label:"Vinho", translation:"Wine", pronunciation:"VI-nho", example:"O vinho é tinto.", examplePt:"O vinho é tinto.", icon:"🍷", color:"#dc2626"},
-      {id:"mesa", x:70, y:54, label:"Mesa", translation:"Table", pronunciation:"ME-za", example:"A mesa está limpa.", examplePt:"A mesa está limpa.", icon:"🪑", color:"#a16207"},
-      {id:"vela", x:41, y:49, label:"Vela", translation:"Candle", pronunciation:"VE-la", example:"A vela ilumina a mesa.", examplePt:"A vela ilumina a mesa.", icon:"🕯️", color:"#eab308"},
-      {id:"quadro", x:84, y:33, label:"Quadro", translation:"Picture", pronunciation:"KWA-dro", example:"O quadro está na parede.", examplePt:"The picture is on the wall.", icon:"🖼️", color:"#6366f1"},
-      {id:"janela", x:14, y:28, label:"Janela", translation:"Window", pronunciation:"ja-NE-la", example:"A janela é grande.", examplePt:"The window is big.", icon:"🪟", color:"#0891b2"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"airport", name:"Aeroporto Internacional", nameEn:"International Airport", flag:"✈️",
@@ -1465,7 +1451,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1474,7 +1460,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

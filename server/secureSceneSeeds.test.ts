@@ -38,6 +38,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(kitchen?.hotspots.map((hotspot) => hotspot.id)).toEqual(["nevera", "horno", "mesa", "ventana", "cuchara", "encimera"]);
   });
 
+  it("mantém o conteúdo do Restaurante Brasileiro disponível somente no contrato do servidor", () => {
+    const restaurant = getSecureSceneSeed("restaurant");
+    expect(restaurant?.dialog).toHaveLength(7);
+    expect(restaurant?.hotspots.map((hotspot) => hotspot.id)).toEqual(["massa", "vinho", "mesa", "vela", "quadro", "janela"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

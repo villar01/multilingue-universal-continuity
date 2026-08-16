@@ -106,6 +106,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "encimera", x: 60, y: 80, label: "Encimera", translation: "Bancada", pronunciation: "en-si-ME-ra", example: "La encimera está limpia.", examplePt: "A bancada está limpa.", icon: "🪵", color: "#7c3aed" },
     ],
   },
+  restaurant: {
+    dialog: [
+      { speaker: "teacher", text: "Olá! Meu nome é Ana. Bem-vindo ao nosso restaurante brasileiro!", textPt: "Olá! Meu nome é Ana. Bem-vindo ao nosso restaurante brasileiro!" },
+      { speaker: "user", text: "Olá Ana! O restaurante é muito bonito.", textPt: "Olá Ana! O restaurante é muito bonito.", options: ["Olá Ana! O restaurante é muito bonito.", "Não gosto de restaurantes.", "Onde é o banheiro?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Obrigada! Veja a mesa — em português dizemos 'mesa'. E a vela se chama 'vela'.", textPt: "Obrigada! Veja a mesa — em português dizemos 'mesa'. E a vela se chama 'vela'." },
+      { speaker: "user", text: "Entendi! Mesa e vela. Posso ver o cardápio?", textPt: "Entendi! Mesa e vela. Posso ver o cardápio?", options: ["Entendi! Mesa e vela. Posso ver o cardápio?", "Não entendi nada.", "Quero ir embora."], correctIndex: 0 },
+      { speaker: "teacher", text: "Claro! O cardápio está aqui. Temos massa, vinho e sobremesas deliciosas!", textPt: "Claro! O cardápio está aqui. Temos massa, vinho e sobremesas deliciosas!" },
+      { speaker: "user", text: "Que ótimo! Vou querer a massa com molho de tomate, por favor.", textPt: "Que ótimo! Vou querer a massa com molho de tomate, por favor.", options: ["Que ótimo! Vou querer a massa com molho de tomate, por favor.", "Não quero nada.", "Prefiro comer em casa."], correctIndex: 0 },
+      { speaker: "teacher", text: "Perfeita escolha! Seu português está excelente. Parabéns!", textPt: "Perfeita escolha! Seu português está excelente. Parabéns!" },
+    ],
+    hotspots: [
+      { id: "massa", x: 28, y: 77, label: "Massa", translation: "Pasta", pronunciation: "MA-ssa", example: "A massa está deliciosa.", examplePt: "A massa está deliciosa.", icon: "🍝", color: "#f59e0b" },
+      { id: "vinho", x: 25, y: 45, label: "Vinho", translation: "Wine", pronunciation: "VI-nho", example: "O vinho é tinto.", examplePt: "O vinho é tinto.", icon: "🍷", color: "#dc2626" },
+      { id: "mesa", x: 70, y: 54, label: "Mesa", translation: "Table", pronunciation: "ME-za", example: "A mesa está limpa.", examplePt: "A mesa está limpa.", icon: "🪑", color: "#a16207" },
+      { id: "vela", x: 41, y: 49, label: "Vela", translation: "Candle", pronunciation: "VE-la", example: "A vela ilumina a mesa.", examplePt: "A vela ilumina a mesa.", icon: "🕯️", color: "#eab308" },
+      { id: "quadro", x: 84, y: 33, label: "Quadro", translation: "Picture", pronunciation: "KWA-dro", example: "O quadro está na parede.", examplePt: "The picture is on the wall.", icon: "🖼️", color: "#6366f1" },
+      { id: "janela", x: 14, y: 28, label: "Janela", translation: "Window", pronunciation: "ja-NE-la", example: "A janela é grande.", examplePt: "The window is big.", icon: "🪟", color: "#0891b2" },
+    ],
+  },
   forest: {
     dialog: [
       { speaker: "teacher", text: "Hello! I'm James. Welcome to this magical enchanted forest!", textPt: "Olá! Sou James. Bem-vindo a esta mágica floresta encantada!" },

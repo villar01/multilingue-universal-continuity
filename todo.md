@@ -1571,3 +1571,5 @@
 - [x] Migrar o diálogo e os objetos da cena Nova York, EUA para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/579 testes aprovados
 
 - [x] Migrar o diálogo e os objetos da cena Cozinha Moderna para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/581 testes aprovados
+
+- [x] Migrar o diálogo e os objetos da cena Restaurante Brasileiro para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/583 testes aprovados
