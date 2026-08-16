@@ -1,16 +1,13 @@
 import { generateAI } from "../aiProvider";
 import type { ParetoWord } from "./paretoContent";
+import {
+  INITIAL_COMMERCIAL_LANGUAGE_CODES,
+  isInitialCommercialTargetLanguage,
+  type InitialCommercialLanguageCode,
+} from "../../shared/commercialLanguageBlocks";
 
-export const INITIAL_COMMERCIAL_LANGUAGE_CODES = [
-  "pt-BR",
-  "en-US",
-  "es-ES",
-  "fr-FR",
-  "it-IT",
-  "de-DE",
-] as const;
-
-export type InitialCommercialLanguageCode = (typeof INITIAL_COMMERCIAL_LANGUAGE_CODES)[number];
+export { INITIAL_COMMERCIAL_LANGUAGE_CODES };
+export type { InitialCommercialLanguageCode };
 
 export type LocalizedParetoWord = {
   id: string;
@@ -25,7 +22,7 @@ export type LocalizedParetoWord = {
 };
 
 export type ParetoLocalizationResult = {
-  status: "ready" | "localization_unavailable" | "invalid_localization";
+  status: "ready" | "localization_unavailable" | "invalid_localization" | "planned_language_block";
   items: LocalizedParetoWord[];
 };
 
@@ -34,7 +31,7 @@ function languageBase(languageCode: string): string {
 }
 
 export function isInitialCommercialLanguageCode(languageCode: string): languageCode is InitialCommercialLanguageCode {
-  return INITIAL_COMMERCIAL_LANGUAGE_CODES.includes(languageCode as InitialCommercialLanguageCode);
+  return isInitialCommercialTargetLanguage(languageCode);
 }
 
 function directText(word: ParetoWord, languageCode: string): { word: string; example: string; pronunciation: string } | null {
@@ -124,6 +121,10 @@ export async function localizeParetoWords(input: {
   nativeLanguage: string;
   userId: number;
 }): Promise<ParetoLocalizationResult> {
+  if (!isInitialCommercialTargetLanguage(input.targetLanguage)) {
+    return { status: "planned_language_block", items: [] };
+  }
+
   const direct = resolveDirectParetoWords(input.words, input.targetLanguage, input.nativeLanguage);
   if (direct) return { status: "ready", items: direct };
 
