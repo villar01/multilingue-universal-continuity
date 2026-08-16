@@ -91,4 +91,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("Write on the blackboard.");
     expect(clientSceneSource).toContain('selectedScene?.id === "school"');
   });
+
+  it("remove também o roteiro e os objetos canônicos da Montanha Nevada do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Willkommen auf dem Berg! Ich bin Hans. Wie gefällt Ihnen die Aussicht?");
+    expect(clientSceneSource).not.toContain("Der Gipfel ist schneebedeckt.");
+    expect(serverSeedSource).toContain("Willkommen auf dem Berg! Ich bin Hans. Wie gefällt Ihnen die Aussicht?");
+    expect(serverSeedSource).toContain("Der Gipfel ist schneebedeckt.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "mountain"');
+  });
 });

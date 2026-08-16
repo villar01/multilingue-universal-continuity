@@ -62,6 +62,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(school?.hotspots.map((hotspot) => hotspot.id)).toEqual(["board", "desk", "book", "pencil", "window", "clock"]);
   });
 
+  it("mantém o conteúdo da Montanha Nevada disponível somente no contrato do servidor", () => {
+    const mountain = getSecureSceneSeed("mountain");
+    expect(mountain?.dialog).toHaveLength(7);
+    expect(mountain?.hotspots.map((hotspot) => hotspot.id)).toEqual(["gipfel", "schnee", "wald2", "fels", "wolke", "see"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

@@ -356,23 +356,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Willkommen auf dem Berg! Lernen wir Natur-Vokabular!",
     greetingPt:"Bem-vindo à montanha! Vamos aprender vocabulário da natureza!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Willkommen auf dem Berg! Ich bin Hans. Wie gefällt Ihnen die Aussicht?", textPt:"Bem-vindo à montanha! Sou Hans. Como você está gostando da vista?"},
-      {speaker:"user", text:"Die Aussicht ist fantastisch! Der Gipfel ist mit Schnee bedeckt!", textPt:"A vista é fantástica! O cume está coberto de neve!", options:["Die Aussicht ist fantastisch! Der Gipfel ist mit Schnee bedeckt!","Ich bin müde.","Wo ist das Hotel?"], correctIndex:0},
-      {speaker:"teacher", text:"Ja! Der Schnee macht den Berg sehr schön. Wie hoch ist dieser Berg?", textPt:"Sim! A neve deixa a montanha muito bonita. Qual é a altura desta montanha?"},
-      {speaker:"user", text:"Der Berg ist über dreitausend Meter hoch!", textPt:"A montanha tem mais de três mil metros de altura!", options:["Der Berg ist über dreitausend Meter hoch!","Ich weiß es nicht.","Das ist zu hoch!"], correctIndex:0},
-      {speaker:"teacher", text:"Richtig! Und schau — ein Adler fliegt über den Felsen. Das ist wunderbar!", textPt:"Correto! E olhe — uma águia voa sobre as rochas. Isso é maravilhoso!"},
-      {speaker:"user", text:"Ich sehe den Adler! Er fliegt sehr hoch über den Wolken.", textPt:"Vejo a águia! Ela voa muito alto sobre as nuvens.", options:["Ich sehe den Adler! Er fliegt sehr hoch über den Wolken.","Ich sehe nichts.","Ich habe Angst vor Adlern."], correctIndex:0},
-      {speaker:"teacher", text:"Ausgezeichnet! Dein Deutsch ist wirklich gut. Weiter so!", textPt:"Excelente! Seu alemão está realmente bom. Continue assim!"},
-    ],
-    hotspots:[
-      {id:"gipfel", x:50, y:28, label:"Gipfel", translation:"Cume", pronunciation:"GIP-fel", example:"Der Gipfel ist schneebedeckt.", examplePt:"O cume está coberto de neve.", icon:"🏔️", color:"#94a3b8"},
-      {id:"schnee", x:35, y:35, label:"Schnee", translation:"Neve", pronunciation:"SHNEY", example:"Der Schnee ist weiß.", examplePt:"A neve é branca.", icon:"❄️", color:"#e2e8f0"},
-      {id:"wald2", x:20, y:55, label:"Wald", translation:"Floresta", pronunciation:"VALT", example:"Der Wald ist dunkel.", examplePt:"A floresta é escura.", icon:"🌲", color:"#16a34a"},
-      {id:"fels", x:70, y:45, label:"Fels", translation:"Rocha", pronunciation:"FELS", example:"Der Fels ist hart.", examplePt:"A rocha é dura.", icon:"🪨", color:"#78716c"},
-      {id:"wolke", x:75, y:18, label:"Wolke", translation:"Nuvem", pronunciation:"VOL-ke", example:"Die Wolke ist weiß.", examplePt:"A nuvem é branca.", icon:"☁️", color:"#94a3b8"},
-      {id:"see", x:50, y:65, label:"See", translation:"Lago", pronunciation:"ZE", example:"Der See ist klar.", examplePt:"O lago é claro.", icon:"🌊", color:"#a16207"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"desert", name:"Deserto do Saara", nameEn:"Sahara Desert", flag:"🏜️",
@@ -1409,7 +1395,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1418,7 +1404,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
