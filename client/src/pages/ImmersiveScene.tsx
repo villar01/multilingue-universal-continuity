@@ -967,6 +967,8 @@ function TeacherAvatar({
   const teethVisible = audioViseme
     ? !tongueVisible && audioViseme.mouthHeight >= 7 && audioViseme.mouthHeight < 22
     : ["C", "E", "G"].includes(viseme);
+  // O retrato permanece sem boca sintética até haver mídia docente aprovada.
+  const showSyntheticMouth = false;
   return (
     <div
       className="immersive-teacher absolute bottom-0 right-4 flex flex-col items-center z-30"
@@ -1072,8 +1074,8 @@ function TeacherAvatar({
             animation: "cheek-warmth 2.4s ease-in-out infinite", pointerEvents: "none",
           }}
         />
-        {/* Facial mouth — directly follows the audio-clock viseme dimensions. */}
-        {isSpeaking && (
+        {/* A boca fica neutra no retrato até existir mídia facial aprovada. */}
+        {showSyntheticMouth && isSpeaking && (
           <div
             style={{
               position: "absolute",
@@ -2776,7 +2778,7 @@ export default function ImmersiveScene() {
                 borderRadius: "16px",
                 border: "1px solid rgba(255,255,255,0.12)",
                 padding: "16px 20px",
-                maxHeight: "min(52vh, 420px)",
+                maxHeight: "min(43vh, 340px)",
                 overflowY: "auto",
               }}
             >
@@ -2857,6 +2859,7 @@ export default function ImmersiveScene() {
                   )}
                   <audio
                     ref={dialogAudioElementRef}
+                    src={dialogAudioSource || undefined}
                     controls={Boolean(dialogAudioSource)}
                     preload="auto"
                     className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
@@ -3008,11 +3011,6 @@ export default function ImmersiveScene() {
                     Continuar diálogo
                   </button>
                 </div>
-              )}
-              {!immersionMode && dlgFeedback && (
-                  <p className="mt-3 whitespace-pre-line rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-medium text-amber-100">
-                  {dlgFeedback}
-                </p>
               )}
               {/* Continue button for teacher lines */}
               {selectedScene.dialog[dlgStep].speaker === 'teacher' && dlgWordIdx >= dlgWords.length && (
