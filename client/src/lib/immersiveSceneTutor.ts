@@ -38,7 +38,8 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
 
   if (/\bwhat is (a |an |the )?pool\b|\bpool\b/.test(normalizedQuestion)) {
     return {
-      text: 'James: “Pool” means “piscina”. A pool is a place where people swim. Repeat: pool.',
+      text: 'James: “Pool” means “piscina”. A pool is a place where people swim. Example: “The hotel has a pool.” Repeat: pool.',
+      nativeText: 'Em português: pool significa piscina — um lugar onde as pessoas nadam.',
       hotspotId: hotspots.find((hotspot) => normalize(hotspot.label).includes("pool"))?.id,
       immediate: true,
     };

@@ -24,9 +24,9 @@ describe("visibilidade do diálogo imersivo", () => {
     expect(sceneSource).toContain("if (activeDialogLineRef.current === text) setDlgAudioClock(false);");
   });
 
-  it("não permite que o aviso de IA local cubra rotas imersivas", () => {
-    expect(noticeSource).toContain("location.startsWith('/immersive-scene')");
-    expect(noticeSource).toContain("if (!visible || isImmersiveLearningRoute) return null;");
+  it("não permite que o aviso de IA local cubra rotas fora da abertura de jornada", () => {
+    expect(noticeSource).toContain("const isJourneyStartRoute = location === '/';");
+    expect(noticeSource).toContain("if (!visible || !isJourneyStartRoute) return null;");
   });
 
   it("usa posição facial calibrada e remove o gesto circular artificial", () => {
