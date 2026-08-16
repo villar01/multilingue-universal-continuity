@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { audioBase64ToObjectUrl } from "@/lib/audioSource";
 import VoiceSelector from "../components/VoiceSelector";
@@ -28,6 +28,7 @@ import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
+import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
 import { JAMES_TROPICAL_PILOT_CLIPS, type JamesTropicalPilotClip, type JamesTropicalPilotClipId } from "@shared/jamesTropicalPilotClips";
 import { SOPHIE_CAFE_PILOT_CLIPS, type SophieCafePilotClip, type SophieCafePilotClipId } from "@shared/sophieCafePilotClips";
 import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
@@ -1424,6 +1425,7 @@ export default function ImmersiveScene() {
   // Always derive targetLang from profile (reactive to LanguageContext changes)
   const profileTarget = profile.targetCode || localStorage.getItem("ml_target_lang") || "en-US";
   const [targetLang, setTargetLang] = useState<string>(() => profileTarget);
+  const [selectedSceneTeacherId, setSelectedSceneTeacherId] = useState<string | null>(null);
 
   // Keep targetLang in sync when LanguageContext profile changes (e.g. user changed language on Home)
   useEffect(() => {
@@ -1461,8 +1463,40 @@ export default function ImmersiveScene() {
   };
   // Full BCP-47 code for Web Speech API (e.g. 'es-ES', 'en-US')
   const effectiveSpeakLang = (_scene: { teacherLang: string }) => targetLang || "en-US";
+  const sceneTeacherResolution = useMemo(
+    () => selectedScene
+      ? resolveSceneTeacherForTarget(selectedScene, targetLang)
+      : { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true },
+    [selectedScene, targetLang],
+  );
+  const compatibleSceneTeachers = useMemo(
+    () => sceneTeacherResolution.materialIsInTargetLanguage ? getTargetLanguageTeachers(targetLang) : [],
+    [sceneTeacherResolution.materialIsInTargetLanguage, targetLang],
+  );
+  const selectedSceneTeacher = compatibleSceneTeachers.find((teacher) => teacher.id === selectedSceneTeacherId) || null;
+  const activeSceneTeacher = selectedSceneTeacher || sceneTeacherResolution.teacher;
+  const teachingScene = useMemo<Scene | null>(() => {
+    if (!activeSceneTeacher || !sceneTeacherResolution.materialIsInTargetLanguage) return selectedScene;
+    if (!selectedScene) return null;
+    return {
+      ...selectedScene,
+      teacherName: activeSceneTeacher.name,
+      teacherImage: activeSceneTeacher.photo || selectedScene.teacherImage,
+      teacherLang: activeSceneTeacher.voiceLang,
+      teacherGender: activeSceneTeacher.gender || selectedScene.teacherGender,
+    };
+  }, [activeSceneTeacher, sceneTeacherResolution.materialIsInTargetLanguage, selectedScene]);
+
+  useEffect(() => {
+    if (!selectedSceneTeacherId) return;
+    if (!compatibleSceneTeachers.some((teacher) => teacher.id === selectedSceneTeacherId)) {
+      setSelectedSceneTeacherId(null);
+    }
+  }, [compatibleSceneTeachers, selectedSceneTeacherId]);
+
   const handleSelectTargetLang = (code: string) => {
     setTargetLang(code);
+    setSelectedSceneTeacherId(null);
     localStorage.setItem("ml_target_lang", code);
     // Sync with LanguageContext (single source of truth for the whole app)
     const info = LANG_LABELS[code] || { flag: "🌐", name: code };
@@ -2009,6 +2043,7 @@ export default function ImmersiveScene() {
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
+    const dialogueScene = teachingScene ?? scene;
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
@@ -2023,7 +2058,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(true);
       // This runs directly from the Iniciar Diálogo click. Guests use the public
       // scene voice; authenticated students keep the protected neural path.
-      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, scene);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
@@ -2031,7 +2066,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely]);
+  }, [playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -2044,6 +2079,7 @@ export default function ImmersiveScene() {
   }, [dialogSpeechRate, dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
   const dlgNext = useCallback(() => {
     if (!selectedScene) return;
+    const dialogueScene = teachingScene ?? selectedScene;
     const next = dlgStep + 1;
     if (next >= selectedScene.dialog.length) {
       activeDialogLineRef.current = null;
@@ -2060,7 +2096,7 @@ export default function ImmersiveScene() {
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(true);
-      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, selectedScene);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
@@ -2068,10 +2104,10 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [dlgStep, isAuthenticated, requestSpeechSafely, selectedScene]);
+  }, [dlgStep, isAuthenticated, requestSpeechSafely, selectedScene, teachingScene]);
 
   const askImmersiveTutor = useCallback(async (answer: string) => {
-    const scene = selectedScene;
+    const scene = teachingScene ?? selectedScene;
     const question = answer.trim();
     if (!scene || !question) return;
     const requestId = ++dlgTutorRequestRef.current;
@@ -2130,10 +2166,10 @@ export default function ImmersiveScene() {
       window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
     }
-  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
+  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
-    const scene = selectedScene;
+    const scene = teachingScene ?? selectedScene;
     if (!scene) return;
     const line = scene.dialog[dlgStep];
     if (!line) return;
@@ -2171,7 +2207,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, requestSpeechSafely, selectedScene]);
+  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, requestSpeechSafely, selectedScene, teachingScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
@@ -2646,6 +2682,23 @@ export default function ImmersiveScene() {
                 </div>
               )}
             </div>
+            {sceneTeacherResolution.materialIsInTargetLanguage && compatibleSceneTeachers.length > 0 && !immersionMode && (
+              <label className="hidden items-center gap-1 rounded-full border border-white/20 bg-slate-950/55 px-2 py-1 text-xs text-white lg:flex" title="Professor compatível com o idioma estudado">
+                <span className="sr-only">Professor da cena</span>
+                <select
+                  value={selectedSceneTeacherId || activeSceneTeacher?.id || ""}
+                  onChange={(event) => setSelectedSceneTeacherId(event.target.value || null)}
+                  className="max-w-32 bg-transparent text-xs font-semibold text-white outline-none"
+                  aria-label="Professor da cena"
+                >
+                  {compatibleSceneTeachers.map((teacher) => (
+                    <option key={teacher.id} value={teacher.id} className="bg-slate-950 text-white">
+                      {teacher.flag} {teacher.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <ImmersionModeToggle compact />
             {!immersionMode && <>
               <VoiceSelector
@@ -2826,7 +2879,7 @@ export default function ImmersiveScene() {
 
         {/* Teacher */}
         <TeacherAvatar
-          scene={selectedScene}
+          scene={teachingScene ?? selectedScene!}
           greeting={greetingText}
           showGreeting={showGreeting}
           isSpeaking={isSpeaking}

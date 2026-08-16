@@ -21,6 +21,10 @@ function teacherWithPortrait(teacher: Teacher57): boolean {
   return Boolean(teacher.photo?.trim());
 }
 
+export function getTargetLanguageTeachers(targetLanguage: string): Teacher57[] {
+  return TEACHERS_57.filter((teacher) => teacherWithPortrait(teacher) && areSameLanguageFamily(teacher.voiceLang, targetLanguage));
+}
+
 /**
  * Selects a regional teacher for target material that is already available.
  * For a cross-language scene whose localized material has not yet arrived, it
@@ -32,8 +36,9 @@ export function resolveSceneTeacherForTarget(scene: SceneTeacherSource, targetLa
     return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };
   }
 
-  const exactRegional = TEACHERS_57.find((teacher) => teacherWithPortrait(teacher) && teacher.voiceLang.toLowerCase() === targetLanguage.toLowerCase());
-  const compatible = exactRegional || TEACHERS_57.find((teacher) => teacherWithPortrait(teacher) && areSameLanguageFamily(teacher.voiceLang, targetLanguage));
+  const compatibleTeachers = getTargetLanguageTeachers(targetLanguage);
+  const exactRegional = compatibleTeachers.find((teacher) => teacher.voiceLang.toLowerCase() === targetLanguage.toLowerCase());
+  const compatible = exactRegional || compatibleTeachers[0];
   return {
     teacher: compatible || null,
     materialIsInTargetLanguage: getLanguageBase(scene.teacherLang) === getLanguageBase(targetLanguage),
