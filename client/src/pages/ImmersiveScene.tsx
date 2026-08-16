@@ -2401,6 +2401,40 @@ export default function ImmersiveScene() {
     level === "A1" || level === "A2" ? "#22c55e" : level === "B1" || level === "B2" ? "#f59e0b" : "#ef4444";
   const cefrLabel = (level: ImmersiveCEFRLevel) => IMMERSIVE_CEFR_LEVELS.find((item) => item.value === level)?.label || level;
 
+  if (isAuthLoading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-slate-100">
+        <p className="text-sm font-semibold">Preparando seu espaço de aprendizagem…</p>
+      </main>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_#1e3a8a,_#0f172a_58%,_#020617)] px-6 text-center text-slate-100">
+        <section className="max-w-md rounded-3xl border border-cyan-200/20 bg-slate-950/75 p-8 shadow-2xl backdrop-blur">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">MultiLingue Universal</p>
+          <h1 className="mt-3 text-2xl font-black">Sua jornada de aprendizagem está protegida</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Entre para acessar as cenas, professores, materiais de estudo e o seu progresso pessoal.</p>
+          <button
+            type="button"
+            onClick={() => { window.location.href = getLoginUrl(); }}
+            className="mt-6 rounded-xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-200"
+          >
+            Entrar para aprender
+          </button>
+          <button
+            type="button"
+            onClick={() => setLocation("/")}
+            className="mt-3 block w-full text-sm font-semibold text-slate-300 hover:text-white"
+          >
+            Voltar ao início
+          </button>
+        </section>
+      </main>
+    );
+  }
+
   // ── Scene View ──
   if (selectedScene) {
     return (
