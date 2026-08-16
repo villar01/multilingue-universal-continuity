@@ -2,7 +2,7 @@
  * MultiLingue Universal — Service Worker v4
  * Cache agressivo: Shell, Estático, API, Áudio, Imagens
  */
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const SHELL_CACHE = `multilingue-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `multilingue-static-${CACHE_VERSION}`;
 const API_CACHE = `multilingue-api-${CACHE_VERSION}`;
@@ -43,6 +43,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   if (request.method !== 'GET') return;
+
+  // As mídias do projeto redirecionam para URLs assinadas de curta duração.
+  // O navegador precisa seguir esse redirecionamento diretamente; colocá-lo
+  // no cache de imagens pode converter uma falha transitória em resposta 503.
+  if (url.pathname.startsWith('/manus-storage/')) return;
 
   // Áudio TTS — Cache First 7 dias
   if (url.pathname.match(/\.(mp3|wav|ogg|m4a|webm)$/) || url.pathname.includes('/audio/')) {

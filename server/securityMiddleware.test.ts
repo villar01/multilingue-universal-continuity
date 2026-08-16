@@ -106,6 +106,7 @@ describe("securityMiddleware", () => {
     expect(continued).toBe(true);
     expect(response.headers["Content-Security-Policy"]).toContain("default-src 'self'");
     expect(response.headers["Content-Security-Policy"]).toContain("object-src 'none'");
+    expect(response.headers["Content-Security-Policy"]).toContain("img-src 'self' data: blob: https://*.manuscdn.com https://d36hbw14aib5lz.cloudfront.net https://d2xsxph8kpxj0f.cloudfront.net");
     expect(response.headers["Content-Security-Policy"]).toContain("frame-ancestors 'self' https://manus.im https://*.manus.im https://*.manus.computer");
     expect(response.headers["Content-Security-Policy"]).toContain("media-src 'self' data: blob: https:");
     expect(response.headers["X-Frame-Options"]).toBeUndefined();
