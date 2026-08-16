@@ -25,10 +25,20 @@ describe("entrega protegida de diálogo localizado", () => {
   it("só solicita e exibe o material depois de uma lição de cena autorizada", () => {
     expect(sceneSource).toContain("const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation()");
     expect(sceneSource).toContain("const localizedSceneDialogueQuery = trpc.curriculum.localizedSceneDialogue.useQuery");
-    expect(sceneSource).toContain("enabled: isAuthenticated && Boolean(authorizedSceneMaterialKey)");
+    expect(sceneSource).toContain("enabled: isAuthenticated");
     expect(sceneSource).toContain("authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })");
     expect(sceneSource).toContain("Material localizado da cena");
     expect(sceneSource).toContain("Objetos para praticar");
     expect(sceneSource).toContain("localizedSceneDialogueQuery.data.objects.map");
+  });
+
+  it("vincula a autorização à cena e aos dois idiomas antes de habilitar a consulta", () => {
+    expect(sceneSource).toContain("const [authorizedSceneMaterial, setAuthorizedSceneMaterial]");
+    expect(sceneSource).toContain("authorizedSceneMaterial?.sceneId === selectedScene?.id");
+    expect(sceneSource).toContain("authorizedSceneMaterial?.targetLanguage === targetLang");
+    expect(sceneSource).toContain("authorizedSceneMaterial?.nativeLanguage === nativeLang");
+    expect(sceneSource).toContain("sceneId: scene.id,");
+    expect(sceneSource).toContain("targetLanguage: targetLang,");
+    expect(sceneSource).toContain("nativeLanguage: nativeLang,");
   });
 });

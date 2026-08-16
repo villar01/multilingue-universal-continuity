@@ -1427,7 +1427,12 @@ export default function ImmersiveScene() {
   const profileTarget = profile.targetCode || localStorage.getItem("ml_target_lang") || "en-US";
   const [targetLang, setTargetLang] = useState<string>(() => profileTarget);
   const [selectedSceneTeacherId, setSelectedSceneTeacherId] = useState<string | null>(null);
-  const [authorizedSceneMaterialKey, setAuthorizedSceneMaterialKey] = useState<string | null>(null);
+  const [authorizedSceneMaterial, setAuthorizedSceneMaterial] = useState<{
+    lessonKey: string;
+    sceneId: string;
+    targetLanguage: string;
+    nativeLanguage: string;
+  } | null>(null);
 
   // Keep targetLang in sync when LanguageContext profile changes (e.g. user changed language on Home)
   useEffect(() => {
@@ -1497,7 +1502,7 @@ export default function ImmersiveScene() {
   }, [compatibleSceneTeachers, selectedSceneTeacherId]);
 
   useEffect(() => {
-    setAuthorizedSceneMaterialKey(null);
+    setAuthorizedSceneMaterial(null);
   }, [selectedScene?.id, targetLang, nativeLang]);
 
   const handleSelectTargetLang = (code: string) => {
@@ -1531,12 +1536,16 @@ export default function ImmersiveScene() {
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
   const localizedSceneDialogueQuery = trpc.curriculum.localizedSceneDialogue.useQuery({
-    lessonKey: authorizedSceneMaterialKey || "scene:pending",
+    lessonKey: authorizedSceneMaterial?.lessonKey || "scene:pending",
     sceneId: selectedScene?.id || "pending",
     targetLanguage: targetLang,
     nativeLanguage: nativeLang,
   }, {
-    enabled: isAuthenticated && Boolean(authorizedSceneMaterialKey) && isInitialCommercialTargetLanguage(targetLang),
+    enabled: isAuthenticated
+      && authorizedSceneMaterial?.sceneId === selectedScene?.id
+      && authorizedSceneMaterial?.targetLanguage === targetLang
+      && authorizedSceneMaterial?.nativeLanguage === nativeLang
+      && isInitialCommercialTargetLanguage(targetLang),
     staleTime: 1000 * 60 * 30,
     retry: false,
   });
@@ -2064,8 +2073,13 @@ export default function ImmersiveScene() {
     const materialLessonKey = `scene:${scene.id}`;
     if (isAuthenticated && isInitialCommercialTargetLanguage(targetLang)) {
       void authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })
-        .then((access) => setAuthorizedSceneMaterialKey(access.allowed ? materialLessonKey : null))
-        .catch(() => setAuthorizedSceneMaterialKey(null));
+        .then((access) => setAuthorizedSceneMaterial(access.allowed ? {
+          lessonKey: materialLessonKey,
+          sceneId: scene.id,
+          targetLanguage: targetLang,
+          nativeLanguage: nativeLang,
+        } : null))
+        .catch(() => setAuthorizedSceneMaterial(null));
     }
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
