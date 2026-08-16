@@ -2,6 +2,7 @@ import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import type { ParetoWord } from "@/lib/curriculum-types";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
@@ -27,19 +28,38 @@ function saveCompletedWords(words: Set<string>) {
 }
 
 export default function Pareto1000() {
-  const paretoQuery = trpc.curriculum.pareto.useQuery({ lessonKey: "/pareto-1000" });
-  const words = useMemo(() => paretoQuery.data ?? [], [paretoQuery.data]);
-  const [completed, setCompleted] = useState<Set<string>>(loadCompletedWords);
   const [page, setPage] = useState(0);
+  const { profile } = useLanguage();
+  const targetLanguage = profile.targetCode || "en-US";
+  const nativeLanguage = profile.nativeCode || "pt-BR";
+  const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
+    lessonKey: "/pareto-1000",
+    targetLanguage,
+    nativeLanguage,
+    page,
+    pageSize: SESSION_SIZE,
+  });
+  const words = useMemo<ParetoWord[]>(() => (paretoQuery.data?.items ?? []).map((word) => ({
+    id: word.id,
+    enUS: word.targetWord,
+    ptBR: word.nativeTranslation,
+    pronunciation: word.pronunciation,
+    category: word.category,
+    frequency: word.frequency,
+    example: word.targetExample,
+    examplePt: word.nativeExample,
+    scene: word.scene,
+  })), [paretoQuery.data]);
+  const [completed, setCompleted] = useState<Set<string>>(loadCompletedWords);
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const sessionStart = page * SESSION_SIZE;
-  const sessionWords = words.slice(sessionStart, sessionStart + SESSION_SIZE);
-  const totalPages = Math.ceil(words.length / SESSION_SIZE);
+  const sessionWords = words;
+  const totalPages = paretoQuery.data?.totalPages ?? 1;
   const completedCount = words.filter((word) => completed.has(word.id)).length;
   const nextWord = words.find((word) => !completed.has(word.id)) ?? null;
-  const programReadyCount = words.length;
+  const programReadyCount = paretoQuery.data?.total ?? 0;
 
   if (paretoQuery.isLoading) {
     return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
@@ -49,6 +69,10 @@ export default function Pareto1000() {
     return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Não foi possível autorizar a entrega do vocabulário Pareto.</main>;
   }
 
+  if (paretoQuery.data?.status !== "ready") {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">O material desta dupla de idiomas está sendo preparado com segurança. Escolha outra prática disponível ou tente novamente em instantes.</main>;
+  }
+
   const speak = useCallback(async (text: string) => {
     if (!text.trim()) return;
     if (audioRef.current) {
@@ -56,7 +80,7 @@ export default function Pareto1000() {
       audioRef.current = null;
     }
     try {
-      const result = await speakMutation.mutateAsync({ text: text.slice(0, 400), voiceLang: "en-US", gender: "male" });
+      const result = await speakMutation.mutateAsync({ text: text.slice(0, 400), voiceLang: targetLanguage, gender: "male" });
       if (!result.success || !result.audioBase64) return;
       const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
       const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
@@ -103,7 +127,7 @@ export default function Pareto1000() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/35 bg-amber-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-amber-100"><Target className="h-4 w-4" />Programa de memorização ativo</div>
             <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">Rumo a mil palavras para lembrar, escrever e usar.</h1>
-            <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. {programReadyCount.toLocaleString("pt-BR")} termos ingleses únicos foram autorizados para esta trilha. O complemento original até mil termos continua em produção.</p>
+            <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. {programReadyCount.toLocaleString("pt-BR")} termos do idioma estudado foram autorizados para esta trilha.</p>
           </div>
           <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Progresso de memória</p><p className="mt-1 text-2xl font-black">{completedCount} <span className="text-base font-semibold text-slate-300">/ {programReadyCount} palavras únicas liberadas</span></p><p className="mt-1 text-xs text-slate-400">Meta do programa: 1.000 palavras únicas.</p></div><Button type="button" onClick={() => setPracticeWord(nextWord)} disabled={!nextWord} className="gap-2 bg-amber-300 font-bold text-slate-950 hover:bg-amber-200"><Sparkles className="h-4 w-4" />{nextWord ? "Continuar memorização" : "Trilha atual concluída"}</Button></div>
