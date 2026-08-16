@@ -1372,6 +1372,7 @@
 - [x] Adicionar fechamento explícito e acessível ao painel Pareto para que ele nunca bloqueie o acesso ao diálogo ou à cena — botão textual Fechar, rótulo acessível, encerramento de áudio/prática e validação visual na Praia Tropical; TypeScript sem erros e 383 testes aprovados
 - [ ] Corrigir bloqueios publicados: primeira fala Hello! My name is James… sem áudio e pergunta escrita sem retorno visível ou falado do professor
 - [ ] Regressão observada no domínio publicado: o elemento de áudio do diálogo de James mostra 0:00 / 0:00; restaurar URL carregável, duração real e reprodução sem modificar currículo, catálogo ou idioma nativo
+- [ ] Regressão observada no domínio publicado: o campo Perguntar ficou indisponível ou sem aceitar a pergunta ao professor; garantir entrada habilitada, feedback textual síncrono e liberação do botão após cada tentativa
 - [ ] Só marcar recursos como consolidados após evidência completa: código, TypeScript/testes, domínio publicado e confirmação do fluxo real pelo aluno quando envolver áudio, microfone, voz ou interação visual
 - [ ] Salvar checkpoint após cada correção funcionalmente validada e manter pendentes os itens sem confirmação publicada, sem assumir execução contínua fora da sessão ativa
 - [ ] Organizar e executar pendências em ordem sequencial de impacto, começando por diálogo/áudio publicado; cada bloco deve indicar critério de aceitação, checkpoint e resultado da validação humana quando aplicável

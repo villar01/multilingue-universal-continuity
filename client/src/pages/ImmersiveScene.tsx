@@ -1961,7 +1961,7 @@ export default function ImmersiveScene() {
   const askImmersiveTutor = useCallback(async (answer: string) => {
     const scene = selectedScene;
     const question = answer.trim();
-    if (!scene || !question || dlgTutorLoading) return;
+    if (!scene || !question) return;
     const requestId = ++dlgTutorRequestRef.current;
     primeDialogAudioFromGesture();
     setDlgTutorLoading(true);
@@ -1973,6 +1973,12 @@ export default function ImmersiveScene() {
     setDlgFeedback(immediateFeedback);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
     requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher");
+    const loadingTimeout = window.setTimeout(() => {
+      if (requestId === dlgTutorRequestRef.current) {
+        setDlgTutorLoading(false);
+        setDlgFeedback((current) => current || immediateFeedback);
+      }
+    }, 10_000);
     try {
       const result = await immersiveSceneTutorMut.mutateAsync({
         teacherName: scene.teacherName,
@@ -2009,6 +2015,7 @@ export default function ImmersiveScene() {
       setDlgFeedback(`${scene.teacherName}: ${targetReply}`);
       requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
     } finally {
+      window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
     }
   }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
@@ -2052,7 +2059,10 @@ export default function ImmersiveScene() {
   }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, requestSpeechSafely, selectedScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
-    validateDialogAnswer(dlgWrittenAnswer);
+    const question = dlgWrittenAnswer.trim();
+    if (!question) return;
+    setDlgWrittenAnswer("");
+    validateDialogAnswer(question);
   }, [dlgWrittenAnswer, validateDialogAnswer]);
 
   const stopDialogRecording = useCallback(() => {
@@ -2857,7 +2867,6 @@ export default function ImmersiveScene() {
                       value={dlgWrittenAnswer}
                       onChange={(event) => setDlgWrittenAnswer(event.target.value)}
                       onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
-                      disabled={dlgTutorLoading}
                       placeholder="Ex.: What is pool?"
                       className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                       autoComplete="off"
@@ -2865,7 +2874,6 @@ export default function ImmersiveScene() {
                     <button
                       type="button"
                       onClick={submitWrittenDialogAnswer}
-                      disabled={dlgTutorLoading}
                       className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950 disabled:opacity-50"
                     >
                       {dlgTutorLoading ? "Respondendo…" : "Perguntar"}
@@ -2932,7 +2940,7 @@ export default function ImmersiveScene() {
                         value={dlgWrittenAnswer}
                         onChange={(event) => setDlgWrittenAnswer(event.target.value)}
                         onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
-                        disabled={dlgAnswer !== null || dlgTutorLoading}
+                        disabled={dlgAnswer !== null}
                         placeholder="Digite sua resposta no idioma estudado"
                         className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                         autoComplete="off"
@@ -2940,7 +2948,7 @@ export default function ImmersiveScene() {
                       <button
                         type="button"
                         onClick={submitWrittenDialogAnswer}
-                        disabled={dlgAnswer !== null || dlgTutorLoading}
+                        disabled={dlgAnswer !== null}
                         className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950 disabled:opacity-50"
                       >
                         {dlgTutorLoading ? "Respondendo…" : "Responder"}
@@ -2955,7 +2963,7 @@ export default function ImmersiveScene() {
                       <button
                         type="button"
                         onClick={dlgIsRecording ? stopDialogRecording : startDialogRecording}
-                        disabled={dlgAnswer !== null || dlgIsProcessingSpeech || dlgTutorLoading}
+                        disabled={dlgAnswer !== null || dlgIsProcessingSpeech}
                         className="inline-flex items-center gap-2 rounded-lg border border-emerald-300/45 bg-emerald-400/10 px-3 py-2 text-sm font-extrabold text-emerald-100 hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {dlgIsRecording ? <Square size={15} fill="currentColor" /> : <Mic size={16} />}

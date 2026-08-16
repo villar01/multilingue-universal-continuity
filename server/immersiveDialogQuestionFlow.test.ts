@@ -1,0 +1,21 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
+
+describe("immersive dialog written question flow", () => {
+  it("shows feedback immediately and releases a stalled tutor request", () => {
+    expect(sceneSource).toContain("setDlgFeedback(immediateFeedback)");
+    expect(sceneSource).toContain("}, 10_000);");
+    expect(sceneSource).toContain("setDlgTutorLoading(false);");
+  });
+
+  it("clears a submitted question and does not submit a blank or currently loading request", () => {
+    expect(sceneSource).toContain("if (!question) return;");
+    expect(sceneSource).toContain('setDlgWrittenAnswer("");');
+    expect(sceneSource).not.toContain("disabled={dlgTutorLoading}");
+    expect(sceneSource).not.toContain("dlgAnswer !== null || dlgTutorLoading");
+    expect(sceneSource).not.toContain("dlgIsProcessingSpeech || dlgTutorLoading");
+  });
+});
