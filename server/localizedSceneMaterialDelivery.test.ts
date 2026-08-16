@@ -28,5 +28,7 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(sceneSource).toContain("enabled: isAuthenticated && Boolean(authorizedSceneMaterialKey)");
     expect(sceneSource).toContain("authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })");
     expect(sceneSource).toContain("Material localizado da cena");
+    expect(sceneSource).toContain("Objetos para praticar");
+    expect(sceneSource).toContain("localizedSceneDialogueQuery.data.objects.map");
   });
 });

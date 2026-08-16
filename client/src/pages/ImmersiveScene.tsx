@@ -3130,6 +3130,19 @@ export default function ImmersiveScene() {
                           </div>
                         ))}
                       </div>
+                      {localizedSceneDialogueQuery.data.objects.length > 0 && (
+                        <div className="mt-3 border-t border-emerald-300/15 pt-3">
+                          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-200">Objetos para praticar</p>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            {localizedSceneDialogueQuery.data.objects.map((object, index) => (
+                              <div key={`${index}-${object.targetText}`} className="rounded-md bg-emerald-300/10 px-2.5 py-2">
+                                <p className="text-sm font-semibold text-emerald-50">{object.targetText}</p>
+                                <p className="text-xs text-emerald-100/80">{nativeLangInfo.name}: {object.nativeHelp}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </section>
                   )}
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">

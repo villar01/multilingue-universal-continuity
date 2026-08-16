@@ -6,23 +6,37 @@ export type LocalizedSceneDialogueTurn = {
   nativeHelp: string;
 };
 
+export type LocalizedSceneVocabularyObject = {
+  targetText: string;
+  nativeHelp: string;
+};
+
 export type LocalizedSceneMaterialResult = {
   status: "ready" | "planned_language_block" | "localization_unavailable" | "invalid_localization";
   turns: LocalizedSceneDialogueTurn[];
+  objects: LocalizedSceneVocabularyObject[];
 };
 
-export function parseLocalizedSceneTurns(content: string): LocalizedSceneDialogueTurn[] | null {
+function parseLocalizedEntries(content: unknown, min: number, max: number): LocalizedSceneDialogueTurn[] | null {
+  if (!Array.isArray(content) || content.length < min || content.length > max) return null;
+  const entries = content.map((entry) => {
+    if (!entry || typeof entry !== "object") return null;
+    const candidate = entry as Record<string, unknown>;
+    const targetText = typeof candidate.targetText === "string" ? candidate.targetText.trim() : "";
+    const nativeHelp = typeof candidate.nativeHelp === "string" ? candidate.nativeHelp.trim() : "";
+    return targetText && nativeHelp ? { targetText, nativeHelp } : null;
+  });
+  return entries.some((entry) => entry === null) ? null : entries as LocalizedSceneDialogueTurn[];
+}
+
+export function parseLocalizedSceneMaterial(content: string): Omit<LocalizedSceneMaterialResult, "status"> | null {
   try {
     const parsed = JSON.parse(content) as unknown;
-    if (!Array.isArray(parsed) || parsed.length < 2 || parsed.length > 4) return null;
-    const turns = parsed.map((entry) => {
-      if (!entry || typeof entry !== "object") return null;
-      const candidate = entry as Record<string, unknown>;
-      const targetText = typeof candidate.targetText === "string" ? candidate.targetText.trim() : "";
-      const nativeHelp = typeof candidate.nativeHelp === "string" ? candidate.nativeHelp.trim() : "";
-      return targetText && nativeHelp ? { targetText, nativeHelp } : null;
-    });
-    return turns.some((turn) => turn === null) ? null : turns as LocalizedSceneDialogueTurn[];
+    if (!parsed || typeof parsed !== "object") return null;
+    const candidate = parsed as Record<string, unknown>;
+    const turns = parseLocalizedEntries(candidate.turns, 2, 4);
+    const objects = parseLocalizedEntries(candidate.objects, 3, 8);
+    return turns && objects ? { turns, objects } : null;
   } catch {
     return null;
   }
@@ -40,7 +54,7 @@ export async function localizeSceneDialogue(input: {
   userId: number;
 }): Promise<LocalizedSceneMaterialResult> {
   if (!isInitialCommercialTargetLanguage(input.targetLanguage)) {
-    return { status: "planned_language_block", turns: [] };
+    return { status: "planned_language_block", turns: [], objects: [] };
   }
 
   try {
@@ -48,11 +62,11 @@ export async function localizeSceneDialogue(input: {
       messages: [
         {
           role: "system",
-          content: "You create short, safe A1 language-learning dialogues. Return only valid JSON.",
+          content: "You create short, safe A1 language-learning scene materials. Return only valid JSON.",
         },
         {
           role: "user",
-          content: `Create 2 to 4 concise dialogue turns for the learning scene "${input.sceneId}". The target language is ${input.targetLanguage}; the native learner support language is ${input.nativeLanguage}. Use only these two languages. Return a JSON array where each object contains targetText and nativeHelp. Keep every turn tied to visible, everyday scene objects and suitable for all ages.`,
+          content: `Create a small A1 material pack for the learning scene "${input.sceneId}". The target language is ${input.targetLanguage}; the native learner support language is ${input.nativeLanguage}. Use only these two languages. Return a JSON object with: "turns" (2 to 4 concise dialogue turns) and "objects" (3 to 8 visible everyday vocabulary objects). Every item must contain targetText and nativeHelp. Keep every item suitable for all ages.`,
         },
       ],
       temperature: 0,
@@ -61,9 +75,9 @@ export async function localizeSceneDialogue(input: {
       useCache: true,
       userId: input.userId,
     });
-    const turns = parseLocalizedSceneTurns(response.content);
-    return turns ? { status: "ready", turns } : { status: "invalid_localization", turns: [] };
+    const material = parseLocalizedSceneMaterial(response.content);
+    return material ? { status: "ready", ...material } : { status: "invalid_localization", turns: [], objects: [] };
   } catch {
-    return { status: "localization_unavailable", turns: [] };
+    return { status: "localization_unavailable", turns: [], objects: [] };
   }
 }
