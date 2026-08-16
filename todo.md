@@ -209,7 +209,7 @@
 - [ ] Reverter a degradação de dicção reportada, restaurando a seleção de voz das telas que já soavam naturais
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
 - [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
-- [ ] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível
+- [x] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível — o painel apresenta Observe, Lembre, Escreva e Crie, explica cada ação, mostra o progresso e confirma a conclusão; TypeScript e suíte completa com 228 arquivos/554 testes aprovados
 - [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
 - [x] Auditar e preservar todas as listas de verificação, testes e pendências antes de qualquer limpeza ou reclassificação — inventário de 2026-08-14 confirma 1.307 linhas no controle mestre, 857 itens concluídos, 136 pendentes, 168 regressões e checkpoints recentes preservados; falhas funcionais foram reabertas sem apagar histórico
 - [ ] Unificar apresentação guiada, objetos, vocabulário, diálogo, prática Pareto, perguntas, repetição e revisão em um roteiro contínuo por cena e CEFR
@@ -1545,5 +1545,6 @@
 - [x] Exibir nas cenas um indicador positivo de bloco futuro quando o idioma estudado ainda não foi lançado, sem consultar ou expor conteúdo pedagógico não disponível — o cabeçalho mostra “Bloco em preparação” apenas para idiomas futuros; TypeScript e suíte completa com 226 arquivos/550 testes aprovados
 - [ ] Restringir diálogo, hotspots, Pareto, áudio e materiais pedagógicos das cenas a alunos autenticados, deixando aos visitantes apenas uma tela de acesso sem currículo
 - [x] Restringir diálogo, hotspots, Pareto, áudio e materiais pedagógicos das cenas a alunos autenticados, deixando aos visitantes apenas uma tela de acesso sem currículo — a rota sem sessão redireciona para login, e a própria página possui bloqueio antes de renderizar cena; TypeScript e suíte completa com 227 arquivos/552 testes aprovados
+- [ ] Migrar o catálogo pedagógico das cenas imersivas para entrega protegida no servidor e remover diálogos, exercícios e vocabulário estático do pacote do navegador
 - [x] Isolar clipes roteirizados pelo professor ativo para que vídeo de James ou Sophie nunca seja sobreposto ao retrato de outro professor selecionado — concluído e detalhado no registro de validação subsequente
 - [x] Isolar clipes roteirizados pelo professor ativo para que vídeo de James ou Sophie nunca seja sobreposto ao retrato de outro professor selecionado — abertura, objeto, acerto e nova tentativa agora verificam o professor ativo antes de tocar vídeo; TypeScript e suíte completa com 226 arquivos/548 testes aprovados
