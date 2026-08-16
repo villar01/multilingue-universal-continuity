@@ -22,7 +22,7 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
   const today = new Date().toISOString().split("T")[0];
   if (!db) return { success: false, message: "Banco de dados não disponível." };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pool = db.$client as any;
+  const pool = (db.$client as any).promise();
 
   try {
     // 1. Coletar telemetria das últimas 24h
