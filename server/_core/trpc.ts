@@ -3,8 +3,24 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext } from "./context";
 
+function safeClientErrorMessage(code: TRPCError["code"]): string {
+  if (code === "UNAUTHORIZED") return "authentication-required";
+  if (code === "FORBIDDEN") return "access-denied";
+  if (code === "BAD_REQUEST") return "invalid-request";
+  if (code === "TOO_MANY_REQUESTS") return "rate-limited";
+  return "request-failed";
+}
+
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
+  errorFormatter({ shape, error }) {
+    const { stack: _stack, path: _path, ...safeData } = shape.data;
+    return {
+      ...shape,
+      message: safeClientErrorMessage(error.code),
+      data: safeData,
+    };
+  },
 });
 
 export const router = t.router;

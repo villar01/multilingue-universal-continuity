@@ -16,7 +16,7 @@ export const systemRouter = router({
       ok: true,
     })),
 
-  getAiMetrics: publicProcedure.query(async () => {
+  getAiMetrics: adminProcedure.query(async () => {
     try {
       const db = await getDb();
       if (!db) {
@@ -99,13 +99,12 @@ export const systemRouter = router({
     }
   }),
 
-  logSecurityEvent: publicProcedure
+  logSecurityEvent: adminProcedure
     .input(
       z.object({
         eventType: z.enum(["paywall_bypass", "rate_limit_exceeded", "scraping_detected", "bot_detected", "moral_violation", "legal_violation", "abuse_content", "discrimination", "unauthorized_access", "suspicious_pattern", "ddos_attempt", "sql_injection", "xss_attempt", "other"]),
         severity: z.enum(["low", "medium", "high", "critical"]).default("low"),
-        description: z.string().min(1),
-        ip: z.string().optional(),
+        description: z.string().trim().min(1).max(240),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -116,8 +115,8 @@ export const systemRouter = router({
           eventType: input.eventType,
           severity: input.severity,
           description: input.description,
-          ipAddress: input.ip || null,
-          userId: ctx.user?.id || null,
+          ipAddress: null,
+          userId: ctx.user.id,
         });
         return { success: true };
       } catch (e) {
