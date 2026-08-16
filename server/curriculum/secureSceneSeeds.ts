@@ -201,6 +201,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "clock", x: 85, y: 15, label: "Clock", translation: "Relógio", pronunciation: "KLOK", example: "Look at the clock.", examplePt: "Olhe para o relógio.", icon: "🕐", color: "#dc2626" },
     ],
   },
+  port: {
+    dialog: [
+      { speaker: "teacher", text: "Benvenuto al porto! Sono Giulia. Che bel porto mediterraneo, vero?", textPt: "Bem-vindo ao porto! Sou Giulia. Que porto mediterrâneo bonito, não é?" },
+      { speaker: "user", text: "Sì, è bellissimo! Vuoi fare una gita in barca con me?", textPt: "Sim, é lindo! Quer fazer um passeio de barco comigo?", options: ["Sì, è bellissimo! Vuoi fare una gita in barca con me?", "No, ho paura del mare.", "Forse domani."], correctIndex: 0 },
+      { speaker: "teacher", text: "Certo! Il mare è azzurro oggi. Vedi il faro in lontananza?", textPt: "Claro! O mar está azul hoje. Você vê o farol ao longe?" },
+      { speaker: "user", text: "Sì! E vedo anche i gabbiani che volano sopra la rete del pescatore.", textPt: "Sim! E também vejo as gaivotas voando sobre a rede do pescador.", options: ["Sì! E vedo anche i gabbiani che volano sopra la rete del pescatore.", "Non vedo niente.", "Ho paura dei gabbiani."], correctIndex: 0 },
+      { speaker: "teacher", text: "Bravissima! L'ancora è pesante — tiene la barca ferma nel porto.", textPt: "Muito bem! A âncora é pesada — mantém o barco fixo no porto." },
+      { speaker: "user", text: "Capisco! Il porto è pieno di vita. Mi piace molto l'italiano!", textPt: "Entendo! O porto está cheio de vida. Gosto muito do italiano!", options: ["Capisco! Il porto è pieno di vita. Mi piace molto l'italiano!", "È troppo difficile.", "Voglio tornare a casa."], correctIndex: 0 },
+      { speaker: "teacher", text: "Meraviglioso! Il tuo italiano migliora ogni giorno. Continua!", textPt: "Maravilhoso! Seu italiano melhora a cada dia. Continue!" },
+    ],
+    hotspots: [
+      { id: "barca", x: 40, y: 55, label: "Barca", translation: "Barco", pronunciation: "BAR-ka", example: "La barca è nel porto.", examplePt: "O barco está no porto.", icon: "⛵", color: "#0ea5e9" },
+      { id: "mare", x: 65, y: 40, label: "Mare", translation: "Mar", pronunciation: "MA-re", example: "Il mare è azzurro.", examplePt: "O mar é azul.", icon: "🌊", color: "#3b82f6" },
+      { id: "faro", x: 80, y: 25, label: "Faro", translation: "Farol", pronunciation: "FA-ro", example: "Il faro guida le navi.", examplePt: "O farol guia os navios.", icon: "🗼", color: "#f59e0b" },
+      { id: "gabbiano", x: 25, y: 30, label: "Gabbiano", translation: "Gaivota", pronunciation: "gab-BIA-no", example: "Il gabbiano vola.", examplePt: "A gaivota voa.", icon: "🕊️", color: "#94a3b8" },
+      { id: "rete", x: 20, y: 65, label: "Rete", translation: "Rede", pronunciation: "RE-te", example: "La rete è piena di pesci.", examplePt: "A rede está cheia de peixes.", icon: "🎣", color: "#16a34a" },
+      { id: "ancora", x: 55, y: 75, label: "Ancora", translation: "Âncora", pronunciation: "AN-ko-ra", example: "L'ancora è pesante.", examplePt: "A âncora é pesada.", icon: "⚓", color: "#dc2626" },
+    ],
+  },
   museum: {
     dialog: [
       { speaker: "teacher", text: "Benvenuto al museo! Sono Giulia. Che quadro bellissimo, vero?", textPt: "Bem-vindo ao museu! Sou Giulia. Que quadro lindo, não é?" },

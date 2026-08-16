@@ -92,6 +92,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(museum?.hotspots.map((hotspot) => hotspot.id)).toEqual(["quadro", "scultura", "cornice", "visitatore", "galleria", "luce"]);
   });
 
+  it("mantém o conteúdo do Porto Mediterrâneo disponível somente no contrato do servidor", () => {
+    const port = getSecureSceneSeed("port");
+    expect(port?.dialog).toHaveLength(7);
+    expect(port?.hotspots.map((hotspot) => hotspot.id)).toEqual(["barca", "mare", "faro", "gabbiano", "rete", "ancora"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

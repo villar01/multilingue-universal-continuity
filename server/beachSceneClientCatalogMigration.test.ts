@@ -131,4 +131,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("Il quadro è antico.");
     expect(clientSceneSource).toContain('selectedScene?.id === "museum"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Porto Mediterrâneo do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Benvenuto al porto! Sono Giulia. Che bel porto mediterraneo, vero?");
+    expect(clientSceneSource).not.toContain("La barca è nel porto.");
+    expect(serverSeedSource).toContain("Benvenuto al porto! Sono Giulia. Che bel porto mediterraneo, vero?");
+    expect(serverSeedSource).toContain("La barca è nel porto.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "port"');
+  });
 });
