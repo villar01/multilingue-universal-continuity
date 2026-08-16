@@ -316,23 +316,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Bienvenue au parc! Profitons de la nature!",
     greetingPt:"Bem-vindo ao parque! Vamos aproveitar a natureza!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Bonjour! Je m'appelle Sophie. Quel beau parc, n'est-ce pas?", textPt:"Bom dia! Meu nome é Sophie. Que parque bonito, não é?"},
-      {speaker:"user", text:"Oui, c'est magnifique! J'adore la nature et les arbres.", textPt:"Sim, é magnífico! Adoro a natureza e as árvores.", options:["Oui, c'est magnifique! J'adore la nature et les arbres.","Non, je préfère la ville.","Je ne sais pas."], correctIndex:0},
-      {speaker:"teacher", text:"Très bien! Regardez cette fontaine — en français on dit 'fontaine'. C'est beau, non?", textPt:"Muito bem! Olhe esta fonte — em francês dizemos 'fontaine'. É bonito, não é?"},
-      {speaker:"user", text:"La fontaine est très belle! Et j'entends un oiseau chanter!", textPt:"A fonte é muito bonita! E ouço um pássaro cantando!", options:["La fontaine est très belle! Et j'entends un oiseau chanter!","Je n'aime pas les fontaines.","Où est le café?"], correctIndex:0},
-      {speaker:"teacher", text:"Oui! L'oiseau chante sur le banc. Asseyons-nous et écoutons.", textPt:"Sim! O pássaro canta no banco. Vamos sentar e ouvir."},
-      {speaker:"user", text:"Avec plaisir! Le chemin dans le parc est très agréable aussi.", textPt:"Com prazer! O caminho no parque também é muito agradável.", options:["Avec plaisir! Le chemin dans le parc est très agréable aussi.","Je suis fatigué.","Je veux rentrer."], correctIndex:0},
-      {speaker:"teacher", text:"Parfait! Votre français progresse très bien. Continuez!", textPt:"Perfeito! Seu francês está progredindo muito bem. Continue!"},
-    ],
-    hotspots:[
-      {id:"arbre", x:25, y:25, label:"Arbre", translation:"Árvore", pronunciation:"AR-bre", example:"L'arbre est grand.", examplePt:"A árvore é grande.", icon:"🌳", color:"#16a34a"},
-      {id:"jeux", x:10, y:62, label:"Jeux", translation:"Brinquedos", pronunciation:"JÖ", example:"Les jeux sont dans le parc.", examplePt:"Os brinquedos estão no parque.", icon:"🎠", color:"#a16207"},
-      {id:"fontaine", x:70, y:45, label:"Fontaine", translation:"Fonte", pronunciation:"fon-TEN", example:"La fontaine est belle.", examplePt:"A fonte é bonita.", icon:"⛲", color:"#0ea5e9"},
-      {id:"personnes", x:50, y:62, label:"Personnes", translation:"Pessoas", pronunciation:"per-SON", example:"Les personnes marchent dans le parc.", examplePt:"As pessoas caminham no parque.", icon:"👥", color:"#dc2626"},
-      {id:"chien", x:60, y:68, label:"Chien", translation:"Cachorro", pronunciation:"SHIEN", example:"Le chien est dans le parc.", examplePt:"O cachorro está no parque.", icon:"🐕", color:"#f59e0b"},
-      {id:"herbe", x:45, y:80, label:"Herbe", translation:"Grama", pronunciation:"ERB", example:"L'herbe est verte.", examplePt:"A grama é verde.", icon:"🌿", color:"#2563eb"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"mountain", name:"Montanha Nevada", nameEn:"Snowy Mountain", flag:"🏔️",
@@ -1381,7 +1367,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1390,7 +1376,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
