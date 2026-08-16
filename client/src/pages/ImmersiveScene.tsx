@@ -1585,15 +1585,8 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
-      audio.removeAttribute("src");
-      audio.load();
-      setDialogAudioSource((current) => current === source ? null : current);
       releaseRequest();
-      if (dialogAudioObjectUrlRef.current === source) {
-        URL.revokeObjectURL(source);
-        dialogAudioObjectUrlRef.current = null;
-      }
-      if (revokeOnEnd) URL.revokeObjectURL(source);
+      setDlgFeedback("A voz não carregou. Use o botão Ouvir James ou a voz do navegador para tentar novamente.");
     };
     try {
       await audio.play();
@@ -1606,6 +1599,23 @@ export default function ImmersiveScene() {
       throw error;
     }
   }, [stopVisemeSync]);
+
+  const replayVisibleDialogAudio = useCallback(async () => {
+    const audio = dialogAudioElementRef.current;
+    if (!audio || !dialogAudioSource) {
+      setDlgFeedback("A voz ainda está sendo preparada. Tente novamente em alguns instantes.");
+      return;
+    }
+    try {
+      audio.muted = false;
+      audio.volume = 1;
+      audio.currentTime = 0;
+      await audio.play();
+      setDlgFeedback("");
+    } catch {
+      setDlgFeedback("Não foi possível iniciar esta voz. Use a voz do navegador para ouvir a fala.");
+    }
+  }, [dialogAudioSource]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
@@ -2865,6 +2875,15 @@ export default function ImmersiveScene() {
                     className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
                     aria-label="Áudio da fala em inglês"
                   />
+                  {dialogAudioSource && (
+                    <button
+                      type="button"
+                      onClick={() => { void replayVisibleDialogAudio(); }}
+                      className="rounded-full border border-cyan-300/60 bg-cyan-400/15 px-3 py-1.5 text-xs font-bold text-cyan-50 transition hover:bg-cyan-400/25"
+                    >
+                      ▶ Ouvir James
+                    </button>
+                  )}
                 </div>
               )}
               {/* Scrolling text word by word */}

@@ -14,6 +14,9 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("src={dialogAudioSource || undefined}");
     expect(sceneSource).toContain("controls={Boolean(dialogAudioSource)}");
+    expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
+    expect(sceneSource).toContain("▶ Ouvir James");
+    expect(sceneSource).not.toContain('audio.removeAttribute("src")');
     expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
   });
 
