@@ -8,7 +8,7 @@ import {
 describe("HTTP route data protection", () => {
   beforeEach(() => resetPublicErrorReportQuotaForTest());
 
-  it("removes free-form telemetry, stack traces and URL query parameters", () => {
+  it("discards free-form telemetry, stack traces and URLs", () => {
     const sanitized = sanitizePublicErrorReport({
       context: "lesson/error?",
       eventType: "unhandledrejection",
@@ -20,9 +20,6 @@ describe("HTTP route data protection", () => {
     expect(sanitized).toEqual({
       eventType: "client-error",
       context: "lessonerror",
-      message: "client-error",
-      stack: "",
-      url: "/lesson/12",
     });
   });
 

@@ -60,7 +60,7 @@ async function startServer() {
   app.post("/api/scheduled/backup", handleScheduledBackup);
 
   // Telemetry is public so signed-out clients can report failures, but it stores
-  // only a fixed event, a safe context label and a path without query parameters.
+  // only a fixed event and a short controlled context label.
   app.post("/api/error-report", async (req, res) => {
     const clientKey = req.ip || req.socket.remoteAddress || "unknown";
     if (!consumePublicErrorReportQuota(clientKey)) {
@@ -77,8 +77,8 @@ async function startServer() {
       if (db) {
         const pool = (db as any).$client;
         await pool.execute(
-          `INSERT INTO app_telemetry (event_type, context, message, stack, url) VALUES (?, ?, ?, ?, ?)`,
-          [telemetry.eventType, telemetry.context, telemetry.message, telemetry.stack, telemetry.url]
+          `INSERT INTO app_telemetry (event_type, context) VALUES (?, ?)`,
+          [telemetry.eventType, telemetry.context]
         );
       }
     } catch (_e) { /* silencioso */ }
@@ -95,8 +95,8 @@ async function startServer() {
       const { runAISelfImprove } = await import("../scheduled/ai-self-improve");
       const result = await runAISelfImprove();
       res.json(result);
-    } catch (e: any) {
-      res.status(500).json({ success: false, message: e.message });
+    } catch {
+      res.status(500).json({ success: false, error: "scheduled-task-failed" });
     }
   });
   // AI insights contain operational data and are never public.
@@ -117,10 +117,13 @@ async function startServer() {
       const db = await getDb();
       if (!db) return res.json([]);
       const pool = (db as any).$client;
-      const [rows] = await pool.execute(`SELECT * FROM ai_insights ORDER BY created_at DESC LIMIT 20`);
+      const [rows] = await pool.execute(
+        `SELECT id, insight_type, title, severity, status, created_at, updated_at
+         FROM ai_insights ORDER BY created_at DESC LIMIT 20`
+      );
       res.json(rows);
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
+    } catch {
+      res.status(500).json({ error: "request-failed" });
     }
   });
 

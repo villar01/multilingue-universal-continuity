@@ -14,19 +14,9 @@ function normalizeContext(value: string): string {
   return normalized.slice(0, 48) || "unknown";
 }
 
-function normalizePath(value: string): string {
-  if (!value) return "";
-
-  try {
-    return new URL(value, "https://telemetry.invalid").pathname.slice(0, 160);
-  } catch {
-    return "";
-  }
-}
-
 /**
- * Retains only diagnostic metadata that cannot contain a typed error message,
- * stack trace, query string, token, email or other free-form personal data.
+ * Retains only a fixed event and a short controlled context. Text supplied by
+ * clients, URLs, stacks and messages are discarded before database persistence.
  */
 export function sanitizePublicErrorReport(payload: unknown) {
   const source = payload && typeof payload === "object" ? (payload as UnknownRecord) : {};
@@ -34,9 +24,6 @@ export function sanitizePublicErrorReport(payload: unknown) {
   return {
     eventType: "client-error",
     context: normalizeContext(readString(source, "context")),
-    message: "client-error",
-    stack: "",
-    url: normalizePath(readString(source, "url")),
   };
 }
 
