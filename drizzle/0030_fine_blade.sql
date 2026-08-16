@@ -1,0 +1,1 @@
+ALTER TABLE `parental_consents` ADD `revoked_at` timestamp;

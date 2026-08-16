@@ -22,4 +22,12 @@ describe("terms collection privacy", () => {
     expect(termsSource).not.toContain("Dados falsos são rastreados");
     expect(termsSource).toContain("Menor de 18 anos detectado");
   });
+
+  it("explains minimum data and parental review before consent", () => {
+    expect(termsSource).toContain("Antes de autorizar: dados e controles");
+    expect(termsSource).toContain("Obrigatórios:");
+    expect(termsSource).toContain("Opcionais:");
+    expect(termsSource).toContain("Não solicitados:");
+    expect(termsSource).toContain("pedir revisão ou revogação do consentimento");
+  });
 });

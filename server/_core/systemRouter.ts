@@ -102,6 +102,65 @@ export const systemRouter = router({
 
   getAbuseProtectionSummary: adminProcedure.query(() => getAbuseProtectionSummary()),
 
+  getOwnerSupportSummary: adminProcedure.query(async () => {
+    const abuse = getAbuseProtectionSummary();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    let recentEvents: Array<{ severity: string; resolved: boolean | null }> = [];
+
+    try {
+      const db = await getDb();
+      if (db) {
+        recentEvents = await db.select({
+          severity: securityEvents.severity,
+          resolved: securityEvents.resolved,
+        }).from(securityEvents).where(gte(securityEvents.createdAt, sevenDaysAgo));
+      }
+    } catch (error) {
+      console.error("[getOwnerSupportSummary] Failed to aggregate operational events", error);
+    }
+
+    const unresolvedEvents = recentEvents.filter((event) => event.resolved !== true).length;
+    const highPriorityEvents = recentEvents.filter(
+      (event) => event.resolved !== true && (event.severity === "high" || event.severity === "critical"),
+    ).length;
+    const suggestions = [
+      ...(highPriorityEvents > 0 ? [{
+        id: "review-high-priority-events",
+        priority: "high" as const,
+        title: "Revisar eventos de segurança pendentes",
+        detail: "Existem eventos de alta prioridade aguardando revisão administrativa.",
+      }] : []),
+      ...(abuse.activeBlocks > 0 ? [{
+        id: "review-active-abuse-blocks",
+        priority: "medium" as const,
+        title: "Revisar contenções temporárias ativas",
+        detail: "Há bloqueios automáticos ativos; confirme se a contenção continua proporcional.",
+      }] : []),
+      ...(unresolvedEvents === 0 && abuse.activeBlocks === 0 ? [{
+        id: "maintain-security-review",
+        priority: "low" as const,
+        title: "Manter a revisão periódica de segurança",
+        detail: "Não há pendência agregada neste momento. Preserve a revisão de acessos, backups e dados sensíveis.",
+      }] : []),
+    ];
+
+    return {
+      security: {
+        eventsLast7Days: recentEvents.length,
+        unresolvedEvents,
+        highPriorityEvents,
+        activeAbuseBlocks: abuse.activeBlocks,
+        activeAbuseRecords: abuse.activeRecords,
+      },
+      suggestions,
+      privacy: {
+        containsPersonalData: false,
+        containsStudentContent: false,
+        containsVisitorIdentifiers: false,
+      },
+    };
+  }),
+
   logSecurityEvent: adminProcedure
     .input(
       z.object({

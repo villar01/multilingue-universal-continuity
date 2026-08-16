@@ -12,7 +12,7 @@ import {
   Shield, AlertTriangle, Activity, Zap, RefreshCw,
   CheckCircle, XCircle, Clock, TrendingUp, Database,
   Lock, Unlock, Eye, ChevronRight, Bell, BookOpen,
-  Settings, BarChart3, Users, DollarSign, Cpu
+  Settings, BarChart3, Users, DollarSign, Cpu, MessageSquare
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -95,6 +95,10 @@ export default function AdminControlCenter() {
   const appliedHistory = trpc.controlCenter.getAppliedHistory.useQuery(
     { limit: 100 },
     { refetchInterval: 60000 }
+  );
+  const ownerSupport = trpc.system.getOwnerSupportSummary.useQuery(
+    undefined,
+    { refetchInterval: 60000 },
   );
 
   // ── Mutations ──
@@ -264,6 +268,9 @@ export default function AdminControlCenter() {
               </span>
             )}
           </TabsTrigger>
+          <TabsTrigger value="support" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white text-gray-400">
+            <MessageSquare className="w-4 h-4 mr-1" /> Apoio Interno
+          </TabsTrigger>
           <TabsTrigger value="history" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400">
             <Eye className="w-4 h-4 mr-1" /> Histórico
           </TabsTrigger>
@@ -432,6 +439,43 @@ export default function AdminControlCenter() {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="support">
+          <div className="space-y-4">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-base text-white">Resumo protegido para decisão</CardTitle>
+                <p className="text-xs text-gray-400">Somente contagens agregadas. Não contém aluno, conversa, documento, IP ou dispositivo.</p>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {[
+                  ["Eventos · 7 dias", ownerSupport.data?.security.eventsLast7Days ?? 0],
+                  ["Pendentes", ownerSupport.data?.security.unresolvedEvents ?? 0],
+                  ["Alta prioridade", ownerSupport.data?.security.highPriorityEvents ?? 0],
+                  ["Bloqueios ativos", ownerSupport.data?.security.activeAbuseBlocks ?? 0],
+                  ["Sinais ativos", ownerSupport.data?.security.activeAbuseRecords ?? 0],
+                ].map(([label, value]) => (
+                  <div key={String(label)} className="rounded-lg border border-gray-700 bg-gray-800/60 p-3">
+                    <p className="text-xl font-bold text-white">{value}</p>
+                    <p className="text-xs text-gray-400">{label}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader><CardTitle className="text-base text-white">Sugestões e críticas operacionais</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {(ownerSupport.data?.suggestions ?? []).map((suggestion) => (
+                  <div key={suggestion.id} className="rounded-lg border border-indigo-500/30 bg-indigo-950/20 p-3">
+                    <Badge className={suggestion.priority === "high" ? "bg-red-500/20 text-red-300 border-red-500/30" : "bg-indigo-500/20 text-indigo-300 border-indigo-500/30"}>{suggestion.priority}</Badge>
+                    <p className="mt-2 text-sm font-semibold text-white">{suggestion.title}</p>
+                    <p className="mt-1 text-xs text-gray-300">{suggestion.detail}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* ── TAB: SEGURANÇA ── */}

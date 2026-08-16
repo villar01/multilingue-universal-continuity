@@ -46,6 +46,29 @@ describe("system operational data access", () => {
     });
   });
 
+  it("rejects owner support summaries for a non-administrator", async () => {
+    const caller = systemRouter.createCaller(createContext("user"));
+    await expect(caller.getOwnerSupportSummary()).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("returns owner support only as aggregate security data", async () => {
+    const caller = systemRouter.createCaller(createContext("admin"));
+    const summary = await caller.getOwnerSupportSummary();
+    expect(summary.security).toEqual({
+      eventsLast7Days: expect.any(Number),
+      unresolvedEvents: expect.any(Number),
+      highPriorityEvents: expect.any(Number),
+      activeAbuseBlocks: expect.any(Number),
+      activeAbuseRecords: expect.any(Number),
+    });
+    expect(summary.privacy).toEqual({
+      containsPersonalData: false,
+      containsStudentContent: false,
+      containsVisitorIdentifiers: false,
+    });
+    expect(JSON.stringify(summary)).not.toMatch(/email|ipAddress|userAgent|conversation/i);
+  });
+
   it("rejects security-event writes for a non-administrator", async () => {
     const caller = systemRouter.createCaller(createContext("user"));
     await expect(

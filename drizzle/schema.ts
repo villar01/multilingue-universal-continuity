@@ -2209,6 +2209,7 @@ export const parentalConsents = mysqlTable("parental_consents", {
   // Metadados
   consentVersion: varchar("consent_version", { length: 20 }).notNull().default("1.0"),
   consentAt: timestamp("consent_at").defaultNow(),
+  revokedAt: timestamp("revoked_at"),
   ipAddress: varchar("ip_address", { length: 45 }),
   userAgent: text("user_agent"),
   isMinor: boolean("is_minor").notNull().default(true),

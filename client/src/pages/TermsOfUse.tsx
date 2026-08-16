@@ -395,6 +395,14 @@ export default function TermsOfUse() {
               <p>Essas ferramentas apoiam a proteção, mas não substituem o dever contínuo de custódia, acompanhamento e orientação do pai, mãe ou responsável legal.</p>
             </div>
 
+            <section aria-labelledby="parental-data-summary" className="bg-slate-900/50 border border-white/15 rounded-xl p-4 mb-6 text-sm text-white/80 space-y-2">
+              <h3 id="parental-data-summary" className="font-semibold text-white">Antes de autorizar: dados e controles</h3>
+              <p><strong className="text-white">Obrigatórios:</strong> nome do responsável, vínculo com o menor e as declarações de autorização.</p>
+              <p><strong className="text-white">Opcionais:</strong> documento e e-mail. O e-mail, se informado, serve apenas como contato para revisão do consentimento.</p>
+              <p><strong className="text-white">Não solicitados:</strong> selfie, foto de documento, número da máquina ou rastreamento do dispositivo.</p>
+              <p>Após o registro, os controles parentais permitem acompanhar configurações e pedir revisão ou revogação do consentimento. A revogação bloqueia o acesso do menor até nova autorização válida.</p>
+            </section>
+
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-white/80 text-sm font-medium block mb-1">Nome completo do responsável *</label>
