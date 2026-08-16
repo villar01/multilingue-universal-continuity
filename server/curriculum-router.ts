@@ -7,6 +7,7 @@ import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
 import { PARETO_VOCAB } from "./curriculum/paretoContent";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
+import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
 
@@ -73,6 +74,17 @@ export const curriculumRouter = router({
       nativeLanguage: input.nativeLanguage,
       userId: ctx.user.id,
     });
+  }),
+
+  sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({
+    sceneId: z.string().trim().min(1).max(80),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    const seed = getSecureSceneSeed(input.sceneId);
+    if (!seed) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "O conteúdo canônico desta cena ainda não foi migrado." });
+    }
+    return seed;
   }),
 
   languageBlocks: protectedProcedure.input(accessInput.extend({ level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).optional() })).query(async ({ ctx, input }) => {

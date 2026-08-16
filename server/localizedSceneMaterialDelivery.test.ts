@@ -41,4 +41,10 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(sceneSource).toContain("targetLanguage: targetLang,");
     expect(sceneSource).toContain("nativeLanguage: nativeLang,");
   });
+
+  it("entrega a semente canônica somente por procedimento protegido e autorizado", () => {
+    expect(source).toContain("sceneCanonicalMaterial: protectedProcedure");
+    expect(source).toContain("getSecureSceneSeed(input.sceneId)");
+    expect(source).toContain("O conteúdo canônico desta cena ainda não foi migrado.");
+  });
 });
