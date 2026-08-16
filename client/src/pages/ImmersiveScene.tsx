@@ -218,23 +218,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"¡Bienvenido a la cocina! ¡Haz clic en los objetos para aprender!",
     greetingPt:"Bem-vindo à cozinha! Clique nos objetos para aprender!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"\u00a1Hola! Me llamo Carlos. \u00a1Bienvenido a mi cocina!", textPt:"Ol\u00e1! Meu nome \u00e9 Carlos. Bem-vindo \u00e0 minha cozinha!"},
-      {speaker:"user", text:"\u00a1Hola Carlos! La cocina es muy bonita.", textPt:"Ol\u00e1 Carlos! A cozinha \u00e9 muito bonita.", options:["\u00a1Hola Carlos! La cocina es muy bonita.","No me gusta cocinar.","\u00bfD\u00f3nde est\u00e1 el ba\u00f1o?"], correctIndex:0},
-      {speaker:"teacher", text:"\u00a1Gracias! Mira la nevera. En espa\u00f1ol decimos 'nevera' o 'refrigerador'.", textPt:"Obrigado! Olhe a geladeira. Em espanhol dizemos 'nevera' ou 'refrigerador'."},
-      {speaker:"user", text:"\u00a1Entiendo! La nevera guarda los alimentos fr\u00edos.", textPt:"Entendo! A geladeira guarda os alimentos frios.", options:["\u00a1Entiendo! La nevera guarda los alimentos fr\u00edos.","No s\u00e9 qu\u00e9 es eso.","\u00bfPuedo comer?"], correctIndex:0},
-      {speaker:"teacher", text:"\u00a1Exacto! Y el horno sirve para cocinar. \u00bfSabes c\u00f3mo se dice 'horno' en portugu\u00e9s?", textPt:"Exato! E o forno serve para cozinhar. Voc\u00ea sabe como se diz 'horno' em portugu\u00eas?"},
-      {speaker:"user", text:"\u00a1S\u00ed! En portugu\u00e9s se dice 'forno'. \u00a1Son palabras similares!", textPt:"Sim! Em portugu\u00eas se diz 'forno'. S\u00e3o palavras parecidas!", options:["\u00a1S\u00ed! En portugu\u00e9s se dice 'forno'. \u00a1Son palabras similares!","No lo s\u00e9.","\u00bfCu\u00e1l es la diferencia?"], correctIndex:0},
-      {speaker:"teacher", text:"\u00a1Muy bien! Tu espa\u00f1ol mejora cada d\u00eda. \u00a1Sigue as\u00ed!", textPt:"Muito bem! Seu espanhol melhora a cada dia. Continue assim!"},
-    ],
-    hotspots:[
-      {id:"nevera", x:15, y:35, label:"Nevera", translation:"Geladeira", pronunciation:"ne-VE-ra", example:"La nevera está fría.", examplePt:"A geladeira está fria.", icon:"🧊", color:"#0ea5e9"},
-      {id:"horno", x:50, y:65, label:"Horno", translation:"Forno", pronunciation:"OR-no", example:"El horno está caliente.", examplePt:"O forno está quente.", icon:"🔥", color:"#f97316"},
-      {id:"mesa", x:70, y:75, label:"Mesa", translation:"Mesa", pronunciation:"ME-sa", example:"La mesa está limpia.", examplePt:"A mesa está limpa.", icon:"🪑", color:"#a16207"},
-      {id:"ventana", x:80, y:25, label:"Ventana", translation:"Janela", pronunciation:"ben-TA-na", example:"La ventana está abierta.", examplePt:"A janela está aberta.", icon:"🪟", color:"#0891b2"},
-      {id:"cuchara", x:35, y:52, label:"Cuchara", translation:"Colher", pronunciation:"ku-TCHA-ra", example:"La cuchara está en el recipiente.", examplePt:"A colher está no recipiente.", icon:"🥄", color:"#dc2626"},
-      {id:"encimera", x:60, y:80, label:"Encimera", translation:"Bancada", pronunciation:"en-si-ME-ra", example:"La encimera está limpia.", examplePt:"A bancada está limpa.", icon:"🪵", color:"#7c3aed"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"restaurant", name:"Restaurante Brasileiro", nameEn:"Brazilian Restaurant", flag:"\ud83c\udde7\ud83c\uddf7",
@@ -1479,7 +1465,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1488,7 +1474,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

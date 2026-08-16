@@ -87,6 +87,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "window", x: 79, y: 58, label: "Window", translation: "Janela", pronunciation: "WIN-dou", example: "The window is large.", examplePt: "A janela é grande.", icon: "🪟", color: "#64748b" },
     ],
   },
+  kitchen: {
+    dialog: [
+      { speaker: "teacher", text: "¡Hola! Me llamo Carlos. ¡Bienvenido a mi cocina!", textPt: "Olá! Meu nome é Carlos. Bem-vindo à minha cozinha!" },
+      { speaker: "user", text: "¡Hola Carlos! La cocina es muy bonita.", textPt: "Olá Carlos! A cozinha é muito bonita.", options: ["¡Hola Carlos! La cocina es muy bonita.", "No me gusta cocinar.", "¿Dónde está el baño?"], correctIndex: 0 },
+      { speaker: "teacher", text: "¡Gracias! Mira la nevera. En español decimos 'nevera' o 'refrigerador'.", textPt: "Obrigado! Olhe a geladeira. Em espanhol dizemos 'nevera' ou 'refrigerador'." },
+      { speaker: "user", text: "¡Entiendo! La nevera guarda los alimentos fríos.", textPt: "Entendo! A geladeira guarda os alimentos frios.", options: ["¡Entiendo! La nevera guarda los alimentos fríos.", "No sé qué es eso.", "¿Puedo comer?"], correctIndex: 0 },
+      { speaker: "teacher", text: "¡Exacto! Y el horno sirve para cocinar. ¿Sabes cómo se dice 'horno' en portugués?", textPt: "Exato! E o forno serve para cozinhar. Você sabe como se diz 'horno' em português?" },
+      { speaker: "user", text: "¡Sí! En portugués se dice 'forno'. ¡Son palabras similares!", textPt: "Sim! Em português se diz 'forno'. São palavras parecidas!", options: ["¡Sí! En portugués se dice 'forno'. ¡Son palabras similares!", "No lo sé.", "¿Cuál es la diferencia?"], correctIndex: 0 },
+      { speaker: "teacher", text: "¡Muy bien! Tu español mejora cada día. ¡Sigue así!", textPt: "Muito bem! Seu espanhol melhora a cada dia. Continue assim!" },
+    ],
+    hotspots: [
+      { id: "nevera", x: 15, y: 35, label: "Nevera", translation: "Geladeira", pronunciation: "ne-VE-ra", example: "La nevera está fría.", examplePt: "A geladeira está fria.", icon: "🧊", color: "#0ea5e9" },
+      { id: "horno", x: 50, y: 65, label: "Horno", translation: "Forno", pronunciation: "OR-no", example: "El horno está caliente.", examplePt: "O forno está quente.", icon: "🔥", color: "#f97316" },
+      { id: "mesa", x: 70, y: 75, label: "Mesa", translation: "Mesa", pronunciation: "ME-sa", example: "La mesa está limpia.", examplePt: "A mesa está limpa.", icon: "🪑", color: "#a16207" },
+      { id: "ventana", x: 80, y: 25, label: "Ventana", translation: "Janela", pronunciation: "ben-TA-na", example: "La ventana está abierta.", examplePt: "A janela está aberta.", icon: "🪟", color: "#0891b2" },
+      { id: "cuchara", x: 35, y: 52, label: "Cuchara", translation: "Colher", pronunciation: "ku-TCHA-ra", example: "La cuchara está en el recipiente.", examplePt: "A colher está no recipiente.", icon: "🥄", color: "#dc2626" },
+      { id: "encimera", x: 60, y: 80, label: "Encimera", translation: "Bancada", pronunciation: "en-si-ME-ra", example: "La encimera está limpia.", examplePt: "A bancada está limpa.", icon: "🪵", color: "#7c3aed" },
+    ],
+  },
   forest: {
     dialog: [
       { speaker: "teacher", text: "Hello! I'm James. Welcome to this magical enchanted forest!", textPt: "Olá! Sou James. Bem-vindo a esta mágica floresta encantada!" },

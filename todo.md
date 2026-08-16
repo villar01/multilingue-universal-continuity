@@ -1569,3 +1569,5 @@
 - [x] Isolar clipes roteirizados pelo professor ativo para que vídeo de James ou Sophie nunca seja sobreposto ao retrato de outro professor selecionado — abertura, objeto, acerto e nova tentativa agora verificam o professor ativo antes de tocar vídeo; TypeScript e suíte completa com 226 arquivos/548 testes aprovados
 
 - [x] Migrar o diálogo e os objetos da cena Nova York, EUA para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/579 testes aprovados
+
+- [x] Migrar o diálogo e os objetos da cena Cozinha Moderna para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/581 testes aprovados

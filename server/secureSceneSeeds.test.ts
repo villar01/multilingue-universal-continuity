@@ -32,6 +32,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(newyork?.hotspots.map((hotspot) => hotspot.id)).toEqual(["statue", "building", "city", "water", "sun", "window"]);
   });
 
+  it("mantém o conteúdo da Cozinha Moderna disponível somente no contrato do servidor", () => {
+    const kitchen = getSecureSceneSeed("kitchen");
+    expect(kitchen?.dialog).toHaveLength(7);
+    expect(kitchen?.hotspots.map((hotspot) => hotspot.id)).toEqual(["nevera", "horno", "mesa", "ventana", "cuchara", "encimera"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });
