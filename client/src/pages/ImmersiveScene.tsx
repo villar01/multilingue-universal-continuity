@@ -2070,8 +2070,8 @@ export default function ImmersiveScene() {
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
-    if (scene.id === "beach" && scene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
-    if (scene.id === "cafe" && scene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
+    if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
+    if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     const line = scene.dialog[0];
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
@@ -2089,7 +2089,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [authorizeLessonMut, isAuthenticated, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, targetLang, teachingScene]);
+  }, [authorizeLessonMut, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, targetLang, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -2208,14 +2208,18 @@ export default function ImmersiveScene() {
     const expected = line.options[line.correctIndex].trim();
     const correct = matchesImmersiveDialogAnswer(expected, provided);
     if (!correct) {
-      playJamesTropicalClip("james-tropical-retry");
-      playSophieCafeClip("sophie-cafe-retry");
+      if (scene.teacherName === "James") playJamesTropicalClip("james-tropical-retry");
+      if (scene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-retry");
       void askImmersiveTutor(provided);
       return;
     }
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
-    const praiseClip = playJamesTropicalClip("james-tropical-praise") || playSophieCafeClip("sophie-cafe-praise");
+    const praiseClip = scene.teacherName === "James"
+      ? playJamesTropicalClip("james-tropical-praise")
+      : scene.teacherName === "Sophie"
+        ? playSophieCafeClip("sophie-cafe-praise")
+        : null;
     if (isAuthenticated) {
       const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `Excellent. ${line.options[line.correctIndex]}`, scene);
       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
@@ -2230,7 +2234,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene, teachingScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
@@ -2320,6 +2324,7 @@ export default function ImmersiveScene() {
 
   const handleHotspotClick = useCallback((hotspot: Hotspot) => {
     if (!selectedScene) return;
+    const activeTeacherScene = teachingScene ?? selectedScene;
     setActiveHotspot(hotspot);
     setParticles(true);
     setTimeout(() => setParticles(false), 1000);
@@ -2338,13 +2343,13 @@ export default function ImmersiveScene() {
       scene: selectedScene.name,
     });
     setNotebookCount(loadNotebook().length);
-    const interaction = createImmersiveHotspotInteraction(hotspot, selectedScene);
+    const interaction = createImmersiveHotspotInteraction(hotspot, activeTeacherScene);
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    const objectFocusClip = hotspot.id === "palm"
+    const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"
       ? playJamesTropicalClip("james-tropical-point-palm")
-      : hotspot.id === "croissant"
+      : activeTeacherScene.teacherName === "Sophie" && hotspot.id === "croissant"
         ? playSophieCafeClip("sophie-cafe-point-croissant")
         : null;
     if (objectFocusClip) {
@@ -2353,7 +2358,7 @@ export default function ImmersiveScene() {
       requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
     }
     setTimeout(() => setShowGreeting(false), 5000);
-  }, [selectedScene, learnedWords, nativeLang, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely]);
+  }, [selectedScene, teachingScene, learnedWords, nativeLang, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
