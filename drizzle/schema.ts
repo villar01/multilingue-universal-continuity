@@ -2218,6 +2218,17 @@ export const parentalConsents = mysqlTable("parental_consents", {
 export type ParentalConsent = typeof parentalConsents.$inferSelect;
 export type InsertParentalConsent = typeof parentalConsents.$inferInsert;
 
+// Configuração da única tarefa autenticada que limpa contato opcional expirado.
+export const parentalOptionalDataRetentionSchedule = mysqlTable("parental_optional_data_retention_schedule", {
+  id: int("id").primaryKey().autoincrement(),
+  heartbeatTaskUid: varchar("heartbeat_task_uid", { length: 65 }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+}, (table) => ({
+  heartbeatTaskUidUnique: uniqueIndex("parental_retention_task_uid_unq").on(table.heartbeatTaskUid),
+}));
+export type ParentalOptionalDataRetentionSchedule = typeof parentalOptionalDataRetentionSchedule.$inferSelect;
+
 // ── Eventos de Segurança ──────────────────────────────────────────────────────
 export const securityEvents = mysqlTable("security_events", {
   id: int("id").primaryKey().autoincrement(),

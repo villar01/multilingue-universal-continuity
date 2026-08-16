@@ -58,6 +58,8 @@ async function startServer() {
   app.post("/api/scheduled/vocab-expand", handleVocabExpand);
   const { handleScheduledBackup } = await import("../scheduled/backup");
   app.post("/api/scheduled/backup", handleScheduledBackup);
+  const { handleParentalOptionalDataRetention } = await import("../scheduled/parental-data-retention");
+  app.post("/api/scheduled/parental-optional-data-retention", handleParentalOptionalDataRetention);
 
   // Telemetry is public so signed-out clients can report failures, but it stores
   // only a fixed event and a short controlled context label.
