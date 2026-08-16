@@ -76,6 +76,35 @@ function getRateLimitBucket(req: Request): { key: string; max: number } | null {
   return { key: isAuthRoute ? "auth" : "api", max: isAuthRoute ? AUTH_RATE_LIMIT_MAX : API_RATE_LIMIT_MAX };
 }
 
+export function buildContentSecurityPolicy(): string {
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const scriptSources = ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://connect.facebook.net"];
+  const connectSources = ["'self'", "https://api.manus.im", "https://*.manus.im"];
+
+  if (isDevelopment) {
+    scriptSources.push("'unsafe-eval'");
+    connectSources.push("ws:");
+  }
+
+  const directives = [
+    "default-src 'self'",
+    `script-src ${scriptSources.join(" ")}`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https://*.manuscdn.com",
+    "media-src 'self' data: blob: https:",
+    `connect-src ${connectSources.join(" ")}`,
+    "worker-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ];
+
+  if (!isDevelopment) directives.push("upgrade-insecure-requests");
+  return directives.join("; ");
+}
+
 // ── Main Security Middleware ───────────────────────────────────
 export function securityMiddleware(req: Request, res: Response, next: NextFunction): void {
   const clientIp = getClientIp(req);
@@ -170,12 +199,14 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   }
 
   // Security Headers
+  res.setHeader('Content-Security-Policy', buildContentSecurityPolicy());
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=(self)');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
 
   next();
 }
