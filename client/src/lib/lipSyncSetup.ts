@@ -27,3 +27,12 @@ export const LIP_SYNC_SETUP_STEPS = [
       "Quando houver uma GPU NVIDIA com CUDA, será feita uma prova de conceito separada, com consentimento, teste visual e áudio real. Nenhum motor será ativado no curso sem essa validação. Não será usado tremor artificial como substituto de movimento labial.",
   },
 ] as const;
+
+export const GPU_INTERACTION_NOTICE = {
+  withCuda:
+    "Uma GPU NVIDIA compatível com CUDA poderá processar, depois de configuração e validação separadas, interações visuais mais complexas: resposta facial por áudio, movimentos naturais, vídeos dinâmicos e reações a objetos da cena.",
+  withoutCuda:
+    "Sem GPU compatível, o aplicativo continua com texto, voz, exercícios, vídeos pré-gerados e vocabulário. Ele não gera localmente essas animações visuais complexas e não simula movimento com tremores.",
+  availability:
+    "Esses recursos futuros não estão instalados, não são ativados automaticamente e não são prometidos por este aviso.",
+} as const;

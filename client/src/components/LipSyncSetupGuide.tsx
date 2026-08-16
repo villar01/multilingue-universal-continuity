@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle2, ChevronRight, Cpu, ExternalLink, ShieldCheck, Volume2 } from "lucide-react";
+import { CheckCircle2, ChevronRight, Cpu, ExternalLink, ShieldCheck, Sparkles, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LIP_SYNC_GUIDE_STORAGE_KEY, LIP_SYNC_SETUP_STEPS } from "@/lib/lipSyncSetup";
+import { GPU_INTERACTION_NOTICE, LIP_SYNC_GUIDE_STORAGE_KEY, LIP_SYNC_SETUP_STEPS } from "@/lib/lipSyncSetup";
 
 const START_ROUTES = new Set(["/", "/onboarding"]);
 
@@ -84,6 +84,17 @@ export function LipSyncSetupGuide() {
               </li>
             ))}
           </ol>
+
+          <section className="rounded-2xl border border-violet-200 bg-violet-50 p-4" aria-label="Capacidade de interação visual por GPU">
+            <div className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-violet-700" aria-hidden="true" />
+              <div className="space-y-3 text-sm text-violet-950">
+                <p><strong>O que uma GPU compatível poderá melhorar:</strong> {GPU_INTERACTION_NOTICE.withCuda}</p>
+                <p><strong>Sem GPU compatível:</strong> {GPU_INTERACTION_NOTICE.withoutCuda}</p>
+                <p className="text-xs text-violet-800">{GPU_INTERACTION_NOTICE.availability}</p>
+              </div>
+            </div>
+          </section>
 
           <div className="flex items-start gap-3 rounded-2xl border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-950">
             <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-800" aria-hidden="true" />
