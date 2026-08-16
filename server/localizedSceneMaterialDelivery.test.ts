@@ -48,8 +48,8 @@ describe("entrega protegida de diálogo localizado", () => {
     expect(source).toContain("O conteúdo canônico desta cena ainda não foi migrado.");
   });
 
-  it("não inicia a Praia Tropical até o material autorizado chegar ao cliente", () => {
-    expect(sceneSource).toContain('const sceneMaterialIsPreparing = selectedScene?.id === "beach" && activeSceneDialog.length === 0');
+  it("não inicia cenas migradas até o material autorizado chegar ao cliente", () => {
+    expect(sceneSource).toContain('const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe") && activeSceneDialog.length === 0');
     expect(sceneSource).toContain("activeSceneDialog.length > 0 && (");
     expect(sceneSource).toContain("Preparando material protegido da cena…");
   });

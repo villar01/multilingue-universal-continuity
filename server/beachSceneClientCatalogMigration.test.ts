@@ -21,4 +21,11 @@ describe("migração protegida da Praia Tropical", () => {
     expect(clientSceneSource).toContain("sceneCanonicalMaterial.useQuery");
     expect(clientSceneSource).toContain("Preparando material protegido da cena…");
   });
+
+  it("remove também o roteiro e os objetos canônicos do Café Parisiense do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Bonjour! Je m'appelle Sophie. Bienvenue au café!");
+    expect(clientSceneSource).not.toContain("Le café est chaud.");
+    expect(serverSeedSource).toContain("Bonjour! Je m'appelle Sophie. Bienvenue au café!");
+    expect(serverSeedSource).toContain("Le café est chaud.");
+  });
 });

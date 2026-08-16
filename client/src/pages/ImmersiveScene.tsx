@@ -807,23 +807,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Bienvenue au café! Commandez en français!",
     greetingPt:"Bem-vindo ao café! Peça em francês!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Bonjour! Je m'appelle Sophie. Bienvenue au café! Que désirez-vous commander?", textPt:"Bom dia! Sou Sophie. Bem-vindo ao café! O que você gostaria de pedir?"},
-      {speaker:"user", text:"Bonjour Sophie! Un café et un croissant, s'il vous plaît.", textPt:"Bom dia Sophie! Um café e um croissant, por favor.", options:["Bonjour Sophie! Un café et un croissant, s'il vous plaît.","Je ne veux rien.","L'addition!"], correctIndex:0},
-      {speaker:"teacher", text:"Très bon choix! Voulez-vous vous asseoir en terrasse? La vue est magnifique.", textPt:"Ótima escolha! Quer se sentar no terraço? A vista é magnífica."},
-      {speaker:"user", text:"Oui, la terrasse est parfaite! Je vais lire le journal en attendant.", textPt:"Sim, o terraço é perfeito! Vou ler o jornal enquanto espero.", options:["Oui, la terrasse est parfaite! Je vais lire le journal en attendant.","Non, je préfère l'intérieur.","Je n'ai pas le temps."], correctIndex:0},
-      {speaker:"teacher", text:"Voici votre café et votre croissant! Le croissant est frais du matin.", textPt:"Aqui está seu café e seu croissant! O croissant é fresco da manhã."},
-      {speaker:"user", text:"Merci beaucoup! C'est délicieux! L'addition, s'il vous plaît.", textPt:"Muito obrigado! Está delicioso! A conta, por favor.", options:["Merci beaucoup! C'est délicieux! L'addition, s'il vous plaît.","Je n'aime pas le croissant.","C'est trop cher."], correctIndex:0},
-      {speaker:"teacher", text:"Avec plaisir! Votre français est excellent. Revenez bientôt!", textPt:"Com prazer! Seu francês está excelente. Volte logo!"},
-    ],
-    hotspots:[
-      {id:"cafe3", x:40, y:55, label:"Café", translation:"Café", pronunciation:"ka-FÉ", example:"Le café est chaud.", examplePt:"O café está quente.", icon:"☕", color:"#a16207"},
-      {id:"croissant", x:60, y:65, label:"Croissant", translation:"Croissant", pronunciation:"krwa-SON", example:"Le croissant est frais.", examplePt:"O croissant está fresco.", icon:"🥐", color:"#f59e0b"},
-      {id:"garcon", x:25, y:40, label:"Garçon", translation:"Garçom", pronunciation:"gar-SON", example:"Appelez le garçon.", examplePt:"Chame o garçom.", icon:"🧑‍🍳", color:"#6366f1"},
-      {id:"terrasse", x:70, y:35, label:"Terrasse", translation:"Terraço", pronunciation:"te-RAS", example:"La terrasse est agréable.", examplePt:"O terraço é agradável.", icon:"🪑", color:"#22c55e"},
-      {id:"journal", x:50, y:45, label:"Journal", translation:"Jornal", pronunciation:"zhur-NAL", example:"Je lis le journal.", examplePt:"Leio o jornal.", icon:"📰", color:"#0ea5e9"},
-      {id:"addition", x:80, y:60, label:"Addition", translation:"Conta", pronunciation:"a-di-SION", example:"L'addition, s'il vous plaît.", examplePt:"A conta, por favor.", icon:"🧾", color:"#dc2626"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"family_home", name:"Casa da Família", nameEn:"Family at Home", flag:"🏠",
@@ -1537,7 +1523,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && selectedScene?.id === "beach"
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1546,7 +1532,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = selectedScene?.id === "beach" && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
