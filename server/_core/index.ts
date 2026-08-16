@@ -12,6 +12,7 @@ import { sdk } from "./sdk";
 import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
+import { consumePublicErrorReportQuota, sanitizePublicErrorReport } from "./httpRouteSecurity";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -45,9 +46,9 @@ async function startServer() {
   // Enable gzip compression for all responses (70% size reduction)
   app.use(compression({ level: 6 }));
   
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // File bytes use storage directly; API bodies stay deliberately small.
+  app.use(express.json({ limit: "1mb" }));
+  app.use(express.urlencoded({ limit: "1mb", extended: true }));
   // Storage proxy for /manus-storage/* paths
   registerStorageProxy(app);
   // OAuth callback under /api/oauth/callback
@@ -58,13 +59,18 @@ async function startServer() {
   const { handleScheduledBackup } = await import("../scheduled/backup");
   app.post("/api/scheduled/backup", handleScheduledBackup);
 
-  // Telemetria + Error reporting — salva no banco para IA de autoaperfeiçoamento
+  // Telemetry is public so signed-out clients can report failures, but it stores
+  // only a fixed event, a safe context label and a path without query parameters.
   app.post("/api/error-report", async (req, res) => {
-    const { context, message, stack, url, timestamp, eventType } = req.body || {};
-    if (message) {
-      console.error(`[CLIENT ERROR] [${context || 'unknown'}] ${message} | url:${url} | ts:${timestamp}`);
-      if (stack) console.error(`  Stack: ${stack.slice(0, 300)}`);
+    const clientKey = req.ip || req.socket.remoteAddress || "unknown";
+    if (!consumePublicErrorReportQuota(clientKey)) {
+      res.status(429).json({ ok: false });
+      return;
     }
+
+    const telemetry = sanitizePublicErrorReport(req.body);
+    console.error(`[CLIENT ERROR] [${telemetry.context}] ${telemetry.eventType}`);
+
     try {
       const { getDb } = await import("../db");
       const db = await getDb();
@@ -72,7 +78,7 @@ async function startServer() {
         const pool = (db as any).$client;
         await pool.execute(
           `INSERT INTO app_telemetry (event_type, context, message, stack, url) VALUES (?, ?, ?, ?, ?)`,
-          [eventType || 'error', (context || '').slice(0, 100), (message || '').slice(0, 500), (stack || '').slice(0, 1000), (url || '').slice(0, 200)]
+          [telemetry.eventType, telemetry.context, telemetry.message, telemetry.stack, telemetry.url]
         );
       }
     } catch (_e) { /* silencioso */ }
@@ -93,9 +99,20 @@ async function startServer() {
       res.status(500).json({ success: false, message: e.message });
     }
   });
-  // Insights da IA — listagem para o painel admin
+  // AI insights contain operational data and are never public.
   app.get("/api/ai-insights", async (req, res) => {
     try {
+      let user;
+      try {
+        user = await sdk.authenticateRequest(req);
+      } catch {
+        res.status(401).json({ error: "authentication-required" });
+        return;
+      }
+      if (user.role !== "admin") {
+        res.status(403).json({ error: "admin-only" });
+        return;
+      }
       const { getDb } = await import("../db");
       const db = await getDb();
       if (!db) return res.json([]);
