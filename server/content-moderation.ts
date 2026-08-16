@@ -20,7 +20,7 @@ import {
   type InsertConversationLog,
   type InsertModerationAlert,
 } from "../drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 
 // ============================================================
@@ -131,6 +131,7 @@ export async function requireVerifiedAISafetyContext(userId: number): Promise<Us
       eq(parentalConsents.confirmedMoralConduct, true),
       eq(parentalConsents.confirmedParentalControl, true),
       eq(parentalConsents.confirmedLegalCompliance, true),
+      isNull(parentalConsents.revokedAt),
     ))
     .limit(1);
 

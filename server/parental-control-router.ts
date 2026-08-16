@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createHash, randomBytes } from 'node:crypto';
 import { getDb } from './db';
-import { childProfiles, parentalSettings, usageSessions, parentalAlerts, parentalContentDecisions } from '../drizzle/schema';
-import { eq, desc, and, gte, gt, sql } from 'drizzle-orm';
+import { childProfiles, parentalSettings, usageSessions, parentalAlerts, parentalContentDecisions, parentalConsents, userSafetyProfile } from '../drizzle/schema';
+import { eq, desc, and, gte, gt, isNull, sql } from 'drizzle-orm';
 import { getUsagePatterns } from './contentFilter';
 import { assessChildSafety } from './childSafetyPolicy';
 import { hashParentPin, isHashedParentPin, verifyStoredParentPin } from './parentalPinSecurity';
@@ -154,6 +154,34 @@ export const parentalControlRouter = router({
       await requireChildOwnership(database, input.childId, ctx.user.id);
       await database.update(childProfiles).set({ parentalConsentGiven: true, parentalConsentAt: new Date() })
         .where(eq(childProfiles.id, input.childId));
+      return { success: true };
+    }),
+
+  revokeChildConsent: protectedProcedure
+    .input(z.object({ childId: z.number().positive(), pin: z.string().length(4) }))
+    .mutation(async ({ input, ctx }) => {
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'DB unavailable' });
+      const child = await requireChildOwnership(database, input.childId, ctx.user.id);
+      const [settings] = await database.select().from(parentalSettings)
+        .where(eq(parentalSettings.childId, input.childId));
+      if (!settings || !(await verifyAndUpgradeParentPin(database, input.childId, settings.pinCode, input.pin))) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'PIN do responsável inválido' });
+      }
+
+      await database.update(childProfiles)
+        .set({ parentalConsentGiven: false, parentalConsentAt: null })
+        .where(and(eq(childProfiles.id, child.id), eq(childProfiles.parentId, ctx.user.id)));
+
+      if (child.linkedUserId) {
+        await database.update(parentalConsents)
+          .set({ revokedAt: new Date() })
+          .where(and(eq(parentalConsents.userId, child.linkedUserId), isNull(parentalConsents.revokedAt)));
+        await database.update(userSafetyProfile)
+          .set({ parentalConsentGiven: false, parentConsentDate: null })
+          .where(eq(userSafetyProfile.userId, child.linkedUserId));
+      }
+
       return { success: true };
     }),
 

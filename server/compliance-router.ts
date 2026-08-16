@@ -87,6 +87,7 @@ export const complianceRouter = router({
         sql`SELECT id FROM parental_consents 
             WHERE user_id = ${ctx.user.id} 
             AND confirmed_terms = 1 
+            AND revoked_at IS NULL
             LIMIT 1`
       );
       const parentalRows = (parentalResult as any)[0] as any[];
@@ -132,8 +133,47 @@ export const complianceRouter = router({
           )`
       );
 
+      // Um novo consentimento formal restaura somente os indicadores mínimos
+      // utilizados pelos portões de acesso. Identidade e contato do responsável
+      // não são retornados ao cliente nem enviados a canais externos.
+      await db.execute(
+        sql`UPDATE user_safety_profile
+            SET parental_consent_given = 1, parent_consent_date = NOW()
+            WHERE user_id = ${ctx.user.id}`
+      );
+      await db.execute(
+        sql`UPDATE child_profiles
+            SET parentalConsentGiven = 1, parentalConsentAt = NOW()
+            WHERE linkedUserId = ${ctx.user.id}`
+      );
+
       // The notification channel must not receive guardian identity or contact data.
       await notifyOwner(createParentalConsentNotification());
+
+      return { success: true };
+    }),
+
+  /** Revogar a autorização formal e bloquear imediatamente os portões do menor. */
+  revokeParentalConsent: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      await db.execute(
+        sql`UPDATE parental_consents
+            SET revoked_at = COALESCE(revoked_at, NOW())
+            WHERE user_id = ${ctx.user.id} AND revoked_at IS NULL`
+      );
+      await db.execute(
+        sql`UPDATE user_safety_profile
+            SET parental_consent_given = 0, parent_consent_date = NULL
+            WHERE user_id = ${ctx.user.id}`
+      );
+      await db.execute(
+        sql`UPDATE child_profiles
+            SET parentalConsentGiven = 0, parentalConsentAt = NULL
+            WHERE linkedUserId = ${ctx.user.id}`
+      );
 
       return { success: true };
     }),

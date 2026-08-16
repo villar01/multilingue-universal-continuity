@@ -1004,6 +1004,12 @@ function SecurityTab({
       setPairingExpiresAt(new Date(result.expiresAt));
     },
   });
+  const revokeChildConsent = trpc.parentalControl.revokeChildConsent.useMutation({
+    onSuccess: () => {
+      utils.parentalControl.listChildren.invalidate();
+      utils.parentalControl.getSettings.invalidate({ childId });
+    },
+  });
 
   return (
     <div className="space-y-4">
@@ -1112,8 +1118,17 @@ function SecurityTab({
             </CardHeader>
             <CardContent>
               <p className="text-sm text-slate-400 mb-4">
-                Remover este perfil de criança apagará todos os dados, sessões e configurações associadas.
+                Revogar a autorização bloqueia imediatamente o perfil infantil vinculado e exige uma nova autorização formal para restaurar o acesso. Excluir o perfil apaga todos os dados, sessões e configurações associadas.
               </p>
+              <Button
+                variant="outline"
+                className="mb-3 w-full border-red-500/60 text-red-200 hover:bg-red-950/60"
+                disabled={revokeChildConsent.isPending}
+                onClick={() => revokeChildConsent.mutate({ childId, pin: pinInput })}
+              >
+                <Shield className="w-4 h-4 mr-1" /> {revokeChildConsent.isPending ? 'Revogando autorização...' : 'Revogar autorização e bloquear acesso'}
+              </Button>
+              {revokeChildConsent.error ? <p className="mb-3 text-sm text-red-300">{revokeChildConsent.error.message}</p> : null}
               <Button variant="destructive" onClick={onDelete} className="w-full">
                 <Trash2 className="w-4 h-4 mr-1" /> Excluir Perfil
               </Button>

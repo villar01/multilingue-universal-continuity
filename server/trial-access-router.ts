@@ -1,7 +1,7 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { learningTrials, termsAcceptances, trialLessonAccesses, users } from "../drizzle/schema";
+import { learningTrials, parentalConsents, termsAcceptances, trialLessonAccesses, userSafetyProfile, users } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 
@@ -45,6 +45,32 @@ async function assertAcceptedTerms(userId: number) {
 
   if (acceptance.length === 0) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Conclua o aceite de proteção antes de iniciar as lições." });
+  }
+
+  const [safetyProfile] = await db
+    .select({ ageGroup: userSafetyProfile.ageGroup })
+    .from(userSafetyProfile)
+    .where(eq(userSafetyProfile.userId, userId))
+    .limit(1);
+
+  if (safetyProfile && safetyProfile.ageGroup !== "adulto") {
+    const [activeConsent] = await db
+      .select({ id: parentalConsents.id })
+      .from(parentalConsents)
+      .where(and(
+        eq(parentalConsents.userId, userId),
+        eq(parentalConsents.isMinor, true),
+        eq(parentalConsents.confirmedTerms, true),
+        eq(parentalConsents.confirmedMoralConduct, true),
+        eq(parentalConsents.confirmedParentalControl, true),
+        eq(parentalConsents.confirmedLegalCompliance, true),
+        isNull(parentalConsents.revokedAt),
+      ))
+      .limit(1);
+
+    if (!activeConsent) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Autorização parental válida é obrigatória antes de iniciar as lições." });
+    }
   }
 
   return db;
