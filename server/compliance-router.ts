@@ -4,9 +4,10 @@
  */
 
 import { z } from "zod";
-import { protectedProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { sql } from "drizzle-orm";
+import { and, desc, eq, sql, type SQL } from "drizzle-orm";
+import { securityEvents } from "../drizzle/schema";
 import { notifyOwner } from "./_core/notification";
 
 export const complianceRouter = router({
@@ -150,42 +151,48 @@ Todos os aceites foram confirmados pelo responsável legal.
     }),
 
   /** Listar eventos de segurança (admin) */
-  getSecurityEvents: protectedProcedure
+  getSecurityEvents: adminProcedure
     .input(z.object({
       severity: z.enum(["critical", "high", "medium", "low", "all"]).default("all"),
       resolved: z.boolean().optional(),
       limit: z.number().min(1).max(100).default(50),
     }))
-    .query(async ({ ctx, input }) => {
-      // Apenas admin
-      if ((ctx.user as any).role !== "admin") {
-        throw new Error("Acesso negado");
-      }
+    .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
 
-      let query = `SELECT * FROM security_events`;
-      const conditions: string[] = [];
-      if (input.severity !== "all") conditions.push(`severity = '${input.severity}'`);
-      if (input.resolved !== undefined) conditions.push(`resolved = ${input.resolved ? 1 : 0}`);
-      if (conditions.length > 0) query += ` WHERE ${conditions.join(" AND ")}`;
-      query += ` ORDER BY created_at DESC LIMIT ${input.limit}`;
+      const conditions: SQL[] = [];
+      if (input.severity !== "all") conditions.push(eq(securityEvents.severity, input.severity));
+      if (input.resolved !== undefined) conditions.push(eq(securityEvents.resolved, input.resolved));
+      const where = conditions.length === 0 ? undefined : conditions.length === 1 ? conditions[0] : and(...conditions);
 
-      const result = await db.execute(sql.raw(query));
-      return (result as any)[0] as any[];
+      return db
+        .select({
+          id: securityEvents.id,
+          eventType: securityEvents.eventType,
+          severity: securityEvents.severity,
+          actionTaken: securityEvents.actionTaken,
+          resolved: securityEvents.resolved,
+          createdAt: securityEvents.createdAt,
+          resolvedAt: securityEvents.resolvedAt,
+        })
+        .from(securityEvents)
+        .where(where)
+        .orderBy(desc(securityEvents.createdAt))
+        .limit(input.limit);
     }),
 
   /** Marcar evento de segurança como resolvido (admin) */
-  resolveSecurityEvent: protectedProcedure
+  resolveSecurityEvent: adminProcedure
     .input(z.object({ eventId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      if ((ctx.user as any).role !== "admin") throw new Error("Acesso negado");
       const db = await getDb();
       if (!db) throw new Error("Database unavailable");
 
-      await db.execute(
-        sql`UPDATE security_events SET resolved = 1, resolved_at = NOW(), resolved_by = ${ctx.user.id} WHERE id = ${input.eventId}`
-      );
+      await db
+        .update(securityEvents)
+        .set({ resolved: true, resolvedAt: new Date(), resolvedBy: ctx.user.id })
+        .where(eq(securityEvents.id, input.eventId));
       return { success: true };
     }),
 });
