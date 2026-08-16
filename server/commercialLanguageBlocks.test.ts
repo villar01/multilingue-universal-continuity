@@ -5,6 +5,7 @@ import {
   isInitialCommercialTargetLanguage,
 } from "../shared/commercialLanguageBlocks";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
+import { readFileSync } from "node:fs";
 
 describe("blocos comerciais de idioma", () => {
   it("mantém os seis idiomas iniciais como oferta comercial por idioma-alvo", () => {
@@ -25,5 +26,12 @@ describe("blocos comerciais de idioma", () => {
       userId: 1,
     });
     expect(result).toEqual({ status: "planned_language_block", items: [] });
+  });
+
+  it("comunica o bloco futuro nas cenas sem iniciar entrega curricular", () => {
+    const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+    expect(sceneSource).toContain("const targetLanguageBlockIsPlanned = Boolean(targetLang) && !isInitialCommercialTargetLanguage(targetLang)");
+    expect(sceneSource).toContain("Bloco em preparação");
+    expect(sceneSource).toContain("targetLanguageBlockIsPlanned && !immersionMode");
   });
 });

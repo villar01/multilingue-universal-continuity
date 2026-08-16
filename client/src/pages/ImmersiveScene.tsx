@@ -1521,6 +1521,7 @@ export default function ImmersiveScene() {
   const currentLangInfo = targetLang
     ? (LANG_LABELS[targetLang] || { flag: "🌐", name: targetLang })
     : { flag: "🌐", name: "Idioma" };
+  const targetLanguageBlockIsPlanned = Boolean(targetLang) && !isInitialCommercialTargetLanguage(targetLang);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeSpeechText, setActiveSpeechText] = useState("");
@@ -2724,6 +2725,14 @@ export default function ImmersiveScene() {
                 </div>
               )}
             </div>
+            {targetLanguageBlockIsPlanned && !immersionMode && (
+              <span
+                className="rounded-full border border-sky-300/40 bg-sky-400/15 px-2 py-1 text-[10px] font-bold text-sky-100"
+                title="Este idioma será liberado em um bloco próprio, após a localização e a validação pedagógica."
+              >
+                Bloco em preparação
+              </span>
+            )}
             {sceneTeacherResolution.materialIsInTargetLanguage && compatibleSceneTeachers.length > 0 && !immersionMode && (
               <label className="hidden items-center gap-1 rounded-full border border-white/20 bg-slate-950/55 px-2 py-1 text-xs text-white lg:flex" title="Professor compatível com o idioma estudado">
                 <span className="sr-only">Professor da cena</span>
