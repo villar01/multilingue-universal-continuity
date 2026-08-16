@@ -125,6 +125,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "janela", x: 14, y: 28, label: "Janela", translation: "Window", pronunciation: "ja-NE-la", example: "A janela é grande.", examplePt: "The window is big.", icon: "🪟", color: "#0891b2" },
     ],
   },
+  hotel: {
+    dialog: [
+      { speaker: "teacher", text: "Buongiorno! Benvenuto in hotel. Ha una prenotazione?", textPt: "Bom dia! Bem-vindo ao hotel. Tem uma reserva?" },
+      { speaker: "user", text: "Sì, ho una prenotazione. Mi chiamo Marco.", textPt: "Sim, tenho uma reserva. Meu nome é Marco.", options: ["Sì, ho una prenotazione. Mi chiamo Marco.", "No, non ho prenotazione.", "Forse, non ricordo."], correctIndex: 0 },
+      { speaker: "teacher", text: "Perfetto, Marco! La sua camera è al terzo piano. Ecco la chiave.", textPt: "Perfeito, Marco! Seu quarto fica no terceiro andar. Aqui está a chave." },
+      { speaker: "user", text: "Grazie! Dov'è l'ascensore?", textPt: "Obrigado! Onde fica o elevador?", options: ["Grazie! Dov'è l'ascensore?", "Non capisco.", "Posso avere un'altra camera?"], correctIndex: 0 },
+      { speaker: "teacher", text: "L'ascensore è a destra. La piscina è al piano terra, aperta fino alle 22.", textPt: "O elevador fica à direita. A piscina fica no térreo, aberta até as 22h." },
+      { speaker: "user", text: "Meraviglioso! E il ristorante, a che ora apre?", textPt: "Maravilhoso! E o restaurante, a que horas abre?", options: ["Meraviglioso! E il ristorante, a che ora apre?", "Non ho fame.", "Preferisco mangiare fuori."], correctIndex: 0 },
+      { speaker: "teacher", text: "Il ristorante apre alle sette di sera. Buon soggiorno!", textPt: "O restaurante abre às sete da noite. Boa estadia!" },
+    ],
+    hotspots: [
+      { id: "reception", x: 40, y: 55, label: "Reception", translation: "Recepção", pronunciation: "re-tche-TSIO-ne", example: "La reception è al piano terra.", examplePt: "A recepção fica no térreo.", icon: "🛎️", color: "#f59e0b" },
+      { id: "lampadario", x: 55, y: 22, label: "Lampadario", translation: "Lustre", pronunciation: "lam-pa-DA-rio", example: "Il lampadario è grande.", examplePt: "O lustre é grande.", icon: "💡", color: "#eab308" },
+      { id: "colonna", x: 80, y: 35, label: "Colonna", translation: "Coluna", pronunciation: "ko-LON-na", example: "La colonna è alta.", examplePt: "A coluna é alta.", icon: "🏛️", color: "#6366f1" },
+      { id: "poltrona", x: 28, y: 74, label: "Poltrona", translation: "Poltrona", pronunciation: "pol-TRO-na", example: "La poltrona è comoda.", examplePt: "A poltrona é confortável.", icon: "🪑", color: "#0ea5e9" },
+      { id: "pianta", x: 48, y: 56, label: "Pianta", translation: "Planta", pronunciation: "PIAN-ta", example: "La pianta è verde.", examplePt: "A planta é verde.", icon: "🌿", color: "#8b5cf6" },
+      { id: "lampada", x: 66, y: 55, label: "Lampada", translation: "Luminária", pronunciation: "lam-PA-da", example: "La lampada è accesa.", examplePt: "A luminária está acesa.", icon: "💡", color: "#dc2626" },
+    ],
+  },
   forest: {
     dialog: [
       { speaker: "teacher", text: "Hello! I'm James. Welcome to this magical enchanted forest!", textPt: "Olá! Sou James. Bem-vindo a esta mágica floresta encantada!" },

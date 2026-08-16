@@ -44,6 +44,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(restaurant?.hotspots.map((hotspot) => hotspot.id)).toEqual(["massa", "vinho", "mesa", "vela", "quadro", "janela"]);
   });
 
+  it("mantém o conteúdo do Hotel de Luxo disponível somente no contrato do servidor", () => {
+    const hotel = getSecureSceneSeed("hotel");
+    expect(hotel?.dialog).toHaveLength(7);
+    expect(hotel?.hotspots.map((hotspot) => hotspot.id)).toEqual(["reception", "lampadario", "colonna", "poltrona", "pianta", "lampada"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });
