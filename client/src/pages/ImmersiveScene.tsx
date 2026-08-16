@@ -28,6 +28,7 @@ import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
+import { JAMES_TROPICAL_PILOT_CLIPS, type JamesTropicalPilotClip, type JamesTropicalPilotClipId } from "@shared/jamesTropicalPilotClips";
 import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
 
 function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number): Promise<T> {
@@ -934,6 +935,8 @@ function TeacherAvatar({
   audioViseme,
   overrideName,
   overrideImage,
+  activeClip,
+  onClipFinished,
 }: {
   scene: Scene;
   greeting: string;
@@ -944,6 +947,8 @@ function TeacherAvatar({
   audioViseme?: VisemeData | null;
   overrideName?: string;
   overrideImage?: string;
+  activeClip?: JamesTropicalPilotClip | null;
+  onClipFinished?: () => void;
 }) {
   const { viseme } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
   const facePosition = IMMERSIVE_TEACHER_FACE_POSITIONS[overrideName || scene.teacherName] || { mouthY: 52, mouthWidth: 0.84 };
@@ -969,6 +974,11 @@ function TeacherAvatar({
     : ["C", "E", "G"].includes(viseme);
   // O retrato permanece sem boca sintética até haver mídia docente aprovada.
   const showSyntheticMouth = false;
+  const showPilotClip = Boolean(
+    activeClip?.videoUrl
+      && activeClip.sceneId === scene.id
+      && activeClip.teacherName === (overrideName || scene.teacherName),
+  );
   return (
     <div
       className="immersive-teacher absolute bottom-0 right-4 flex flex-col items-center z-30"
@@ -1032,6 +1042,29 @@ function TeacherAvatar({
             target.style.display = "none";
           }}
         />
+        {showPilotClip && activeClip?.videoUrl && (
+          <video
+            key={activeClip.id}
+            src={activeClip.videoUrl}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
+            onEnded={onClipFinished}
+            onError={onClipFinished}
+            onAbort={onClipFinished}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: "12px",
+              pointerEvents: "none",
+            }}
+          />
+        )}
         {/* Eye blink overlay — natural blinking every 3-5 seconds */}
         <div
           style={{
@@ -1342,6 +1375,17 @@ export default function ImmersiveScene() {
 
   const [selectedScene, setSelectedScene] = useState<Scene | null>(() => getInitialScene());
   const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
+  const [activeJamesClipId, setActiveJamesClipId] = useState<JamesTropicalPilotClipId | null>(null);
+  const activeJamesClip = activeJamesClipId
+    ? JAMES_TROPICAL_PILOT_CLIPS.find((clip) => clip.id === activeJamesClipId) || null
+    : null;
+  const playJamesTropicalClip = useCallback((clipId: JamesTropicalPilotClipId) => {
+    if (selectedScene?.id !== "beach" || selectedScene.teacherName !== "James") return null;
+    const clip = JAMES_TROPICAL_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
+    if (!clip) return null;
+    setActiveJamesClipId(clip.id);
+    return clip;
+  }, [selectedScene?.id, selectedScene?.teacherName]);
   const sceneInitialized = useRef(false); // Track if scene was auto-initialized from targetLang
 
   useEffect(() => {
@@ -1909,11 +1953,15 @@ export default function ImmersiveScene() {
     setDlgIsProcessingSpeech(false);
     dlgRecordingSessionRef.current += 1;
     setActiveHotspot(null);
+    setActiveJamesClipId(null);
     setLearnedWords(new Set());
     setQuizIndex(0);
     setQuizFeedback(null);
     setGreetingText(selectedScene.greetingPt);
     setShowGreeting(true);
+    if (selectedScene.id === "beach" && selectedScene.teacherName === "James") {
+      setActiveJamesClipId("james-tropical-greeting");
+    }
     if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
     greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
     return () => {
@@ -1931,6 +1979,7 @@ export default function ImmersiveScene() {
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
+    if (scene.id === "beach" && scene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
     const line = scene.dialog[0];
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
@@ -1948,7 +1997,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [primeDialogAudioFromGesture, requestSpeechSafely]);
+  }, [playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -2066,13 +2115,15 @@ export default function ImmersiveScene() {
     const expected = line.options[line.correctIndex].trim();
     const correct = matchesImmersiveDialogAnswer(expected, provided);
     if (!correct) {
+      playJamesTropicalClip("james-tropical-retry");
       void askImmersiveTutor(provided);
       return;
     }
     setDlgFeedback("Muito bem. Sua resposta em inglês está correta.");
     setDlgAnswer(line.correctIndex);
+    const praiseClip = playJamesTropicalClip("james-tropical-praise");
     if (isAuthenticated) {
-      const teacherSpeech = getImmersiveDialogTeacherSpeech(`Excellent. ${line.options[line.correctIndex]}`, scene);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `Excellent. ${line.options[line.correctIndex]}`, scene);
       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     }
     const referencedHotspotId = findReferencedHotspotId(line.options[line.correctIndex], scene.hotspots);
@@ -2085,7 +2136,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, requestSpeechSafely, selectedScene]);
+  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, requestSpeechSafely, selectedScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
@@ -2197,9 +2248,14 @@ export default function ImmersiveScene() {
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
+    const pointPalmClip = hotspot.id === "palm" ? playJamesTropicalClip("james-tropical-point-palm") : null;
+    if (pointPalmClip) {
+      requestSpeechSafely(pointPalmClip.dialogue, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
+    } else {
+      requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
+    }
     setTimeout(() => setShowGreeting(false), 5000);
-  }, [selectedScene, learnedWords, nativeLang, requestSpeechSafely]);
+  }, [selectedScene, learnedWords, nativeLang, playJamesTropicalClip, requestSpeechSafely]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -2738,6 +2794,8 @@ export default function ImmersiveScene() {
           isPreparingAudio={isPreparingNeuralAudio}
           spokenText={activeSpeechText || greetingText}
           audioViseme={audioViseme}
+          activeClip={activeJamesClip}
+          onClipFinished={() => setActiveJamesClipId(null)}
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
@@ -2954,8 +3012,12 @@ export default function ImmersiveScene() {
                         setDlgAnswer(i);
                         const correct = selectedScene.dialog[dlgStep].correctIndex === i;
                         if (correct) {
-                          const teacherSpeech = getImmersiveDialogTeacherSpeech(`✅ ${opt}`, selectedScene);
+                          const praiseClip = playJamesTropicalClip("james-tropical-praise");
+                          const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `✅ ${opt}`, selectedScene);
                           requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+                        } else {
+                          const retryClip = playJamesTropicalClip("james-tropical-retry");
+                          if (retryClip) requestSpeechSafely(retryClip.dialogue, retryClip.language, "male", "teacher");
                         }
                         setTimeout(() => dlgNext(), 1400);
                       }}
