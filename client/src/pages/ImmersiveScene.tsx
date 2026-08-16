@@ -120,7 +120,7 @@ const IMMERSIVE_CEFR_LEVELS: Array<{ value: ImmersiveCEFRLevel; label: string }>
 
 const sceneCefrLevel = (scene: Scene): ImmersiveCEFRLevel => resolvePracticeCEFRLevel(scene.difficulty) as ImmersiveCEFRLevel;
 
-// ─── Scene Data (25 scenes with CDN images) ───────────────────────────────────
+// ─── Scene Data (29 scenes with CDN images) ───────────────────────────────────
 export const IMMERSIVE_VOICE_REFERENCE = {
   sceneId: "beach",
   teacherName: "James",
