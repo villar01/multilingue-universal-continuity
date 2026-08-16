@@ -13,6 +13,7 @@ import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
 import { consumePublicErrorReportQuota, sanitizePublicErrorReport } from "./httpRouteSecurity";
+import { requireImmersiveSceneAccess } from "../immersiveSceneAccess";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -53,6 +54,9 @@ async function startServer() {
   registerStorageProxy(app);
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Curriculum scenes must not even receive the application shell before a
+  // valid session is established. The client keeps a matching defensive gate.
+  app.use("/immersive-scene", requireImmersiveSceneAccess(sdk));
   // Scheduled: expansão diária de vocabulário Pareto (+200 palavras/dia via IA)
   const { handleVocabExpand } = await import("../scheduled/vocab-expand");
   app.post("/api/scheduled/vocab-expand", handleVocabExpand);
