@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
+import { getAbuseProtectionSummary } from "./abuseProtection";
 import { getDb } from "../db";
 import { metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
@@ -98,6 +99,8 @@ export const systemRouter = router({
       };
     }
   }),
+
+  getAbuseProtectionSummary: adminProcedure.query(() => getAbuseProtectionSummary()),
 
   logSecurityEvent: adminProcedure
     .input(

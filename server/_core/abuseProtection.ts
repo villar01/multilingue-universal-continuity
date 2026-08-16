@@ -55,6 +55,30 @@ export function isTemporarilyAbuseBlocked(networkAddress: string, now = Date.now
   return Boolean(record && now < record.blockedUntil);
 }
 
+/** Administrative aggregate only. It never returns a network address or key. */
+export function getAbuseProtectionSummary(now = Date.now()) {
+  const bySignal: Record<AbuseSignal, number> = {
+    "rate-limit": 0,
+    scanner: 0,
+    "malicious-input": 0,
+    "repeated-access-denied": 0,
+  };
+  let activeBlocks = 0;
+  let activeRecords = 0;
+
+  for (const [key, record] of records.entries()) {
+    if (now >= record.resetAt && now >= record.blockedUntil) {
+      records.delete(key);
+      continue;
+    }
+    activeRecords += 1;
+    bySignal[record.lastSignal] += 1;
+    if (now < record.blockedUntil) activeBlocks += 1;
+  }
+
+  return { activeRecords, activeBlocks, bySignal };
+}
+
 export function __resetAbuseProtectionForTests(): void {
   records.clear();
 }

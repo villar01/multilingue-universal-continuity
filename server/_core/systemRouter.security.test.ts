@@ -27,6 +27,25 @@ describe("system operational data access", () => {
     await expect(caller.getAiMetrics()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
+  it("rejects the abuse-containment summary for a non-administrator", async () => {
+    const caller = systemRouter.createCaller(createContext("user"));
+    await expect(caller.getAbuseProtectionSummary()).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("returns only aggregate abuse counters to an administrator", async () => {
+    const caller = systemRouter.createCaller(createContext("admin"));
+    await expect(caller.getAbuseProtectionSummary()).resolves.toEqual({
+      activeRecords: expect.any(Number),
+      activeBlocks: expect.any(Number),
+      bySignal: expect.objectContaining({
+        "rate-limit": expect.any(Number),
+        scanner: expect.any(Number),
+        "malicious-input": expect.any(Number),
+        "repeated-access-denied": expect.any(Number),
+      }),
+    });
+  });
+
   it("rejects security-event writes for a non-administrator", async () => {
     const caller = systemRouter.createCaller(createContext("user"));
     await expect(
