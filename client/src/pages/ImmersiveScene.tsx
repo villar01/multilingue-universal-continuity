@@ -531,23 +531,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Willkommen auf dem mittelalterlichen Markt! Lernen wir Geschichte!",
     greetingPt:"Bem-vindo ao mercado medieval! Vamos aprender história!",
     difficulty:"advanced", premium:true,
-    dialog:[
-      {speaker:"teacher", text:"Willkommen auf dem mittelalterlichen Markt! Ich bin Hans. Was möchten Sie kaufen?", textPt:"Bem-vindo ao mercado medieval! Sou Hans. O que você gostaria de comprar?"},
-      {speaker:"user", text:"Guten Tag! Wie viel kostet dieser Apfel?", textPt:"Bom dia! Quanto custa esta maçã?", options:["Guten Tag! Wie viel kostet dieser Apfel?","Ich weiß nicht was ich will.","Das ist zu teuer."], correctIndex:0},
-      {speaker:"teacher", text:"Nur einen Pfennig! Und schau — die alte Burg dort ist aus dem 12. Jahrhundert.", textPt:"Apenas um centavo! E olhe — aquele castelo antigo é do século XII."},
-      {speaker:"user", text:"Die Burg ist beeindruckend! Und der Ritter mit dem Schwert — ist er echt?", textPt:"O castelo é impressionante! E o cavaleiro com a espada — é real?", options:["Die Burg ist beeindruckend! Und der Ritter mit dem Schwert — ist er echt?","Ich habe Angst.","Wo ist der Ausgang?"], correctIndex:0},
-      {speaker:"teacher", text:"Ja, er ist ein Schauspieler! Die Fahne weht im Wind — das ist die Flagge des Königs.", textPt:"Sim, ele é um ator! A bandeira tremula no vento — é a bandeira do rei."},
-      {speaker:"user", text:"Fantastisch! Und die Kerzen am Brunnen leuchten sehr schön.", textPt:"Fantástico! E as velas na fonte brilham muito bonito.", options:["Fantastisch! Und die Kerzen am Brunnen leuchten sehr schön.","Es ist zu dunkel.","Ich will nach Hause."], correctIndex:0},
-      {speaker:"teacher", text:"Wunderbar! Dein Deutsch ist ausgezeichnet. Weiter so!", textPt:"Maravilhoso! Seu alemão está excelente. Continue assim!"},
-    ],
-    hotspots:[
-      {id:"burg", x:70, y:20, label:"Burg", translation:"Castelo", pronunciation:"BURK", example:"Die Burg ist alt.", examplePt:"O castelo é antigo.", icon:"🏰", color:"#64748b"},
-      {id:"markt", x:40, y:60, label:"Markt", translation:"Mercado", pronunciation:"MARKT", example:"Der Markt ist voll.", examplePt:"O mercado está cheio.", icon:"🏪", color:"#f59e0b"},
-      {id:"ritter", x:25, y:40, label:"Ritter", translation:"Cavaleiro", pronunciation:"RIT-ter", example:"Der Ritter ist tapfer.", examplePt:"O cavaleiro é corajoso.", icon:"⚔️", color:"#94a3b8"},
-      {id:"fahne", x:80, y:30, label:"Fahne", translation:"Bandeira", pronunciation:"FA-ne", example:"Die Fahne weht.", examplePt:"A bandeira está tremulando.", icon:"🚩", color:"#dc2626"},
-      {id:"brunnen", x:55, y:65, label:"Brunnen", translation:"Poço", pronunciation:"BRUN-nen", example:"Der Brunnen ist tief.", examplePt:"O poço é fundo.", icon:"⛲", color:"#0ea5e9"},
-      {id:"kerze", x:20, y:55, label:"Kerze", translation:"Vela", pronunciation:"KER-tse", example:"Die Kerze brennt.", examplePt:"A vela está acesa.", icon:"🕯️", color:"#eab308"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"spa", name:"Spa & Bem-Estar", nameEn:"Spa & Wellness", flag:"🧘",
@@ -1325,7 +1311,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1334,7 +1320,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

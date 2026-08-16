@@ -98,6 +98,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(port?.hotspots.map((hotspot) => hotspot.id)).toEqual(["barca", "mare", "faro", "gabbiano", "rete", "ancora"]);
   });
 
+  it("mantém o conteúdo do Mercado Medieval disponível somente no contrato do servidor", () => {
+    const medieval = getSecureSceneSeed("medieval");
+    expect(medieval?.dialog).toHaveLength(7);
+    expect(medieval?.hotspots.map((hotspot) => hotspot.id)).toEqual(["burg", "markt", "ritter", "fahne", "brunnen", "kerze"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

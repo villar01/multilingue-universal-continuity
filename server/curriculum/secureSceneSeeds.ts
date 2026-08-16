@@ -201,6 +201,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "clock", x: 85, y: 15, label: "Clock", translation: "Relógio", pronunciation: "KLOK", example: "Look at the clock.", examplePt: "Olhe para o relógio.", icon: "🕐", color: "#dc2626" },
     ],
   },
+  medieval: {
+    dialog: [
+      { speaker: "teacher", text: "Willkommen auf dem mittelalterlichen Markt! Ich bin Hans. Was möchten Sie kaufen?", textPt: "Bem-vindo ao mercado medieval! Sou Hans. O que você gostaria de comprar?" },
+      { speaker: "user", text: "Guten Tag! Wie viel kostet dieser Apfel?", textPt: "Bom dia! Quanto custa esta maçã?", options: ["Guten Tag! Wie viel kostet dieser Apfel?", "Ich weiß nicht was ich will.", "Das ist zu teuer."], correctIndex: 0 },
+      { speaker: "teacher", text: "Nur einen Pfennig! Und schau — die alte Burg dort ist aus dem 12. Jahrhundert.", textPt: "Apenas um centavo! E olhe — aquele castelo antigo é do século XII." },
+      { speaker: "user", text: "Die Burg ist beeindruckend! Und der Ritter mit dem Schwert — ist er echt?", textPt: "O castelo é impressionante! E o cavaleiro com a espada — é real?", options: ["Die Burg ist beeindruckend! Und der Ritter mit dem Schwert — ist er echt?", "Ich habe Angst.", "Wo ist der Ausgang?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Ja, er ist ein Schauspieler! Die Fahne weht im Wind — das ist die Flagge des Königs.", textPt: "Sim, ele é um ator! A bandeira tremula no vento — é a bandeira do rei." },
+      { speaker: "user", text: "Fantastisch! Und die Kerzen am Brunnen leuchten sehr schön.", textPt: "Fantástico! E as velas na fonte brilham muito bonito.", options: ["Fantastisch! Und die Kerzen am Brunnen leuchten sehr schön.", "Es ist zu dunkel.", "Ich will nach Hause."], correctIndex: 0 },
+      { speaker: "teacher", text: "Wunderbar! Dein Deutsch ist ausgezeichnet. Weiter so!", textPt: "Maravilhoso! Seu alemão está excelente. Continue assim!" },
+    ],
+    hotspots: [
+      { id: "burg", x: 70, y: 20, label: "Burg", translation: "Castelo", pronunciation: "BURK", example: "Die Burg ist alt.", examplePt: "O castelo é antigo.", icon: "🏰", color: "#64748b" },
+      { id: "markt", x: 40, y: 60, label: "Markt", translation: "Mercado", pronunciation: "MARKT", example: "Der Markt ist voll.", examplePt: "O mercado está cheio.", icon: "🏪", color: "#f59e0b" },
+      { id: "ritter", x: 25, y: 40, label: "Ritter", translation: "Cavaleiro", pronunciation: "RIT-ter", example: "Der Ritter ist tapfer.", examplePt: "O cavaleiro é corajoso.", icon: "⚔️", color: "#94a3b8" },
+      { id: "fahne", x: 80, y: 30, label: "Fahne", translation: "Bandeira", pronunciation: "FA-ne", example: "Die Fahne weht.", examplePt: "A bandeira está tremulando.", icon: "🚩", color: "#dc2626" },
+      { id: "brunnen", x: 55, y: 65, label: "Brunnen", translation: "Poço", pronunciation: "BRUN-nen", example: "Der Brunnen ist tief.", examplePt: "O poço é fundo.", icon: "⛲", color: "#0ea5e9" },
+      { id: "kerze", x: 20, y: 55, label: "Kerze", translation: "Vela", pronunciation: "KER-tse", example: "Die Kerze brennt.", examplePt: "A vela está acesa.", icon: "🕯️", color: "#eab308" },
+    ],
+  },
   port: {
     dialog: [
       { speaker: "teacher", text: "Benvenuto al porto! Sono Giulia. Che bel porto mediterraneo, vero?", textPt: "Bem-vindo ao porto! Sou Giulia. Que porto mediterrâneo bonito, não é?" },

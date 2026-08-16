@@ -139,4 +139,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("La barca è nel porto.");
     expect(clientSceneSource).toContain('selectedScene?.id === "port"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Mercado Medieval do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Willkommen auf dem mittelalterlichen Markt! Ich bin Hans. Was möchten Sie kaufen?");
+    expect(clientSceneSource).not.toContain("Die Burg ist alt.");
+    expect(serverSeedSource).toContain("Willkommen auf dem mittelalterlichen Markt! Ich bin Hans. Was möchten Sie kaufen?");
+    expect(serverSeedSource).toContain("Die Burg ist alt.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "medieval"');
+  });
 });
