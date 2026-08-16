@@ -29,6 +29,7 @@ import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } 
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
+import { isInitialCommercialTargetLanguage } from "@shared/commercialLanguageBlocks";
 import { JAMES_TROPICAL_PILOT_CLIPS, type JamesTropicalPilotClip, type JamesTropicalPilotClipId } from "@shared/jamesTropicalPilotClips";
 import { SOPHIE_CAFE_PILOT_CLIPS, type SophieCafePilotClip, type SophieCafePilotClipId } from "@shared/sophieCafePilotClips";
 import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
@@ -1426,6 +1427,7 @@ export default function ImmersiveScene() {
   const profileTarget = profile.targetCode || localStorage.getItem("ml_target_lang") || "en-US";
   const [targetLang, setTargetLang] = useState<string>(() => profileTarget);
   const [selectedSceneTeacherId, setSelectedSceneTeacherId] = useState<string | null>(null);
+  const [authorizedSceneMaterialKey, setAuthorizedSceneMaterialKey] = useState<string | null>(null);
 
   // Keep targetLang in sync when LanguageContext profile changes (e.g. user changed language on Home)
   useEffect(() => {
@@ -1494,6 +1496,10 @@ export default function ImmersiveScene() {
     }
   }, [compatibleSceneTeachers, selectedSceneTeacherId]);
 
+  useEffect(() => {
+    setAuthorizedSceneMaterialKey(null);
+  }, [selectedScene?.id, targetLang, nativeLang]);
+
   const handleSelectTargetLang = (code: string) => {
     setTargetLang(code);
     setSelectedSceneTeacherId(null);
@@ -1520,9 +1526,20 @@ export default function ImmersiveScene() {
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
+  const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation();
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
+  const localizedSceneDialogueQuery = trpc.curriculum.localizedSceneDialogue.useQuery({
+    lessonKey: authorizedSceneMaterialKey || "scene:pending",
+    sceneId: selectedScene?.id || "pending",
+    targetLanguage: targetLang,
+    nativeLanguage: nativeLang,
+  }, {
+    enabled: isAuthenticated && Boolean(authorizedSceneMaterialKey) && isInitialCommercialTargetLanguage(targetLang),
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioObjectUrlRef = useRef<string | null>(null);
@@ -2044,6 +2061,12 @@ export default function ImmersiveScene() {
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
+    const materialLessonKey = `scene:${scene.id}`;
+    if (isAuthenticated && isInitialCommercialTargetLanguage(targetLang)) {
+      void authorizeLessonMut.mutateAsync({ lessonKey: materialLessonKey })
+        .then((access) => setAuthorizedSceneMaterialKey(access.allowed ? materialLessonKey : null))
+        .catch(() => setAuthorizedSceneMaterialKey(null));
+    }
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
@@ -2066,7 +2089,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+  }, [authorizeLessonMut, isAuthenticated, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, targetLang, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -3090,6 +3113,19 @@ export default function ImmersiveScene() {
                         {dlgFeedback}
                       </div>
                     </div>
+                  )}
+                  {localizedSceneDialogueQuery.data?.status === "ready" && localizedSceneDialogueQuery.data.turns.length > 0 && (
+                    <section className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-950/20 px-3 py-2" aria-label="Material localizado da cena">
+                      <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-emerald-100">Material localizado da cena</p>
+                      <div className="space-y-2 text-sm text-emerald-50">
+                        {localizedSceneDialogueQuery.data.turns.map((turn, index) => (
+                          <div key={`${index}-${turn.targetText}`}>
+                            <p className="font-semibold">{turn.targetText}</p>
+                            <p className="text-emerald-100/80">{nativeLangInfo.name}: {turn.nativeHelp}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
                   )}
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">
                     <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-violet-100">Começar só pelas palavras Pareto</p>
