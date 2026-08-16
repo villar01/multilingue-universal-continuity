@@ -68,6 +68,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(mountain?.hotspots.map((hotspot) => hotspot.id)).toEqual(["gipfel", "schnee", "wald2", "fels", "wolke", "see"]);
   });
 
+  it("mantém o conteúdo do Aeroporto Internacional disponível somente no contrato do servidor", () => {
+    const airport = getSecureSceneSeed("airport");
+    expect(airport?.dialog).toHaveLength(7);
+    expect(airport?.hotspots.map((hotspot) => hotspot.id)).toEqual(["gate", "person", "people", "sign", "window", "floor"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

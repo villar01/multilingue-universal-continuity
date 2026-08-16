@@ -242,23 +242,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to the airport! Let's learn travel vocabulary!",
     greetingPt:"Bem-vindo ao aeroporto! Vamos aprender vocabulário de viagem!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Welcome to the airport! Do you have your passport ready?", textPt:"Bem-vindo ao aeroporto! Você tem seu passaporte pronto?"},
-      {speaker:"user", text:"Yes, here is my passport and boarding pass!", textPt:"Sim, aqui está meu passaporte e cartão de embarque!", options:["Yes, here is my passport and boarding pass!","I lost my passport.","What is a boarding pass?"], correctIndex:0},
-      {speaker:"teacher", text:"Great! Your flight is at gate B12. Do you see the screen with flight information?", textPt:"Ótimo! Seu voo é no portão B12. Você vê a tela com informações de voo?"},
-      {speaker:"user", text:"Yes! The screen says my flight departs in one hour.", textPt:"Sim! A tela diz que meu voo parte em uma hora.", options:["Yes! The screen says my flight departs in one hour.","I can't read the screen.","Where is gate B12?"], correctIndex:0},
-      {speaker:"teacher", text:"Perfect! Don't forget to pass through security. Remove your shoes and belt.", textPt:"Perfeito! Não esqueça de passar pela segurança. Tire os sapatos e o cinto."},
-      {speaker:"user", text:"Understood! How heavy can my luggage be?", textPt:"Entendido! Qual é o peso máximo da bagagem?", options:["Understood! How heavy can my luggage be?","I don't have luggage.","Can I bring food?"], correctIndex:0},
-      {speaker:"teacher", text:"Usually 23 kilograms for checked luggage. Have a great flight!", textPt:"Geralmente 23 quilos para bagagem despachada. Tenha um ótimo voo!"},
-    ],
-    hotspots:[
-      {id:"gate", x:60, y:30, label:"Gate", translation:"Portão", pronunciation:"GEYT", example:"The gate is open.", examplePt:"O portão está aberto.", icon:"🚪", color:"#6366f1"},
-      {id:"person", x:62, y:58, label:"Person", translation:"Pessoa", pronunciation:"PER-son", example:"The person is waiting.", examplePt:"A pessoa está esperando.", icon:"🧍", color:"#f59e0b"},
-      {id:"people", x:50, y:55, label:"People", translation:"Pessoas", pronunciation:"PI-pol", example:"The people are waiting.", examplePt:"As pessoas estão esperando.", icon:"👥", color:"#0ea5e9"},
-      {id:"sign", x:90, y:18, label:"Sign", translation:"Placa", pronunciation:"SAIN", example:"Read the sign.", examplePt:"Leia a placa.", icon:"📋", color:"#94a3b8"},
-      {id:"window", x:20, y:35, label:"Window", translation:"Janela", pronunciation:"WIN-dou", example:"The window is large.", examplePt:"A janela é grande.", icon:"🪟", color:"#8b5cf6"},
-      {id:"floor", x:45, y:72, label:"Floor", translation:"Chão", pronunciation:"FLÓR", example:"The floor is clean.", examplePt:"O chão está limpo.", icon:"⬇️", color:"#dc2626"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"hotel", name:"Hotel de Luxo", nameEn:"Luxury Hotel", flag:"🏨",
@@ -1395,7 +1381,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1404,7 +1390,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

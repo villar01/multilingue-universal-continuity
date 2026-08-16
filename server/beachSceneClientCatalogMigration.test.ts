@@ -99,4 +99,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("Der Gipfel ist schneebedeckt.");
     expect(clientSceneSource).toContain('selectedScene?.id === "mountain"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Aeroporto Internacional do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Welcome to the airport! Do you have your passport ready?");
+    expect(clientSceneSource).not.toContain("The gate is open.");
+    expect(serverSeedSource).toContain("Welcome to the airport! Do you have your passport ready?");
+    expect(serverSeedSource).toContain("The gate is open.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "airport"');
+  });
 });

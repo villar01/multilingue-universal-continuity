@@ -28,6 +28,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "sand", x: 59, y: 82, label: "Sand", translation: "Areia", pronunciation: "SÆND", example: "The sand is warm.", examplePt: "A areia está quente.", icon: "🏖️", color: "#f59e0b" },
     ],
   },
+  airport: {
+    dialog: [
+      { speaker: "teacher", text: "Welcome to the airport! Do you have your passport ready?", textPt: "Bem-vindo ao aeroporto! Você tem seu passaporte pronto?" },
+      { speaker: "user", text: "Yes, here is my passport and boarding pass!", textPt: "Sim, aqui está meu passaporte e cartão de embarque!", options: ["Yes, here is my passport and boarding pass!", "I lost my passport.", "What is a boarding pass?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Great! Your flight is at gate B12. Do you see the screen with flight information?", textPt: "Ótimo! Seu voo é no portão B12. Você vê a tela com informações de voo?" },
+      { speaker: "user", text: "Yes! The screen says my flight departs in one hour.", textPt: "Sim! A tela diz que meu voo parte em uma hora.", options: ["Yes! The screen says my flight departs in one hour.", "I can't read the screen.", "Where is gate B12?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Perfect! Don't forget to pass through security. Remove your shoes and belt.", textPt: "Perfeito! Não esqueça de passar pela segurança. Tire os sapatos e o cinto." },
+      { speaker: "user", text: "Understood! How heavy can my luggage be?", textPt: "Entendido! Qual é o peso máximo da bagagem?", options: ["Understood! How heavy can my luggage be?", "I don't have luggage.", "Can I bring food?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Usually 23 kilograms for checked luggage. Have a great flight!", textPt: "Geralmente 23 quilos para bagagem despachada. Tenha um ótimo voo!" },
+    ],
+    hotspots: [
+      { id: "gate", x: 60, y: 30, label: "Gate", translation: "Portão", pronunciation: "GEYT", example: "The gate is open.", examplePt: "O portão está aberto.", icon: "🚪", color: "#6366f1" },
+      { id: "person", x: 62, y: 58, label: "Person", translation: "Pessoa", pronunciation: "PER-son", example: "The person is waiting.", examplePt: "A pessoa está esperando.", icon: "🧍", color: "#f59e0b" },
+      { id: "people", x: 50, y: 55, label: "People", translation: "Pessoas", pronunciation: "PI-pol", example: "The people are waiting.", examplePt: "As pessoas estão esperando.", icon: "👥", color: "#0ea5e9" },
+      { id: "sign", x: 90, y: 18, label: "Sign", translation: "Placa", pronunciation: "SAIN", example: "Read the sign.", examplePt: "Leia a placa.", icon: "📋", color: "#94a3b8" },
+      { id: "window", x: 20, y: 35, label: "Window", translation: "Janela", pronunciation: "WIN-dou", example: "The window is large.", examplePt: "A janela é grande.", icon: "🪟", color: "#8b5cf6" },
+      { id: "floor", x: 45, y: 72, label: "Floor", translation: "Chão", pronunciation: "FLÓR", example: "The floor is clean.", examplePt: "O chão está limpo.", icon: "⬇️", color: "#dc2626" },
+    ],
+  },
   cafe: {
     dialog: [
       { speaker: "teacher", text: "Bonjour! Je m'appelle Sophie. Bienvenue au café! Que désirez-vous commander?", textPt: "Bom dia! Sou Sophie. Bem-vindo ao café! O que você gostaria de pedir?" },
