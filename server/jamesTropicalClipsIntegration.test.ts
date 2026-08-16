@@ -18,7 +18,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
 
   it("sobrepõe o vídeo sem retirar a foto e retorna a ela quando a mídia termina ou falha", () => {
     expect(sceneSource).toContain('src={overrideImage || scene.teacherImage}');
-    expect(sceneSource).toContain("activeClip?: JamesTropicalPilotClip | null;");
+    expect(sceneSource).toContain("activeClip?: ScenePilotClip | null;");
     expect(sceneSource).toContain("{showPilotClip && activeClip?.videoUrl && (");
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
@@ -30,10 +30,11 @@ describe("integração de clipes de James na Praia Tropical", () => {
 
   it("cobre abertura, palmeira, acerto e nova tentativa sem criar outro controle de áudio", () => {
     expect(sceneSource).toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(sceneSource).toContain('hotspot.id === "palm" ? playJamesTropicalClip("james-tropical-point-palm")');
+    expect(sceneSource).toContain('hotspot.id === "palm"');
+    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-point-palm")');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-praise")');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-retry")');
-    expect(sceneSource).toContain('activeClip={activeJamesClip}');
+    expect(sceneSource).toContain('activeClip={activeJamesClip || activeSophieClip}');
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
