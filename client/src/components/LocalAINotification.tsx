@@ -9,7 +9,7 @@
  * - Never imply that a text model itself creates facial or lip animation
  * 
  * The notification appears once on first visit and can be dismissed.
- * User can choose: install automatically (guided) or manually.
+ * User can choose to view guided installation steps or continue without IA local.
  */
 
 import { useState, useEffect } from 'react';
@@ -21,13 +21,10 @@ export default function LocalAINotification() {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [location] = useLocation();
-  const isImmersiveLearningRoute =
-    location.startsWith('/immersive-scene') ||
-    location.startsWith('/immersive-lesson') ||
-    location.startsWith('/dialogue');
+  const isJourneyStartRoute = location === '/';
 
   useEffect(() => {
-    if (isImmersiveLearningRoute) {
+    if (!isJourneyStartRoute) {
       setVisible(false);
       return;
     }
@@ -41,7 +38,7 @@ export default function LocalAINotification() {
     } catch {
       setVisible(true);
     }
-  }, [isImmersiveLearningRoute]);
+  }, [isJourneyStartRoute]);
 
   const handleDismiss = () => {
     try {
@@ -54,7 +51,7 @@ export default function LocalAINotification() {
     setExpanded(true);
   };
 
-  if (!visible || isImmersiveLearningRoute) return null;
+  if (!visible || !isJourneyStartRoute) return null;
 
   return (
     <div className="fixed bottom-2 right-2 z-50 w-[calc(100vw-1rem)] max-w-md animate-in slide-in-from-bottom-5 duration-300 sm:bottom-4 sm:right-4 sm:w-auto">

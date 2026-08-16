@@ -4,7 +4,7 @@ import { CheckCircle2, ChevronRight, Cpu, ExternalLink, ShieldCheck, Sparkles, V
 import { Button } from "@/components/ui/button";
 import { GPU_INTERACTION_NOTICE, LIP_SYNC_GUIDE_STORAGE_KEY, LIP_SYNC_SETUP_STEPS } from "@/lib/lipSyncSetup";
 
-const START_ROUTES = new Set(["/", "/onboarding"]);
+const START_ROUTES = new Set(["/"]);
 
 export function LipSyncSetupGuide() {
   const [location] = useLocation();
@@ -19,7 +19,8 @@ export function LipSyncSetupGuide() {
     try {
       setOpen(localStorage.getItem(LIP_SYNC_GUIDE_STORAGE_KEY) !== "1");
     } catch {
-      setOpen(true);
+      // Sem armazenamento persistente, não sobrepor a jornada de aprendizagem.
+      setOpen(false);
     }
   }, [location]);
 
