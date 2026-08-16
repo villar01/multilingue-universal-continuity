@@ -80,6 +80,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(park?.hotspots.map((hotspot) => hotspot.id)).toEqual(["arbre", "jeux", "fontaine", "personnes", "chien", "herbe"]);
   });
 
+  it("mantém o conteúdo do Hospital disponível somente no contrato do servidor", () => {
+    const hospital = getSecureSceneSeed("hospital");
+    expect(hospital?.dialog).toHaveLength(7);
+    expect(hospital?.hotspots.map((hotspot) => hotspot.id)).toEqual(["doctor", "medicine", "bed", "xray", "nurse", "ambulance"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

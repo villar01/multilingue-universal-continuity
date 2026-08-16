@@ -115,4 +115,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("L'arbre est grand.");
     expect(clientSceneSource).toContain('selectedScene?.id === "park"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Hospital do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Good morning! I'm Dr. Priya. How are you feeling today?");
+    expect(clientSceneSource).not.toContain("The doctor is kind.");
+    expect(serverSeedSource).toContain("Good morning! I'm Dr. Priya. How are you feeling today?");
+    expect(serverSeedSource).toContain("The doctor is kind.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "hospital"');
+  });
 });

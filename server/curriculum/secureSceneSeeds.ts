@@ -201,6 +201,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "clock", x: 85, y: 15, label: "Clock", translation: "Relógio", pronunciation: "KLOK", example: "Look at the clock.", examplePt: "Olhe para o relógio.", icon: "🕐", color: "#dc2626" },
     ],
   },
+  hospital: {
+    dialog: [
+      { speaker: "teacher", text: "Good morning! I'm Dr. Priya. How are you feeling today?", textPt: "Bom dia! Sou a Dra. Priya. Como você está se sentindo hoje?" },
+      { speaker: "user", text: "I have a headache and I feel very tired.", textPt: "Estou com dor de cabeça e me sinto muito cansado.", options: ["I have a headache and I feel very tired.", "I'm perfectly fine.", "I don't know what's wrong."], correctIndex: 0 },
+      { speaker: "teacher", text: "I see. How long have you had this headache? Since this morning?", textPt: "Entendo. Há quanto tempo você tem essa dor de cabeça? Desde esta manhã?" },
+      { speaker: "user", text: "Yes, since this morning. I also have a fever.", textPt: "Sim, desde esta manhã. Também estou com febre.", options: ["Yes, since this morning. I also have a fever.", "No, it started yesterday.", "I'm not sure."], correctIndex: 0 },
+      { speaker: "teacher", text: "Let me check. The nurse will take your temperature. We may need an X-ray.", textPt: "Deixe-me verificar. A enfermeira vai medir sua temperatura. Podemos precisar de um raio-X." },
+      { speaker: "user", text: "Should I take medicine now? I have some in my bag.", textPt: "Devo tomar remédio agora? Tenho alguns na minha bolsa.", options: ["Should I take medicine now? I have some in my bag.", "I don't want any medicine.", "Can I go home?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Wait for the diagnosis first. Rest in the hospital bed for now.", textPt: "Aguarde o diagnóstico primeiro. Descanse na cama hospitalar por enquanto." },
+    ],
+    hotspots: [
+      { id: "doctor", x: 30, y: 35, label: "Doctor", translation: "Médico", pronunciation: "DOK-ter", example: "The doctor is kind.", examplePt: "O médico é gentil.", icon: "👨‍⚕️", color: "#0ea5e9" },
+      { id: "medicine", x: 60, y: 55, label: "Medicine", translation: "Remédio", pronunciation: "MED-i-sin", example: "Take your medicine.", examplePt: "Tome seu remédio.", icon: "💊", color: "#dc2626" },
+      { id: "bed", x: 75, y: 65, label: "Hospital Bed", translation: "Cama hospitalar", pronunciation: "HOS-pi-tal BED", example: "Rest in the bed.", examplePt: "Descanse na cama.", icon: "🛏️", color: "#8b5cf6" },
+      { id: "xray", x: 20, y: 50, label: "X-Ray", translation: "Raio-X", pronunciation: "EKS-rey", example: "Take an X-ray.", examplePt: "Faça um raio-X.", icon: "🩻", color: "#64748b" },
+      { id: "nurse", x: 50, y: 30, label: "Nurse", translation: "Enfermeira", pronunciation: "NÖRS", example: "The nurse helps.", examplePt: "A enfermeira ajuda.", icon: "👩‍⚕️", color: "#ec4899" },
+      { id: "ambulance", x: 85, y: 75, label: "Ambulance", translation: "Ambulância", pronunciation: "AM-biu-lens", example: "Call an ambulance!", examplePt: "Chame uma ambulância!", icon: "🚑", color: "#f97316" },
+    ],
+  },
   park: {
     dialog: [
       { speaker: "teacher", text: "Bonjour! Je m'appelle Sophie. Quel beau parc, n'est-ce pas?", textPt: "Bom dia! Meu nome é Sophie. Que parque bonito, não é?" },
