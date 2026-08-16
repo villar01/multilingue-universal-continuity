@@ -32,7 +32,6 @@ import { enrichTeacherProfile } from "@/lib/teacherProfile";
 import { synthesizeSpeechLocal as synthesizeSpeechLocalBase, isWebSpeechSupported } from "@/lib/localTTS";
 import { VoiceQualityBanner } from "@/components/VoiceQualityBanner";
 import LiveLessonTeacher from "@/components/LiveLessonTeacher";
-import { analyzePronunciationLocal, isWebAudioSupported } from "@/lib/localSTT";
 import { getLevelByLesson, getLevelConfig, resolvePracticeCEFRLevel, type CEFRLevel } from "@/lib/lesson-levels";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { resolveTeacherSpeechVoice } from "@/lib/voiceConversationTeacher";
