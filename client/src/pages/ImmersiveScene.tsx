@@ -1423,6 +1423,7 @@ export default function ImmersiveScene() {
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1430,15 +1431,17 @@ export default function ImmersiveScene() {
   const activeSpeechRequestRef = useRef<string | null>(null);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
-  const { syncWithAudio, stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
+  const { stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
 
   const stopTeacherAudio = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      audioRef.current.remove();
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
       audioRef.current = null;
     }
+    setDialogAudioSource(null);
     if (localSpeechRef.current && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
       localSpeechRef.current = null;
@@ -1515,15 +1518,17 @@ export default function ImmersiveScene() {
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
-  const playTeacherAudio = useCallback(async (source: string, phrase: string, language: string, requestKey: string, revokeOnEnd = false) => {
-    const audio = new Audio();
+  const playTeacherAudio = useCallback(async (source: string, phrase: string, _language: string, requestKey: string, revokeOnEnd = false) => {
+    const audio = dialogAudioElementRef.current;
+    if (!audio) throw new Error("dialogue-audio-control-unavailable");
+    audio.pause();
+    audio.currentTime = 0;
     audio.src = source;
     audio.preload = "auto";
     audio.setAttribute("playsinline", "");
     audio.muted = false;
     audio.volume = 1;
-    audio.setAttribute("aria-hidden", "true");
-    document.body.appendChild(audio);
+    audio.load();
     setDialogAudioSource(source);
     audioRef.current = audio;
     const releaseRequest = () => {
@@ -1555,7 +1560,6 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
-      audio.remove();
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
@@ -1569,24 +1573,23 @@ export default function ImmersiveScene() {
         audioRef.current = null;
         setActiveSpeechText("");
       }
-      audio.remove();
+      audio.removeAttribute("src");
+      audio.load();
       setDialogAudioSource((current) => current === source ? null : current);
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
-    syncWithAudio(audio, phrase, language);
     try {
       await audio.play();
     } catch (error) {
       if (updatesActiveDialog()) setDlgAudioClock(false);
-      audio.remove();
-      setDialogAudioSource((current) => current === source ? null : current);
       if (audioRef.current === audio) audioRef.current = null;
-      if (revokeOnEnd) URL.revokeObjectURL(source);
-      releaseRequest();
+      setIsPreparingNeuralAudio(false);
+      setIsSpeaking(false);
+      setDlgFeedback("A reprodução automática foi bloqueada. Use o controle de áudio visível para tentar novamente.");
       throw error;
     }
-  }, [stopVisemeSync, syncWithAudio]);
+  }, [stopVisemeSync]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
@@ -2838,14 +2841,14 @@ export default function ImmersiveScene() {
                       {immersionMode ? "Browser voice" : "Usar voz do navegador"}
                     </button>
                   )}
-                  {dialogAudioSource && (
-                    <audio
-                      controls
-                      src={dialogAudioSource}
-                      className="h-8 max-w-[220px]"
-                      aria-label="Áudio da fala em inglês"
-                    />
-                  )}
+                  <audio
+                    ref={dialogAudioElementRef}
+                    controls={Boolean(dialogAudioSource)}
+                    src={dialogAudioSource || undefined}
+                    preload="auto"
+                    className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
+                    aria-label="Áudio da fala em inglês"
+                  />
                 </div>
               )}
               {/* Scrolling text word by word */}

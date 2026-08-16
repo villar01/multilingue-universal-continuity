@@ -15,6 +15,7 @@ describe("estabilidade do sincronizador de visemas", () => {
 
   it("limpa o áudio do professor somente quando a função estável de parada muda", () => {
     expect(sceneSource).toContain("useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);");
-    expect(sceneSource).toContain("const { syncWithAudio, stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);");
+    expect(sceneSource).toContain("const { stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);");
+    expect(sceneSource).toContain("const audio = dialogAudioElementRef.current;");
   });
 });

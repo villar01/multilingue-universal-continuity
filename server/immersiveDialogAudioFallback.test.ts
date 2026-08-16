@@ -19,7 +19,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("audioBase64ToDataUrl");
     expect(source).toContain("setDialogAudioSource((current) => current === source ? null : current)");
     expect(source).not.toContain('URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }))');
-    expect(source).toContain("document.body.appendChild(audio)");
+    expect(source).toContain("const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null)");
+    expect(source).toContain("const audio = dialogAudioElementRef.current;");
+    expect(source).toContain("ref={dialogAudioElementRef}");
+    expect(source).not.toContain("document.body.appendChild(audio)");
   });
 
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
