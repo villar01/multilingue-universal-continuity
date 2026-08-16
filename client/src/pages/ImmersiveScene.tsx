@@ -280,23 +280,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"¡Bienvenido al supermercado! ¡Aprendamos a hacer compras!",
     greetingPt:"Bem-vindo ao supermercado! Vamos aprender a fazer compras!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"¡Bienvenido al supermercado! ¿Qué necesitas comprar hoy?", textPt:"Bem-vindo ao supermercado! O que você precisa comprar hoje?"},
-      {speaker:"user", text:"Necesito leche, pan y fruta fresca.", textPt:"Preciso de leite, pão e fruta fresca.", options:["Necesito leche, pan y fruta fresca.","No necesito nada.","No sé qué comprar."], correctIndex:0},
-      {speaker:"teacher", text:"¡Perfecto! La fruta está en el pasillo tres. ¿Sabes cómo pedir el precio?", textPt:"Perfeito! A fruta fica no corredor três. Você sabe como perguntar o preço?"},
-      {speaker:"user", text:"¡Sí! Digo: '¿Cuál es el precio de esta fruta?'", textPt:"Sim! Digo: 'Qual é o preço desta fruta?'", options:["¡Sí! Digo: '¿Cuál es el precio de esta fruta?'","No sé cómo preguntar.","Prefiero no preguntar."], correctIndex:0},
-      {speaker:"teacher", text:"¡Excelente! Y cuando termines, vas a la caja para pagar.", textPt:"Excelente! E quando terminar, vá ao caixa para pagar."},
-      {speaker:"user", text:"¿Puedo pagar con tarjeta de crédito?", textPt:"Posso pagar com cartão de crédito?", options:["¿Puedo pagar con tarjeta de crédito?","Solo tengo efectivo.","¿Dónde está la salida?"], correctIndex:0},
-      {speaker:"teacher", text:"¡Claro que sí! Tu español está mejorando mucho. ¡Muy bien!", textPt:"Claro que sim! Seu espanhol está melhorando muito. Muito bem!"},
-    ],
-    hotspots:[
-      {id:"carrito", x:35, y:65, label:"Carrito", translation:"Carrinho", pronunciation:"ka-RRI-to", example:"El carrito está lleno.", examplePt:"O carrinho está cheio.", icon:"🛒", color:"#f59e0b"},
-      {id:"fruta", x:20, y:40, label:"Fruta", translation:"Fruta", pronunciation:"FRU-ta", example:"La fruta es fresca.", examplePt:"A fruta está fresca.", icon:"🍎", color:"#dc2626"},
-      {id:"pan", x:60, y:45, label:"Pan", translation:"Pão", pronunciation:"pan", example:"El pan está caliente.", examplePt:"O pão está quente.", icon:"🍞", color:"#a16207"},
-      {id:"leche", x:75, y:35, label:"Leche", translation:"Leite", pronunciation:"LE-tche", example:"La leche es blanca.", examplePt:"O leite é branco.", icon:"🥛", color:"#e2e8f0"},
-      {id:"caja", x:50, y:78, label:"Caja", translation:"Caixa", pronunciation:"KA-kha", example:"La caja está al fondo.", examplePt:"O caixa fica no fundo.", icon:"💳", color:"#6366f1"},
-      {id:"precio", x:85, y:55, label:"Precio", translation:"Preço", pronunciation:"PRE-sio", example:"¿Cuál es el precio?", examplePt:"Qual é o preço?", icon:"🏷️", color:"#22c55e"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"school", name:"Sala de Aula", nameEn:"Classroom", flag:"📚",
@@ -1437,7 +1423,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1446,7 +1432,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "cafe" || selectedScene?.id === "forest" || selectedScene?.id === "paris" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
