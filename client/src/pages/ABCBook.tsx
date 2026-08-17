@@ -114,6 +114,34 @@ export default function ABCBook() {
             </div>
           </section>
 
+          <section>
+            <div className="border-b border-stone-200 pb-3">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Primeiro volume A1</p>
+              <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Capítulos contínuos para estudar</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-700">Leia um capítulo por vez: entenda o objetivo, acompanhe o texto, compare a tradução, observe a gramática e escreva antes de seguir para Pareto, Professor ou cena.</p>
+            </div>
+            <div className="mt-5 space-y-6">
+              {book.chapters.map((chapter, index) => (
+                <article key={chapter.title} className="border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span>
+                    <div className="min-w-0">
+                      <h3 className="font-serif text-xl font-bold text-slate-950">{chapter.title}</h3>
+                      <p className="mt-2 text-sm font-semibold leading-6 text-amber-800">Objetivo: {chapter.objective}</p>
+                    </div>
+                  </div>
+                  <p className="mt-4 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
+                  <p className="mt-3 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
+                  <div className="mt-4 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+                    <p className="font-bold text-slate-900">{chapter.grammarTitle}</p>
+                    <p className="mt-1">{chapter.grammarExplanation}</p>
+                  </div>
+                  <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
           {book.sections.map((section, index) => (
             <section key={section.title} className="border-b border-stone-200 pb-8 last:border-b-0">
               <div className="flex items-start gap-3"><span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span><div><h2 className="font-serif text-xl font-bold">{section.title}</h2><p className="mt-2 leading-7 text-slate-700">{section.text}</p><blockquote className="mt-4 border-l-2 border-slate-300 bg-stone-50 px-4 py-3 text-sm font-semibold italic leading-6 text-slate-700">{section.example}</blockquote></div></div>

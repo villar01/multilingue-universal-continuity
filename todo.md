@@ -1545,6 +1545,8 @@
 - [x] Rejeitar destinos externos no parâmetro returnTo da Base de Estudos, mantendo somente retornos internos seguros — a Base aceita apenas caminhos iniciados por uma única barra e recusa // externo, preservando o painel como retorno seguro; TypeScript e 16 regressões da Base e Pareto aprovadas
 
 - [x] Adicionar uma ação de fala com o Professor diretamente à unidade estruturada A1, mantendo retorno ao item curricular de origem — o botão da unidade abre a conversa do Professor com returnTo para o item ativo da Base; TypeScript e 19 regressões da Base e atalhos aprovadas
+
+- [x] Exibir no Livro ABC a leitura protegida das dez unidades A1, com objetivo, texto, gramática e proposta de escrita de cada capítulo — o Livro recebe dos dados curriculares protegidos os dez capítulos A1 completos em leitura contínua, sem duplicar texto pedagógico no navegador; TypeScript e 21 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados

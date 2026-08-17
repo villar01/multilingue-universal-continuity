@@ -1,7 +1,19 @@
+import { STRUCTURED_A1_UNITS } from "./studyBaseContent";
+
 export type ABCBookSection = {
   title: string;
   text: string;
   example: string;
+};
+
+export type ABCBookChapter = {
+  title: string;
+  objective: string;
+  reading: string;
+  translation: string;
+  grammarTitle: string;
+  grammarExplanation: string;
+  writingPrompt: string;
 };
 
 export type ABCBookPhrase = {
@@ -34,8 +46,19 @@ export type ABCBookDelivery = {
     paretoPrompt: string;
   }>;
   sections: ABCBookSection[];
+  chapters: ABCBookChapter[];
   phrases: ABCBookPhrase[];
 };
+
+const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit) => ({
+  title: unit.unit,
+  objective: unit.objective,
+  reading: unit.reading,
+  translation: unit.readingTranslation,
+  grammarTitle: unit.grammarTitle,
+  grammarExplanation: unit.grammarExplanation,
+  writingPrompt: unit.writingPrompt,
+}));
 
 const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   edition: "Português → Inglês",
@@ -70,6 +93,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       paretoPrompt: "Crie um pedido educado com water e pratique-o sem consultar o modelo.",
     },
   ],
+  chapters: A1_CHAPTERS,
   phrases: [
     { english: "Hello. How are you?", portuguese: "Olá. Como você está?", focus: "Saudação e pergunta" },
     { english: "I am learning English.", portuguese: "Eu estou aprendendo inglês.", focus: "Identidade e objetivo" },
