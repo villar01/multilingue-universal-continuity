@@ -28,7 +28,7 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     const sceneIds = [...sceneSource.matchAll(/^    id:"([^"]+)"/gm)].map((match) => match[1]);
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const launchDialogFromGesture = useCallback");
-    expect(sceneSource).toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
+    expect(sceneSource).toContain("onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
     expect(sceneSource).toContain("activeSceneHotspots.map((hotspot) => {");
     expect(sceneSource).toContain("handleHotspotClick(hotspot);");
     for (const sceneId of sceneIds) {

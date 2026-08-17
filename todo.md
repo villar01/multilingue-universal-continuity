@@ -1584,3 +1584,5 @@
 - [x] Criar regressão transversal para garantir que as 29 cenas usam o mesmo início de diálogo e a mesma ativação acessível de objetos — as 29 sementes protegidas têm diálogo e objetos, e todas passam pelo mesmo início por gesto e pela mesma ativação acessível; TypeScript sem erros e suíte completa com 220 arquivos/572 testes aprovados
 
 - [x] Fechar cartões de objetos ao iniciar o diálogo e impedir que o áudio de objetos capture o fluxo de voz do professor — o início do diálogo encerra cartão e áudio do objeto; cartões não disparam fala automática e continuam com botões de escuta próprios; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados
+
+- [x] Corrigir a progressão principal da Praia Tropical quando o diálogo não abre mesmo com Pareto e objetos funcionando — a abertura do diálogo passa a atualizar o estado antes de limpar mídia anterior e usa um único clique nativo, sem duplicação de gesto; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados

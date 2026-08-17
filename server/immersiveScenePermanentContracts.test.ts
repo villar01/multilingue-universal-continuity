@@ -72,13 +72,14 @@ describe("permanent Tropical Beach scene contracts", () => {
   it("keeps the first dialogue and every scene object reachable by touch, click, and keyboard", () => {
     expect(sceneSource).toContain("const lastSceneGestureAtRef = useRef(0);");
     expect(sceneSource).toContain("const launchDialogFromGesture = useCallback");
-    expect(sceneSource).toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
+    expect(sceneSource).toContain("onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
+    expect(sceneSource).not.toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
     expect(sceneSource).toContain('aria-label={`Abrir vocabulário: ${hotspot.label}`}');
     expect(sceneSource).toContain("tabIndex={0}");
   });
 
   it("separates vocabulary cards from the teacher dialogue and avoids automatic object audio", () => {
-    expect(sceneSource).toContain("stopTeacherAudio();\n    setActiveHotspot(null);");
+    expect(sceneSource).toContain("setActiveHotspot(null);\n    try {\n      stopTeacherAudio();");
     expect(sceneSource).toContain("if (dlgOpen) {\n      setActiveHotspot(null);\n      return;");
     expect(sceneSource).not.toContain("requestSpeechSafely(interaction.speech.text");
   });

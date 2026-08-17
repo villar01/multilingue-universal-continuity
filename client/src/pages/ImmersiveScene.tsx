@@ -1744,15 +1744,19 @@ export default function ImmersiveScene() {
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
-    stopTeacherAudio();
-    setActiveHotspot(null);
-    primeDialogAudioFromGesture();
-    setDialogAuthRequired(false);
-    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
-    if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
-    if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     const line = activeSceneDialog[0];
     if (!line) return;
+    setDialogAuthRequired(false);
+    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
+    setActiveHotspot(null);
+    try {
+      stopTeacherAudio();
+    } catch {
+      // A abertura do diálogo não depende da limpeza de mídia anterior.
+    }
+    primeDialogAudioFromGesture();
+    if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
+    if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
@@ -2653,7 +2657,6 @@ export default function ImmersiveScene() {
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
             type="button"
-            onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}
             onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}
             className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
