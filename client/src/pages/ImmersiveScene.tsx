@@ -324,23 +324,8 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Witaj na farmie! Uczmy się słownictwa wiejskiego!",
     greetingPt:"Bem-vindo à fazenda! Vamos aprender vocabulário rural!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Dzień dobry! Jestem Maja. Witaj na naszej farmie!", textPt:"Bom dia! Sou Maja. Bem-vindo à nossa fazenda!"},
-      {speaker:"user", text:"Dzień dobry, Maja! Jaka piękna farma! Widzę krowy i kury!", textPt:"Bom dia, Maja! Que fazenda bonita! Vejo vacas e galinhas!", options:["Dzień dobry, Maja! Jaka piękna farma! Widzę krowy i kury!","Nie lubię farm.","Gdzie jest miasto?"], correctIndex:0},
-      {speaker:"teacher", text:"Tak! Krowa daje nam mleko, a kura znosi jajka. Czy wiesz jak powiedzieć 'traktor'?", textPt:"Sim! A vaca nos dá leite e a galinha bota ovos. Você sabe como dizer 'trator'?"},
-      {speaker:"user", text:"Traktor! I widzę wielką stodołę pełną pszenicy!", textPt:"Traktor! E vejo um grande celeiro cheio de trigo!", options:["Traktor! I widzę wielką stodołę pełną pszenicy!","Nie rozumiem.","To za trudne."], correctIndex:0},
-      {speaker:"teacher", text:"Doskonale! Pszenica jest złota i piękna. Niebo jest dziś błękitne.", textPt:"Excelente! O trigo é dourado e bonito. O céu está azul hoje."},
-      {speaker:"user", text:"Tak, niebo jest cudowne! Chciałbym tu mieszkać!", textPt:"Sim, o céu é maravilhoso! Gostaria de morar aqui!", options:["Tak, niebo jest cudowne! Chciałbym tu mieszkać!","Wolę miasto.","Jest za cicho."], correctIndex:0},
-      {speaker:"teacher", text:"Wspaniale! Twój polski jest coraz lepszy. Brawo!", textPt:"Maravilhoso! Seu polonês está cada vez melhor. Parabéns!"},
-    ],
-    hotspots:[
-      {id:"krowa", x:35, y:55, label:"Krowa", translation:"Vaca", pronunciation:"KRO-va", example:"Krowa daje mleko.", examplePt:"A vaca dá leite.", icon:"🐄", color:"#f59e0b"},
-      {id:"stodola", x:65, y:40, label:"Stodoła", translation:"Celeiro", pronunciation:"sto-DO-wa", example:"Stodoła jest duża.", examplePt:"O celeiro é grande.", icon:"🏚️", color:"#a16207"},
-      {id:"pszenica", x:50, y:72, label:"Pszenica", translation:"Trigo", pronunciation:"PSHE-ni-tsa", example:"Pszenica jest złota.", examplePt:"O trigo é dourado.", icon:"🌾", color:"#eab308"},
-      {id:"traktor", x:20, y:65, label:"Traktor", translation:"Trator", pronunciation:"TRAK-tor", example:"Traktor jest czerwony.", examplePt:"O trator é vermelho.", icon:"🚜", color:"#dc2626"},
-      {id:"kura", x:80, y:60, label:"Kura", translation:"Galinha", pronunciation:"KU-ra", example:"Kura znosi jajka.", examplePt:"A galinha bota ovos.", icon:"🐔", color:"#f97316"},
-      {id:"niebo", x:55, y:15, label:"Niebo", translation:"Céu", pronunciation:"NIE-bo", example:"Niebo jest błękitne.", examplePt:"O céu é azul.", icon:"🌤️", color:"#3b82f6"},
-    ]
+    dialog:[],
+    hotspots:[]
   },
   {
     id:"museum", name:"Museu de Arte", nameEn:"Art Museum", flag:"🎨",
@@ -1256,7 +1241,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1265,7 +1250,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

@@ -1601,3 +1601,5 @@
 - [x] Migrar o diálogo e os objetos da cena Tóquio, Japão para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/609 testes aprovados
 
 - [x] Migrar o diálogo e os objetos da cena Deserto do Saara para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e cinco objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/611 testes aprovados
+
+- [x] Migrar o diálogo e os objetos da cena Fazenda Campestre para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros e suíte completa com 234 arquivos/611 testes aprovados
