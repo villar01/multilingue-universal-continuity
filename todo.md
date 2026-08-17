@@ -1625,7 +1625,7 @@
 
 - [x] Corrigir diálogo, avanço e voz principal da Praia Tropical preservando os cartões de objetos que já funcionam — diálogo autenticado, avanço seguro e voz manual de James seguem contratos isolados dos cartões; TypeScript e 13 regressões de fluxo, autorização e voz aprovados
 
-- [ ] Restaurar a reprodução neural dos objetos Wave, Ocean, Palm Tree e Sand sem alterar os cartões pedagógicos
+- [x] Restaurar a reprodução neural dos objetos Wave, Ocean, Palm Tree e Sand sem alterar os cartões pedagógicos — os quatro objetos usam a mesma faixa neural preparada, com fallback e cartões preservados; TypeScript e 18 regressões de áudio, fluxo e mídia aprovados
 
 - [ ] Manter o elemento de áudio neural montado quando o diálogo está fechado para que os objetos possam falar
 
