@@ -23,6 +23,11 @@ describe("contrato crítico da cena imersiva", () => {
     expect(startDialogBlock.indexOf("stopTeacherAudio();")).toBeLessThan(startDialogBlock.indexOf("setDlgOpen(true)"));
   });
 
+  it("mantém o comando Iniciar Diálogo acima do cartão de vocabulário aberto", () => {
+    expect(sceneSource).toContain('className="immersive-start-dialog absolute z-[80]');
+    expect(sceneSource).toContain('className="absolute z-50 rounded-2xl shadow-2xl overflow-hidden"');
+  });
+
   it("mantém Pareto como painel independente e acionável", () => {
     expect(sceneSource).toContain("const [paretoOpen, setParetoOpen] = useState(false);");
     expect(sceneSource).toContain("onClick={() => setParetoOpen(true)}");

@@ -2674,7 +2674,7 @@ export default function ImmersiveScene() {
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
             onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
-            className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
+            className="immersive-start-dialog absolute z-[80] flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
               bottom: "100px", left: "50%", transform: "translateX(-50%)",
               background: "rgba(99,102,241,0.85)", backdropFilter: "blur(8px)",
