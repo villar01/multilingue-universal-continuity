@@ -192,6 +192,61 @@ const PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMa
   },
 };
 
+const PT_BR_CAFE_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "¡Hola! Bienvenido al café. ¿Qué quieres pedir?", nativeHelp: "Olá! Bem-vindo ao café. O que você quer pedir?" },
+      { targetText: "Un café y un cruasán, por favor.", nativeHelp: "Um café e um croissant, por favor." },
+      { targetText: "El café está caliente y el cruasán está fresco.", nativeHelp: "O café está quente e o croissant está fresco." },
+    ],
+    objects: [
+      { targetText: "café", nativeHelp: "café" },
+      { targetText: "cruasán", nativeHelp: "croissant" },
+      { targetText: "camarero", nativeHelp: "garçom" },
+      { targetText: "terraza", nativeHelp: "terraço" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Bonjour ! Bienvenue au café. Que voulez-vous commander ?", nativeHelp: "Olá! Bem-vindo ao café. O que você quer pedir?" },
+      { targetText: "Un café et un croissant, s’il vous plaît.", nativeHelp: "Um café e um croissant, por favor." },
+      { targetText: "Le café est chaud et le croissant est frais.", nativeHelp: "O café está quente e o croissant está fresco." },
+    ],
+    objects: [
+      { targetText: "café", nativeHelp: "café" },
+      { targetText: "croissant", nativeHelp: "croissant" },
+      { targetText: "serveur", nativeHelp: "garçom" },
+      { targetText: "terrasse", nativeHelp: "terraço" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Ciao! Benvenuto al bar. Che cosa desideri ordinare?", nativeHelp: "Olá! Bem-vindo ao café. O que você quer pedir?" },
+      { targetText: "Un caffè e un cornetto, per favore.", nativeHelp: "Um café e um croissant, por favor." },
+      { targetText: "Il caffè è caldo e il cornetto è fresco.", nativeHelp: "O café está quente e o croissant está fresco." },
+    ],
+    objects: [
+      { targetText: "caffè", nativeHelp: "café" },
+      { targetText: "cornetto", nativeHelp: "croissant" },
+      { targetText: "cameriere", nativeHelp: "garçom" },
+      { targetText: "terrazza", nativeHelp: "terraço" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Hallo! Willkommen im Café. Was möchten Sie bestellen?", nativeHelp: "Olá! Bem-vindo ao café. O que você quer pedir?" },
+      { targetText: "Einen Kaffee und ein Croissant, bitte.", nativeHelp: "Um café e um croissant, por favor." },
+      { targetText: "Der Kaffee ist heiß und das Croissant ist frisch.", nativeHelp: "O café está quente e o croissant está fresco." },
+    ],
+    objects: [
+      { targetText: "Kaffee", nativeHelp: "café" },
+      { targetText: "Croissant", nativeHelp: "croissant" },
+      { targetText: "Kellner", nativeHelp: "garçom" },
+      { targetText: "Terrasse", nativeHelp: "terraço" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
@@ -202,6 +257,7 @@ function getReviewedLaunchSceneMaterial(input: {
     beach: PT_BR_BEACH_LAUNCH_MATERIAL,
     family_home: PT_BR_FAMILY_HOME_LAUNCH_MATERIAL,
     airport_family: PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL,
+    cafe: PT_BR_CAFE_LAUNCH_MATERIAL,
   };
   return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }
