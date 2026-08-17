@@ -1629,7 +1629,7 @@
 
 - [x] Manter o elemento de áudio neural montado quando o diálogo está fechado para que os objetos possam falar — o player oculto permanece montado acima do painel de diálogo e serve Wave, Ocean, Palm Tree e Sand sem barra nativa; TypeScript e 12 regressões de áudio e segurança aprovados
 
-- [ ] Fazer o clique explícito de pronúncia em Wave, Ocean, Palm Tree e Sand iniciar a faixa neural preparada
+- [x] Fazer o clique explícito de pronúncia em Wave, Ocean, Palm Tree e Sand iniciar a faixa neural preparada — o gesto do aluno inicia a reprodução preparada e mantém o botão do cartão como única recuperação; TypeScript e 13 regressões de áudio e mídia aprovados
 
 - [ ] Fazer a frase de exemplo do cartão Wave iniciar após a pronúncia principal já ter tocado
 
