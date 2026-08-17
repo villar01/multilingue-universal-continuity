@@ -1651,9 +1651,9 @@
 
 - [x] Retomar uma única vez às 21h pela validação visual do Pareto, suíte completa e correções críticas comprovadas — agendamento ativo para 21h no fuso America/Sao_Paulo, sem repetição e com expiração às 23h30
 
-- [ ] Criar o Socorro como livro voador com rótulo SOS, acionado voluntariamente em cenas e lições para abrir o Livro ABC e retornar ao ponto de origem
+- [x] Criar o Socorro como livro voador com rótulo SOS, acionado voluntariamente em cenas e lições para abrir o Livro ABC e retornar ao ponto de origem — componente reutilizável integrado em ImmersiveScene e Lesson, retorno contextual protegido, TypeScript sem erros e 603 testes aprovados
 
-- [ ] Finalizar a primeira edição do Livro ABC do Socorro para o par Português–Inglês, mantendo a arquitetura pronta para os demais pares
+- [x] Finalizar a primeira edição do Livro ABC do Socorro para o par Português–Inglês, mantendo a arquitetura pronta para os demais pares — leitura em folhas brancas, frases PT→EN, prática Pareto contextual e retorno em cascata; TypeScript sem erros e 603 testes aprovados
 
 - [ ] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — captura indisponível no ambiente atual; TypeScript e testes permanecem como validações já executadas
 
