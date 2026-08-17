@@ -485,6 +485,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "papka", x: 60, y: 30, label: "Папка", translation: "Pasta", pronunciation: "PAP-ka", example: "Папка на столе.", examplePt: "A pasta está na mesa.", icon: "📁", color: "#dc2626" },
     ],
   },
+  metro: {
+    dialog: [
+      { speaker: "teacher", text: "Bienvenue dans le métro de Paris! Je suis Sophie. Quelle station cherchez-vous?", textPt: "Bem-vindo ao metrô de Paris! Sou Sophie. Qual estação você procura?" },
+      { speaker: "user", text: "Je cherche la station Louvre. Comment acheter un billet?", textPt: "Procuro a estação Louvre. Como comprar um bilhete?", options: ["Je cherche la station Louvre. Comment acheter un billet?", "Je ne sais pas où aller.", "Je suis perdu."], correctIndex: 0 },
+      { speaker: "teacher", text: "Achetez un billet au guichet ou à la machine. Un ticket coûte deux euros.", textPt: "Compre um bilhete na bilheteria ou na máquina. Um bilhete custa dois euros." },
+      { speaker: "user", text: "Merci! Et le train arrive dans combien de minutes?", textPt: "Obrigado! E o trem chega em quantos minutos?", options: ["Merci! Et le train arrive dans combien de minutes?", "Je n'ai pas d'argent.", "Où est la sortie?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Regardez le panneau — le prochain train arrive dans trois minutes. Attendez sur le quai.", textPt: "Olhe o painel — o próximo trem chega em três minutos. Espere na plataforma." },
+      { speaker: "user", text: "Je vois la porte s'ouvrir! Je dois entrer par le couloir à droite?", textPt: "Vejo a porta se abrir! Devo entrar pelo corredor à direita?", options: ["Je vois la porte s'ouvrir! Je dois entrer par le couloir à droite?", "Je ne veux pas entrer.", "Où est la sortie?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Oui, entrez vite! Votre français est excellent. Bon voyage!", textPt: "Sim, entre rápido! Seu francês está excelente. Boa viagem!" },
+    ],
+    hotspots: [
+      { id: "train", x: 50, y: 50, label: "Train", translation: "Trem", pronunciation: "TREN", example: "Le train arrive.", examplePt: "O trem está chegando.", icon: "🚇", color: "#6366f1" },
+      { id: "quai", x: 30, y: 70, label: "Quai", translation: "Plataforma", pronunciation: "KE", example: "Attendez sur le quai.", examplePt: "Espere na plataforma.", icon: "🛤️", color: "#f59e0b" },
+      { id: "panneau", x: 70, y: 30, label: "Panneau", translation: "Painel", pronunciation: "pa-NO", example: "Lisez le panneau.", examplePt: "Leia o painel.", icon: "📋", color: "#0ea5e9" },
+      { id: "porte", x: 20, y: 45, label: "Porte", translation: "Porta", pronunciation: "PORT", example: "La porte s'ouvre.", examplePt: "A porta se abre.", icon: "🚪", color: "#dc2626" },
+      { id: "billet", x: 80, y: 55, label: "Billet", translation: "Bilhete", pronunciation: "bi-YE", example: "Achetez un billet.", examplePt: "Compre um bilhete.", icon: "🎟️", color: "#22c55e" },
+      { id: "couloir", x: 55, y: 80, label: "Couloir", translation: "Corredor", pronunciation: "kul-WAR", example: "Le couloir est long.", examplePt: "O corredor é longo.", icon: "🏃", color: "#8b5cf6" },
+    ],
+  },
 };
 
 export function getSecureSceneSeed(sceneId: string): SecureSceneSeed | null {
