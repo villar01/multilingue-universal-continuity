@@ -134,6 +134,22 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       example: "I practice new words in the morning. — Eu pratico palavras novas de manhã.",
       paretoPrompt: "Crie uma frase verdadeira com morning e leve-a para a recuperação Pareto sem consultar o modelo.",
     },
+    {
+      term: "study",
+      meaning: "estudar",
+      grammar: "verbo regular; com I, you, we e they, use study; com he, she e it, use studies",
+      pattern: "I study + idioma/assunto: I study English every day.",
+      example: "We study new words together. — Nós estudamos palavras novas juntos.",
+      paretoPrompt: "Escreva quando e o que você study; depois transforme a frase em uma pergunta ao Professor.",
+    },
+    {
+      term: "tomorrow",
+      meaning: "amanhã",
+      grammar: "advérbio de tempo; pode aparecer no fim ou no início de uma frase sobre um plano próximo",
+      pattern: "I will + ação + tomorrow: I will practice tomorrow.",
+      example: "I will review this word tomorrow. — Vou revisar esta palavra amanhã.",
+      paretoPrompt: "Planeje uma revisão curta com tomorrow e repita a frase sem olhar antes de seguir no Pareto.",
+    },
   ],
   chapters: A1_CHAPTERS,
   phrases: [

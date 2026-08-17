@@ -1538,6 +1538,8 @@
 
 - [x] Ampliar as fichas protegidas do Livro ABC com pessoas e rotina — friend e morning foram acrescentados com função, padrão, exemplo e prática Pareto, vinculando a leitura às unidades A1 de pessoas e hábitos; TypeScript, 7 regressões do Livro e validação visual aprovados
 
+- [x] Ampliar as fichas protegidas do Livro ABC com estudo e tempo, vinculando os termos às unidades A1 correspondentes — study e tomorrow foram acrescentados com função, padrão, exemplo e prática Pareto, em alinhamento com as unidades A1; TypeScript, 7 regressões do Livro e validação visual aprovados
+
 - [x] Adicionar em cada capítulo do Livro ABC um link para estudar a unidade correspondente na Base e retornar ao mesmo ponto do livro — cada capítulo abre a unidade A1 pelo parâmetro interno unit e a Base oferece retorno ao Livro, inclusive quando não há cartão de vocabulário ativo; TypeScript e 23 regressões do Livro, Base e SOS aprovadas
 
 - [x] Impedir que o guia técnico de IA local abra automaticamente na tela inicial, mantendo-o acessível apenas por escolha explícita do aluno — o guia exige ?setup=local-ai e não interrompe mais a tela inicial; TypeScript, regressão e validação visual aprovados
