@@ -1744,6 +1744,8 @@ export default function ImmersiveScene() {
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
+    stopTeacherAudio();
+    setActiveHotspot(null);
     primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
@@ -1764,7 +1766,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
 
   const launchDialogFromGesture = useCallback(() => {
     const now = Date.now();
@@ -2007,7 +2009,12 @@ export default function ImmersiveScene() {
 
   const handleHotspotClick = useCallback((hotspot: Hotspot) => {
     if (!selectedScene) return;
+    if (dlgOpen) {
+      setActiveHotspot(null);
+      return;
+    }
     const activeTeacherScene = teachingScene ?? selectedScene;
+    stopTeacherAudio();
     setActiveHotspot(hotspot);
     setParticles(true);
     setTimeout(() => setParticles(false), 1000);
@@ -2030,18 +2037,8 @@ export default function ImmersiveScene() {
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"
-      ? playJamesTropicalClip("james-tropical-point-palm")
-      : activeTeacherScene.teacherName === "Sophie" && hotspot.id === "croissant"
-        ? playSophieCafeClip("sophie-cafe-point-croissant")
-        : null;
-    if (objectFocusClip) {
-      requestSpeechSafely(objectFocusClip.dialogue, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
-    } else {
-      requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
-    }
     setTimeout(() => setShowGreeting(false), 5000);
-  }, [selectedScene, teachingScene, learnedWords, nativeLang, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely]);
+  }, [dlgOpen, learnedWords, selectedScene, stopTeacherAudio, teachingScene]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;

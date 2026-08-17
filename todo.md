@@ -1582,3 +1582,5 @@
 - [x] Corrigir o botão “Iniciar Diálogo” e a ativação dos objetos da Praia Tropical quando o material autorizado já estiver carregado — clique, toque e teclado passam pelo mesmo comando protegido contra duplo disparo; objetos também ficam acessíveis por teclado; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados
 
 - [x] Criar regressão transversal para garantir que as 29 cenas usam o mesmo início de diálogo e a mesma ativação acessível de objetos — as 29 sementes protegidas têm diálogo e objetos, e todas passam pelo mesmo início por gesto e pela mesma ativação acessível; TypeScript sem erros e suíte completa com 220 arquivos/572 testes aprovados
+
+- [x] Fechar cartões de objetos ao iniciar o diálogo e impedir que o áudio de objetos capture o fluxo de voz do professor — o início do diálogo encerra cartão e áudio do objeto; cartões não disparam fala automática e continuam com botões de escuta próprios; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados

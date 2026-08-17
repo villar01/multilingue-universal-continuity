@@ -28,14 +28,13 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('pointerEvents: "none"');
   });
 
-  it("cobre abertura, palmeira, acerto e nova tentativa sem criar outro controle de áudio", () => {
+  it("cobre abertura, acerto e nova tentativa sem deixar a palmeira disparar mídia automaticamente", () => {
     expect(sceneSource).toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(sceneSource).toContain('hotspot.id === "palm"');
-    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-point-palm")');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-praise")');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-retry")');
     expect(sceneSource).toContain('activeClip={activeJamesClip || activeSophieClip}');
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
+    expect(sceneSource).not.toContain('playJamesTropicalClip("james-tropical-point-palm")');
   });
 });

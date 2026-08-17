@@ -77,6 +77,12 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("tabIndex={0}");
   });
 
+  it("separates vocabulary cards from the teacher dialogue and avoids automatic object audio", () => {
+    expect(sceneSource).toContain("stopTeacherAudio();\n    setActiveHotspot(null);");
+    expect(sceneSource).toContain("if (dlgOpen) {\n      setActiveHotspot(null);\n      return;");
+    expect(sceneSource).not.toContain("requestSpeechSafely(interaction.speech.text");
+  });
+
   it("prepares James's neural audio without starting an automatic browser-blocked playback", () => {
     expect(sceneSource).toContain("options?: { autoPlay?: boolean }");
     expect(sceneSource).toContain("const autoPlay = options?.autoPlay ?? true;");
