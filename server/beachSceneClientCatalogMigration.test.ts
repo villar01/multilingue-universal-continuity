@@ -163,4 +163,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("The pool is warm.");
     expect(clientSceneSource).toContain('selectedScene?.id === "spa"');
   });
+
+  it("remove também o roteiro e os objetos canônicos de Tóquio do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("こんにちは！私はゆきです。東京へようこそ！");
+    expect(clientSceneSource).not.toContain("富士山は高いです。");
+    expect(serverSeedSource).toContain("こんにちは！私はゆきです。東京へようこそ！");
+    expect(serverSeedSource).toContain("富士山は高いです。");
+    expect(clientSceneSource).toContain('selectedScene?.id === "tokyo"');
+  });
 });

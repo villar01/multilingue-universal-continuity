@@ -116,6 +116,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(spa?.hotspots.map((hotspot) => hotspot.id)).toEqual(["pool", "towel", "candle", "flower3", "massage", "music"]);
   });
 
+  it("mantém o conteúdo de Tóquio disponível somente no contrato do servidor", () => {
+    const tokyo = getSecureSceneSeed("tokyo");
+    expect(tokyo?.dialog).toHaveLength(7);
+    expect(tokyo?.hotspots.map((hotspot) => hotspot.id)).toEqual(["fuji", "street", "billboard", "screen", "building", "sign"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

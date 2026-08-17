@@ -220,6 +220,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "exit", x: 15, y: 55, label: "Exit", translation: "Saída", pronunciation: "EK-sit", example: "Where is the exit?", examplePt: "Onde fica a saída?", icon: "🚪", color: "#0ea5e9" },
     ],
   },
+  tokyo: {
+    dialog: [
+      { speaker: "teacher", text: "こんにちは！私はゆきです。東京へようこそ！", textPt: "Olá! Sou Yuki. Bem-vindo a Tóquio!" },
+      { speaker: "user", text: "こんにちは、ゆきさん！東京はすごいですね！", textPt: "Olá, Yuki! Tóquio é incrível!", options: ["こんにちは、ゆきさん！東京はすごいですね！", "わかりません。", "さようなら。"], correctIndex: 0 },
+      { speaker: "teacher", text: "ありがとう！あの神社を見てください。日本語で「神社」と言います。", textPt: "Obrigada! Veja aquele santuário. Em japonês dizemos 'jinja'." },
+      { speaker: "user", text: "神社！とても美しいです。桜の花も見えます！", textPt: "Jinja! É muito bonito. Também vejo flores de cerejeira!", options: ["神社！とても美しいです。桜の花も見えます！", "難しいです。", "もう一度言ってください。"], correctIndex: 0 },
+      { speaker: "teacher", text: "そうです！桜は日本の象徴です。春に咲きます。", textPt: "Exato! A cerejeira é o símbolo do Japão. Floresce na primavera." },
+      { speaker: "user", text: "日本語は難しいですが、とても面白いです！", textPt: "O japonês é difícil, mas muito interessante!", options: ["日本語は難しいですが、とても面白いです！", "日本語は嫌いです。", "もう帰ります。"], correctIndex: 0 },
+      { speaker: "teacher", text: "素晴らしい！毎日練習してください！", textPt: "Maravilhoso! Pratique todos os dias!" },
+    ],
+    hotspots: [
+      { id: "fuji", x: 47, y: 18, label: "富士山", translation: "Monte Fuji", pronunciation: "fu-dji-san", example: "富士山は高いです。", examplePt: "O Monte Fuji é alto.", icon: "🗻", color: "#64748b" },
+      { id: "street", x: 54, y: 72, label: "通り", translation: "Rua", pronunciation: "to-ori", example: "通りは賑やかです。", examplePt: "A rua é movimentada.", icon: "🛣️", color: "#7c3aed" },
+      { id: "billboard", x: 22, y: 37, label: "広告", translation: "Publicidade", pronunciation: "ko-ku", example: "広告が見えます。", examplePt: "Vejo uma publicidade.", icon: "📋", color: "#0891b2" },
+      { id: "screen", x: 70, y: 40, label: "画面", translation: "Tela", pronunciation: "ga-men", example: "画面が明るいです。", examplePt: "A tela está iluminada.", icon: "📺", color: "#2563eb" },
+      { id: "building", x: 84, y: 48, label: "建物", translation: "Prédio", pronunciation: "ta-te-mo-no", example: "建物が高いです。", examplePt: "O prédio é alto.", icon: "🏢", color: "#6366f1" },
+      { id: "sign", x: 74, y: 56, label: "看板", translation: "Placa", pronunciation: "can-ban", example: "看板が見えます。", examplePt: "Vejo a placa.", icon: "📋", color: "#14b8a6" },
+    ],
+  },
   spa: {
     dialog: [
       { speaker: "teacher", text: "Welcome to the spa! I'm Priya. How do you feel today?", textPt: "Bem-vindo ao spa! Sou Priya. Como você se sente hoje?" },
