@@ -1560,3 +1560,5 @@
 - [x] Substituir o carregamento indefinido de material protegido por uma orientação de acesso objetiva e acionável quando a sessão não estiver autenticada — acesso não autenticado agora exibe entrada protegida em vez de permanecer em carregamento; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
 
 - [x] Encerrar o estado de carregamento quando a autorização protegida não retornar material, oferecendo renovação segura de acesso sem expor currículo — falhas de autorização ou de entrega agora encerram o carregamento e apresentam ativação segura de acesso; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
+
+- [x] Vincular o indicador de carregamento da cena exclusivamente às requisições realmente pendentes e permitir atualização segura quando não houver material disponível — indicador depende apenas de requisições pendentes, encerra após oito segundos sem material e oferece atualização ou ativação de acesso; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados

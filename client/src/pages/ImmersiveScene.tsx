@@ -1116,6 +1116,7 @@ export default function ImmersiveScene() {
   const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
   const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(loadDialogSpeechRate);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
+  const [sceneMaterialTimedOut, setSceneMaterialTimedOut] = useState(false);
   const ttsMut = trpc.tts.speak.useMutation();
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
@@ -1155,11 +1156,18 @@ export default function ImmersiveScene() {
   const sceneMaterialAccessFailed = Boolean(
     selectedSceneRequiresProtectedMaterial
       && activeSceneDialog.length === 0
-      && (authorizeLessonMut.isError || canonicalSceneMaterialQuery.isError || (isAuthenticated && !authorizedSceneMaterial && !authorizeLessonMut.isPending)),
+      && (authorizeLessonMut.isError || canonicalSceneMaterialQuery.isError || sceneMaterialTimedOut),
   );
-  const sceneMaterialIsPreparing = Boolean(selectedSceneRequiresProtectedMaterial && isAuthenticated && activeSceneDialog.length === 0 && !sceneMaterialAccessFailed);
+  const sceneMaterialIsPreparing = Boolean(
+    selectedSceneRequiresProtectedMaterial
+      && isAuthenticated
+      && activeSceneDialog.length === 0
+      && (authorizeLessonMut.isPending || canonicalSceneMaterialQuery.isPending)
+      && !sceneMaterialAccessFailed,
+  );
   const sceneMaterialRequiresLogin = Boolean(selectedSceneRequiresProtectedMaterial && !isAuthenticated);
   const sceneMaterialNeedsAccess = sceneMaterialRequiresLogin || sceneMaterialAccessFailed;
+  const sceneMaterialActionLabel = isAuthenticated ? "Atualizar cena" : "Ativar acesso";
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
@@ -1181,6 +1189,13 @@ export default function ImmersiveScene() {
       });
     return () => { cancelled = true; };
   }, [authorizeLessonMut, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
+
+  useEffect(() => {
+    setSceneMaterialTimedOut(false);
+    if (!selectedSceneRequiresProtectedMaterial || !isAuthenticated || activeSceneDialog.length > 0) return;
+    const timeoutId = window.setTimeout(() => setSceneMaterialTimedOut(true), 8000);
+    return () => window.clearTimeout(timeoutId);
+  }, [activeSceneDialog.length, isAuthenticated, nativeLang, selectedScene?.id, selectedSceneRequiresProtectedMaterial, targetLang]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioObjectUrlRef = useRef<string | null>(null);
@@ -2633,7 +2648,7 @@ export default function ImmersiveScene() {
           >
             <p className="text-sm font-semibold text-white">Ative o acesso para iniciar esta cena.</p>
             <p className="mt-1 text-xs text-slate-300">O diálogo, a voz e o vocabulário são liberados somente na sessão protegida.</p>
-            <button type="button" onClick={() => { window.location.href = getLoginUrl(); }} className="mt-3 rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">Ativar acesso</button>
+            <button type="button" onClick={() => { window.location.href = isAuthenticated ? window.location.href : getLoginUrl(); }} className="mt-3 rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">{sceneMaterialActionLabel}</button>
           </div>
         )}
         {dialogAuthRequired && !isAuthenticated && (

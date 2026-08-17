@@ -31,8 +31,11 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("const sceneMaterialRequiresLogin");
     expect(sceneSource).toContain("const sceneMaterialAccessFailed");
     expect(sceneSource).toContain("const sceneMaterialNeedsAccess");
+    expect(sceneSource).toContain("const [sceneMaterialTimedOut");
+    expect(sceneSource).toContain("window.setTimeout(() => setSceneMaterialTimedOut(true), 8000)");
+    expect(sceneSource).toContain("const sceneMaterialActionLabel");
     expect(sceneSource).toContain("Ative o acesso para iniciar esta cena.");
-    expect(sceneSource).toContain("Ativar acesso");
+    expect(sceneSource).toContain("Atualizar cena");
   });
 
   it("keeps free questions in the scene with an immediate contextual fallback", () => {
