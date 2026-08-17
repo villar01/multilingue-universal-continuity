@@ -1575,3 +1575,5 @@
 - [ ] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada
 - [x] Restaurar a resposta da pergunta livre ao professor na Praia Tropical, com retorno escrito e reprodução acionável — a validação usa o diálogo canônico autorizado em vez do catálogo cliente vazio; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 - [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
+
+- [x] Restaurar a última versão funcional da Praia Tropical após bloqueio de autorização introduzido por atualização recente — recuperação aplicada a partir do checkpoint estável 9ddf4e5d; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
