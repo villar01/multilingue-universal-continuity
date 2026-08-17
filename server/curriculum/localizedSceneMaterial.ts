@@ -137,6 +137,61 @@ const PT_BR_FAMILY_HOME_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMater
   },
 };
 
+const PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "La familia va de vacaciones. ¿Adónde van?", nativeHelp: "A família vai de férias. Para onde eles vão?" },
+      { targetText: "Van a Londres.", nativeHelp: "Eles vão para Londres." },
+      { targetText: "Disculpe, ¿dónde está la puerta B12?", nativeHelp: "Com licença, onde fica o portão B12?" },
+    ],
+    objects: [
+      { targetText: "pasaporte", nativeHelp: "passaporte" },
+      { targetText: "maleta", nativeHelp: "mala" },
+      { targetText: "tarjeta de embarque", nativeHelp: "cartão de embarque" },
+      { targetText: "puerta", nativeHelp: "portão" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "La famille part en vacances. Où va-t-elle ?", nativeHelp: "A família vai de férias. Para onde eles vão?" },
+      { targetText: "Elle va à Londres.", nativeHelp: "Eles vão para Londres." },
+      { targetText: "Excusez-moi, où se trouve la porte B12 ?", nativeHelp: "Com licença, onde fica o portão B12?" },
+    ],
+    objects: [
+      { targetText: "passeport", nativeHelp: "passaporte" },
+      { targetText: "valise", nativeHelp: "mala" },
+      { targetText: "carte d’embarquement", nativeHelp: "cartão de embarque" },
+      { targetText: "porte", nativeHelp: "portão" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "La famiglia va in vacanza. Dove va?", nativeHelp: "A família vai de férias. Para onde eles vão?" },
+      { targetText: "Va a Londra.", nativeHelp: "Eles vão para Londres." },
+      { targetText: "Mi scusi, dov’è il gate B12?", nativeHelp: "Com licença, onde fica o portão B12?" },
+    ],
+    objects: [
+      { targetText: "passaporto", nativeHelp: "passaporte" },
+      { targetText: "valigia", nativeHelp: "mala" },
+      { targetText: "carta d’imbarco", nativeHelp: "cartão de embarque" },
+      { targetText: "gate", nativeHelp: "portão" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Die Familie fährt in den Urlaub. Wohin fährt sie?", nativeHelp: "A família vai de férias. Para onde eles vão?" },
+      { targetText: "Sie fährt nach London.", nativeHelp: "Eles vão para Londres." },
+      { targetText: "Entschuldigung, wo ist Gate B12?", nativeHelp: "Com licença, onde fica o portão B12?" },
+    ],
+    objects: [
+      { targetText: "Reisepass", nativeHelp: "passaporte" },
+      { targetText: "Koffer", nativeHelp: "mala" },
+      { targetText: "Bordkarte", nativeHelp: "cartão de embarque" },
+      { targetText: "Gate", nativeHelp: "portão" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
@@ -146,6 +201,7 @@ function getReviewedLaunchSceneMaterial(input: {
   const materialsByScene: Record<string, Record<string, Omit<LocalizedSceneMaterialResult, "status">>> = {
     beach: PT_BR_BEACH_LAUNCH_MATERIAL,
     family_home: PT_BR_FAMILY_HOME_LAUNCH_MATERIAL,
+    airport_family: PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL,
   };
   return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }

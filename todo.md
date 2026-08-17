@@ -1549,3 +1549,5 @@
 - [x] Entregar o primeiro pacote determinístico de cena por dupla comercial PT-BR para espanhol, francês, italiano e alemão, mantendo a geração local protegida como cobertura dos demais pares e cenas — Praia Tropical agora tem diálogo e quatro objetos revisados no servidor para ES/FR/IT/DE, sem depender de geração; demais pares e cenas seguem entrega local protegida; TypeScript sem erros e 12 regressões dedicadas aprovadas
 
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão à cena Casa da Família, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 16 regressões dedicadas e suíte completa com 220 arquivos/545 testes aprovados
+
+- [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão à cena Família no Aeroporto, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 20 regressões dedicadas e suíte completa com 220 arquivos/549 testes aprovados

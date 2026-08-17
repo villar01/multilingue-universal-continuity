@@ -57,7 +57,7 @@ describe("material localizado protegido das cenas", () => {
 
   it.each(INITIAL_COMMERCIAL_LANGUAGE_CODES)("gera localização protegida para %s, preservando o apoio nativo solicitado", async (targetLanguage) => {
     const result = await localizeSceneDialogue({
-      sceneId: "airport_family",
+      sceneId: "paris",
       targetLanguage,
       nativeLanguage: "pt-BR",
       userId: 41,
@@ -114,6 +114,27 @@ describe("material localizado protegido das cenas", () => {
     expect(result.turns).toHaveLength(3);
     expect(result.objects).toEqual(expect.arrayContaining([
       expect.objectContaining({ targetText: expectedObject, nativeHelp: "sofá" }),
+    ]));
+    expect(mockedGenerateAI).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["es-ES", "pasaporte"],
+    ["fr-FR", "passeport"],
+    ["it-IT", "passaporto"],
+    ["de-DE", "Reisepass"],
+  ])("entrega o pacote revisado PT-BR → %s da Família no Aeroporto sem depender de geração", async (targetLanguage, expectedObject) => {
+    const result = await localizeSceneDialogue({
+      sceneId: "airport_family",
+      targetLanguage,
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result.status).toBe("ready");
+    expect(result.turns).toHaveLength(3);
+    expect(result.objects).toEqual(expect.arrayContaining([
+      expect.objectContaining({ targetText: expectedObject, nativeHelp: "passaporte" }),
     ]));
     expect(mockedGenerateAI).not.toHaveBeenCalled();
   });
