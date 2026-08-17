@@ -447,6 +447,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "coach", x: 45, y: 35, label: "Coach", translation: "Treinador", pronunciation: "KOUTCH", example: "The coach is strong.", examplePt: "O treinador é forte.", icon: "👨‍🏫", color: "#f59e0b" },
     ],
   },
+  library: {
+    dialog: [
+      { speaker: "teacher", text: "Witaj w bibliotece! Jestem Maja. Jaką książkę chcesz przeczytać?", textPt: "Bem-vindo à biblioteca! Sou Maja. Qual livro você quer ler?" },
+      { speaker: "user", text: "Chcę przeczytać powieść przygodową. Gdzie jest dział literatury?", textPt: "Quero ler um romance de aventura. Onde fica a seção de literatura?", options: ["Chcę przeczytać powieść przygodową. Gdzie jest dział literatury?", "Nie wiem co czytać.", "Nie lubię czytać."], correctIndex: 0 },
+      { speaker: "teacher", text: "Dział literatury jest na drugiej półce po lewej. Pamiętaj — w bibliotece jest cisza!", textPt: "A seção de literatura fica na segunda prateleira à esquerda. Lembre-se — na biblioteca há silêncio!" },
+      { speaker: "user", text: "Oczywiście! Mogę usiąść przy stoliku przy lampie?", textPt: "Claro! Posso sentar na mesa perto da lâmpada?", options: ["Oczywiście! Mogę usiąść przy stoliku przy lampie?", "Wolę stać.", "Czy mogę jeść tutaj?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Tak, stolik jest wolny. Możesz też skorzystać z katalogu, żeby znaleźć książki.", textPt: "Sim, a mesa está livre. Você também pode usar o catálogo para encontrar livros." },
+      { speaker: "user", text: "Dziękuję! Jak długo mogę wypożyczyć książkę?", textPt: "Obrigado! Por quanto tempo posso emprestar um livro?", options: ["Dziękuję! Jak długo mogę wypożyczyć książkę?", "Nie chcę wypożyczać.", "Mogę zabrać bez pytania?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Dwa tygodnie. Twój polski jest naprawdę dobry! Brawo!", textPt: "Duas semanas. Seu polonês está realmente bom! Parabéns!" },
+    ],
+    hotspots: [
+      { id: "ksiazka", x: 40, y: 45, label: "Książka", translation: "Livro", pronunciation: "KSHON-shka", example: "Książka jest ciekawa.", examplePt: "O livro é interessante.", icon: "📖", color: "#6366f1" },
+      { id: "polka", x: 70, y: 35, label: "Półka", translation: "Prateleira", pronunciation: "PUW-ka", example: "Półka jest pełna.", examplePt: "A prateleira está cheia.", icon: "📚", color: "#a16207" },
+      { id: "stolik", x: 30, y: 68, label: "Stolik", translation: "Mesa de leitura", pronunciation: "STO-lik", example: "Stolik jest wolny.", examplePt: "A mesa está livre.", icon: "🪑", color: "#f59e0b" },
+      { id: "lampa", x: 55, y: 25, label: "Lampa", translation: "Lâmpada", pronunciation: "LAM-pa", example: "Lampa świeci.", examplePt: "A lâmpada brilha.", icon: "💡", color: "#eab308" },
+      { id: "katalog", x: 80, y: 55, label: "Katalog", translation: "Catálogo", pronunciation: "KA-ta-log", example: "Szukaj w katalogu.", examplePt: "Procure no catálogo.", icon: "🗂️", color: "#0ea5e9" },
+      { id: "cisza", x: 15, y: 40, label: "Cisza", translation: "Silêncio", pronunciation: "TSHI-sha", example: "W bibliotece jest cisza.", examplePt: "Na biblioteca há silêncio.", icon: "🤫", color: "#8b5cf6" },
+    ],
+  },
 };
 
 export function getSecureSceneSeed(sceneId: string): SecureSceneSeed | null {

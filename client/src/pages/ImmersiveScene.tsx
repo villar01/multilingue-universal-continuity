@@ -372,23 +372,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Witaj w bibliotece! Czytajmy razem!",
     greetingPt:"Bem-vindo à biblioteca! Vamos ler juntos!",
     difficulty:"beginner", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Witaj w bibliotece! Jestem Maja. Jaką książkę chcesz przeczytać?", textPt:"Bem-vindo à biblioteca! Sou Maja. Qual livro você quer ler?"},
-      {speaker:"user", text:"Chcę przeczytać powieść przygodową. Gdzie jest dział literatury?", textPt:"Quero ler um romance de aventura. Onde fica a seção de literatura?", options:["Chcę przeczytać powieść przygodową. Gdzie jest dział literatury?","Nie wiem co czytać.","Nie lubię czytać."], correctIndex:0},
-      {speaker:"teacher", text:"Dział literatury jest na drugiej półce po lewej. Pamiętaj — w bibliotece jest cisza!", textPt:"A seção de literatura fica na segunda prateleira à esquerda. Lembre-se — na biblioteca há silêncio!"},
-      {speaker:"user", text:"Oczywiście! Mogę usiąść przy stoliku przy lampie?", textPt:"Claro! Posso sentar na mesa perto da lâmpada?", options:["Oczywiście! Mogę usiąść przy stoliku przy lampie?","Wolę stać.","Czy mogę jeść tutaj?"], correctIndex:0},
-      {speaker:"teacher", text:"Tak, stolik jest wolny. Możesz też skorzystać z katalogu, żeby znaleźć książki.", textPt:"Sim, a mesa está livre. Você também pode usar o catálogo para encontrar livros."},
-      {speaker:"user", text:"Dziękuję! Jak długo mogę wypożyczyć książkę?", textPt:"Obrigado! Por quanto tempo posso emprestar um livro?", options:["Dziękuję! Jak długo mogę wypożyczyć książkę?","Nie chcę wypożyczać.","Mogę zabrać bez pytania?"], correctIndex:0},
-      {speaker:"teacher", text:"Dwa tygodnie. Twój polski jest naprawdę dobry! Brawo!", textPt:"Duas semanas. Seu polonês está realmente bom! Parabéns!"},
-    ],
-    hotspots:[
-      {id:"ksiazka", x:40, y:45, label:"Książka", translation:"Livro", pronunciation:"KSHON-shka", example:"Książka jest ciekawa.", examplePt:"O livro é interessante.", icon:"📖", color:"#6366f1"},
-      {id:"polka", x:70, y:35, label:"Półka", translation:"Prateleira", pronunciation:"PUW-ka", example:"Półka jest pełna.", examplePt:"A prateleira está cheia.", icon:"📚", color:"#a16207"},
-      {id:"stolik", x:30, y:68, label:"Stolik", translation:"Mesa de leitura", pronunciation:"STO-lik", example:"Stolik jest wolny.", examplePt:"A mesa está livre.", icon:"🪑", color:"#f59e0b"},
-      {id:"lampa", x:55, y:25, label:"Lampa", translation:"Lâmpada", pronunciation:"LAM-pa", example:"Lampa świeci.", examplePt:"A lâmpada brilha.", icon:"💡", color:"#eab308"},
-      {id:"katalog", x:80, y:55, label:"Katalog", translation:"Catálogo", pronunciation:"KA-ta-log", example:"Szukaj w katalogu.", examplePt:"Procure no catálogo.", icon:"🗂️", color:"#0ea5e9"},
-      {id:"cisza", x:15, y:40, label:"Cisza", translation:"Silêncio", pronunciation:"TSHI-sha", example:"W bibliotece jest cisza.", examplePt:"Na biblioteca há silêncio.", icon:"🤫", color:"#8b5cf6"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"office", name:"Escritório Moderno", nameEn:"Modern Office", flag:"💼",
@@ -1228,7 +1214,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1237,7 +1223,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

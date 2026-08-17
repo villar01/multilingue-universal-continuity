@@ -1532,3 +1532,5 @@
 - [x] Isolar o progresso do Pareto por dupla de idiomas — mudança de idioma estudado ou nativo recarrega somente a memória daquela trilha, reinicia a página e fecha a prática ativa; TypeScript e suíte completa com 219 arquivos/529 testes aprovados
 
 - [x] Recuperar a camada de cenas curriculares protegidas após sincronização e migrar o diálogo e os seis objetos da Academia Fitness ao servidor — contratos históricos recuperados, entrega autenticada reconectada, catálogo cliente sem diálogo/objetos canônicos da academia; TypeScript sem erros e suíte completa com 219 arquivos/529 testes aprovados
+
+- [x] Migrar o diálogo e os objetos da cena Biblioteca Histórica para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; a cena aguarda material autorizado e o catálogo cliente não inclui esses textos; TypeScript sem erros, suíte completa com 219 arquivos/529 testes aprovados e auditoria do catálogo concluída
