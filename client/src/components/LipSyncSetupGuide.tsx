@@ -11,7 +11,8 @@ export function LipSyncSetupGuide() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!START_ROUTES.has(location)) {
+    const setupRequested = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("setup") === "local-ai";
+    if (!START_ROUTES.has(location) || !setupRequested) {
       setOpen(false);
       return;
     }

@@ -1538,6 +1538,10 @@
 
 - [x] Adicionar em cada capítulo do Livro ABC um link para estudar a unidade correspondente na Base e retornar ao mesmo ponto do livro — cada capítulo abre a unidade A1 pelo parâmetro interno unit e a Base oferece retorno ao Livro, inclusive quando não há cartão de vocabulário ativo; TypeScript e 23 regressões do Livro, Base e SOS aprovadas
 
+- [x] Impedir que o guia técnico de IA local abra automaticamente na tela inicial, mantendo-o acessível apenas por escolha explícita do aluno — o guia exige ?setup=local-ai e não interrompe mais a tela inicial; TypeScript, regressão e validação visual aprovados
+
+- [x] Impedir que a notificação técnica de IA local apareça automaticamente na tela inicial, mantendo a configuração opcional disponível somente por escolha explícita — banner e notificação exigem ?setup=local-ai; a abertura normal foi validada visualmente sem modal, banner ou aviso técnico; TypeScript e 2 regressões de abertura voluntária aprovadas
+
 - [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas

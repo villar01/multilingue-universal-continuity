@@ -192,6 +192,7 @@ export default function Home() {
     const { user, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const { profile, setProfile } = useLanguage();
+  const showLocalSetup = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("setup") === "local-ai";
   // Language selector state — initialized from LanguageContext (single source of truth)
   const [nativeLang, setNativeLangState] = useState(() => {
     return profile.nativeCode || localStorage.getItem("ml_native_lang") || "pt-BR";
@@ -348,22 +349,18 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── IA NATIVA BANNER ── */}
-      <section className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <Cpu className="h-5 w-5 flex-shrink-0" />
-            <p className="text-sm font-medium">
-              <strong>IA Local:</strong> Conheça a configuração de provedores locais para tarefas de texto em ambientes compatíveis.
-            </p>
+      {/* ── CONFIGURAÇÃO LOCAL VOLUNTÁRIA ── */}
+      {showLocalSetup && (
+        <section className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <Cpu className="h-5 w-5 flex-shrink-0" />
+              <p className="text-sm font-medium"><strong>IA Local:</strong> Configuração opcional de provedores locais para tarefas de texto.</p>
+            </div>
+            <Link href="/ia-nativa"><button className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-all whitespace-nowrap">Abrir configuração →</button></Link>
           </div>
-          <Link href="/ia-nativa">
-            <button className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-all whitespace-nowrap">
-              Saber como →
-            </button>
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── HERO SECTION ── */}
       <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white">

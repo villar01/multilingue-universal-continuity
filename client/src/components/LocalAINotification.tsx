@@ -22,23 +22,15 @@ export default function LocalAINotification() {
   const [expanded, setExpanded] = useState(false);
   const [location] = useLocation();
   const isJourneyStartRoute = location === '/';
+  const setupRequested = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('setup') === 'local-ai';
 
   useEffect(() => {
-    if (!isJourneyStartRoute) {
+    if (!isJourneyStartRoute || !setupRequested) {
       setVisible(false);
       return;
     }
-    try {
-      const dismissed = localStorage.getItem(STORAGE_KEY);
-      if (!dismissed) {
-        // Show after 3 seconds
-        const timer = setTimeout(() => setVisible(true), 3000);
-        return () => clearTimeout(timer);
-      }
-    } catch {
-      setVisible(true);
-    }
-  }, [isJourneyStartRoute]);
+    setVisible(true);
+  }, [isJourneyStartRoute, setupRequested]);
 
   const handleDismiss = () => {
     try {
