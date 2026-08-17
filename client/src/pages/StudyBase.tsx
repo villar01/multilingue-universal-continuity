@@ -270,6 +270,17 @@ export default function StudyBase() {
           </button>
         </section>
 
+        <section className="mt-5 rounded-2xl border border-emerald-300/25 bg-emerald-300/5 p-4" aria-labelledby="study-journey-heading">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-emerald-200">Roteiro recomendado</p>
+          <h2 id="study-journey-heading" className="mt-1 text-lg font-black text-white">Entender → memorizar → aplicar → revisar</h2>
+          <ol className="mt-3 grid gap-2 text-sm leading-6 text-slate-200 sm:grid-cols-2 xl:grid-cols-4">
+            <li><strong className="text-emerald-100">1. Base:</strong> entenda a palavra, a gramática e o exemplo.</li>
+            <li><strong className="text-emerald-100">2. Pareto:</strong> recupere, escreva e crie uma frase.</li>
+            <li><strong className="text-emerald-100">3. Cena:</strong> aplique o conteúdo com professor e objetos.</li>
+            <li><strong className="text-emerald-100">4. Revisão:</strong> transforme frases e retome o ponto necessário.</li>
+          </ol>
+        </section>
+
         <section className="mt-7 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
             <label htmlFor="study-search" className="text-sm font-bold text-slate-100">O que você quer estudar?</label>

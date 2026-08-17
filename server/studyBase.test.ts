@@ -84,6 +84,15 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain("openRelatedScene(activeEntry)");
   });
 
+  it("explica a jornada Base, Pareto, cena e revisão em ordem pedagógica", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain("Entender → memorizar → aplicar → revisar");
+    expect(source).toContain("1. Base:");
+    expect(source).toContain("2. Pareto:");
+    expect(source).toContain("3. Cena:");
+    expect(source).toContain("4. Revisão:");
+  });
+
   it("apresenta a trilha Pareto única sem confundir o programa com o piloto curricular", () => {
     const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
     expect(source).toContain("Trilha atual: 1.000 palavras únicas.");
