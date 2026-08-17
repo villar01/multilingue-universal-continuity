@@ -41,8 +41,10 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("const sceneMaterialNeedsAccess");
     expect(sceneSource).toContain("const [sceneMaterialTimedOut");
     expect(sceneSource).toContain("window.setTimeout(() => setSceneMaterialTimedOut(true), 8000)");
-    expect(sceneSource).toContain("const authorizeSceneLesson = authorizeLessonMut.mutateAsync;");
-    expect(sceneSource).toContain("void authorizeSceneLesson({ lessonKey })");
+    expect(sceneSource).toContain("const authorizeSceneLessonRef = useRef(authorizeLessonMut.mutateAsync);");
+    expect(sceneSource).toContain("authorizeSceneLessonRef.current = authorizeLessonMut.mutateAsync;");
+    expect(sceneSource).toContain("(lessonKey: string) => authorizeSceneLessonRef.current({ lessonKey })");
+    expect(sceneSource).toContain("void authorizeSceneLesson(lessonKey)");
     expect(sceneSource).toContain("const sceneMaterialActionLabel");
     expect(sceneSource).toContain("Ative o acesso para iniciar esta cena.");
     expect(sceneSource).toContain("Atualizar cena");
@@ -50,8 +52,15 @@ describe("permanent Tropical Beach scene contracts", () => {
 
   it("keeps free questions in the scene with an immediate contextual fallback", () => {
     expect(sceneSource).toContain("const fallback = getFreeDialogQuestionReply(question, scene.hotspots);");
+    expect(sceneSource).toContain("const line = activeSceneDialog[dlgStep];");
     expect(sceneSource).toContain("setDlgTutorHistory");
     expect(sceneSource).toContain('placeholder="Ex.: What is pool?"');
+  });
+
+  it("keeps James on a named male browser voice instead of substituting another gender", () => {
+    expect(sceneSource).toContain("const maleVoicePattern");
+    expect(sceneSource).toContain("if (gender && !preferredVoice) return false;");
+    expect(sceneSource).toContain("if (preferredVoice) utterance.voice = preferredVoice;");
   });
 
   it("keeps the dialogue panel compact enough to preserve the scene", () => {

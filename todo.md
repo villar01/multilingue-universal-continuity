@@ -1570,3 +1570,8 @@
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Supermercado, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 36 regressões dedicadas e suíte completa com 220 arquivos/567 testes aprovados
 
 - [x] Corrigir a reprodução do botão “Ouvir voz natural” da Praia Tropical, mantendo voz neural autorizada e fallback audível ao aluno — provedores neurais agora têm limite de seis segundos por tentativa, sinalização de preparo e fallback de voz disponível após indisponibilidade; TypeScript sem erros e suíte completa com 220 arquivos/568 testes aprovados
+
+- [ ] Garantir fallback audível de voz natural mesmo quando o navegador não expõe uma voz masculina nomeada para o idioma da cena
+- [ ] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada
+- [x] Restaurar a resposta da pergunta livre ao professor na Praia Tropical, com retorno escrito e reprodução acionável — a validação usa o diálogo canônico autorizado em vez do catálogo cliente vazio; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
+- [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados

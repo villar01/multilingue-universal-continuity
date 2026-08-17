@@ -1121,7 +1121,14 @@ export default function ImmersiveScene() {
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
   const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation();
-  const authorizeSceneLesson = authorizeLessonMut.mutateAsync;
+  const authorizeSceneLessonRef = useRef(authorizeLessonMut.mutateAsync);
+  useEffect(() => {
+    authorizeSceneLessonRef.current = authorizeLessonMut.mutateAsync;
+  }, [authorizeLessonMut.mutateAsync]);
+  const authorizeSceneLesson = useCallback(
+    (lessonKey: string) => authorizeSceneLessonRef.current({ lessonKey }),
+    [],
+  );
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
@@ -1174,7 +1181,7 @@ export default function ImmersiveScene() {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
     let cancelled = false;
     const lessonKey = `scene:${selectedScene.id}`;
-    void authorizeSceneLesson({ lessonKey })
+    void authorizeSceneLesson(lessonKey)
       .then((access) => {
         if (!cancelled) {
           setAuthorizedSceneMaterial(access.allowed ? {
@@ -1858,7 +1865,7 @@ export default function ImmersiveScene() {
   const validateDialogAnswer = useCallback((answer: string) => {
     const scene = teachingScene ?? selectedScene;
     if (!scene) return;
-    const line = scene.dialog[dlgStep];
+    const line = activeSceneDialog[dlgStep];
     if (!line) return;
     const provided = answer.trim();
     if (!provided) {
@@ -1898,7 +1905,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeSceneDialog, askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene, teachingScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
