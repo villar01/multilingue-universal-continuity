@@ -1566,6 +1566,8 @@
 
 - [x] Adicionar um sumário navegável aos capítulos A1 do Livro ABC, mantendo leitura em folhas brancas e retorno SOS — índice local de dez capítulos aponta a cada leitura A1, sem alterar conteúdo protegido, Pareto ou retorno; TypeScript, 7 regressões do Livro e verificação visual aprovados
 
+- [x] Adicionar retorno local ao sumário em cada capítulo A1 do Livro ABC, mantendo leitura em folhas brancas e retorno SOS — cada capítulo aponta para o índice local sem sair do Livro; TypeScript, 7 regressões do Livro e verificação visual aprovados
+
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma

@@ -139,7 +139,7 @@ export default function ABCBook() {
               <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Capítulos contínuos para estudar</h2>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-700">Leia um capítulo por vez: entenda o objetivo, acompanhe o texto, compare a tradução, observe a gramática e escreva antes de seguir para Pareto, Professor ou cena.</p>
             </div>
-            <nav aria-label="Sumário dos capítulos A1" className="mt-5 rounded-sm border border-stone-200 bg-stone-50 p-4 sm:p-5">
+            <nav id="sumario-a1" aria-label="Sumário dos capítulos A1" className="mt-5 scroll-mt-6 rounded-sm border border-stone-200 bg-stone-50 p-4 sm:p-5">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-600">Sumário do volume</p>
               <ol className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
                 {book.chapters.map((chapter, index) => (
@@ -168,7 +168,10 @@ export default function ABCBook() {
                     <p className="mt-1">{chapter.grammarExplanation}</p>
                   </div>
                   <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
-                  <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="mt-5 inline-flex rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">Estudar este capítulo na Base</a>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="inline-flex rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">Estudar este capítulo na Base</a>
+                    <a href="#sumario-a1" className="inline-flex items-center rounded-md px-3 py-2 text-sm font-bold text-slate-600 underline-offset-4 transition hover:text-amber-800 hover:underline">Voltar ao sumário</a>
+                  </div>
                 </article>
               ))}
             </div>
