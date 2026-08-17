@@ -1507,7 +1507,7 @@
 - [x] Expor caminhos complementares na Base de Estudos — Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total ficam visíveis e acionáveis; o Pareto mostra com honestidade o piloto atual de 11 entradas enquanto o programa de 1.000 palavras permanece em construção
 - [ ] Expor o banco Pareto existente de 1.130 palavras em um programa real de memorização por idioma — distribuição por CEFR e situação, recuperação ativa, escrita obrigatória, frases novas, repetição espaçada e revisão de itens esquecidos
 - [ ] Corrigir duplicatas do banco Pareto — a auditoria encontrou 780 formas inglesas distintas entre 1.130 entradas; acrescentar termos autorais até obter mil palavras inglesas únicas antes de declarar o programa completo
-- [ ] Acrescentar 220 termos ingleses únicos, práticos e contextualizados para completar a primeira trilha de mil palavras do Pareto
+- [x] Acrescentar 220 termos ingleses únicos, práticos e contextualizados para completar a primeira trilha de mil palavras do Pareto — lote autoral cobre rotina, serviços, tecnologia, saúde, estudo, trabalho, viagem, compras, cidade, relações e prática; regressão confirma 1.000 formas inglesas únicas e IDs estáveis na primeira trilha
 - [ ] Criar links de escolha do aluno para Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total, com retorno ao ponto de estudo e complementaridade entre conteúdo, exercícios e revisão
 - [ ] Organizar a jornada Base de Estudos → memorização Pareto → cenas imersivas → exercícios e revisão, tornando as cenas a etapa de consolidação contextual
 - [ ] Preservar a ordem sucessiva do método: apresentação, compreensão, memorização, escrita, fala, frases, conversa e revisão

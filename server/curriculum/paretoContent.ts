@@ -3,6 +3,8 @@
 // Organizado por categoria temática para uso nas cenas imersivas
 // pt-BR ↔ en-US (com variante en-GB onde difere)
 
+import { PARETO_CORE_ADDITIONS } from "./paretoCoreAdditions";
+
 export interface ParetoWord {
   id: string;
   ptBR: string;
@@ -1232,6 +1234,7 @@ export const PARETO_VOCAB: ParetoWord[] = [
   { id:"nb031", ptBR:"Empatia", enUS:"Empathy", pronunciation:"ˈɛmpəθi", category:"social", frequency:8, example:"Show empathy to others.", examplePt:"Mostre empatia pelos outros.", scene:"social" },
   { id:"nb032", ptBR:"Paciência", enUS:"Patience", pronunciation:"ˈpeɪʃəns", category:"social", frequency:9, example:"Patience is a virtue.", examplePt:"A paciência é uma virtude.", scene:"social" },
   { id:"nb033", ptBR:"Generosidade", enUS:"Generosity", pronunciation:"ˌdʒɛnəˈrɒsɪti", category:"social", frequency:8, example:"Generosity warms the heart.", examplePt:"A generosidade aquece o coração.", scene:"social" },
+  ...PARETO_CORE_ADDITIONS,
 ];
 
 export function getWordsByCategory(category: ParetoCategory): ParetoWord[] {
