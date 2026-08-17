@@ -236,6 +236,11 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       text: "Escreva uma frase curta sem consultar o modelo. Compare com o exemplo, corrija somente o ponto necessário e volte a ela nos intervalos de revisão. Um erro identificado vira uma nova oportunidade de recuperação ativa, não uma interrupção do estudo.",
       example: "I study English in the morning. — Revise amanhã e acrescente uma nova informação.",
     },
+    {
+      title: "Som e escrita caminham juntos",
+      text: "Aprenda a forma falada e a forma escrita no mesmo momento. Observe a pronúncia IPA, ouça um modelo, registre a palavra e use-a em uma frase. Quando uma letra ou som causar dúvida, soletrar, comparar e reescrever transforma a dúvida em uma pista concreta para a próxima revisão.",
+      example: "How do you spell that? — Como se soletra isso? / It is spelled B-O-O-K.",
+    },
   ],
 };
 
