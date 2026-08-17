@@ -1346,7 +1346,9 @@ export default function ImmersiveScene() {
     };
     let invalidTrackHandled = false;
     let invalidTrackTimeout: number | null = null;
+    let objectPlaybackAttempted = false;
     const hasPlayableDuration = () => Number.isFinite(audio.duration) && audio.duration > 0;
+    const isObjectPronunciation = requestKey.startsWith("hotspot:");
     const useFallbackForInvalidTrack = () => {
       if (invalidTrackHandled || audio.src !== source) return;
       invalidTrackHandled = true;
@@ -1399,7 +1401,16 @@ export default function ImmersiveScene() {
       }, 1800);
     };
     audio.ondurationchange = acceptPlayableTrack;
-    audio.oncanplay = acceptPlayableTrack;
+    audio.oncanplay = () => {
+      if (!acceptPlayableTrack() || !isObjectPronunciation || objectPlaybackAttempted) return;
+      objectPlaybackAttempted = true;
+      // A pronúncia foi pedida pelo botão explícito do cartão. Tentamos tocar
+      // no mesmo fluxo; se o navegador exigir outro gesto, o player visível
+      // abaixo do cartão permite concluir a reprodução sem perder a faixa.
+      void audio.play().catch(() => {
+        setDlgFeedback("Pronúncia pronta. Toque no controle de áudio abaixo do cartão para ouvir.");
+      });
+    };
     audio.ontimeupdate = updateDialogWordsFromAudio;
     audio.onended = () => {
       if (updatesActiveDialog()) {
@@ -2675,9 +2686,9 @@ export default function ImmersiveScene() {
         <audio
           ref={dialogAudioElementRef}
           src={dialogAudioSource || undefined}
-          controls={Boolean(dialogAudioSource && dlgOpen)}
+          controls={Boolean(dialogAudioSource && !dlgOpen)}
           preload="auto"
-          className={dialogAudioSource && dlgOpen ? "absolute bottom-[150px] left-1/2 z-[75] h-8 w-[220px] -translate-x-1/2" : "hidden"}
+          className={dialogAudioSource && !dlgOpen ? "absolute bottom-[112px] left-1/2 z-[75] h-9 w-[min(88vw,320px)] -translate-x-1/2" : "hidden"}
           aria-label="Áudio da fala em inglês"
         />
 

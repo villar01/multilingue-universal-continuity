@@ -35,8 +35,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
       source.indexOf("const playTeacherAudio = useCallback"),
       source.indexOf("const replayVisibleDialogAudio = useCallback"),
     );
+    const jamesPreparation = neuralPreparation.slice(0, neuralPreparation.indexOf("const isObjectPronunciation"));
     expect(neuralPreparation).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");
-    expect(neuralPreparation).not.toContain("audio.play()");
+    expect(jamesPreparation).not.toContain("audio.play()");
     expect(source).toContain("await audio.play();");
   });
 
@@ -83,7 +84,13 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     const audioIndex = source.indexOf("ref={dialogAudioElementRef}");
     expect(audioIndex).toBeGreaterThan(teacherIndex);
     expect(audioIndex).toBeLessThan(dialogPanelIndex);
-    expect(source).toContain("controls={Boolean(dialogAudioSource && dlgOpen)}");
+    expect(source).toContain("controls={Boolean(dialogAudioSource && !dlgOpen)}");
     expect(source).toContain("os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural");
+  });
+
+  it("inicia a pronúncia de objeto pelo gesto explícito e mantém controle visível quando outro gesto é necessário", () => {
+    expect(source).toContain('const isObjectPronunciation = requestKey.startsWith("hotspot:")');
+    expect(source).toContain("void audio.play().catch(() =>");
+    expect(source).toContain("Pronúncia pronta. Toque no controle de áudio abaixo do cartão para ouvir.");
   });
 });
