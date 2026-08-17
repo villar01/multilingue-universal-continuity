@@ -1515,6 +1515,13 @@
 - [ ] Abrir a cena imersiva relacionada a partir da Base de Estudos e retornar ao mesmo ponto curricular após a prática
 - [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
+- [ ] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual
+- [ ] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar
+- [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
+- [ ] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto
+- [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis
+- [ ] Catalogar os objetos das 29 cenas e produzir clipes roteirizados próprios com fala correspondente por palavra
+- [ ] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos
 - [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
 - [ ] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular
 - [ ] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço

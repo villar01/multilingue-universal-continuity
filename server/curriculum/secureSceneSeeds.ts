@@ -10,7 +10,7 @@ export type SecureSceneSeed = {
  * migration slice; authenticated localization can use it without importing its
  * pedagogical text into a client-facing module.
  */
-const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
+export const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
   beach: {
     dialog: [
       { speaker: "teacher", text: "Hello! My name is James. Welcome to this beautiful tropical beach!", textPt: "Olá! Meu nome é James. Bem-vindo a esta linda praia tropical!" },
@@ -567,4 +567,12 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
 
 export function getSecureSceneSeed(sceneId: string): SecureSceneSeed | null {
   return SECURE_SCENE_SEEDS[sceneId] ?? null;
+}
+
+export function getSecureSceneSeedCatalog() {
+  return Object.entries(SECURE_SCENE_SEEDS).map(([sceneId, seed]) => ({
+    sceneId,
+    dialogLines: seed.dialog.length,
+    hotspotCount: seed.hotspots.length,
+  }));
 }
