@@ -1641,7 +1641,7 @@
 
 - [x] Manter animação somente em objetos com clipe roteirizado próprio, preservando Palm Tree e foto estável nos demais — o catálogo associa cada objeto ao respectivo clipe aprovado e mantém retrato estável quando não há mídia roteirizada; TypeScript e 10 regressões de mídia e consistência aprovados
 
-- [ ] Impedir que o cartão de objeto Wave permaneça sobre o início do diálogo e bloqueie a voz neural de James
+- [x] Impedir que o cartão de objeto Wave permaneça sobre o início do diálogo e bloqueie a voz neural de James — o início do diálogo fecha o cartão e a prática ativa antes de preparar a voz de James; TypeScript e 18 regressões de fluxo, segurança e áudio aprovados
 
 - [x] Validar que a rejeição de faixa de voz vazia e o fallback compartilhado funcionam nas 29 cenas imersivas — fluxo único rejeita MP3 vazio ou sem duração, remove o player 0:00 e aciona a reserva masculina; rota pública real de James retornou MP3 não vazio de 60.809 bytes, TypeScript sem erros e suíte completa com 222 arquivos/580 testes aprovados
 
