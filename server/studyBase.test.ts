@@ -29,6 +29,12 @@ describe("Base de Estudos A1", () => {
       "Unidade 2 · Necessidades imediatas",
       "Unidade 3 · Lugares e localização",
       "Unidade 4 · Pessoas e rotina",
+      "Unidade 5 · Números, tempo e agenda",
+      "Unidade 6 · Objetos, lugares e posse",
+      "Unidade 7 · Ações, hábitos e necessidades",
+      "Unidade 8 · Serviços, comida e escolhas",
+      "Unidade 9 · Descrever, comparar e opinar",
+      "Unidade 10 · Conversa, revisão e autonomia",
     ]);
     const locationUnit = filterStudyEntriesByUnit(searchStudyBase(STUDY_BASE_A1_ENTRIES, "", "all", "A1"), "Unidade 3 · Lugares e localização");
     expect(locationUnit.map((entry) => entry.id)).toEqual(["a1-where-is", "a1-near-location"]);
@@ -40,6 +46,13 @@ describe("Base de Estudos A1", () => {
     expect(unit?.grammarExplanation).toContain("My name is");
     expect(unit?.questions).toHaveLength(2);
     expect(unit?.writingPrompt).toContain("Escreva duas frases");
+  });
+
+  it("expande o primeiro volume contínuo com leitura, gramática, compreensão e escrita até a conversa", () => {
+    expect(STRUCTURED_A1_UNITS).toHaveLength(7);
+    expect(STRUCTURED_A1_UNITS.slice(1).every((unit) => unit.questions.length === 2)).toBe(true);
+    expect(searchStudyBase(STUDY_BASE_A1_ENTRIES, "finally").map((entry) => entry.id)).toContain("a1-connect-ideas");
+    expect(searchStudyBase(STUDY_BASE_A1_ENTRIES, "sandwich").map((entry) => entry.id)).toContain("a1-cafe-order");
   });
 
   it("oferece orientação contextual sem repetir conteúdo ofensivo", () => {

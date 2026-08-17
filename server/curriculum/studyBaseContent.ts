@@ -249,6 +249,108 @@ export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
   },
 ];
 
+STRUCTURED_A1_UNITS.push(
+  {
+    id: "a1-unit-time",
+    unit: "Unidade 5 · Números, tempo e agenda",
+    objective: "Dizer números, horários e compromissos simples para organizar a própria rotina.",
+    readingTitle: "Texto guiado · Uma aula às sete",
+    reading: "My English class starts at seven. I have one notebook and two pens. The class is today, but I will practice again tomorrow.",
+    readingTranslation: "Minha aula de inglês começa às sete. Eu tenho um caderno e duas canetas. A aula é hoje, mas vou praticar novamente amanhã.",
+    grammarTitle: "Gramática útil · números, at e expressões de tempo",
+    grammarExplanation: "Use at antes de uma hora específica: at seven. Use today e tomorrow para situar uma ação no presente ou no plano próximo.",
+    writingPrompt: "Escreva três frases sobre sua agenda usando um número, uma hora e today ou tomorrow.",
+    questions: [
+      { id: "a1-time-class", prompt: "What time does the class start?", options: ["At seven.", "At two.", "Tomorrow."], correctIndex: 0, explanation: "O texto informa que a aula começa às sete." },
+      { id: "a1-time-pens", prompt: "How many pens does the student have?", options: ["One.", "Two.", "Seven."], correctIndex: 1, explanation: "O texto diz: “two pens”." },
+    ],
+  },
+  {
+    id: "a1-unit-objects",
+    unit: "Unidade 6 · Objetos, lugares e posse",
+    objective: "Identificar objetos, perguntar a quem pertencem e explicar onde estão.",
+    readingTitle: "Texto guiado · O livro e a chave",
+    reading: "This is my book. The key is on the table. Is that your bag? No, it is Maria's bag. Her phone is in the room.",
+    readingTranslation: "Este é meu livro. A chave está sobre a mesa. Aquela é sua bolsa? Não, é a bolsa de Maria. O telefone dela está no cômodo.",
+    grammarTitle: "Gramática útil · my, your, her e posse com nome",
+    grammarExplanation: "Use my, your e her antes de um objeto. Use nome + 's para indicar posse e in, on ou under para localizar.",
+    writingPrompt: "Descreva três objetos perto de você. Diga de quem são e onde estão.",
+    questions: [
+      { id: "a1-objects-key", prompt: "Where is the key?", options: ["On the table.", "In the bag.", "Under the book."], correctIndex: 0, explanation: "A frase diz: “The key is on the table.”" },
+      { id: "a1-objects-bag", prompt: "Whose bag is it?", options: ["Maria's.", "The teacher's.", "The student's."], correctIndex: 0, explanation: "A resposta no texto é “Maria's bag”." },
+    ],
+  },
+  {
+    id: "a1-unit-actions",
+    unit: "Unidade 7 · Ações, hábitos e necessidades",
+    objective: "Usar verbos frequentes para falar de hábitos, necessidades e planos simples.",
+    readingTitle: "Texto guiado · Estudar e praticar",
+    reading: "I study English in the morning. My friend works in the afternoon. We practice together because we want to speak with confidence.",
+    readingTranslation: "Eu estudo inglês de manhã. Meu amigo trabalha à tarde. Nós praticamos juntos porque queremos falar com confiança.",
+    grammarTitle: "Gramática útil · sujeito, verbo e because",
+    grammarExplanation: "Em uma frase básica, diga quem faz a ação e depois o verbo. Use because para explicar um motivo.",
+    writingPrompt: "Escreva uma frase sobre um hábito seu, uma sobre uma necessidade e uma usando because.",
+    questions: [
+      { id: "a1-actions-when", prompt: "When does the speaker study English?", options: ["In the morning.", "At night.", "On Sunday."], correctIndex: 0, explanation: "O texto usa “in the morning”." },
+      { id: "a1-actions-why", prompt: "Why do they practice together?", options: ["They want to speak with confidence.", "They need a new bag.", "They are at a hotel."], correctIndex: 0, explanation: "A razão vem depois de because." },
+    ],
+  },
+  {
+    id: "a1-unit-services",
+    unit: "Unidade 8 · Serviços, comida e escolhas",
+    objective: "Pedir itens, escolher opções e resolver necessidades simples com educação.",
+    readingTitle: "Texto guiado · Um pedido simples",
+    reading: "At the café, I would like water and a sandwich, please. The server asks, “Still or sparkling water?” I choose still water. Thank you.",
+    readingTranslation: "No café, eu gostaria de água e um sanduíche, por favor. O atendente pergunta: “Água sem gás ou com gás?” Eu escolho água sem gás. Obrigado.",
+    grammarTitle: "Gramática útil · I would like e escolhas",
+    grammarExplanation: "I would like é uma forma educada para pedir algo. Use and para juntar itens e I choose para decidir entre alternativas.",
+    writingPrompt: "Escreva um pedido de duas coisas e uma resposta escolhendo uma opção oferecida pelo atendente.",
+    questions: [
+      { id: "a1-services-order", prompt: "What does the speaker order?", options: ["Water and a sandwich.", "Coffee and tea.", "A book and a key."], correctIndex: 0, explanation: "O pedido inicial contém water and a sandwich." },
+      { id: "a1-services-choice", prompt: "Which water does the speaker choose?", options: ["Still water.", "Sparkling water.", "Hot water."], correctIndex: 0, explanation: "A escolha explícita é still water." },
+    ],
+  },
+  {
+    id: "a1-unit-description",
+    unit: "Unidade 9 · Descrever, comparar e opinar",
+    objective: "Descrever pessoas, objetos e lugares e justificar uma preferência simples.",
+    readingTitle: "Texto guiado · Dois lugares para estudar",
+    reading: "The library is quiet and the café is busy. I prefer the library because it is quieter. My friend prefers the café because it is near her office.",
+    readingTranslation: "A biblioteca é silenciosa e o café é movimentado. Eu prefiro a biblioteca porque ela é mais silenciosa. Minha amiga prefere o café porque ele fica perto do escritório dela.",
+    grammarTitle: "Gramática útil · adjetivo, comparativo e preferência",
+    grammarExplanation: "Use adjetivos para descrever. Use prefer e because para transformar uma descrição em opinião justificada.",
+    writingPrompt: "Compare dois lugares que você conhece. Diga qual prefere e explique o motivo com because.",
+    questions: [
+      { id: "a1-description-library", prompt: "Why does the speaker prefer the library?", options: ["It is quieter.", "It is more expensive.", "It has water."], correctIndex: 0, explanation: "A justificativa usa “because it is quieter”." },
+      { id: "a1-description-friend", prompt: "Why does the friend prefer the café?", options: ["It is near her office.", "It is quiet.", "It has a book."], correctIndex: 0, explanation: "O texto relaciona o café ao escritório dela." },
+    ],
+  },
+  {
+    id: "a1-unit-conversation",
+    unit: "Unidade 10 · Conversa, revisão e autonomia",
+    objective: "Conectar cumprimentos, perguntas, respostas, pedidos de esclarecimento e próximos passos em uma conversa curta.",
+    readingTitle: "Texto guiado · Uma conversa de estudo",
+    reading: "Hello, I am Lucas. I am learning English. Can you help me with this word? Yes. Please say the word slowly. Thank you. I will practice it again tomorrow.",
+    readingTranslation: "Olá, eu sou Lucas. Estou aprendendo inglês. Você pode me ajudar com esta palavra? Sim. Por favor, diga a palavra devagar. Obrigado. Vou praticá-la novamente amanhã.",
+    grammarTitle: "Gramática útil · manter a conversa em movimento",
+    grammarExplanation: "Uma conversa inicial precisa de abertura, pergunta, resposta, pedido de esclarecimento e encerramento. Reutilize palavras Pareto de unidades anteriores.",
+    writingPrompt: "Escreva um diálogo de seis falas: apresente-se, faça uma pergunta, peça repetição, agradeça e diga quando praticará novamente.",
+    questions: [
+      { id: "a1-conversation-help", prompt: "What does Lucas ask for?", options: ["Help with a word.", "A sandwich.", "A new book."], correctIndex: 0, explanation: "Ele pergunta por ajuda com uma palavra." },
+      { id: "a1-conversation-next", prompt: "When will Lucas practice again?", options: ["Tomorrow.", "Last week.", "At the café."], correctIndex: 0, explanation: "A frase final usa tomorrow." },
+    ],
+  },
+);
+
+STUDY_BASE_A1_ENTRIES.push(
+  { id: "a1-tell-time", unit: "Unidade 5 · Números, tempo e agenda", kind: "grammar", cefr: "A1", title: "Dizer a hora de uma atividade", subtitle: "Usar at antes de uma hora específica", targetText: "The class starts at seven.", nativeExplanation: "Use at antes de uma hora específica para informar uma agenda.", figurativePronunciation: "dê क्लáss stárts ét séven.", example: "The meeting starts at eight.", exampleTranslation: "A reunião começa às oito.", paretoWord: "Time", paretoTranslation: "Hora; tempo", relatedScene: "Sala de Aula", searchTerms: ["hora", "tempo", "time", "agenda", "sete", "aula"] },
+  { id: "a1-whose-is-this", unit: "Unidade 6 · Objetos, lugares e posse", kind: "grammar", cefr: "A1", title: "Perguntar a quem um objeto pertence", subtitle: "Usar whose e responder com posse simples", targetText: "Whose book is this?", nativeExplanation: "Use whose para perguntar de quem é um objeto. Responda com my, your, her, his ou nome + 's.", figurativePronunciation: "rrúz búk iz dís?", example: "Whose bag is this? It is Maria's bag.", exampleTranslation: "De quem é esta bolsa? É a bolsa da Maria.", paretoWord: "Whose", paretoTranslation: "De quem", relatedScene: "Casa da Família", searchTerms: ["de quem", "whose", "posse", "livro", "bolsa"] },
+  { id: "a1-study-habit", unit: "Unidade 7 · Ações, hábitos e necessidades", kind: "vocabulary", cefr: "A1", title: "Descrever um hábito de estudo", subtitle: "Usar study em uma rotina pessoal", targetText: "I study English every day.", nativeExplanation: "Use study para falar de aprendizagem regular. Every day indica rotina.", figurativePronunciation: "ai stâdi ínglish évri dêi.", example: "We study new words every day.", exampleTranslation: "Nós estudamos palavras novas todos os dias.", paretoWord: "Study", paretoTranslation: "Estudar", relatedScene: "Biblioteca Histórica", searchTerms: ["estudar", "study", "todo dia", "hábito", "palavras"] },
+  { id: "a1-cafe-order", unit: "Unidade 8 · Serviços, comida e escolhas", kind: "situation", cefr: "A1", title: "Fazer um pedido no café", subtitle: "Pedir dois itens de forma educada", targetText: "I would like water and a sandwich, please.", nativeExplanation: "Use I would like para pedir algo com educação. Junte itens com and e finalize com please.", figurativePronunciation: "ai uúd láik uóter én a sánduítch, plíiz.", example: "I would like tea and bread, please.", exampleTranslation: "Eu gostaria de chá e pão, por favor.", paretoWord: "Sandwich", paretoTranslation: "Sanduíche", relatedScene: "Café Parisiense", searchTerms: ["café", "pedido", "sandwich", "sanduíche", "água"] },
+  { id: "a1-prefer-place", unit: "Unidade 9 · Descrever, comparar e opinar", kind: "grammar", cefr: "A1", title: "Dizer o que você prefere e explicar", subtitle: "Usar prefer e because para uma opinião simples", targetText: "I prefer the library because it is quieter.", nativeExplanation: "Use prefer para escolher e because para justificar a escolha.", figurativePronunciation: "ai prifêr dê láibréri bicóz it iz cuáiéter.", example: "I prefer the bus because it is cheaper.", exampleTranslation: "Eu prefiro o ônibus porque é mais barato.", paretoWord: "Prefer", paretoTranslation: "Preferir", relatedScene: "Biblioteca Histórica", searchTerms: ["preferir", "prefer", "opinião", "because", "comparar"] },
+  { id: "a1-connect-ideas", unit: "Unidade 10 · Conversa, revisão e autonomia", kind: "grammar", cefr: "A1", title: "Organizar uma sequência de estudo", subtitle: "Usar first, then e finally para ligar ideias", targetText: "First I read, then I write, and finally I speak.", nativeExplanation: "Use first, then e finally para organizar etapas e explicar uma sequência.", figurativePronunciation: "fârst ai ríd, dên ai ráit, én fáinali ai spík.", example: "First I listen, then I repeat, and finally I practice.", exampleTranslation: "Primeiro eu escuto, depois repito e, por fim, pratico.", paretoWord: "Finally", paretoTranslation: "Por fim", relatedScene: "Sala de Aula", searchTerms: ["primeiro", "depois", "por fim", "first", "then", "finally", "sequência"] },
+);
+
 const NORMALIZE = (value: string) => value
   .normalize("NFD")
   .replace(/[\u0300-\u036f]/g, "")
