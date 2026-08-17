@@ -6,6 +6,8 @@ import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBa
 import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
 import { PARETO_VOCAB } from "./curriculum/paretoContent";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
+import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
+import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
 
@@ -58,6 +60,31 @@ export const curriculumRouter = router({
       pageSize: input.pageSize,
       totalPages: Math.max(1, Math.ceil(scopedWords.length / input.pageSize)),
     };
+  }),
+
+  localizedSceneDialogue: protectedProcedure.input(accessInput.extend({
+    sceneId: z.string().trim().min(1).max(80),
+    targetLanguage: z.string().trim().min(2).max(16),
+    nativeLanguage: z.string().trim().min(2).max(16),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    return localizeSceneDialogue({
+      sceneId: input.sceneId,
+      targetLanguage: input.targetLanguage,
+      nativeLanguage: input.nativeLanguage,
+      userId: ctx.user.id,
+    });
+  }),
+
+  sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({
+    sceneId: z.string().trim().min(1).max(80),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    const seed = getSecureSceneSeed(input.sceneId);
+    if (!seed) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "O conteúdo canônico desta cena ainda não foi migrado." });
+    }
+    return seed;
   }),
 
   languageBlocks: protectedProcedure.input(accessInput.extend({ level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).optional() })).query(async ({ ctx, input }) => {
