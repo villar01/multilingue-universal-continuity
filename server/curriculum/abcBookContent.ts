@@ -25,6 +25,14 @@ export type ABCBookDelivery = {
     example: string;
     paretoPrompt: string;
   };
+  additionalTermCards: Array<{
+    term: string;
+    meaning: string;
+    grammar: string;
+    pattern: string;
+    example: string;
+    paretoPrompt: string;
+  }>;
   sections: ABCBookSection[];
   phrases: ABCBookPhrase[];
 };
@@ -44,6 +52,24 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
     paretoPrompt: "Sem olhar, escreva uma necessidade real sua usando need e leve a frase para a prática Pareto.",
   },
+  additionalTermCards: [
+    {
+      term: "help",
+      meaning: "ajuda; ajudar",
+      grammar: "substantivo contável ou verbo; com need, atua como substantivo",
+      pattern: "I need help with + assunto: I need help with this word.",
+      example: "Can you help me, please? — Você pode me ajudar, por favor?",
+      paretoPrompt: "Escreva uma pergunta educada pedindo help para uma situação real.",
+    },
+    {
+      term: "water",
+      meaning: "água",
+      grammar: "substantivo não contável; use some ou a glass of para indicar quantidade",
+      pattern: "I would like + água/bebida: I would like water, please.",
+      example: "Could I have some water, please? — Eu poderia tomar um pouco de água, por favor?",
+      paretoPrompt: "Crie um pedido educado com water e pratique-o sem consultar o modelo.",
+    },
+  ],
   phrases: [
     { english: "Hello. How are you?", portuguese: "Olá. Como você está?", focus: "Saudação e pergunta" },
     { english: "I am learning English.", portuguese: "Eu estou aprendendo inglês.", focus: "Identidade e objetivo" },

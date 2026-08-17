@@ -97,6 +97,23 @@ export default function ABCBook() {
             <p className="mt-5 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700">{book.termCard.paretoPrompt}</p>
           </section>
 
+          <section>
+            <h2 className="font-serif text-2xl font-bold text-slate-950">Termos para ampliar o padrão</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Leia uma ficha de cada vez. Depois, transforme o exemplo em uma frase própria antes de seguir para o Pareto.</p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {book.additionalTermCards.map((card) => (
+                <article key={card.term} className="border border-stone-200 bg-white p-5 shadow-sm">
+                  <h3 className="font-serif text-xl font-bold text-slate-950">{card.term}</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-600">{card.meaning}</p>
+                  <p className="mt-4 text-sm leading-6 text-slate-700"><strong>Função:</strong> {card.grammar}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Padrão:</strong> {card.pattern}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Exemplo:</strong> {card.example}</p>
+                  <p className="mt-4 border-l-2 border-violet-300 pl-3 text-sm font-semibold leading-6 text-slate-700">{card.paretoPrompt}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
           {book.sections.map((section, index) => (
             <section key={section.title} className="border-b border-stone-200 pb-8 last:border-b-0">
               <div className="flex items-start gap-3"><span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span><div><h2 className="font-serif text-xl font-bold">{section.title}</h2><p className="mt-2 leading-7 text-slate-700">{section.text}</p><blockquote className="mt-4 border-l-2 border-slate-300 bg-stone-50 px-4 py-3 text-sm font-semibold italic leading-6 text-slate-700">{section.example}</blockquote></div></div>
