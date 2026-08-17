@@ -302,6 +302,61 @@ const PT_BR_RESTAURANT_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMateri
   },
 };
 
+const PT_BR_KITCHEN_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "Esta es mi cocina moderna. Aquí cocinamos juntos.", nativeHelp: "Esta é minha cozinha moderna. Aqui cozinhamos juntos." },
+      { targetText: "Primero lavamos las verduras y después cortamos el tomate.", nativeHelp: "Primeiro lavamos os legumes e depois cortamos o tomate." },
+      { targetText: "La olla está en la estufa y el refrigerador está frío.", nativeHelp: "A panela está no fogão e a geladeira está fria." },
+    ],
+    objects: [
+      { targetText: "cuchillo", nativeHelp: "faca" },
+      { targetText: "tabla de cortar", nativeHelp: "tábua de cortar" },
+      { targetText: "olla", nativeHelp: "panela" },
+      { targetText: "refrigerador", nativeHelp: "geladeira" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Voici ma cuisine moderne. Ici, nous cuisinons ensemble.", nativeHelp: "Esta é minha cozinha moderna. Aqui cozinhamos juntos." },
+      { targetText: "D’abord, nous lavons les légumes, puis nous coupons la tomate.", nativeHelp: "Primeiro lavamos os legumes e depois cortamos o tomate." },
+      { targetText: "La casserole est sur la cuisinière et le réfrigérateur est froid.", nativeHelp: "A panela está no fogão e a geladeira está fria." },
+    ],
+    objects: [
+      { targetText: "couteau", nativeHelp: "faca" },
+      { targetText: "planche à découper", nativeHelp: "tábua de cortar" },
+      { targetText: "casserole", nativeHelp: "panela" },
+      { targetText: "réfrigérateur", nativeHelp: "geladeira" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Questa è la mia cucina moderna. Qui cuciniamo insieme.", nativeHelp: "Esta é minha cozinha moderna. Aqui cozinhamos juntos." },
+      { targetText: "Prima laviamo le verdure, poi tagliamo il pomodoro.", nativeHelp: "Primeiro lavamos os legumes e depois cortamos o tomate." },
+      { targetText: "La pentola è sul fornello e il frigorifero è freddo.", nativeHelp: "A panela está no fogão e a geladeira está fria." },
+    ],
+    objects: [
+      { targetText: "coltello", nativeHelp: "faca" },
+      { targetText: "tagliere", nativeHelp: "tábua de cortar" },
+      { targetText: "pentola", nativeHelp: "panela" },
+      { targetText: "frigorifero", nativeHelp: "geladeira" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Das ist meine moderne Küche. Hier kochen wir zusammen.", nativeHelp: "Esta é minha cozinha moderna. Aqui cozinhamos juntos." },
+      { targetText: "Zuerst waschen wir das Gemüse, dann schneiden wir die Tomate.", nativeHelp: "Primeiro lavamos os legumes e depois cortamos o tomate." },
+      { targetText: "Der Topf steht auf dem Herd und der Kühlschrank ist kalt.", nativeHelp: "A panela está no fogão e a geladeira está fria." },
+    ],
+    objects: [
+      { targetText: "Messer", nativeHelp: "faca" },
+      { targetText: "Schneidebrett", nativeHelp: "tábua de cortar" },
+      { targetText: "Topf", nativeHelp: "panela" },
+      { targetText: "Kühlschrank", nativeHelp: "geladeira" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
@@ -314,6 +369,7 @@ function getReviewedLaunchSceneMaterial(input: {
     airport_family: PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL,
     cafe: PT_BR_CAFE_LAUNCH_MATERIAL,
     restaurant: PT_BR_RESTAURANT_LAUNCH_MATERIAL,
+    kitchen: PT_BR_KITCHEN_LAUNCH_MATERIAL,
   };
   return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }

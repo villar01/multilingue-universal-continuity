@@ -181,6 +181,27 @@ describe("material localizado protegido das cenas", () => {
     expect(mockedGenerateAI).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["es-ES", "cuchillo"],
+    ["fr-FR", "couteau"],
+    ["it-IT", "coltello"],
+    ["de-DE", "Messer"],
+  ])("entrega o pacote revisado PT-BR → %s da Cozinha Moderna sem depender de geração", async (targetLanguage, expectedObject) => {
+    const result = await localizeSceneDialogue({
+      sceneId: "kitchen",
+      targetLanguage,
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result.status).toBe("ready");
+    expect(result.turns).toHaveLength(3);
+    expect(result.objects).toEqual(expect.arrayContaining([
+      expect.objectContaining({ targetText: expectedObject, nativeHelp: "faca" }),
+    ]));
+    expect(mockedGenerateAI).not.toHaveBeenCalled();
+  });
+
   it("não substitui um idioma futuro por conteúdo de outra língua", async () => {
     const result = await localizeSceneDialogue({
       sceneId: "family_home",
