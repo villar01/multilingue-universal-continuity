@@ -1579,3 +1579,7 @@
 - [x] Restaurar a última versão funcional da Praia Tropical após bloqueio de autorização introduzido por atualização recente — recuperação aplicada a partir do checkpoint estável 9ddf4e5d; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 
 - [x] Restaurar a Praia Tropical ao último estado estável com diálogo, objetos, Pareto e áudio de reserva disponíveis antes das regressões recentes — recuperação aplicada a partir do checkpoint estável f0541cca; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
+
+- [ ] Corrigir diálogo, avanço e voz principal da Praia Tropical preservando os cartões de objetos que já funcionam
+
+- [x] Impedir que o Service Worker reutilize respostas tRPC em autorizações, materiais curriculares e voz da cena — o Service Worker não intercepta mais tRPC, evitando sessão e currículo obsoletos; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados

@@ -13,4 +13,12 @@ describe("service worker storage media", () => {
       workerSource.indexOf("// Imagens — Cache First 30 dias"),
     );
   });
+
+  it("mantém autorização, currículo e voz tRPC fora do cache do navegador", () => {
+    const trpcBypass = "if (url.pathname.startsWith('/api/trpc')) return;";
+    expect(workerSource).toContain(trpcBypass);
+    expect(workerSource.indexOf(trpcBypass)).toBeLessThan(
+      workerSource.indexOf("// Outras APIs — Network only"),
+    );
+  });
 });

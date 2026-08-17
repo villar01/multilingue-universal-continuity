@@ -91,25 +91,9 @@ self.addEventListener('fetch', (event) => {
     })); return;
   }
 
-  // API tRPC — Stale-While-Revalidate (serve cache instantâneo, atualiza em background)
-  if (url.pathname.startsWith('/api/trpc')) {
-    event.respondWith((async () => {
-      const cache = await caches.open(API_CACHE);
-      const cached = await cache.match(request);
-      const networkPromise = fetch(request).then(async (r) => {
-        if (r.ok) await cacheWith(API_CACHE, request, r.clone());
-        return r;
-      });
-      if (cached && !isExpired(cached, 300)) {
-        networkPromise.catch(() => null); // revalidate in background
-        return cached;
-      }
-      return networkPromise.catch(async () => {
-        if (cached) return cached;
-        return new Response(JSON.stringify({ error: 'offline' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-      });
-    })()); return;
-  }
+  // tRPC entrega autorização, currículo e voz por sessão. Nunca servir uma
+  // resposta anterior aqui: dados obsoletos podem fechar o diálogo da cena.
+  if (url.pathname.startsWith('/api/trpc')) return;
 
   // Outras APIs — Network only
   if (url.pathname.startsWith('/api/')) return;
