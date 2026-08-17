@@ -256,7 +256,7 @@ export default function StudyBase() {
           <button type="button" onClick={() => chooseStudyPath("pareto")} className="rounded-2xl border border-amber-300/35 bg-amber-300/10 p-4 text-left transition hover:bg-amber-300/20">
             <BrainCircuit className="h-5 w-5 text-amber-100" />
             <strong className="mt-3 block text-amber-50">Pareto · 1.000 palavras</strong>
-            <span className="mt-1 block text-sm leading-5 text-slate-200">Memorizar, escrever, recuperar e revisar. Piloto atual: {studyEntries.length} entradas.</span>
+            <span className="mt-1 block text-sm leading-5 text-slate-200">Memorizar, escrever, recuperar e revisar. Trilha atual: 1.000 palavras únicas.</span>
           </button>
           <button type="button" onClick={() => chooseStudyPath("unidade")} className="rounded-2xl border border-cyan-300/35 bg-cyan-300/10 p-4 text-left transition hover:bg-cyan-300/20">
             <Sparkles className="h-5 w-5 text-cyan-100" />

@@ -83,4 +83,10 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain("interagir e retornar ao estudo");
     expect(source).toContain("openRelatedScene(activeEntry)");
   });
+
+  it("apresenta a trilha Pareto única sem confundir o programa com o piloto curricular", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain("Trilha atual: 1.000 palavras únicas.");
+    expect(source).not.toContain("Piloto atual: {studyEntries.length} entradas.");
+  });
 });
