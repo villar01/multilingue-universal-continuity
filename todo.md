@@ -1572,23 +1572,8 @@
 - [x] Corrigir a reprodução do botão “Ouvir voz natural” da Praia Tropical, mantendo voz neural autorizada e fallback audível ao aluno — provedores neurais agora têm limite de seis segundos por tentativa, sinalização de preparo e fallback de voz disponível após indisponibilidade; TypeScript sem erros e suíte completa com 220 arquivos/568 testes aprovados
 
 - [ ] Garantir fallback audível de voz natural mesmo quando o navegador não expõe uma voz masculina nomeada para o idioma da cena
-- [x] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada — o controle agora prepara a voz e, quando pronta, a reproduz explicitamente; TypeScript sem erros e suíte completa com 220 arquivos/571 testes aprovados
-- [x] Remover a tentativa automática de áudio no início do diálogo e manter apenas a reprodução manual por “Ouvir James” — início e avanço do diálogo mostram o texto e orientam o controle manual, sem disparar `audio.play()` após resposta assíncrona; TypeScript sem erros e suíte completa com 220 arquivos/571 testes aprovados
+- [ ] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada
 - [x] Restaurar a resposta da pergunta livre ao professor na Praia Tropical, com retorno escrito e reprodução acionável — a validação usa o diálogo canônico autorizado em vez do catálogo cliente vazio; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 - [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 
 - [x] Restaurar a última versão funcional da Praia Tropical após bloqueio de autorização introduzido por atualização recente — recuperação aplicada a partir do checkpoint estável 9ddf4e5d; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
-
-- [x] Corrigir o botão “Iniciar Diálogo” e a ativação dos objetos da Praia Tropical quando o material autorizado já estiver carregado — clique, toque e teclado passam pelo mesmo comando protegido contra duplo disparo; objetos também ficam acessíveis por teclado; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados
-
-- [x] Criar regressão transversal para garantir que as 29 cenas usam o mesmo início de diálogo e a mesma ativação acessível de objetos — as 29 sementes protegidas têm diálogo e objetos, e todas passam pelo mesmo início por gesto e pela mesma ativação acessível; TypeScript sem erros e suíte completa com 220 arquivos/572 testes aprovados
-
-- [x] Fechar cartões de objetos ao iniciar o diálogo e impedir que o áudio de objetos capture o fluxo de voz do professor — o início do diálogo encerra cartão e áudio do objeto; cartões não disparam fala automática e continuam com botões de escuta próprios; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados
-
-- [x] Corrigir a progressão principal da Praia Tropical quando o diálogo não abre mesmo com Pareto e objetos funcionando — a abertura do diálogo passa a atualizar o estado antes de limpar mídia anterior e usa um único clique nativo, sem duplicação de gesto; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados
-
-- [x] Corrigir o acionamento do painel Pareto da Praia Tropical sem alterar o diálogo, os objetos ou o currículo protegido — a reinicialização da cena depende somente da troca de cena e não mais de re-renderizações de áudio; Pareto, diálogo e objetos permanecem abertos após seus cliques; TypeScript sem erros e suíte completa com 220 arquivos/574 testes aprovados
-
-- [ ] Garantir que Pareto e diálogo permaneçam abertos após o clique e não sejam fechados por atualização de estado compartilhado
-
-- [x] Adicionar ícone permanente de acesso rápido à Cena Praia Tropical com James para abrir a cena sem depender de um novo link no chat — botão fixo “🏝️ Cena James” abre `/immersive-scene?scene=beach` em todas as áreas fora da própria cena; TypeScript sem erros e suíte completa com 220 arquivos/575 testes aprovados

@@ -1212,7 +1212,6 @@ export default function ImmersiveScene() {
   const activeDialogWordCountRef = useRef(0);
   const dialogAudioContextRef = useRef<AudioContext | null>(null);
   const activeSpeechRequestRef = useRef<string | null>(null);
-  const lastSceneGestureAtRef = useRef(0);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
@@ -1316,7 +1315,7 @@ export default function ImmersiveScene() {
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
-  const playTeacherAudio = useCallback(async (source: string, phrase: string, _language: string, requestKey: string, revokeOnEnd = false, autoPlay = true) => {
+  const playTeacherAudio = useCallback(async (source: string, phrase: string, _language: string, requestKey: string, revokeOnEnd = false) => {
     const audio = dialogAudioElementRef.current;
     if (!audio) throw new Error("dialogue-audio-control-unavailable");
     if (dialogAudioObjectUrlRef.current && dialogAudioObjectUrlRef.current !== source) {
@@ -1335,11 +1334,6 @@ export default function ImmersiveScene() {
     audio.load();
     setDialogAudioSource(source);
     audioRef.current = audio;
-    if (!autoPlay) {
-      setIsPreparingNeuralAudio(false);
-      setDlgFeedback("A voz está pronta. Toque em Ouvir James para reproduzir.");
-      return;
-    }
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
     };
@@ -1430,19 +1424,19 @@ export default function ImmersiveScene() {
     }
   }, []);
 
-  const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string, autoPlay = true) => {
+  const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string) => {
     const result = await waitForSpeechResult(
       sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender }),
       12_000,
     );
     if (!result.success || !("audioBase64" in result)) return false;
     const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
-    await playTeacherAudio(source, text, language, requestKey, false, autoPlay);
+    await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
 
   // Neural speech only: object pronunciation must never use a system/browser voice.
-  const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher", autoPlay = true) => {
+  const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (!text?.trim()) return;
     const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
     const requestKey = `${purpose}:${lang}:${teacherGender}:${text}`;
@@ -1464,7 +1458,7 @@ export default function ImmersiveScene() {
       );
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
       const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mp3");
-      await playTeacherAudio(source, text, lang, requestKey, false, autoPlay);
+      await playTeacherAudio(source, text, lang, requestKey);
       return true;
     };
 
@@ -1485,7 +1479,7 @@ export default function ImmersiveScene() {
         6_000,
       );
       if (googleAudio.audioUrl) {
-        await playTeacherAudio(googleAudio.audioUrl, text, lang, requestKey, false, autoPlay);
+        await playTeacherAudio(googleAudio.audioUrl, text, lang, requestKey);
         return;
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
@@ -1504,9 +1498,8 @@ export default function ImmersiveScene() {
     if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
   }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
 
-  const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher", options?: { autoPlay?: boolean }) => {
+  const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (isAuthLoading) return;
-    const autoPlay = options?.autoPlay ?? true;
     if (!isAuthenticated) {
       setDialogAuthRequired(true);
       const requestKey = `local-dialog:${language}:${gender || "female"}:${text}`;
@@ -1516,7 +1509,7 @@ export default function ImmersiveScene() {
       setShowGreeting(true);
       setActiveSpeechText(text);
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, gender || "female", requestKey, autoPlay)
+      void playPublicSceneDialogue(text, language, gender || "female", requestKey)
         .then((played) => {
           if (played) return;
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
@@ -1536,12 +1529,12 @@ export default function ImmersiveScene() {
     }
     primeVisemeAudio();
     const requestKey = `dialog-recovery:${language}:${gender || selectedScene?.teacherGender || "female"}:${text}`;
-    void speak(text, language, undefined, gender, purpose, autoPlay).catch(() => {
+    void speak(text, language, undefined, gender, purpose).catch(() => {
       if (activeDialogLineRef.current === text) setDlgAudioClock(false);
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, gender || selectedScene?.teacherGender || "female", requestKey, autoPlay)
+      void playPublicSceneDialogue(text, language, gender || selectedScene?.teacherGender || "female", requestKey)
         .then((played) => {
           if (played || playLocalDialogFallback(text, language, requestKey, gender || selectedScene?.teacherGender)) return;
           setIsPreparingNeuralAudio(false);
@@ -1740,46 +1733,34 @@ export default function ImmersiveScene() {
       dlgRecordingStreamRef.current?.getTracks().forEach((track) => track.stop());
       dlgRecordingStreamRef.current = null;
     };
-  }, [selectedScene?.id]);
+  }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
-    const line = activeSceneDialog[0];
-    if (!line) return;
+    primeDialogAudioFromGesture();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
-    setActiveHotspot(null);
-    try {
-      stopTeacherAudio();
-    } catch {
-      // A abertura do diálogo não depende da limpeza de mídia anterior.
-    }
-    primeDialogAudioFromGesture();
     if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
     if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
+    const line = activeSceneDialog[0];
+    if (!line) return;
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
       setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(false);
-      setDlgFeedback("Toque em Ouvir James para preparar e ouvir a voz natural.");
+      setDlgAudioClock(true);
+      // This runs directly from the Iniciar Diálogo click. Guests use the public
+      // scene voice; authenticated students keep the protected neural path.
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
-
-  const launchDialogFromGesture = useCallback(() => {
-    const now = Date.now();
-    if (now - lastSceneGestureAtRef.current < 350) return;
-    lastSceneGestureAtRef.current = now;
-    if (!selectedScene || activeSceneDialog.length === 0) return;
-    startDialog(selectedScene);
-  }, [activeSceneDialog.length, selectedScene, startDialog]);
-
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1808,8 +1789,9 @@ export default function ImmersiveScene() {
       setDlgWords(words); setDlgWordIdx(0);
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
-      setDlgAudioClock(false);
-      setDlgFeedback("Toque em Ouvir James para preparar e ouvir a voz natural.");
+      setDlgAudioClock(true);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -2013,12 +1995,7 @@ export default function ImmersiveScene() {
 
   const handleHotspotClick = useCallback((hotspot: Hotspot) => {
     if (!selectedScene) return;
-    if (dlgOpen) {
-      setActiveHotspot(null);
-      return;
-    }
     const activeTeacherScene = teachingScene ?? selectedScene;
-    stopTeacherAudio();
     setActiveHotspot(hotspot);
     setParticles(true);
     setTimeout(() => setParticles(false), 1000);
@@ -2041,8 +2018,18 @@ export default function ImmersiveScene() {
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
+    const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"
+      ? playJamesTropicalClip("james-tropical-point-palm")
+      : activeTeacherScene.teacherName === "Sophie" && hotspot.id === "croissant"
+        ? playSophieCafeClip("sophie-cafe-point-croissant")
+        : null;
+    if (objectFocusClip) {
+      requestSpeechSafely(objectFocusClip.dialogue, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
+    } else {
+      requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);
+    }
     setTimeout(() => setShowGreeting(false), 5000);
-  }, [dlgOpen, learnedWords, selectedScene, stopTeacherAudio, teachingScene]);
+  }, [selectedScene, teachingScene, learnedWords, nativeLang, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -2504,20 +2491,11 @@ export default function ImmersiveScene() {
                 left: `${hotspot.x}%`,
                 top: `${hotspot.y}%`,
                 transform: "translate(-50%, -50%)",
-              zIndex: 20,
-              cursor: "pointer",
-            }}
-            onClick={(e) => { e.stopPropagation(); handleHotspotClick(hotspot); }}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" && event.key !== " ") return;
-              event.preventDefault();
-              event.stopPropagation();
-              handleHotspotClick(hotspot);
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label={`Abrir vocabulário: ${hotspot.label}`}
-          >
+                zIndex: 20,
+                cursor: "pointer",
+              }}
+              onClick={(e) => { e.stopPropagation(); handleHotspotClick(hotspot); }}
+            >
               {/* Float wrapper: CSS class hs-float-N — translateY only, no inline style conflict */}
               <div className={learned ? undefined : `hs-float hs-float-${hotspot.id.charCodeAt(hotspot.id.length - 1) % 10}`}>
               {/* Main button — clean, no glow, no ring */}
@@ -2656,8 +2634,7 @@ export default function ImmersiveScene() {
         {/* ── Dialog Panel: scrolling text + exercises ── */}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}
+            onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
             className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
               bottom: "100px", left: "50%", transform: "translateX(-50%)",
@@ -2781,16 +2758,12 @@ export default function ImmersiveScene() {
                     type="button"
                     onClick={() => {
                       const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
-                      if (dialogAudioSource) {
-                        void replayVisibleDialogAudio();
-                        return;
-                      }
-                      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, { autoPlay: false });
+                      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                     }}
                     className="rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
                     title="Repetir a fala do professor em inglês"
                   >
-                    {isPreparingNeuralAudio ? "Preparando James…" : dialogAudioSource ? "▶ Ouvir James" : "Preparar voz de James"}
+                    {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
                   </button>
                   {!isAuthenticated && (
                     <button
@@ -2829,6 +2802,15 @@ export default function ImmersiveScene() {
                     className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
                     aria-label="Áudio da fala em inglês"
                   />
+                  {dialogAudioSource && (
+                    <button
+                      type="button"
+                      onClick={() => { void replayVisibleDialogAudio(); }}
+                      className="rounded-full border border-cyan-300/60 bg-cyan-400/15 px-3 py-1.5 text-xs font-bold text-cyan-50 transition hover:bg-cyan-400/25"
+                    >
+                      ▶ Ouvir James
+                    </button>
+                  )}
                 </div>
               )}
               {/* Scrolling text word by word */}

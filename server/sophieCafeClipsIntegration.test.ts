@@ -39,13 +39,14 @@ describe("integração dos clipes de Sophie na Cena do Café", () => {
     expect(sceneSource).toContain("setActiveSophieClipId(null);");
   });
 
-  it("associa os clipes do Café ao diálogo e mantém o cartão de croissant sem disparo automático", () => {
+  it("associa somente os gatilhos do Café à saudação, croissant, acerto e nova tentativa", () => {
     expect(sceneSource).toContain('setActiveSophieClipId("sophie-cafe-greeting")');
     expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-greeting")');
+    expect(sceneSource).toContain('hotspot.id === "croissant"');
+    expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-point-croissant")');
     expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-praise")');
     expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-retry")');
     expect(sceneSource).toContain('selectedScene?.id !== "cafe" || selectedScene.teacherName !== "Sophie"');
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
-    expect(sceneSource).not.toContain('playSophieCafeClip("sophie-cafe-point-croissant")');
   });
 });

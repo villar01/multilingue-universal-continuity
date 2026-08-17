@@ -16,7 +16,6 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("src={dialogAudioSource || undefined}");
     expect(sceneSource).toContain("controls={Boolean(dialogAudioSource)}");
     expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
-    expect(sceneSource).toContain("Preparar voz de James");
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');
     expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
@@ -67,33 +66,5 @@ describe("permanent Tropical Beach scene contracts", () => {
   it("keeps the dialogue panel compact enough to preserve the scene", () => {
     expect(sceneSource).toContain('maxHeight: "min(43vh, 340px)"');
     expect(sceneSource).not.toContain("!immersionMode && dlgFeedback && (");
-  });
-
-  it("keeps the first dialogue and every scene object reachable by touch, click, and keyboard", () => {
-    expect(sceneSource).toContain("const lastSceneGestureAtRef = useRef(0);");
-    expect(sceneSource).toContain("const launchDialogFromGesture = useCallback");
-    expect(sceneSource).toContain("onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
-    expect(sceneSource).not.toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
-    expect(sceneSource).toContain('aria-label={`Abrir vocabulário: ${hotspot.label}`}');
-    expect(sceneSource).toContain("tabIndex={0}");
-  });
-
-  it("only resets the teaching session when the selected scene changes", () => {
-    expect(sceneSource).toContain("}, [selectedScene?.id]);");
-    expect(sceneSource).not.toContain("}, [selectedScene?.id, stopTeacherAudio]);");
-  });
-
-  it("separates vocabulary cards from the teacher dialogue and avoids automatic object audio", () => {
-    expect(sceneSource).toContain("setActiveHotspot(null);\n    try {\n      stopTeacherAudio();");
-    expect(sceneSource).toContain("if (dlgOpen) {\n      setActiveHotspot(null);\n      return;");
-    expect(sceneSource).not.toContain("requestSpeechSafely(interaction.speech.text");
-  });
-
-  it("prepares James's neural audio without starting an automatic browser-blocked playback", () => {
-    expect(sceneSource).toContain("options?: { autoPlay?: boolean }");
-    expect(sceneSource).toContain("const autoPlay = options?.autoPlay ?? true;");
-    expect(sceneSource).toContain("A voz está pronta. Toque em Ouvir James para reproduzir.");
-    expect(sceneSource).toContain("{ autoPlay: false }");
-    expect(sceneSource).toContain("Toque em Ouvir James para preparar e ouvir a voz natural.");
   });
 });

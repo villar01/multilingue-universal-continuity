@@ -15,17 +15,11 @@ export function getQuickTeacherHref(location: string): string | null {
   return isExcluded ? null : `/free-talk?returnTo=${encodeURIComponent(path)}`;
 }
 
-export function getJamesSceneHref(location: string): string | null {
-  const path = location.split("?")[0] || "/";
-  return path === "/immersive-scene" ? null : "/immersive-scene?scene=beach";
-}
-
 export function QuickStudyAccess() {
   const [location] = useLocation();
   const studyHref = getQuickStudyHref(location);
   const teacherHref = getQuickTeacherHref(location);
-  const jamesSceneHref = getJamesSceneHref(location);
-  if (!studyHref && !teacherHref && !jamesSceneHref) return null;
+  if (!studyHref && !teacherHref) return null;
 
   return (
     <div className="fixed bottom-6 left-4 z-[80] flex flex-wrap items-center gap-2">
@@ -47,16 +41,6 @@ export function QuickStudyAccess() {
         >
           <MessageCircleMore className="h-4 w-4" />
           Professor
-        </Link>
-      )}
-      {jamesSceneHref && (
-        <Link
-          href={jamesSceneHref}
-          className="inline-flex items-center gap-2 rounded-full border border-cyan-300/60 bg-slate-950/95 px-4 py-3 text-sm font-extrabold text-cyan-100 shadow-xl backdrop-blur transition hover:bg-cyan-300 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2"
-          aria-label="Abrir Cena Praia Tropical com James"
-        >
-          <span aria-hidden="true">🏝️</span>
-          Cena James
         </Link>
       )}
     </div>

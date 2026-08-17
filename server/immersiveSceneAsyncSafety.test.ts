@@ -6,13 +6,12 @@ const source = readFileSync(new URL("../client/src/pages/ImmersiveScene.tsx", im
 describe("segurança assíncrona da cena imersiva", () => {
   it("centraliza disparos de fala em um invólucro que captura rejeições", () => {
     expect(source).toContain("const requestSpeechSafely = useCallback");
-    expect(source).toContain("void speak(text, language, undefined, gender, purpose, autoPlay).catch");
+    expect(source).toContain("void speak(text, language, undefined, gender, purpose).catch");
   });
 
-  it("usa o invólucro em diálogos, respostas e controles manuais, sem voz automática de objetos", () => {
-    expect(source).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, { autoPlay: false });");
-    expect(source).toContain("onSpeak={(text, language) => requestSpeechSafely(text, language, selectedScene.teacherGender, \"hotspot\")}");
-    expect(source).not.toContain("requestSpeechSafely(interaction.speech.text");
+  it("usa o invólucro em diálogos, respostas, hotspots e botões", () => {
+    expect(source).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);");
+    expect(source).toContain("requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);");
     expect(source.match(/void speak\(/g)).toHaveLength(1);
   });
 });
