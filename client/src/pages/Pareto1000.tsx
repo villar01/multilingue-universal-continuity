@@ -68,7 +68,9 @@ export default function Pareto1000() {
   const programReadyCount = paretoQuery.data?.total ?? 0;
   const returnTo = useMemo(() => {
     const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
-    return requestedDestination?.startsWith("/base-de-estudos") ? requestedDestination : "/base-de-estudos";
+    return requestedDestination?.startsWith("/base-de-estudos") || requestedDestination?.startsWith("/abc-book")
+      ? requestedDestination
+      : "/base-de-estudos";
   }, [location]);
 
   useEffect(() => {

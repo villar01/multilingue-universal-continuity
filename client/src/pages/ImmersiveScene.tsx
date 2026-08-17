@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { audioBase64ToObjectUrl } from "@/lib/audioSource";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
+import { FlyingSOSBook } from "@/components/FlyingSOSBook";
 import Notebook, { NotebookButton, addToNotebook, loadNotebook } from "../components/Notebook";
 import ParetoPanel from "../components/ParetoPanel";
 import { ParetoPracticeCycle } from "../components/ParetoPracticeCycle";
@@ -2521,6 +2522,7 @@ export default function ImmersiveScene() {
                 compact
               />
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
+              <FlyingSOSBook className="relative z-0" />
               <button
                 onClick={() => setParetoOpen(true)}
                 className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"

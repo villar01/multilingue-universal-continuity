@@ -1650,3 +1650,13 @@
 - [x] Criar contrato integrado para acesso autenticado, abertura de diálogo, Pareto, objetos e voz manual sem cache tRPC — nova regressão valida os quatro contratos compartilhados; TypeScript sem erros e suíte completa com 221 arquivos/575 testes aprovados
 
 - [x] Retomar uma única vez às 21h pela validação visual do Pareto, suíte completa e correções críticas comprovadas — agendamento ativo para 21h no fuso America/Sao_Paulo, sem repetição e com expiração às 23h30
+
+- [ ] Criar o Socorro como livro voador com rótulo SOS, acionado voluntariamente em cenas e lições para abrir o Livro ABC e retornar ao ponto de origem
+
+- [ ] Finalizar a primeira edição do Livro ABC do Socorro para o par Português–Inglês, mantendo a arquitetura pronta para os demais pares
+
+- [ ] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — captura indisponível no ambiente atual; TypeScript e testes permanecem como validações já executadas
+
+- [ ] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação
+
+- [ ] Registrar para correção posterior cada item que não passar em TypeScript, testes ou validação funcional, sem marcar como concluído

@@ -36,6 +36,7 @@ import { getLevelByLesson, getLevelConfig, resolvePracticeCEFRLevel, type CEFRLe
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { resolveTeacherSpeechVoice } from "@/lib/voiceConversationTeacher";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
+import { FlyingSOSBook } from "@/components/FlyingSOSBook";
 // Lazy load heavy components
 const ARLearningScene = lazy(() => import("@/components/ARLearningScene").then(m => ({ default: m.ARLearningScene })));
 const VoiceConversation = lazy(() => import("@/components/VoiceConversation"));
@@ -1608,6 +1609,7 @@ export default function Lesson() {
           position="bottom-right"
         />
       )}
+      <FlyingSOSBook className="fixed bottom-6 left-4 z-[80]" />
     </ContentProtection>
   );
 }

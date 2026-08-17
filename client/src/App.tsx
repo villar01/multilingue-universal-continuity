@@ -77,6 +77,7 @@ const SmartReview = lazy(() => import("./pages/SmartReview"));
 const ParentalControlPanel = lazy(() => import("./pages/ParentalControlPanel"));
 const StudyBase = lazy(() => import("./pages/StudyBase"));
 const Pareto1000 = lazy(() => import("./pages/Pareto1000"));
+const ABCBook = lazy(() => import("./pages/ABCBook"));
 import LocalAINotification from "./components/LocalAINotification";
 import { LipSyncSetupGuide } from "./components/LipSyncSetupGuide";
 import ConnectivityIndicator from "./components/ConnectivityIndicator";
@@ -161,6 +162,7 @@ function Router() {
         <Route path="/smart-review" component={SmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
         <Route path="/base-de-estudos" component={StudyBase} />
+        <Route path="/abc-book" component={ABCBook} />
         <Route path="/pareto-1000" component={Pareto1000} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
