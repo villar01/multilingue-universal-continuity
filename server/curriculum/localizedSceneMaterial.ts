@@ -247,6 +247,61 @@ const PT_BR_CAFE_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResu
   },
 };
 
+const PT_BR_RESTAURANT_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "¡Bienvenido al restaurante! ¿Puedo ver el menú?", nativeHelp: "Bem-vindo ao restaurante! Posso ver o cardápio?" },
+      { targetText: "Quiero pasta con salsa de tomate, por favor.", nativeHelp: "Quero massa com molho de tomate, por favor." },
+      { targetText: "La mesa está limpia y la vela ilumina el restaurante.", nativeHelp: "A mesa está limpa e a vela ilumina o restaurante." },
+    ],
+    objects: [
+      { targetText: "pasta", nativeHelp: "massa" },
+      { targetText: "vino", nativeHelp: "vinho" },
+      { targetText: "mesa", nativeHelp: "mesa" },
+      { targetText: "vela", nativeHelp: "vela" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Bienvenue au restaurant ! Puis-je voir le menu ?", nativeHelp: "Bem-vindo ao restaurante! Posso ver o cardápio?" },
+      { targetText: "Je voudrais des pâtes avec de la sauce tomate, s’il vous plaît.", nativeHelp: "Quero massa com molho de tomate, por favor." },
+      { targetText: "La table est propre et la bougie éclaire le restaurant.", nativeHelp: "A mesa está limpa e a vela ilumina o restaurante." },
+    ],
+    objects: [
+      { targetText: "pâtes", nativeHelp: "massa" },
+      { targetText: "vin", nativeHelp: "vinho" },
+      { targetText: "table", nativeHelp: "mesa" },
+      { targetText: "bougie", nativeHelp: "vela" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Benvenuto al ristorante! Posso vedere il menu?", nativeHelp: "Bem-vindo ao restaurante! Posso ver o cardápio?" },
+      { targetText: "Vorrei la pasta con salsa di pomodoro, per favore.", nativeHelp: "Quero massa com molho de tomate, por favor." },
+      { targetText: "Il tavolo è pulito e la candela illumina il ristorante.", nativeHelp: "A mesa está limpa e a vela ilumina o restaurante." },
+    ],
+    objects: [
+      { targetText: "pasta", nativeHelp: "massa" },
+      { targetText: "vino", nativeHelp: "vinho" },
+      { targetText: "tavolo", nativeHelp: "mesa" },
+      { targetText: "candela", nativeHelp: "vela" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Willkommen im Restaurant! Kann ich die Speisekarte sehen?", nativeHelp: "Bem-vindo ao restaurante! Posso ver o cardápio?" },
+      { targetText: "Ich möchte Pasta mit Tomatensoße, bitte.", nativeHelp: "Quero massa com molho de tomate, por favor." },
+      { targetText: "Der Tisch ist sauber und die Kerze beleuchtet das Restaurant.", nativeHelp: "A mesa está limpa e a vela ilumina o restaurante." },
+    ],
+    objects: [
+      { targetText: "Pasta", nativeHelp: "massa" },
+      { targetText: "Wein", nativeHelp: "vinho" },
+      { targetText: "Tisch", nativeHelp: "mesa" },
+      { targetText: "Kerze", nativeHelp: "vela" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
@@ -258,6 +313,7 @@ function getReviewedLaunchSceneMaterial(input: {
     family_home: PT_BR_FAMILY_HOME_LAUNCH_MATERIAL,
     airport_family: PT_BR_AIRPORT_FAMILY_LAUNCH_MATERIAL,
     cafe: PT_BR_CAFE_LAUNCH_MATERIAL,
+    restaurant: PT_BR_RESTAURANT_LAUNCH_MATERIAL,
   };
   return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }

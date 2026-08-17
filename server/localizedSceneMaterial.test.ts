@@ -160,6 +160,27 @@ describe("material localizado protegido das cenas", () => {
     expect(mockedGenerateAI).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["es-ES", "pasta"],
+    ["fr-FR", "pâtes"],
+    ["it-IT", "pasta"],
+    ["de-DE", "Pasta"],
+  ])("entrega o pacote revisado PT-BR → %s do Restaurante Brasileiro sem depender de geração", async (targetLanguage, expectedObject) => {
+    const result = await localizeSceneDialogue({
+      sceneId: "restaurant",
+      targetLanguage,
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result.status).toBe("ready");
+    expect(result.turns).toHaveLength(3);
+    expect(result.objects).toEqual(expect.arrayContaining([
+      expect.objectContaining({ targetText: expectedObject, nativeHelp: "massa" }),
+    ]));
+    expect(mockedGenerateAI).not.toHaveBeenCalled();
+  });
+
   it("não substitui um idioma futuro por conteúdo de outra língua", async () => {
     const result = await localizeSceneDialogue({
       sceneId: "family_home",

@@ -1553,3 +1553,5 @@
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão à cena Família no Aeroporto, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 20 regressões dedicadas e suíte completa com 220 arquivos/549 testes aprovados
 
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Café Parisiense, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 24 regressões dedicadas e suíte completa com 220 arquivos/553 testes aprovados
+
+- [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Restaurante Brasileiro, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 28 regressões dedicadas e suíte completa com 220 arquivos/557 testes aprovados
