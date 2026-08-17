@@ -118,6 +118,22 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
       paretoPrompt: "Crie uma frase de necessidade ou localização usando airport e pratique-a em voz alta.",
     },
+    {
+      term: "friend",
+      meaning: "amigo; amiga",
+      grammar: "substantivo contável; use my, your, his ou her para indicar de quem é a amizade",
+      pattern: "My friend + verbo: My friend studies English.",
+      example: "My friend practices with me. — Minha amiga pratica comigo.",
+      paretoPrompt: "Escreva uma frase sobre um friend e acrescente uma ação que essa pessoa faz na rotina.",
+    },
+    {
+      term: "morning",
+      meaning: "manhã",
+      grammar: "substantivo de período do dia; use in the morning para situar uma rotina",
+      pattern: "ação + in the morning: I study English in the morning.",
+      example: "I practice new words in the morning. — Eu pratico palavras novas de manhã.",
+      paretoPrompt: "Crie uma frase verdadeira com morning e leve-a para a recuperação Pareto sem consultar o modelo.",
+    },
   ],
   chapters: A1_CHAPTERS,
   phrases: [
