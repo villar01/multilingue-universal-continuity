@@ -1212,6 +1212,7 @@ export default function ImmersiveScene() {
   const activeDialogWordCountRef = useRef(0);
   const dialogAudioContextRef = useRef<AudioContext | null>(null);
   const activeSpeechRequestRef = useRef<string | null>(null);
+  const lastSceneGestureAtRef = useRef(0);
   const [audioViseme, setAudioViseme] = useState<VisemeData | null>(null);
   const handleAudioViseme = useCallback((viseme: VisemeData) => setAudioViseme(viseme), []);
   const { stop: stopVisemeSync, primeAudioContext: primeVisemeAudio } = useTTSVisemeSync(handleAudioViseme);
@@ -1761,6 +1762,15 @@ export default function ImmersiveScene() {
       setDlgWords([]); setDlgWordIdx(0);
     }
   }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+
+  const launchDialogFromGesture = useCallback(() => {
+    const now = Date.now();
+    if (now - lastSceneGestureAtRef.current < 350) return;
+    lastSceneGestureAtRef.current = now;
+    if (!selectedScene || activeSceneDialog.length === 0) return;
+    startDialog(selectedScene);
+  }, [activeSceneDialog.length, selectedScene, startDialog]);
+
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -2491,11 +2501,20 @@ export default function ImmersiveScene() {
                 left: `${hotspot.x}%`,
                 top: `${hotspot.y}%`,
                 transform: "translate(-50%, -50%)",
-                zIndex: 20,
-                cursor: "pointer",
-              }}
-              onClick={(e) => { e.stopPropagation(); handleHotspotClick(hotspot); }}
-            >
+              zIndex: 20,
+              cursor: "pointer",
+            }}
+            onClick={(e) => { e.stopPropagation(); handleHotspotClick(hotspot); }}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter" && event.key !== " ") return;
+              event.preventDefault();
+              event.stopPropagation();
+              handleHotspotClick(hotspot);
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Abrir vocabulário: ${hotspot.label}`}
+          >
               {/* Float wrapper: CSS class hs-float-N — translateY only, no inline style conflict */}
               <div className={learned ? undefined : `hs-float hs-float-${hotspot.id.charCodeAt(hotspot.id.length - 1) % 10}`}>
               {/* Main button — clean, no glow, no ring */}
@@ -2634,7 +2653,9 @@ export default function ImmersiveScene() {
         {/* ── Dialog Panel: scrolling text + exercises ── */}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
-            onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
+            type="button"
+            onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}
+            onClick={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}
             className="immersive-start-dialog absolute z-50 flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
               bottom: "100px", left: "50%", transform: "translateX(-50%)",

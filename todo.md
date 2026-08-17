@@ -1577,3 +1577,5 @@
 - [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 
 - [x] Restaurar a última versão funcional da Praia Tropical após bloqueio de autorização introduzido por atualização recente — recuperação aplicada a partir do checkpoint estável 9ddf4e5d; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
+
+- [x] Corrigir o botão “Iniciar Diálogo” e a ativação dos objetos da Praia Tropical quando o material autorizado já estiver carregado — clique, toque e teclado passam pelo mesmo comando protegido contra duplo disparo; objetos também ficam acessíveis por teclado; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados

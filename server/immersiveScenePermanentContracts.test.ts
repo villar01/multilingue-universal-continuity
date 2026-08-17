@@ -67,4 +67,12 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain('maxHeight: "min(43vh, 340px)"');
     expect(sceneSource).not.toContain("!immersionMode && dlgFeedback && (");
   });
+
+  it("keeps the first dialogue and every scene object reachable by touch, click, and keyboard", () => {
+    expect(sceneSource).toContain("const lastSceneGestureAtRef = useRef(0);");
+    expect(sceneSource).toContain("const launchDialogFromGesture = useCallback");
+    expect(sceneSource).toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
+    expect(sceneSource).toContain('aria-label={`Abrir vocabulário: ${hotspot.label}`}');
+    expect(sceneSource).toContain("tabIndex={0}");
+  });
 });
