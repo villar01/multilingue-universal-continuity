@@ -1623,7 +1623,7 @@
 
 - [x] Restaurar a Praia Tropical ao último estado estável com diálogo, objetos, Pareto e áudio de reserva disponíveis antes das regressões recentes — recuperação aplicada a partir do checkpoint estável f0541cca; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 
-- [ ] Corrigir diálogo, avanço e voz principal da Praia Tropical preservando os cartões de objetos que já funcionam
+- [x] Corrigir diálogo, avanço e voz principal da Praia Tropical preservando os cartões de objetos que já funcionam — diálogo autenticado, avanço seguro e voz manual de James seguem contratos isolados dos cartões; TypeScript e 13 regressões de fluxo, autorização e voz aprovados
 
 - [ ] Restaurar a reprodução neural dos objetos Wave, Ocean, Palm Tree e Sand sem alterar os cartões pedagógicos
 
