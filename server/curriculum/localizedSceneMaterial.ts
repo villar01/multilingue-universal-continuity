@@ -82,13 +82,72 @@ const PT_BR_BEACH_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialRes
   },
 };
 
+const PT_BR_FAMILY_HOME_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "¿Quién está en tu familia?", nativeHelp: "Quem está na sua família?" },
+      { targetText: "Tengo una mamá, un papá y una hermana.", nativeHelp: "Tenho uma mãe, um pai e uma irmã." },
+      { targetText: "Veo un sofá, una televisión y una mesa.", nativeHelp: "Vejo um sofá, uma televisão e uma mesa." },
+    ],
+    objects: [
+      { targetText: "sofá", nativeHelp: "sofá" },
+      { targetText: "televisión", nativeHelp: "televisão" },
+      { targetText: "mesa", nativeHelp: "mesa" },
+      { targetText: "cocina", nativeHelp: "cozinha" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Qui y a-t-il dans ta famille ?", nativeHelp: "Quem está na sua família?" },
+      { targetText: "J’ai une maman, un papa et une sœur.", nativeHelp: "Tenho uma mãe, um pai e uma irmã." },
+      { targetText: "Je vois un canapé, une télévision et une table.", nativeHelp: "Vejo um sofá, uma televisão e uma mesa." },
+    ],
+    objects: [
+      { targetText: "canapé", nativeHelp: "sofá" },
+      { targetText: "télévision", nativeHelp: "televisão" },
+      { targetText: "table", nativeHelp: "mesa" },
+      { targetText: "cuisine", nativeHelp: "cozinha" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Chi c’è nella tua famiglia?", nativeHelp: "Quem está na sua família?" },
+      { targetText: "Ho una mamma, un papà e una sorella.", nativeHelp: "Tenho uma mãe, um pai e uma irmã." },
+      { targetText: "Vedo un divano, una televisione e un tavolo.", nativeHelp: "Vejo um sofá, uma televisão e uma mesa." },
+    ],
+    objects: [
+      { targetText: "divano", nativeHelp: "sofá" },
+      { targetText: "televisione", nativeHelp: "televisão" },
+      { targetText: "tavolo", nativeHelp: "mesa" },
+      { targetText: "cucina", nativeHelp: "cozinha" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Wer ist in deiner Familie?", nativeHelp: "Quem está na sua família?" },
+      { targetText: "Ich habe eine Mutter, einen Vater und eine Schwester.", nativeHelp: "Tenho uma mãe, um pai e uma irmã." },
+      { targetText: "Ich sehe ein Sofa, einen Fernseher und einen Tisch.", nativeHelp: "Vejo um sofá, uma televisão e uma mesa." },
+    ],
+    objects: [
+      { targetText: "Sofa", nativeHelp: "sofá" },
+      { targetText: "Fernseher", nativeHelp: "televisão" },
+      { targetText: "Tisch", nativeHelp: "mesa" },
+      { targetText: "Küche", nativeHelp: "cozinha" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
   nativeLanguage: string;
 }): Omit<LocalizedSceneMaterialResult, "status"> | null {
-  if (input.sceneId !== "beach" || languageBase(input.nativeLanguage) !== "pt") return null;
-  return PT_BR_BEACH_LAUNCH_MATERIAL[languageBase(input.targetLanguage)] || null;
+  if (languageBase(input.nativeLanguage) !== "pt") return null;
+  const materialsByScene: Record<string, Record<string, Omit<LocalizedSceneMaterialResult, "status">>> = {
+    beach: PT_BR_BEACH_LAUNCH_MATERIAL,
+    family_home: PT_BR_FAMILY_HOME_LAUNCH_MATERIAL,
+  };
+  return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }
 
 function parseLocalizedEntries(content: unknown, min: number, max: number): LocalizedSceneDialogueTurn[] | null {
