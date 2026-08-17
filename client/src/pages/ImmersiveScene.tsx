@@ -1265,7 +1265,6 @@ export default function ImmersiveScene() {
     const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
     const preferredVoice = gender === "male"
       ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name))
-        || regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))
       : gender === "female"
         ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
         : regionalVoices[0];
@@ -1346,9 +1345,12 @@ export default function ImmersiveScene() {
       setDlgWordIdx((current) => Math.max(current, nextWord));
     };
     let invalidTrackHandled = false;
+    let invalidTrackTimeout: number | null = null;
+    const hasPlayableDuration = () => Number.isFinite(audio.duration) && audio.duration > 0;
     const useFallbackForInvalidTrack = () => {
       if (invalidTrackHandled || audio.src !== source) return;
       invalidTrackHandled = true;
+      if (invalidTrackTimeout !== null) window.clearTimeout(invalidTrackTimeout);
       audio.pause();
       if (updatesActiveDialog()) setDlgAudioClock(false);
       stopVisemeSync();
@@ -1359,7 +1361,8 @@ export default function ImmersiveScene() {
         URL.revokeObjectURL(source);
         dialogAudioObjectUrlRef.current = null;
       }
-      if (playLocalDialogFallback(phrase, _language, requestKey, "male")) {
+      const isJames = selectedScene?.teacherName === "James";
+      if (!isJames && playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
         setDlgFeedback("A faixa neural não ficou disponível. James está usando a voz de reserva do navegador.");
         return;
       }
@@ -1374,13 +1377,26 @@ export default function ImmersiveScene() {
       setIsSpeaking(true);
       if (updatesActiveDialog()) setDlgAudioClock(true);
     };
-    audio.onloadedmetadata = () => {
-      if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
-        useFallbackForInvalidTrack();
-        return;
+    const acceptPlayableTrack = () => {
+      if (!hasPlayableDuration()) return false;
+      if (invalidTrackTimeout !== null) {
+        window.clearTimeout(invalidTrackTimeout);
+        invalidTrackTimeout = null;
       }
       updateDialogWordsFromAudio();
+      return true;
     };
+    audio.onloadedmetadata = () => {
+      if (acceptPlayableTrack()) return;
+      // Alguns navegadores anunciam metadata antes de calcular a duração do
+      // Blob MP3. Só rejeitamos a faixa se ela continuar inválida após a
+      // janela de decodificação, nunca no primeiro evento transitório.
+      invalidTrackTimeout = window.setTimeout(() => {
+        if (!hasPlayableDuration()) useFallbackForInvalidTrack();
+      }, 1800);
+    };
+    audio.ondurationchange = acceptPlayableTrack;
+    audio.oncanplay = acceptPlayableTrack;
     audio.ontimeupdate = updateDialogWordsFromAudio;
     audio.onended = () => {
       if (updatesActiveDialog()) {
@@ -1395,6 +1411,7 @@ export default function ImmersiveScene() {
         setActiveSpeechText("");
       }
       releaseRequest();
+      if (invalidTrackTimeout !== null) window.clearTimeout(invalidTrackTimeout);
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
     audio.onerror = useFallbackForInvalidTrack;
@@ -1403,7 +1420,7 @@ export default function ImmersiveScene() {
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");
-  }, [dialogSpeechRate, playLocalDialogFallback, stopVisemeSync]);
+  }, [dialogSpeechRate, playLocalDialogFallback, selectedScene?.teacherGender, selectedScene?.teacherName, stopVisemeSync]);
 
   const replayVisibleDialogAudio = useCallback(async () => {
     const audio = dialogAudioElementRef.current;
@@ -1444,7 +1461,7 @@ export default function ImmersiveScene() {
       12_000,
     );
     if (!result.success || !("audioBase64" in result) || !result.audioBase64.trim()) return false;
-    const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
+    const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mpeg");
     await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
@@ -1471,7 +1488,7 @@ export default function ImmersiveScene() {
         6_000,
       );
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
-      const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mp3");
+      const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg");
       await playTeacherAudio(source, text, lang, requestKey);
       return true;
     };

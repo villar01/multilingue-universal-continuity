@@ -17,6 +17,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
     expect(source).toContain('"Ouvir inglês"');
     expect(source).toContain("audioBase64ToObjectUrl");
+    expect(source).toContain('audioBase64ToObjectUrl(result.audioBase64, "audio/mpeg")');
+    expect(source).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
     expect(source).toContain("dialogAudioObjectUrlRef");
     expect(source).toContain("const replayVisibleDialogAudio = useCallback");
     expect(source).toContain("▶ Ouvir James");
@@ -46,7 +48,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("const useFallbackForInvalidTrack");
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
-    expect(neuralPreparation).toContain('playLocalDialogFallback(phrase, _language, requestKey, "male")');
+    expect(neuralPreparation).toContain('const isJames = selectedScene?.teacherName === "James"');
+    expect(neuralPreparation).toContain("if (!isJames && playLocalDialogFallback");
+    expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
@@ -64,7 +68,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   it("nunca troca James por voz feminina quando o fallback local não encontra inglês masculino", () => {
     expect(source).toContain("const maleVoicePattern");
     expect(source).toContain("if (gender && !preferredVoice) return false;");
-    expect(source).toContain("regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))");
+    expect(source).not.toContain("regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))");
     expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
   });
 });
