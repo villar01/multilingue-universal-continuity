@@ -102,4 +102,10 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain("Trilha atual: 1.000 palavras únicas.");
     expect(source).not.toContain("Piloto atual: {studyEntries.length} entradas.");
   });
+
+  it("aceita somente retorno interno seguro para a Base de Estudos", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain('destination?.startsWith("/") && !destination.startsWith("//")');
+    expect(source).toContain('return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/dashboard";');
+  });
 });

@@ -1539,6 +1539,10 @@
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas
 
 - [x] Estruturar a Unidade 4 A1 do ABC sobre pessoas e rotina — leitura contextual, gramática de she/her e presente, escrita e compreensão sobre hábitos cotidianos foram adicionadas à entrega curricular; TypeScript e 17 regressões da Base e das pontes pedagógicas aprovadas
+
+- [x] Completar as dez unidades estruturadas A1 do primeiro volume ABC — as unidades 1–10 agora têm leitura, tradução, gramática, duas questões e escrita, cobrindo identidade, necessidades, localização, rotina, tempo, objetos, ações, serviços, descrição e conversa; TypeScript e regressões da Base aprovadas
+
+- [x] Rejeitar destinos externos no parâmetro returnTo da Base de Estudos, mantendo somente retornos internos seguros — a Base aceita apenas caminhos iniciados por uma única barra e recusa // externo, preservando o painel como retorno seguro; TypeScript e 16 regressões da Base e Pareto aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados

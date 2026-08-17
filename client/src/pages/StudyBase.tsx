@@ -90,7 +90,7 @@ export default function StudyBase() {
     const destination = typeof window === "undefined"
       ? null
       : new URLSearchParams(window.location.search).get("returnTo");
-    return destination?.startsWith("/") ? destination : "/dashboard";
+    return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/dashboard";
   }, []);
 
   const studyEntries = studyContentQuery.data?.entries ?? [];
