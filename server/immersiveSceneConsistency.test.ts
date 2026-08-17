@@ -33,6 +33,12 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
   });
 
+  it("reserva a animação estável de James ao objeto com clipe roteirizado próprio", () => {
+    expect(sceneSource).toContain('const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"');
+    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-point-palm")');
+    expect(sceneSource).toContain('requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);');
+  });
+
   it("preserva perfis com retrato para as seis línguas iniciais", () => {
     for (const voiceLanguage of INITIAL_LANGUAGE_VOICES) {
       const languageEntry = new RegExp(`voiceLang: '${voiceLanguage}'[\\s\\S]{0,260}?photo: '/manus-storage/`);
