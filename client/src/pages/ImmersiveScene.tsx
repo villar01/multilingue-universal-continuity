@@ -444,23 +444,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"日本庭園へようこそ！自然の中で学びましょう！",
     greetingPt:"Bem-vindo ao jardim japonês! Aprenda na natureza!",
     difficulty:"advanced", premium:true,
-    dialog:[
-      {speaker:"teacher", text:"ようこそ！私はゆきです。この日本庭園は美しいですね！", textPt:"Bem-vindo! Sou Yuki. Este jardim japonês é bonito, não é?"},
-      {speaker:"user", text:"はい、とても美しいです！桜の花が素晴らしいです！", textPt:"Sim, é muito bonito! As flores de cerejeira são maravilhosas!", options:["はい、とても美しいです！桜の花が素晴らしいです！","わかりません。","怖いです。"], correctIndex:0},
-      {speaker:"teacher", text:"そうですね！池の中に魚がいます。橋を渡りましょう！", textPt:"É mesmo! Há peixes no lago. Vamos atravessar a ponte!"},
-      {speaker:"user", text:"はい！橋はとても美しいです。石も見えます。", textPt:"Sim! A ponte é muito bonita. Também vejo as pedras.", options:["はい！橋はとても美しいです。石も見えます。","橋が怖いです。","どこに行きますか？"], correctIndex:0},
-      {speaker:"teacher", text:"よく見えましたね！竹もあります。竹は日本の象徴です。", textPt:"Você viu bem! Há bambu também. O bambu é símbolo do Japão."},
-      {speaker:"user", text:"提灯も光っています！夜はもっと美しいでしょう。", textPt:"As lanternas também estão brilhando! À noite deve ser ainda mais bonito.", options:["提灯も光っています！夜はもっと美しいでしょう。","もう帰りたいです。","日本語は難しいです。"], correctIndex:0},
-      {speaker:"teacher", text:"素晴らしい！日本語がとても上手になりましたね！", textPt:"Maravilhoso! Seu japonês melhorou muito!"},
-    ],
-    hotspots:[
-      {id:"sakura2", x:35, y:25, label:"桜", translation:"Cerejeira", pronunciation:"sa-ku-ra", example:"桜が美しい。", examplePt:"A cerejeira é bonita.", icon:"🌸", color:"#ec4899"},
-      {id:"ike", x:55, y:60, label:"池", translation:"Lago", pronunciation:"いけ", example:"池に魚がいる。", examplePt:"Há peixes no lago.", icon:"🐟", color:"#3b82f6"},
-      {id:"hashi", x:70, y:50, label:"橋", translation:"Ponte", pronunciation:"はし", example:"橋を渡る。", examplePt:"Atravesse a ponte.", icon:"🌉", color:"#a16207"},
-      {id:"ishi", x:25, y:65, label:"石", translation:"Pedra", pronunciation:"いし", example:"石は重い。", examplePt:"A pedra é pesada.", icon:"🪨", color:"#64748b"},
-      {id:"take", x:80, y:35, label:"竹", translation:"Bambu", pronunciation:"たけ", example:"竹は高い。", examplePt:"O bambu é alto.", icon:"🎋", color:"#16a34a"},
-      {id:"chochin2", x:45, y:40, label:"提灯", translation:"Lanterna", pronunciation:"cho-chin", example:"提灯が光る。", examplePt:"A lanterna brilha.", icon:"🏮", color:"#ea580c"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"cafe", name:"Café Parisiense", nameEn:"Parisian Café", flag:"☕",
@@ -1186,7 +1172,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1195,7 +1181,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

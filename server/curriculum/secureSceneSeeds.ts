@@ -28,6 +28,25 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "sand", x: 59, y: 82, label: "Sand", translation: "Areia", pronunciation: "SÆND", example: "The sand is warm.", examplePt: "A areia está quente.", icon: "🏖️", color: "#f59e0b" },
     ],
   },
+  garden: {
+    dialog: [
+      { speaker: "teacher", text: "ようこそ！私はゆきです。この日本庭園は美しいですね！", textPt: "Bem-vindo! Sou Yuki. Este jardim japonês é bonito, não é?" },
+      { speaker: "user", text: "はい、とても美しいです！桜の花が素晴らしいです！", textPt: "Sim, é muito bonito! As flores de cerejeira são maravilhosas!", options: ["はい、とても美しいです！桜の花が素晴らしいです！", "わかりません。", "怖いです。"], correctIndex: 0 },
+      { speaker: "teacher", text: "そうですね！池の中に魚がいます。橋を渡りましょう！", textPt: "É mesmo! Há peixes no lago. Vamos atravessar a ponte!" },
+      { speaker: "user", text: "はい！橋はとても美しいです。石も見えます。", textPt: "Sim! A ponte é muito bonita. Também vejo as pedras.", options: ["はい！橋はとても美しいです。石も見えます。", "橋が怖いです。", "どこに行きますか？"], correctIndex: 0 },
+      { speaker: "teacher", text: "よく見えましたね！竹もあります。竹は日本の象徴です。", textPt: "Você viu bem! Há bambu também. O bambu é símbolo do Japão." },
+      { speaker: "user", text: "提灯も光っています！夜はもっと美しいでしょう。", textPt: "As lanternas também estão brilhando! À noite deve ser ainda mais bonito.", options: ["提灯も光っています！夜はもっと美しいでしょう。", "もう帰りたいです。", "日本語は難しいです。"], correctIndex: 0 },
+      { speaker: "teacher", text: "素晴らしい！日本語がとても上手になりましたね！", textPt: "Maravilhoso! Seu japonês melhorou muito!" },
+    ],
+    hotspots: [
+      { id: "sakura2", x: 35, y: 25, label: "桜", translation: "Cerejeira", pronunciation: "sa-ku-ra", example: "桜が美しい。", examplePt: "A cerejeira é bonita.", icon: "🌸", color: "#ec4899" },
+      { id: "ike", x: 55, y: 60, label: "池", translation: "Lago", pronunciation: "いけ", example: "池に魚がいる。", examplePt: "Há peixes no lago.", icon: "🐟", color: "#3b82f6" },
+      { id: "hashi", x: 70, y: 50, label: "橋", translation: "Ponte", pronunciation: "はし", example: "橋を渡る。", examplePt: "Atravesse a ponte.", icon: "🌉", color: "#a16207" },
+      { id: "ishi", x: 25, y: 65, label: "石", translation: "Pedra", pronunciation: "いし", example: "石は重い。", examplePt: "A pedra é pesada.", icon: "🪨", color: "#64748b" },
+      { id: "take", x: 80, y: 35, label: "竹", translation: "Bambu", pronunciation: "たけ", example: "竹は高い。", examplePt: "O bambu é alto.", icon: "🎋", color: "#16a34a" },
+      { id: "chochin2", x: 45, y: 40, label: "提灯", translation: "Lanterna", pronunciation: "cho-chin", example: "提灯が光る。", examplePt: "A lanterna brilha.", icon: "🏮", color: "#ea580c" },
+    ],
+  },
   airport: {
     dialog: [
       { speaker: "teacher", text: "Welcome to the airport! Do you have your passport ready?", textPt: "Bem-vindo ao aeroporto! Você tem seu passaporte pronto?" },
