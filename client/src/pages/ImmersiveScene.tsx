@@ -1740,7 +1740,7 @@ export default function ImmersiveScene() {
       dlgRecordingStreamRef.current?.getTracks().forEach((track) => track.stop());
       dlgRecordingStreamRef.current = null;
     };
-  }, [selectedScene?.id, stopTeacherAudio]);
+  }, [selectedScene?.id]);
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;

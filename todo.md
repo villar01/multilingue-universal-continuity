@@ -1586,3 +1586,5 @@
 - [x] Fechar cartões de objetos ao iniciar o diálogo e impedir que o áudio de objetos capture o fluxo de voz do professor — o início do diálogo encerra cartão e áudio do objeto; cartões não disparam fala automática e continuam com botões de escuta próprios; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados
 
 - [x] Corrigir a progressão principal da Praia Tropical quando o diálogo não abre mesmo com Pareto e objetos funcionando — a abertura do diálogo passa a atualizar o estado antes de limpar mídia anterior e usa um único clique nativo, sem duplicação de gesto; TypeScript sem erros e suíte completa com 220 arquivos/573 testes aprovados
+
+- [x] Corrigir o acionamento do painel Pareto da Praia Tropical sem alterar o diálogo, os objetos ou o currículo protegido — a reinicialização da cena depende somente da troca de cena e não mais de re-renderizações de áudio; Pareto, diálogo e objetos permanecem abertos após seus cliques; TypeScript sem erros e suíte completa com 220 arquivos/574 testes aprovados

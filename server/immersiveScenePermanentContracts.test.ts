@@ -78,6 +78,11 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("tabIndex={0}");
   });
 
+  it("only resets the teaching session when the selected scene changes", () => {
+    expect(sceneSource).toContain("}, [selectedScene?.id]);");
+    expect(sceneSource).not.toContain("}, [selectedScene?.id, stopTeacherAudio]);");
+  });
+
   it("separates vocabulary cards from the teacher dialogue and avoids automatic object audio", () => {
     expect(sceneSource).toContain("setActiveHotspot(null);\n    try {\n      stopTeacherAudio();");
     expect(sceneSource).toContain("if (dlgOpen) {\n      setActiveHotspot(null);\n      return;");
