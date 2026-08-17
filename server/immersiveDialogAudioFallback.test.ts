@@ -48,8 +48,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("const useFallbackForInvalidTrack");
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
-    expect(neuralPreparation).toContain('const isJames = selectedScene?.teacherName === "James"');
-    expect(neuralPreparation).toContain("if (!isJames && playLocalDialogFallback");
+    expect(neuralPreparation).toContain('const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:")');
+    expect(neuralPreparation).toContain("if (!preserveJamesVoice && playLocalDialogFallback");
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 
@@ -70,5 +70,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("if (gender && !preferredVoice) return false;");
     expect(source).not.toContain("regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))");
     expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
+  });
+
+  it("mantém a reserva de pronúncia disponível para objetos sem aplicar a restrição exclusiva do diálogo de James", () => {
+    expect(source).toContain('requestKey.startsWith("teacher:")');
+    expect(source).toContain("Pronúncias de objetos usam o fluxo");
   });
 });

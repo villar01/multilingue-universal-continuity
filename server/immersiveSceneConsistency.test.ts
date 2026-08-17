@@ -28,8 +28,8 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const useFallbackForInvalidTrack");
     expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
-    expect(sceneSource).toContain('const isJames = selectedScene?.teacherName === "James"');
-    expect(sceneSource).toContain("if (!isJames && playLocalDialogFallback");
+    expect(sceneSource).toContain('const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:")');
+    expect(sceneSource).toContain("if (!preserveJamesVoice && playLocalDialogFallback");
     expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
   });
 

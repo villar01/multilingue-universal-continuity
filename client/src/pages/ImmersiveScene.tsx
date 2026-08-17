@@ -1361,9 +1361,12 @@ export default function ImmersiveScene() {
         URL.revokeObjectURL(source);
         dialogAudioObjectUrlRef.current = null;
       }
-      const isJames = selectedScene?.teacherName === "James";
-      if (!isJames && playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
-        setDlgFeedback("A faixa neural não ficou disponível. James está usando a voz de reserva do navegador.");
+      // A exigência de não substituir James por uma voz feminina vale apenas
+      // para suas falas de professor. Pronúncias de objetos usam o fluxo
+      // próprio de reserva para não ficarem silenciosas por essa proteção.
+      const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:");
+      if (!preserveJamesVoice && playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
+        setDlgFeedback("A faixa neural não ficou disponível. A fala está usando a voz de reserva do navegador.");
         return;
       }
       setIsPreparingNeuralAudio(false);
