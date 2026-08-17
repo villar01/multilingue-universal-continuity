@@ -15,6 +15,13 @@ describe("contrato regional de voz das cenas imersivas", () => {
     expect(sceneSource).toContain('gender: "male" as const');
   });
 
+  it("força James à rota masculina em fala neural, pública e de recuperação", () => {
+    expect(sceneSource).toContain('selectedScene?.teacherName === "James"');
+    expect(sceneSource).toContain('const effectiveGender = selectedScene?.teacherName === "James"');
+    expect(sceneSource).toContain('void playPublicSceneDialogue(text, language, effectiveGender, requestKey)');
+    expect(sceneSource).toContain('playLocalDialogFallback(text, language, requestKey, effectiveGender)');
+  });
+
   it("exige locale e gênero explícitos em toda cena para selecionar uma voz neural regional", () => {
     const teacherEntries = sceneData.match(/teacherName:/g) ?? [];
     const voicedEntries = sceneData.match(/teacherName:"[^"]+", teacherLang:"[^"]+", langCode:"[^"]+", teacherGender:"(?:male|female)"/g) ?? [];

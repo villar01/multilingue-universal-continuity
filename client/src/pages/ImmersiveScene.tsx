@@ -1496,7 +1496,9 @@ export default function ImmersiveScene() {
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (!text?.trim()) return;
-    const teacherGender = gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
+    const teacherGender = selectedScene?.teacherName === "James"
+      ? "male"
+      : gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
     const requestKey = `${purpose}:${lang}:${teacherGender}:${text}`;
     // A mesma linha pode ser solicitada por clique e atualização visual quase ao
     // mesmo tempo. Mantemos um único pedido até o áudio encerrar ou falhar.
@@ -1558,27 +1560,30 @@ export default function ImmersiveScene() {
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
     if (isAuthLoading) return;
+    const effectiveGender = selectedScene?.teacherName === "James"
+      ? "male"
+      : gender || selectedScene?.teacherGender || "female";
     if (!isAuthenticated) {
       setDialogAuthRequired(true);
-      const requestKey = `local-dialog:${language}:${gender || "female"}:${text}`;
+      const requestKey = `local-dialog:${language}:${effectiveGender}:${text}`;
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
       setGreetingText("A sessão ativa a voz neural. Enquanto isso, a fala em inglês usa a voz disponível neste navegador.");
       setShowGreeting(true);
       setActiveSpeechText(text);
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, gender || "female", requestKey)
+      void playPublicSceneDialogue(text, language, effectiveGender, requestKey)
         .then((played) => {
           if (played) return;
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-          if (playLocalDialogFallback(text, language, requestKey, gender)) return;
+          if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
           setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
         })
         .catch(() => {
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-          if (playLocalDialogFallback(text, language, requestKey, gender)) return;
+          if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
           setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
@@ -1586,29 +1591,29 @@ export default function ImmersiveScene() {
       return;
     }
     primeVisemeAudio();
-    const requestKey = `dialog-recovery:${language}:${gender || selectedScene?.teacherGender || "female"}:${text}`;
-    void speak(text, language, undefined, gender, purpose).catch(() => {
+    const requestKey = `dialog-recovery:${language}:${effectiveGender}:${text}`;
+    void speak(text, language, undefined, effectiveGender, purpose).catch(() => {
       if (activeDialogLineRef.current === text) setDlgAudioClock(false);
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, gender || selectedScene?.teacherGender || "female", requestKey)
+      void playPublicSceneDialogue(text, language, effectiveGender, requestKey)
         .then((played) => {
-          if (played || playLocalDialogFallback(text, language, requestKey, gender || selectedScene?.teacherGender)) return;
+          if (played || playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setIsSpeaking(false);
           setActiveSpeechText("");
           setDlgFeedback((feedback) => feedback || "A resposta está visível. A voz não ficou disponível nesta tentativa; use o controle de áudio ou pergunte novamente.");
         })
         .catch(() => {
-          if (playLocalDialogFallback(text, language, requestKey, gender || selectedScene?.teacherGender)) return;
+          if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setIsSpeaking(false);
           setActiveSpeechText("");
           setDlgFeedback((feedback) => feedback || "A resposta está visível. A voz não ficou disponível nesta tentativa; use o controle de áudio ou pergunte novamente.");
         });
     });
-  }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, speak, stopTeacherAudio]);
+  }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, selectedScene?.teacherGender, selectedScene?.teacherName, speak, stopTeacherAudio]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");

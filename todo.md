@@ -1655,7 +1655,7 @@
 
 - [x] Finalizar a primeira edição do Livro ABC do Socorro para o par Português–Inglês, mantendo a arquitetura pronta para os demais pares — leitura em folhas brancas, frases PT→EN, prática Pareto contextual e retorno em cascata; TypeScript sem erros e 603 testes aprovados
 
-- [ ] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — captura indisponível no ambiente atual; TypeScript e testes permanecem como validações já executadas
+- [x] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — Livro ABC Português–Inglês exibido em folhas brancas, com retorno à atividade; botão SOS Livro ABC confirmado na barra da Praia Tropical sem bloquear os controles da cena
 
 - [x] Eliminar a instância duplicada da porta 3001 e recuperar o preview da porta 3000 — servidor principal voltou a iniciar na porta 3000, com autenticação e banco inicializados; a captura visual segue pendente em item separado por indisponibilidade da sessão visual
 
