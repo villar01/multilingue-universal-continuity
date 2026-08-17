@@ -109,6 +109,14 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain('return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/dashboard";');
   });
 
+  it("abre a unidade solicitada pelo Livro e mantém o retorno contextual ao Livro", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain('get("unit")');
+    expect(source).toContain('activeEntry?.unit ?? (unit === "all" ? undefined : unit)');
+    expect(source).toContain("Capítulo aberto pelo Livro ABC");
+    expect(source).toContain("Voltar ao Livro ABC");
+  });
+
   it("abre a conversa do Professor a partir da unidade e preserva o item de origem", () => {
     const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
     expect(source).toContain("const openUnitConversation");

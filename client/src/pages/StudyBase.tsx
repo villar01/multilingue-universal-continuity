@@ -63,7 +63,10 @@ export default function StudyBase() {
   const [, setLocation] = useLocation();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<StudyEntryKind | "all">("all");
-  const [unit, setUnit] = useState<string | "all">("all");
+  const [unit, setUnit] = useState<string | "all">(() => {
+    if (typeof window === "undefined") return "all";
+    return new URLSearchParams(window.location.search).get("unit") ?? "all";
+  });
   const [level] = useState<CEFRLevel>(getStoredLevel);
   const [selectedEntry, setSelectedEntry] = useState<StudyEntry | null>(null);
   const [practiceEntry, setPracticeEntry] = useState<StudyEntry | null>(null);
@@ -104,7 +107,7 @@ export default function StudyBase() {
   const activeEntry = selectedEntry && entries.some((entry) => entry.id === selectedEntry.id)
     ? selectedEntry
     : entries[0] ?? null;
-  const structuredUnit = getStructuredStudyUnit(structuredStudyUnits, activeEntry?.unit);
+  const structuredUnit = getStructuredStudyUnit(structuredStudyUnits, activeEntry?.unit ?? (unit === "all" ? undefined : unit));
 
   useEffect(() => {
     if (!returnEntryId || selectedEntry) return;
@@ -603,10 +606,37 @@ export default function StudyBase() {
                 </section>
               </article>
             ) : (
-              <div className="flex min-h-72 flex-col items-center justify-center text-center text-slate-400">
-                <BookOpen className="h-12 w-12" />
-                <p className="mt-4 font-semibold">Escolha um resultado para estudar.</p>
-              </div>
+              structuredUnit ? (
+                <article>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-fuchsia-200">
+                      <BookOpen className="h-5 w-5" />
+                      <span className="text-sm font-bold">Base de Estudos · capítulo A1</span>
+                    </div>
+                    <Button type="button" variant="outline" onClick={() => setLocation(returnTo)} className="border-fuchsia-300/50 text-fuchsia-100 hover:bg-fuchsia-300/10 hover:text-fuchsia-50">Voltar ao Livro ABC</Button>
+                  </div>
+                  <section className="mt-5 rounded-2xl border border-fuchsia-300/25 bg-fuchsia-300/5 p-4" aria-labelledby="book-linked-unit-heading">
+                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-fuchsia-200">Capítulo aberto pelo Livro ABC</p>
+                    <h2 id="book-linked-unit-heading" className="mt-2 text-xl font-black text-white">{structuredUnit.readingTitle}</h2>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-fuchsia-50">{structuredUnit.objective}</p>
+                    <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/60 p-4">
+                      <p className="text-base font-semibold leading-7 text-white">{structuredUnit.reading}</p>
+                      <p className="mt-3 border-l-2 border-fuchsia-300 pl-3 text-sm leading-6 text-slate-300">{structuredUnit.readingTranslation}</p>
+                      <Button type="button" onClick={() => playTargetVoice(structuredUnit.reading)} disabled={speakMutation.isPending} className="mt-4 gap-2 bg-fuchsia-300 font-bold text-slate-950 hover:bg-fuchsia-200"><Headphones className="h-4 w-4" />Ouvir o texto</Button>
+                    </div>
+                    <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4">
+                      <p className="text-sm font-bold text-cyan-100">{structuredUnit.grammarTitle}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-200">{structuredUnit.grammarExplanation}</p>
+                    </div>
+                    <p className="mt-4 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm leading-6 text-amber-100"><strong>Escrita para fixar:</strong> {structuredUnit.writingPrompt}</p>
+                  </section>
+                </article>
+              ) : (
+                <div className="flex min-h-72 flex-col items-center justify-center text-center text-slate-400">
+                  <BookOpen className="h-12 w-12" />
+                  <p className="mt-4 font-semibold">Escolha um resultado para estudar.</p>
+                </div>
+              )
             )}
           </div>
         </section>

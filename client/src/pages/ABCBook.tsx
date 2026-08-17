@@ -156,6 +156,7 @@ export default function ABCBook() {
                     <p className="mt-1">{chapter.grammarExplanation}</p>
                   </div>
                   <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
+                  <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="mt-5 inline-flex rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">Estudar este capítulo na Base</a>
                 </article>
               ))}
             </div>
