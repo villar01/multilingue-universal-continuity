@@ -34,6 +34,9 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain("Capítulos contínuos para estudar");
     expect(bookPage).toContain("chapter.writingPrompt");
     expect(bookPage).toContain("/base-de-estudos?unit=");
+    expect(bookPage).toContain('aria-label="Sumário dos capítulos A1"');
+    expect(bookPage).toContain('href={`#capitulo-a1-${index + 1}`}');
+    expect(bookPage).toContain('id={`capitulo-a1-${index + 1}`}');
     expect(bookPage).toContain("if (!book.available)");
     expect(bookPage).toContain("Edição em preparação");
     expect(bookPage).not.toContain('const TERM_CARD');

@@ -139,9 +139,21 @@ export default function ABCBook() {
               <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Capítulos contínuos para estudar</h2>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-700">Leia um capítulo por vez: entenda o objetivo, acompanhe o texto, compare a tradução, observe a gramática e escreva antes de seguir para Pareto, Professor ou cena.</p>
             </div>
+            <nav aria-label="Sumário dos capítulos A1" className="mt-5 rounded-sm border border-stone-200 bg-stone-50 p-4 sm:p-5">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-600">Sumário do volume</p>
+              <ol className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                {book.chapters.map((chapter, index) => (
+                  <li key={chapter.title}>
+                    <a href={`#capitulo-a1-${index + 1}`} className="text-sm font-semibold text-slate-700 underline-offset-4 transition hover:text-amber-800 hover:underline">
+                      {index + 1}. {chapter.title}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
             <div className="mt-5 space-y-6">
               {book.chapters.map((chapter, index) => (
-                <article key={chapter.title} className="border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+                <article id={`capitulo-a1-${index + 1}`} key={chapter.title} className="scroll-mt-6 border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
                   <div className="flex items-start gap-3">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span>
                     <div className="min-w-0">

@@ -1560,6 +1560,8 @@
 
 - [x] Exibir no Livro ABC a leitura protegida das dez unidades A1, com objetivo, texto, gramática e proposta de escrita de cada capítulo — o Livro recebe dos dados curriculares protegidos os dez capítulos A1 completos em leitura contínua, sem duplicar texto pedagógico no navegador; TypeScript e 21 regressões do Livro e Base aprovadas
 
+- [x] Adicionar um sumário navegável aos capítulos A1 do Livro ABC, mantendo leitura em folhas brancas e retorno SOS — índice local de dez capítulos aponta a cada leitura A1, sem alterar conteúdo protegido, Pareto ou retorno; TypeScript, 7 regressões do Livro e verificação visual aprovados
+
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
