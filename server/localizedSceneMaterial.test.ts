@@ -1,0 +1,90 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { INITIAL_COMMERCIAL_LANGUAGE_CODES } from "../shared/commercialLanguageBlocks";
+import { generateAI } from "./aiProvider";
+import {
+  localizeSceneDialogue,
+  parseLocalizedSceneMaterial,
+} from "./curriculum/localizedSceneMaterial";
+
+vi.mock("./aiProvider", () => ({
+  generateAI: vi.fn(),
+}));
+
+const mockedGenerateAI = vi.mocked(generateAI);
+
+describe("material localizado protegido das cenas", () => {
+  beforeEach(() => {
+    mockedGenerateAI.mockReset();
+    mockedGenerateAI.mockResolvedValue({
+      content: JSON.stringify({
+        turns: [
+          { targetText: "Localized scene dialogue.", nativeHelp: "Diálogo localizado da cena." },
+          { targetText: "Practice the visible object.", nativeHelp: "Pratique o objeto visível." },
+        ],
+        objects: [
+          { targetText: "Object", nativeHelp: "Objeto" },
+          { targetText: "Scene", nativeHelp: "Cena" },
+          { targetText: "Practice", nativeHelp: "Prática" },
+        ],
+      }),
+      provider: "ollama",
+      model: "test-local-model",
+      tokensSaved: 0,
+    });
+  });
+
+  it("aceita somente pacotes completos de diálogo e objetos", () => {
+    expect(parseLocalizedSceneMaterial(JSON.stringify({
+      turns: [{ targetText: "Olá", nativeHelp: "Hello" }],
+      objects: [{ targetText: "Casa", nativeHelp: "Home" }],
+    }))).toBeNull();
+
+    expect(parseLocalizedSceneMaterial(JSON.stringify({
+      turns: [
+        { targetText: "Olá", nativeHelp: "Hello" },
+        { targetText: "Até logo", nativeHelp: "See you" },
+      ],
+      objects: [
+        { targetText: "Casa", nativeHelp: "Home" },
+        { targetText: "Porta", nativeHelp: "Door" },
+        { targetText: "Janela", nativeHelp: "Window" },
+      ],
+    }))).toEqual(expect.objectContaining({
+      turns: expect.any(Array),
+      objects: expect.any(Array),
+    }));
+  });
+
+  it.each(INITIAL_COMMERCIAL_LANGUAGE_CODES)("gera localização protegida para %s, preservando o apoio nativo solicitado", async (targetLanguage) => {
+    const result = await localizeSceneDialogue({
+      sceneId: "family_home",
+      targetLanguage,
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result.status).toBe("ready");
+    expect(result.turns).toHaveLength(2);
+    expect(result.objects).toHaveLength(3);
+    expect(mockedGenerateAI).toHaveBeenLastCalledWith(expect.objectContaining({
+      preferredProvider: "ollama",
+      userId: 41,
+      messages: expect.arrayContaining([
+        expect.objectContaining({ content: expect.stringContaining(`target language is ${targetLanguage}`) }),
+        expect.objectContaining({ content: expect.stringContaining("native learner support language is pt-BR") }),
+      ]),
+    }));
+  });
+
+  it("não substitui um idioma futuro por conteúdo de outra língua", async () => {
+    const result = await localizeSceneDialogue({
+      sceneId: "family_home",
+      targetLanguage: "ja-JP",
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result).toEqual({ status: "planned_language_block", turns: [], objects: [] });
+    expect(mockedGenerateAI).not.toHaveBeenCalled();
+  });
+});
