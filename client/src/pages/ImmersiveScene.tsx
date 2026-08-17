@@ -1733,6 +1733,11 @@ export default function ImmersiveScene() {
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = teachingScene ?? scene;
     primeDialogAudioFromGesture();
+    // O cartão de objeto não pode ficar sobre o diálogo nem manter seu áudio
+    // ativo quando o aluno inicia a fala principal do professor.
+    setActiveHotspot(null);
+    setPracticeHotspot(null);
+    stopTeacherAudio();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
     if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
@@ -1755,7 +1760,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);

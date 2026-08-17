@@ -1590,6 +1590,8 @@
 
 - [ ] Auditar fluxos críticos do aplicativo e criar regressões permanentes para impedir o retorno de falhas reproduzíveis
 
+- [x] Fechar o cartão de objeto ativo antes de abrir o diálogo principal para impedir sobreposição e captura de clique — início do diálogo fecha cartão e prática ativa, interrompe áudio anterior e só então abre James; TypeScript sem erros e suíte completa com 222 arquivos/577 testes aprovados
+
 - [x] Criar contrato integrado para acesso autenticado, abertura de diálogo, Pareto, objetos e voz manual sem cache tRPC — nova regressão valida os quatro contratos compartilhados; TypeScript sem erros e suíte completa com 221 arquivos/575 testes aprovados
 
 - [x] Retomar uma única vez às 21h pela validação visual do Pareto, suíte completa e correções críticas comprovadas — agendamento ativo para 21h no fuso America/Sao_Paulo, sem repetição e com expiração às 23h30
