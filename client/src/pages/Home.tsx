@@ -384,7 +384,7 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="text-center mb-12">
             <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 text-sm px-4 py-1.5">
-              🌍 143 idiomas · IA avançada · Professores virtuais · Suporte local configurável
+              🌍 143 idiomas · IA avançada · Professores virtuais · Prática guiada em cada etapa
             </Badge>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
               Aprenda Qualquer Idioma

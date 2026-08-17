@@ -1544,6 +1544,8 @@
 
 - [x] Corrigir as bandeiras quebradas da abertura, removendo a dependência de imagens externas instáveis no fundo da página inicial — bandeiras flutuantes usam emojis locais com rótulo acessível, sem downloads externos; TypeScript, regressão e validação visual aprovados
 
+- [x] Substituir a mensagem técnica “Suporte local configurável” da abertura por um benefício pedagógico claro ao aluno — a faixa principal comunica “Prática guiada em cada etapa”, sem alterar cadastro ou idiomas; TypeScript, regressão e validação visual aprovados
+
 - [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas
@@ -1583,7 +1585,7 @@
 - [x] Expandir a sequência curricular A1 autoral da Base de Estudos — 11 entradas pesquisáveis em quatro unidades (identidade, necessidades, localização e rotina), com Pareto, pronúncia figurativa, cena relacionada, modelo de frase e prática; TypeScript sem erros, regressão dedicada e 185 arquivos/424 testes aprovados. Expansão de todos os níveis e idiomas permanece aberta
 - [x] Expor a progressão curricular A1 na Base de Estudos — filtro por quatro unidades autorais, identificação de unidade no conteúdo e ligação visível ao ciclo Pareto, frase e consulta do professor; TypeScript sem erros, validação visual e 185 arquivos/427 testes aprovados
 - [x] Tornar Consulta Rápida e Total um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita — atalho global validado fora da Cena Imersiva, atalho contextual no diálogo, retorno à cena confirmado visualmente; TypeScript sem erros e 185 arquivos/422 testes aprovados
-- [ ] Tornar Consulta Rápida um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita
+- [x] Tornar Consulta Rápida um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita — requisito duplicado consolidado com o atalho global e contextual já validados, incluindo retorno à cena, consulta ao professor, Pareto, frase e prática escrita
 - [x] Implementar o piloto de Consulta Rápida e Total na Cena Imersiva — diálogo oferece acesso direto à Base de Estudos, retorno validado à cena, consulta livre ao professor com contexto, proteção, voz do idioma-alvo, tradução, histórico curto e entrada opcional por palavras Pareto; TypeScript sem erros, 7 regressões dedicadas e validação visual aprovados. Cobertura global de todas as telas permanece aberta
 
 ## 📘 CARTILHA CURRICULAR ORIGINAL — REFERÊNCIA PEDAGÓGICA

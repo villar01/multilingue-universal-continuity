@@ -10,4 +10,9 @@ describe("bandeiras flutuantes da abertura", () => {
     expect(home).toContain('role="img"');
     expect(home).not.toContain("flagcdn.com");
   });
+
+  it("apresenta benefício pedagógico em vez de mensagem técnica residual", () => {
+    expect(home).toContain("Prática guiada em cada etapa");
+    expect(home).not.toContain("Suporte local configurável");
+  });
 });
