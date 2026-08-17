@@ -4,7 +4,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { hasAuthorizedTrialLessonKey, getLearningContentEntitlement } from "./trial-access-router";
 import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBaseContent";
 import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
-import { PARETO_VOCAB } from "./curriculum/paretoContent";
+import { getParetoProgramWords, PARETO_VOCAB } from "./curriculum/paretoContent";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
@@ -42,7 +42,8 @@ export const curriculumRouter = router({
     pageSize: z.number().int().min(1).max(10).default(10),
   })).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
-    const authorizedWords = entitlement.isPaid ? PARETO_VOCAB : PARETO_VOCAB.slice(0, 10);
+    const programWords = getParetoProgramWords();
+    const authorizedWords = entitlement.isPaid ? programWords : programWords.slice(0, 10);
     const scopedWords = input.scene ? authorizedWords.filter((word) => word.scene === input.scene) : authorizedWords;
     const start = input.page * input.pageSize;
     const pageWords = scopedWords.slice(start, start + input.pageSize);
