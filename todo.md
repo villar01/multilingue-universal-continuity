@@ -1558,3 +1558,5 @@
 
 - [x] Corrigir a seleção do professor da Praia Tropical para preservar James e sua voz masculina en-US em todos os caminhos autorizados da cena — resolvedor preserva o retrato canônico de James e impede a substituição por Sarah; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
 - [x] Substituir o carregamento indefinido de material protegido por uma orientação de acesso objetiva e acionável quando a sessão não estiver autenticada — acesso não autenticado agora exibe entrada protegida em vez de permanecer em carregamento; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
+
+- [x] Encerrar o estado de carregamento quando a autorização protegida não retornar material, oferecendo renovação segura de acesso sem expor currículo — falhas de autorização ou de entrega agora encerram o carregamento e apresentam ativação segura de acesso; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados

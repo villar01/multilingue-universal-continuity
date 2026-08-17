@@ -27,10 +27,12 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(teacherResolverSource).toContain('return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };');
   });
 
-  it("replaces indefinite protected-content loading with an actionable sign-in state", () => {
+  it("replaces indefinite protected-content loading with an actionable access state", () => {
     expect(sceneSource).toContain("const sceneMaterialRequiresLogin");
-    expect(sceneSource).toContain("Entre para iniciar esta cena.");
-    expect(sceneSource).toContain("Entrar para começar");
+    expect(sceneSource).toContain("const sceneMaterialAccessFailed");
+    expect(sceneSource).toContain("const sceneMaterialNeedsAccess");
+    expect(sceneSource).toContain("Ative o acesso para iniciar esta cena.");
+    expect(sceneSource).toContain("Ativar acesso");
   });
 
   it("keeps free questions in the scene with an immediate contextual fallback", () => {

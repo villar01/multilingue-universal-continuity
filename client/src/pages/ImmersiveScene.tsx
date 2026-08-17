@@ -1152,8 +1152,14 @@ export default function ImmersiveScene() {
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
   const selectedSceneRequiresProtectedMaterial = selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "airport_family" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "family_home" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain";
-  const sceneMaterialIsPreparing = Boolean(selectedSceneRequiresProtectedMaterial && isAuthenticated && activeSceneDialog.length === 0);
+  const sceneMaterialAccessFailed = Boolean(
+    selectedSceneRequiresProtectedMaterial
+      && activeSceneDialog.length === 0
+      && (authorizeLessonMut.isError || canonicalSceneMaterialQuery.isError || (isAuthenticated && !authorizedSceneMaterial && !authorizeLessonMut.isPending)),
+  );
+  const sceneMaterialIsPreparing = Boolean(selectedSceneRequiresProtectedMaterial && isAuthenticated && activeSceneDialog.length === 0 && !sceneMaterialAccessFailed);
   const sceneMaterialRequiresLogin = Boolean(selectedSceneRequiresProtectedMaterial && !isAuthenticated);
+  const sceneMaterialNeedsAccess = sceneMaterialRequiresLogin || sceneMaterialAccessFailed;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
@@ -2619,15 +2625,15 @@ export default function ImmersiveScene() {
             Preparando material protegido da cena…
           </div>
         )}
-        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && sceneMaterialRequiresLogin && (
+        {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && sceneMaterialNeedsAccess && (
           <div
             className="absolute left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2 rounded-2xl border p-4 text-center shadow-2xl"
             style={{ bottom: "100px", background: "rgba(15,23,42,.94)", borderColor: "rgba(129,140,248,.72)", backdropFilter: "blur(14px)" }}
             role="status"
           >
-            <p className="text-sm font-semibold text-white">Entre para iniciar esta cena.</p>
+            <p className="text-sm font-semibold text-white">Ative o acesso para iniciar esta cena.</p>
             <p className="mt-1 text-xs text-slate-300">O diálogo, a voz e o vocabulário são liberados somente na sessão protegida.</p>
-            <button type="button" onClick={() => { window.location.href = getLoginUrl(); }} className="mt-3 rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">Entrar para começar</button>
+            <button type="button" onClick={() => { window.location.href = getLoginUrl(); }} className="mt-3 rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">Ativar acesso</button>
           </div>
         )}
         {dialogAuthRequired && !isAuthenticated && (
