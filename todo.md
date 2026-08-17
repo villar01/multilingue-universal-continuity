@@ -1594,6 +1594,8 @@
 
 - [ ] Fazer a frase de exemplo do cartão Wave iniciar após a pronúncia principal já ter tocado
 
+- [ ] Posicionar o player de objeto abaixo do cartão, sem bloquear frase ou controles pedagógicos
+
 - [ ] Impedir que o cartão de objeto Wave permaneça sobre o início do diálogo e bloqueie a voz neural de James
 
 - [x] Validar que a rejeição de faixa de voz vazia e o fallback compartilhado funcionam nas 29 cenas imersivas — fluxo único rejeita MP3 vazio ou sem duração, remove o player 0:00 e aciona a reserva masculina; rota pública real de James retornou MP3 não vazio de 60.809 bytes, TypeScript sem erros e suíte completa com 222 arquivos/580 testes aprovados

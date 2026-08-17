@@ -93,4 +93,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("void audio.play().catch(() =>");
     expect(source).toContain("Pronúncia pronta. Toque no controle de áudio abaixo do cartão para ouvir.");
   });
+
+  it("mantém o player de objeto na zona livre superior, sem cobrir a frase ou os botões do cartão", () => {
+    expect(source).toContain('top-[160px] z-[75] h-9');
+    expect(source).not.toContain('bottom-[112px] left-1/2 z-[75]');
+  });
 });

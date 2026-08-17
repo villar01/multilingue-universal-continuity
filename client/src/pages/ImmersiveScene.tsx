@@ -2688,7 +2688,7 @@ export default function ImmersiveScene() {
           src={dialogAudioSource || undefined}
           controls={Boolean(dialogAudioSource && !dlgOpen)}
           preload="auto"
-          className={dialogAudioSource && !dlgOpen ? "absolute bottom-[112px] left-1/2 z-[75] h-9 w-[min(88vw,320px)] -translate-x-1/2" : "hidden"}
+          className={dialogAudioSource && !dlgOpen ? "absolute left-1/2 top-[160px] z-[75] h-9 w-[min(88vw,320px)] -translate-x-1/2" : "hidden"}
           aria-label="Áudio da fala em inglês"
         />
 
