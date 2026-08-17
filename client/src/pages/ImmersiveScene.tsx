@@ -2670,6 +2670,17 @@ export default function ImmersiveScene() {
           onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}
         />
 
+        {/* O elemento de áudio precisa existir também com o diálogo fechado:
+            os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural. */}
+        <audio
+          ref={dialogAudioElementRef}
+          src={dialogAudioSource || undefined}
+          controls={Boolean(dialogAudioSource && dlgOpen)}
+          preload="auto"
+          className={dialogAudioSource && dlgOpen ? "absolute bottom-[150px] left-1/2 z-[75] h-8 w-[220px] -translate-x-1/2" : "hidden"}
+          aria-label="Áudio da fala em inglês"
+        />
+
         {/* ── Dialog Panel: scrolling text + exercises ── */}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
@@ -2833,14 +2844,6 @@ export default function ImmersiveScene() {
                       </button>
                     ))}
                   </div>
-                  <audio
-                    ref={dialogAudioElementRef}
-                    src={dialogAudioSource || undefined}
-                    controls={Boolean(dialogAudioSource)}
-                    preload="auto"
-                    className={dialogAudioSource ? "h-8 max-w-[220px]" : "hidden"}
-                    aria-label="Áudio da fala em inglês"
-                  />
                   {dialogAudioSource && (
                     <button
                       type="button"

@@ -76,4 +76,14 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('requestKey.startsWith("teacher:")');
     expect(source).toContain("Pronúncias de objetos usam o fluxo");
   });
+
+  it("mantém o único elemento de áudio montado quando o diálogo está fechado para os cartões de objeto", () => {
+    const teacherIndex = source.indexOf("<TeacherAvatar");
+    const dialogPanelIndex = source.indexOf("{/* ── Dialog Panel:");
+    const audioIndex = source.indexOf("ref={dialogAudioElementRef}");
+    expect(audioIndex).toBeGreaterThan(teacherIndex);
+    expect(audioIndex).toBeLessThan(dialogPanelIndex);
+    expect(source).toContain("controls={Boolean(dialogAudioSource && dlgOpen)}");
+    expect(source).toContain("os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural");
+  });
 });
