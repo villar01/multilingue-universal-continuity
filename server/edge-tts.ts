@@ -267,6 +267,13 @@ async function synthesizeWithEdgeTransport(voice: string, text: string, options:
   return Buffer.concat(chunks);
 }
 
+function isPlayableMp3Buffer(audioBuffer: Buffer): boolean {
+  if (audioBuffer.length < 4) return false;
+  const hasId3Header = audioBuffer.subarray(0, 3).toString("ascii") === "ID3";
+  const hasMpegFrameHeader = audioBuffer[0] === 0xff && (audioBuffer[1] & 0xe0) === 0xe0;
+  return hasId3Header || hasMpegFrameHeader;
+}
+
 /**
  * Sintetiza texto com Edge TTS e retorna base64 do MP3
  */
@@ -297,6 +304,9 @@ export async function synthesizeEdgeTTS(
   };
 
   const audioBuffer = await synthesizeWithEdgeTransport(voice, text, options);
+  if (!isPlayableMp3Buffer(audioBuffer)) {
+    throw new Error("A síntese neural não retornou uma faixa MP3 reproduzível.");
+  }
   const audioBase64 = audioBuffer.toString("base64");
   const durationEstimateMs = Math.max(800, Math.ceil((text.length / 15) * 1000));
 

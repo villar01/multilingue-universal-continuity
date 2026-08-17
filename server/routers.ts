@@ -112,6 +112,9 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         try {
           const audio = await synthesizeEdgeTTS(input.text, input.language, undefined, input.gender);
+          if (!audio.audioBase64.trim()) {
+            throw new Error("A síntese neural retornou áudio vazio.");
+          }
           return { success: true, ...audio };
         } catch (error) {
           console.warn("[Scene dialogue voice] Edge synthesis unavailable", error);

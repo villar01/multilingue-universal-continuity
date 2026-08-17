@@ -9,6 +9,7 @@ describe("voz neural pública de diálogo roteirizado", () => {
     expect(routerSource).toContain("sceneDialogueVoice: router({");
     expect(routerSource).toContain("text: z.string().trim().min(1).max(500)");
     expect(routerSource).toContain("const audio = await synthesizeEdgeTTS(input.text, input.language, undefined, input.gender);");
+    expect(routerSource).toContain("if (!audio.audioBase64.trim())");
     expect(routerSource).toContain("Voz neural da cena indisponível.");
   });
 });

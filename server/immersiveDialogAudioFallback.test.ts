@@ -38,6 +38,17 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("await audio.play();");
   });
 
+  it("recusa uma faixa sem duração e inicia a voz masculina de reserva sem exibir player 0:00", () => {
+    const neuralPreparation = source.slice(
+      source.indexOf("const playTeacherAudio = useCallback"),
+      source.indexOf("const replayVisibleDialogAudio = useCallback"),
+    );
+    expect(neuralPreparation).toContain("const useFallbackForInvalidTrack");
+    expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
+    expect(neuralPreparation).toContain("setDialogAudioSource(null);");
+    expect(neuralPreparation).toContain('playLocalDialogFallback(phrase, _language, requestKey, "male")');
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
@@ -53,6 +64,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   it("nunca troca James por voz feminina quando o fallback local não encontra inglês masculino", () => {
     expect(source).toContain("const maleVoicePattern");
     expect(source).toContain("if (gender && !preferredVoice) return false;");
+    expect(source).toContain("regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))");
     expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
   });
 });

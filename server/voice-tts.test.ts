@@ -14,7 +14,10 @@ import {
 } from "./edge-tts";
 
 beforeEach(() => {
-  __setEdgeTtsTransportForTests(async () => Buffer.alloc(192, 7));
+  __setEdgeTtsTransportForTests(async () => Buffer.concat([
+    Buffer.from([0xff, 0xfb, 0x90, 0x64]),
+    Buffer.alloc(188, 7),
+  ]));
 });
 
 afterEach(() => {
@@ -138,6 +141,12 @@ describe("🎤 Voice TTS System (Edge TTS)", () => {
       expect(result.durationEstimateMs).toBeGreaterThan(500);
       expect(result.durationEstimateMs).toBeLessThan(30000);
     }, 15000);
+
+    it("recusa bytes vazios ou inválidos antes de armazená-los no cache", async () => {
+      __setEdgeTtsTransportForTests(async () => Buffer.alloc(0));
+      await expect(synthesizeEdgeTTS("Empty audio", "en-US", undefined, "male"))
+        .rejects.toThrow("faixa MP3 reproduzível");
+    });
   });
 
   describe("Suporte a Múltiplos Idiomas", () => {

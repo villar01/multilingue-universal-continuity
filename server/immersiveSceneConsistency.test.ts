@@ -23,6 +23,15 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
 
+  it("aplica a rejeição de faixa vazia e a voz de reserva pelo fluxo compartilhado das 29 cenas", () => {
+    const sceneIds = sceneSource.match(/^    id:"[^"]+"/gm) || [];
+    expect(sceneIds).toHaveLength(29);
+    expect(sceneSource).toContain("const useFallbackForInvalidTrack");
+    expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
+    expect(sceneSource).toContain('playLocalDialogFallback(phrase, _language, requestKey, "male")');
+    expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
+  });
+
   it("preserva perfis com retrato para as seis línguas iniciais", () => {
     for (const voiceLanguage of INITIAL_LANGUAGE_VOICES) {
       const languageEntry = new RegExp(`voiceLang: '${voiceLanguage}'[\\s\\S]{0,260}?photo: '/manus-storage/`);

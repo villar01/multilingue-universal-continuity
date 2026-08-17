@@ -1265,6 +1265,7 @@ export default function ImmersiveScene() {
     const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
     const preferredVoice = gender === "male"
       ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name))
+        || regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))
       : gender === "female"
         ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
         : regionalVoices[0];
@@ -1344,12 +1345,42 @@ export default function ImmersiveScene() {
       const nextWord = Math.min(wordCount, Math.floor((audio.currentTime / audio.duration) * wordCount));
       setDlgWordIdx((current) => Math.max(current, nextWord));
     };
+    let invalidTrackHandled = false;
+    const useFallbackForInvalidTrack = () => {
+      if (invalidTrackHandled || audio.src !== source) return;
+      invalidTrackHandled = true;
+      audio.pause();
+      if (updatesActiveDialog()) setDlgAudioClock(false);
+      stopVisemeSync();
+      setAudioViseme(null);
+      setDialogAudioSource(null);
+      if (audioRef.current === audio) audioRef.current = null;
+      if (dialogAudioObjectUrlRef.current === source) {
+        URL.revokeObjectURL(source);
+        dialogAudioObjectUrlRef.current = null;
+      }
+      if (playLocalDialogFallback(phrase, _language, requestKey, "male")) {
+        setDlgFeedback("A faixa neural não ficou disponível. James está usando a voz de reserva do navegador.");
+        return;
+      }
+      setIsPreparingNeuralAudio(false);
+      setIsSpeaking(false);
+      setActiveSpeechText("");
+      releaseRequest();
+      setDlgFeedback("A faixa neural não ficou disponível. Toque em Ouvir inglês para tentar novamente.");
+    };
     audio.onplay = () => {
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
       if (updatesActiveDialog()) setDlgAudioClock(true);
     };
-    audio.onloadedmetadata = updateDialogWordsFromAudio;
+    audio.onloadedmetadata = () => {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+        useFallbackForInvalidTrack();
+        return;
+      }
+      updateDialogWordsFromAudio();
+    };
     audio.ontimeupdate = updateDialogWordsFromAudio;
     audio.onended = () => {
       if (updatesActiveDialog()) {
@@ -1366,25 +1397,13 @@ export default function ImmersiveScene() {
       releaseRequest();
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
-    audio.onerror = () => {
-      if (updatesActiveDialog()) setDlgAudioClock(false);
-      stopVisemeSync();
-      setAudioViseme(null);
-      setIsSpeaking(false);
-      setIsPreparingNeuralAudio(false);
-      if (audioRef.current === audio) {
-        audioRef.current = null;
-        setActiveSpeechText("");
-      }
-      releaseRequest();
-      setDlgFeedback("A voz não carregou. Use o botão Ouvir James ou a voz do navegador para tentar novamente.");
-    };
+    audio.onerror = useFallbackForInvalidTrack;
     // A faixa é preparada no início do diálogo, mas nunca toca sozinha. O
     // navegador aceita a execução somente no gesto explícito em Ouvir James.
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");
-  }, [dialogSpeechRate, stopVisemeSync]);
+  }, [dialogSpeechRate, playLocalDialogFallback, stopVisemeSync]);
 
   const replayVisibleDialogAudio = useCallback(async () => {
     const audio = dialogAudioElementRef.current;
@@ -1424,7 +1443,7 @@ export default function ImmersiveScene() {
       sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender }),
       12_000,
     );
-    if (!result.success || !("audioBase64" in result)) return false;
+    if (!result.success || !("audioBase64" in result) || !result.audioBase64.trim()) return false;
     const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
     await playTeacherAudio(source, text, language, requestKey);
     return true;
