@@ -272,12 +272,16 @@ export default function StudyBase() {
 
         <section className="mt-5 rounded-2xl border border-emerald-300/25 bg-emerald-300/5 p-4" aria-labelledby="study-journey-heading">
           <p className="text-xs font-bold uppercase tracking-[0.12em] text-emerald-200">Roteiro recomendado</p>
-          <h2 id="study-journey-heading" className="mt-1 text-lg font-black text-white">Entender → memorizar → aplicar → revisar</h2>
+          <h2 id="study-journey-heading" className="mt-1 text-lg font-black text-white">Apresentar → compreender → memorizar → escrever → falar → criar frases → conversar → revisar</h2>
           <ol className="mt-3 grid gap-2 text-sm leading-6 text-slate-200 sm:grid-cols-2 xl:grid-cols-4">
-            <li><strong className="text-emerald-100">1. Base:</strong> entenda a palavra, a gramática e o exemplo.</li>
-            <li><strong className="text-emerald-100">2. Pareto:</strong> recupere, escreva e crie uma frase.</li>
-            <li><strong className="text-emerald-100">3. Cena:</strong> aplique o conteúdo com professor e objetos.</li>
-            <li><strong className="text-emerald-100">4. Revisão:</strong> transforme frases e retome o ponto necessário.</li>
+            <li><strong className="text-emerald-100">1. Apresentar:</strong> leia a palavra e o exemplo.</li>
+            <li><strong className="text-emerald-100">2. Compreender:</strong> estude explicação e gramática.</li>
+            <li><strong className="text-emerald-100">3. Memorizar:</strong> recupere a palavra no Pareto.</li>
+            <li><strong className="text-emerald-100">4. Escrever:</strong> fixe a grafia com resposta ativa.</li>
+            <li><strong className="text-emerald-100">5. Falar:</strong> ouça e repita com a voz do idioma.</li>
+            <li><strong className="text-emerald-100">6. Criar frases:</strong> produza e transforme exemplos.</li>
+            <li><strong className="text-emerald-100">7. Conversar:</strong> aplique na cena com o professor.</li>
+            <li><strong className="text-emerald-100">8. Revisar:</strong> retome o ponto que ainda precisa de prática.</li>
           </ol>
         </section>
 
