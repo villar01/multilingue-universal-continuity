@@ -1649,7 +1649,7 @@
 
 - [x] Impedir que o Service Worker reutilize respostas tRPC em autorizações, materiais curriculares e voz da cena — o Service Worker não intercepta mais tRPC, evitando sessão e currículo obsoletos; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados
 
-- [ ] Auditar fluxos críticos do aplicativo e criar regressões permanentes para impedir o retorno de falhas reproduzíveis
+- [x] Auditar fluxos críticos do aplicativo e criar regressões permanentes para impedir o retorno de falhas reproduzíveis — a auditoria completa cobre acesso, currículo protegido, Pareto, cenas, objetos, voz, atalhos, retornos, Service Worker e segurança; TypeScript e 232 arquivos de teste com 617 testes aprovados
 
 - [x] Fechar o cartão de objeto ativo antes de abrir o diálogo principal para impedir sobreposição e captura de clique — início do diálogo fecha cartão e prática ativa, interrompe áudio anterior e só então abre James; TypeScript sem erros e suíte completa com 222 arquivos/577 testes aprovados
 
