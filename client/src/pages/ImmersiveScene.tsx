@@ -1442,9 +1442,13 @@ export default function ImmersiveScene() {
     activeSpeechRequestRef.current = requestKey;
     setActiveSpeechText(text);
     setIsPreparingNeuralAudio(true);
+    setDlgFeedback("Preparando voz natural…");
 
     const playEdgeNeural = async () => {
-      const edgeAudio = await ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender });
+      const edgeAudio = await waitForSpeechResult(
+        ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender }),
+        6_000,
+      );
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
       const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mp3");
       await playTeacherAudio(source, text, lang, requestKey);
@@ -1459,11 +1463,14 @@ export default function ImmersiveScene() {
       } catch { /* Try the other neural provider below. */ }
     }
     try {
-      const googleAudio = await googleTtsMut.mutateAsync({
-        text: text.slice(0, 500),
-        languageCode: lang,
-        gender: teacherGender === "male" ? "MALE" : "FEMALE",
-      });
+      const googleAudio = await waitForSpeechResult(
+        googleTtsMut.mutateAsync({
+          text: text.slice(0, 500),
+          languageCode: lang,
+          gender: teacherGender === "male" ? "MALE" : "FEMALE",
+        }),
+        6_000,
+      );
       if (googleAudio.audioUrl) {
         await playTeacherAudio(googleAudio.audioUrl, text, lang, requestKey);
         return;

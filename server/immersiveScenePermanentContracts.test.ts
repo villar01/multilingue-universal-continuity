@@ -21,6 +21,14 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
   });
 
+  it("limits neural hotspot waits so an audible fallback can run promptly", () => {
+    expect(sceneSource).toContain("setDlgFeedback(\"Preparando voz natural…\")");
+    expect(sceneSource).toContain("ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender })");
+    expect(sceneSource).toContain("googleTtsMut.mutateAsync({");
+    expect((sceneSource.match(/6_000/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect(sceneSource).toContain("if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender))");
+  });
+
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
     expect(sceneSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
     expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');

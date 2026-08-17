@@ -1568,3 +1568,5 @@
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão à Cozinha Moderna, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 32 regressões dedicadas e suíte completa com 220 arquivos/563 testes aprovados
 
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Supermercado, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 36 regressões dedicadas e suíte completa com 220 arquivos/567 testes aprovados
+
+- [x] Corrigir a reprodução do botão “Ouvir voz natural” da Praia Tropical, mantendo voz neural autorizada e fallback audível ao aluno — provedores neurais agora têm limite de seis segundos por tentativa, sinalização de preparo e fallback de voz disponível após indisponibilidade; TypeScript sem erros e suíte completa com 220 arquivos/568 testes aprovados
