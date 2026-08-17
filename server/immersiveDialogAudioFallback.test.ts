@@ -95,6 +95,13 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("Pronúncia pronta. Toque novamente no botão de áudio do cartão para ouvir.");
   });
 
+  it("libera a frase de exemplo somente depois da pronúncia principal do cartão", () => {
+    expect(source).toContain("const [pronunciationPlayed, setPronunciationPlayed] = useState(false);");
+    expect(source).toContain("setPronunciationPlayed(true);");
+    expect(source).toContain("disabled={!pronunciationPlayed}");
+    expect(source).toContain('pronunciationPlayed ? "Ouvir frase" : "Ouça a palavra primeiro"');
+  });
+
   it("não renderiza barra nativa sobre a frase ou os botões do cartão", () => {
     expect(source).not.toContain('top-[160px] z-[75] h-9');
     expect(source).not.toContain('bottom-[112px] left-1/2 z-[75]');
