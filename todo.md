@@ -1537,8 +1537,8 @@
 - [ ] Catalogar os objetos das 29 cenas e produzir clipes roteirizados próprios com fala correspondente por palavra
 - [ ] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos
 - [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
-- [ ] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular
-- [ ] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço
+- [x] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular — a prática recebe o item ativo como retorno e volta somente ao ponto curricular da Base; regressão dedicada aprovada
+- [x] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço — a trilha aceita somente retorno interno da Base e preserva o destino curricular seguro; regressão dedicada aprovada
 - [ ] Revisar conteúdos dominados periodicamente e exigir frases, escrita e conversa com vocabulário em todos os níveis e áreas curriculares
 - [x] Expandir a sequência curricular A1 autoral da Base de Estudos — 11 entradas pesquisáveis em quatro unidades (identidade, necessidades, localização e rotina), com Pareto, pronúncia figurativa, cena relacionada, modelo de frase e prática; TypeScript sem erros, regressão dedicada e 185 arquivos/424 testes aprovados. Expansão de todos os níveis e idiomas permanece aberta
 - [x] Expor a progressão curricular A1 na Base de Estudos — filtro por quatro unidades autorais, identificação de unidade no conteúdo e ligação visível ao ciclo Pareto, frase e consulta do professor; TypeScript sem erros, validação visual e 185 arquivos/427 testes aprovados
@@ -1657,7 +1657,7 @@
 
 - [ ] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — captura indisponível no ambiente atual; TypeScript e testes permanecem como validações já executadas
 
-- [ ] Eliminar a instância duplicada da porta 3001 e recuperar o preview visual da porta 3000 para validar o Livro SOS em cena
+- [x] Eliminar a instância duplicada da porta 3001 e recuperar o preview da porta 3000 — servidor principal voltou a iniciar na porta 3000, com autenticação e banco inicializados; a captura visual segue pendente em item separado por indisponibilidade da sessão visual
 
 - [ ] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação
 
