@@ -4,15 +4,17 @@ import { Link, useLocation } from "wouter";
 const EXCLUDED_PATHS = ["/", "/base-de-estudos", "/immersive-scene", "/onboarding"];
 
 export function getQuickStudyHref(location: string): string | null {
-  const path = location.split("?")[0] || "/";
+  const origin = location.startsWith("/") ? location : "/";
+  const path = origin.split("?")[0] || "/";
   const isExcluded = EXCLUDED_PATHS.includes(path) || path.startsWith("/admin") || path.startsWith("/checkout");
-  return isExcluded ? null : `/base-de-estudos?returnTo=${encodeURIComponent(path)}`;
+  return isExcluded ? null : `/base-de-estudos?returnTo=${encodeURIComponent(origin)}`;
 }
 
 export function getQuickTeacherHref(location: string): string | null {
-  const path = location.split("?")[0] || "/";
+  const origin = location.startsWith("/") ? location : "/";
+  const path = origin.split("?")[0] || "/";
   const isExcluded = EXCLUDED_PATHS.includes(path) || path === "/free-talk" || path.startsWith("/admin") || path.startsWith("/checkout");
-  return isExcluded ? null : `/free-talk?returnTo=${encodeURIComponent(path)}`;
+  return isExcluded ? null : `/free-talk?returnTo=${encodeURIComponent(origin)}`;
 }
 
 export function QuickStudyAccess() {

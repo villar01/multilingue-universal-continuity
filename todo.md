@@ -1513,6 +1513,9 @@
 - [ ] Atingir os mesmos objetivos pedagógicos da sequência validada e aperfeiçoá-los com recuperação Pareto, produção ativa e revisão espaçada
 - [ ] Criar ilustrações autorais monocromáticas de alto contraste para apoiar memorização, sem reproduzir figuras do PDF
 - [ ] Abrir a cena imersiva relacionada a partir da Base de Estudos e retornar ao mesmo ponto curricular após a prática
+- [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
+- [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
+- [ ] Revisar conteúdos dominados periodicamente e exigir frases, escrita e conversa com vocabulário em todos os níveis e áreas curriculares
 - [x] Expandir a sequência curricular A1 autoral da Base de Estudos — 11 entradas pesquisáveis em quatro unidades (identidade, necessidades, localização e rotina), com Pareto, pronúncia figurativa, cena relacionada, modelo de frase e prática; TypeScript sem erros, regressão dedicada e 185 arquivos/424 testes aprovados. Expansão de todos os níveis e idiomas permanece aberta
 - [x] Expor a progressão curricular A1 na Base de Estudos — filtro por quatro unidades autorais, identificação de unidade no conteúdo e ligação visível ao ciclo Pareto, frase e consulta do professor; TypeScript sem erros, validação visual e 185 arquivos/427 testes aprovados
 - [x] Tornar Consulta Rápida e Total um link direto, permanente e prioritário em cenas, lições e gamificações, com retorno ao ponto de estudo e acesso a palavra, gramática, frase, áudio, Pareto e prática escrita — atalho global validado fora da Cena Imersiva, atalho contextual no diálogo, retorno à cena confirmado visualmente; TypeScript sem erros e 185 arquivos/422 testes aprovados
