@@ -76,6 +76,27 @@ describe("material localizado protegido das cenas", () => {
     }));
   });
 
+  it.each([
+    ["es-ES", "palmera"],
+    ["fr-FR", "palmier"],
+    ["it-IT", "palma"],
+    ["de-DE", "Palme"],
+  ])("entrega o pacote revisado PT-BR → %s da Praia Tropical sem depender de geração", async (targetLanguage, expectedObject) => {
+    const result = await localizeSceneDialogue({
+      sceneId: "beach",
+      targetLanguage,
+      nativeLanguage: "pt-BR",
+      userId: 41,
+    });
+
+    expect(result.status).toBe("ready");
+    expect(result.turns).toHaveLength(3);
+    expect(result.objects).toEqual(expect.arrayContaining([
+      expect.objectContaining({ targetText: expectedObject, nativeHelp: "palmeira" }),
+    ]));
+    expect(mockedGenerateAI).not.toHaveBeenCalled();
+  });
+
   it("não substitui um idioma futuro por conteúdo de outra língua", async () => {
     const result = await localizeSceneDialogue({
       sceneId: "family_home",

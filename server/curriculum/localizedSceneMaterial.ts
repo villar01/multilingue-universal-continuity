@@ -18,6 +18,79 @@ export type LocalizedSceneMaterialResult = {
   objects: LocalizedSceneVocabularyObject[];
 };
 
+function languageBase(languageCode: string): string {
+  return languageCode.trim().toLowerCase().split("-")[0] || "";
+}
+
+/**
+ * Reviewed launch material remains server-only. It gives PT-BR learners a
+ * deterministic beach scene in four commercial target languages while the
+ * protected local generator continues to cover other authorized pairs/scenes.
+ */
+const PT_BR_BEACH_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "¡Hola! Bienvenido a esta hermosa playa tropical.", nativeHelp: "Olá! Bem-vindo a esta linda praia tropical." },
+      { targetText: "El océano es azul y la arena está cálida.", nativeHelp: "O oceano é azul e a areia está quente." },
+      { targetText: "Mira la palmera cerca de la playa.", nativeHelp: "Olhe a palmeira perto da praia." },
+    ],
+    objects: [
+      { targetText: "palmera", nativeHelp: "palmeira" },
+      { targetText: "océano", nativeHelp: "oceano" },
+      { targetText: "arena", nativeHelp: "areia" },
+      { targetText: "ola", nativeHelp: "onda" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Bonjour ! Bienvenue sur cette belle plage tropicale.", nativeHelp: "Olá! Bem-vindo a esta linda praia tropical." },
+      { targetText: "L’océan est bleu et le sable est chaud.", nativeHelp: "O oceano é azul e a areia está quente." },
+      { targetText: "Regarde le palmier près de la plage.", nativeHelp: "Olhe a palmeira perto da praia." },
+    ],
+    objects: [
+      { targetText: "palmier", nativeHelp: "palmeira" },
+      { targetText: "océan", nativeHelp: "oceano" },
+      { targetText: "sable", nativeHelp: "areia" },
+      { targetText: "vague", nativeHelp: "onda" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Ciao! Benvenuto in questa splendida spiaggia tropicale.", nativeHelp: "Olá! Bem-vindo a esta linda praia tropical." },
+      { targetText: "L’oceano è blu e la sabbia è calda.", nativeHelp: "O oceano é azul e a areia está quente." },
+      { targetText: "Guarda la palma vicino alla spiaggia.", nativeHelp: "Olhe a palmeira perto da praia." },
+    ],
+    objects: [
+      { targetText: "palma", nativeHelp: "palmeira" },
+      { targetText: "oceano", nativeHelp: "oceano" },
+      { targetText: "sabbia", nativeHelp: "areia" },
+      { targetText: "onda", nativeHelp: "onda" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Hallo! Willkommen an diesem wunderschönen tropischen Strand.", nativeHelp: "Olá! Bem-vindo a esta linda praia tropical." },
+      { targetText: "Der Ozean ist blau und der Sand ist warm.", nativeHelp: "O oceano é azul e a areia está quente." },
+      { targetText: "Schau dir die Palme am Strand an.", nativeHelp: "Olhe a palmeira perto da praia." },
+    ],
+    objects: [
+      { targetText: "Palme", nativeHelp: "palmeira" },
+      { targetText: "Ozean", nativeHelp: "oceano" },
+      { targetText: "Sand", nativeHelp: "areia" },
+      { targetText: "Welle", nativeHelp: "onda" },
+    ],
+  },
+};
+
+function getReviewedLaunchSceneMaterial(input: {
+  sceneId: string;
+  targetLanguage: string;
+  nativeLanguage: string;
+}): Omit<LocalizedSceneMaterialResult, "status"> | null {
+  if (input.sceneId !== "beach" || languageBase(input.nativeLanguage) !== "pt") return null;
+  return PT_BR_BEACH_LAUNCH_MATERIAL[languageBase(input.targetLanguage)] || null;
+}
+
 function parseLocalizedEntries(content: unknown, min: number, max: number): LocalizedSceneDialogueTurn[] | null {
   if (!Array.isArray(content) || content.length < min || content.length > max) return null;
   const entries = content.map((entry) => {
@@ -57,6 +130,9 @@ export async function localizeSceneDialogue(input: {
   if (!isInitialCommercialTargetLanguage(input.targetLanguage)) {
     return { status: "planned_language_block", turns: [], objects: [] };
   }
+
+  const reviewedLaunchMaterial = getReviewedLaunchSceneMaterial(input);
+  if (reviewedLaunchMaterial) return { status: "ready", ...reviewedLaunchMaterial };
 
   const canonicalSeed = getSecureSceneSeed(input.sceneId);
   const canonicalContext = canonicalSeed

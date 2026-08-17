@@ -1545,3 +1545,5 @@
 - [x] Migrar o diálogo e os objetos da cena Família no Aeroporto para consumo autenticado da semente do servidor, removendo-os do catálogo estático cliente — diálogo e seis objetos canônicos agora vivem na semente protegida; catálogo cliente sem currículo, TypeScript sem erros e suíte completa com 219 arquivos/529 testes aprovados
 
 - [x] Cobrir por regressão a localização protegida de materiais de cena para os seis idiomas comerciais, sem permitir conteúdo de outro idioma como fallback direto — nova regressão valida pacotes completos, os seis idiomas PT-BR/EN/ES/FR/IT/DE, apoio nativo solicitado, prioridade Ollama e bloqueio explícito de fallback para idioma futuro; TypeScript sem erros e 8 testes dedicados aprovados
+
+- [x] Entregar o primeiro pacote determinístico de cena por dupla comercial PT-BR para espanhol, francês, italiano e alemão, mantendo a geração local protegida como cobertura dos demais pares e cenas — Praia Tropical agora tem diálogo e quatro objetos revisados no servidor para ES/FR/IT/DE, sem depender de geração; demais pares e cenas seguem entrega local protegida; TypeScript sem erros e 12 regressões dedicadas aprovadas
