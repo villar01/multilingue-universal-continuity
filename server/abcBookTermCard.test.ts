@@ -22,6 +22,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(protectedContent).toContain('term: "morning"');
     expect(protectedContent).toContain('term: "study"');
     expect(protectedContent).toContain('term: "tomorrow"');
+    expect(protectedContent).toContain('term: "book"');
+    expect(protectedContent).toContain('term: "work"');
     expect(protectedContent).toContain("A1_CHAPTERS");
     expect(protectedContent).toContain("STRUCTURED_A1_UNITS");
     expect(protectedContent).toContain("chapters: A1_CHAPTERS");

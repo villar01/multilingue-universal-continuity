@@ -150,6 +150,22 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       example: "I will review this word tomorrow. — Vou revisar esta palavra amanhã.",
       paretoPrompt: "Planeje uma revisão curta com tomorrow e repita a frase sem olhar antes de seguir no Pareto.",
     },
+    {
+      term: "book",
+      meaning: "livro",
+      grammar: "substantivo contável; use a/an para um livro e the para um livro específico no contexto",
+      pattern: "This is + a book: This is a useful book.",
+      example: "I have a book for my English class. — Eu tenho um livro para minha aula de inglês.",
+      paretoPrompt: "Descreva um book que você usa para aprender e transforme a ideia em uma frase própria.",
+    },
+    {
+      term: "work",
+      meaning: "trabalhar; trabalho",
+      grammar: "pode ser verbo ou substantivo não contável; como verbo, use work com I, you, we e they",
+      pattern: "I work + lugar/horário: I work in the morning.",
+      example: "I work and study English every day. — Eu trabalho e estudo inglês todos os dias.",
+      paretoPrompt: "Crie uma frase sobre work e acrescente quando você estuda ou pratica depois da rotina.",
+    },
   ],
   chapters: A1_CHAPTERS,
   phrases: [
