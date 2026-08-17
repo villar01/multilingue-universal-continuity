@@ -1635,7 +1635,7 @@
 
 - [ ] Posicionar o player de objeto abaixo do cartão, sem bloquear frase ou controles pedagógicos
 
-- [ ] Substituir a barra nativa sobreposta por botão explícito para tocar a frase em inglês do cartão
+- [x] Substituir a barra nativa sobreposta por botão explícito para tocar a frase em inglês do cartão — o cartão usa botão explícito de frase e o elemento de áudio permanece oculto, sem sobrepor texto ou controles; TypeScript e 16 regressões de áudio e fluxo aprovados
 
 - [x] Ativar a animação estável de James em Wave, Ocean, Palm Tree e Sand durante a fala de cada objeto — Palm Tree, Wave, Ocean e Sand possuem clipes roteirizados próprios com fala correspondente e fallback fotográfico; TypeScript e 10 regressões de mídia e consistência aprovados
 
