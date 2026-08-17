@@ -1207,6 +1207,7 @@ export default function ImmersiveScene() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioObjectUrlRef = useRef<string | null>(null);
+  const preloadedDialogAudioRef = useRef<{ requestKey: string; text: string; language: string; source: string } | null>(null);
   const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1457,6 +1458,33 @@ export default function ImmersiveScene() {
     await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
+
+  useEffect(() => {
+    const dialogueScene = teachingScene ?? selectedScene;
+    const firstLine = activeSceneDialog[0];
+    if (!dialogueScene || !firstLine || !shouldStartSceneTeacherAudio(firstLine)) return;
+    const teacherSpeech = getImmersiveDialogTeacherSpeech(firstLine.text, dialogueScene);
+    const teacherGender = teacherSpeech.gender || dialogueScene.teacherGender || "female";
+    const requestKey = `preload:${teacherSpeech.language}:${teacherGender}:${teacherSpeech.text}`;
+    if (preloadedDialogAudioRef.current?.requestKey === requestKey) return;
+    let cancelled = false;
+    void sceneDialogueVoiceMut.mutateAsync({
+      text: teacherSpeech.text.slice(0, 500),
+      language: teacherSpeech.language,
+      gender: teacherGender,
+    }).then((result) => {
+      if (cancelled || !result.success || !("audioBase64" in result) || !result.audioBase64) return;
+      const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
+      if (cancelled) {
+        URL.revokeObjectURL(source);
+        return;
+      }
+      const previous = preloadedDialogAudioRef.current;
+      if (previous && previous.source !== source) URL.revokeObjectURL(previous.source);
+      preloadedDialogAudioRef.current = { requestKey, text: teacherSpeech.text, language: teacherSpeech.language, source };
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [activeSceneDialog, sceneDialogueVoiceMut, selectedScene, teachingScene]);
 
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
@@ -1776,14 +1804,23 @@ export default function ImmersiveScene() {
       // This runs directly from the Iniciar Diálogo click. Guests use the public
       // scene voice; authenticated students keep the protected neural path.
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      const preloadKey = `preload:${teacherSpeech.language}:${teacherSpeech.gender}:${teacherSpeech.text}`;
+      const preloaded = preloadedDialogAudioRef.current;
+      if (preloaded?.requestKey === preloadKey) {
+        preloadedDialogAudioRef.current = null;
+        void playTeacherAudio(preloaded.source, teacherSpeech.text, teacherSpeech.language, `dialog:${teacherSpeech.text}`).catch(() => {
+          requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+        });
+      } else {
+        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      }
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
