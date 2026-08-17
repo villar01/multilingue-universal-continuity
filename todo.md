@@ -1555,3 +1555,6 @@
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Café Parisiense, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 24 regressões dedicadas e suíte completa com 220 arquivos/553 testes aprovados
 
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Restaurante Brasileiro, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 28 regressões dedicadas e suíte completa com 220 arquivos/557 testes aprovados
+
+- [x] Corrigir a seleção do professor da Praia Tropical para preservar James e sua voz masculina en-US em todos os caminhos autorizados da cena — resolvedor preserva o retrato canônico de James e impede a substituição por Sarah; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
+- [x] Substituir o carregamento indefinido de material protegido por uma orientação de acesso objetiva e acionável quando a sessão não estiver autenticada — acesso não autenticado agora exibe entrada protegida em vez de permanecer em carregamento; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados

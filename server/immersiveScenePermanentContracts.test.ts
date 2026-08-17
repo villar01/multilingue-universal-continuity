@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const teacherResolverSource = readFileSync("client/src/lib/sceneTeacherResolver.ts", "utf8");
 
 describe("permanent Tropical Beach scene contracts", () => {
   it("keeps the teacher portrait free from unapproved synthetic face overlays", () => {
@@ -18,6 +19,18 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');
     expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
+  });
+
+  it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
+    expect(sceneSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
+    expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');
+    expect(teacherResolverSource).toContain('return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };');
+  });
+
+  it("replaces indefinite protected-content loading with an actionable sign-in state", () => {
+    expect(sceneSource).toContain("const sceneMaterialRequiresLogin");
+    expect(sceneSource).toContain("Entre para iniciar esta cena.");
+    expect(sceneSource).toContain("Entrar para começar");
   });
 
   it("keeps free questions in the scene with an immediate contextual fallback", () => {

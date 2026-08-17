@@ -32,6 +32,12 @@ export function getTargetLanguageTeachers(targetLanguage: string): Teacher57[] {
  * teacher with text in a different language.
  */
 export function resolveSceneTeacherForTarget(scene: SceneTeacherSource, targetLanguage: string): SceneTeacherResolution {
+  // James is the canonical beach teacher. Do not substitute the en-US catalog
+  // teacher (Sarah) for this authored scene, regardless of the active target.
+  if (scene.teacherName.trim().toLowerCase() === "james") {
+    return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };
+  }
+
   if (!areSameLanguageFamily(scene.teacherLang, targetLanguage)) {
     return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };
   }
