@@ -1507,6 +1507,7 @@
 - [x] Expor caminhos complementares na Base de Estudos — Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total ficam visíveis e acionáveis; o Pareto mostra com honestidade o piloto atual de 11 entradas enquanto o programa de 1.000 palavras permanece em construção
 - [ ] Expor o banco Pareto existente de 1.130 palavras em um programa real de memorização por idioma — distribuição por CEFR e situação, recuperação ativa, escrita obrigatória, frases novas, repetição espaçada e revisão de itens esquecidos
 - [ ] Corrigir duplicatas do banco Pareto — a auditoria encontrou 780 formas inglesas distintas entre 1.130 entradas; acrescentar termos autorais até obter mil palavras inglesas únicas antes de declarar o programa completo
+- [ ] Acrescentar 220 termos ingleses únicos, práticos e contextualizados para completar a primeira trilha de mil palavras do Pareto
 - [ ] Criar links de escolha do aluno para Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total, com retorno ao ponto de estudo e complementaridade entre conteúdo, exercícios e revisão
 - [ ] Organizar a jornada Base de Estudos → memorização Pareto → cenas imersivas → exercícios e revisão, tornando as cenas a etapa de consolidação contextual
 - [ ] Preservar a ordem sucessiva do método: apresentação, compreensão, memorização, escrita, fala, frases, conversa e revisão
@@ -1516,6 +1517,15 @@
 - [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
+- [ ] Concluir primeiro o núcleo ABC: Pareto prático, exercícios de produção ativa e links permanentes entre todos os blocos
+- [ ] Estruturar o curso ABC como manual completo e consultável do idioma, com ficha de termo, exemplos, gramática, Pareto e prática ativa
+- [ ] Expandir o piloto ABC para módulos completos de explicação, gramática, leitura, escuta, escrita, fala, frases, conversa, revisão e consulta
+- [ ] Elaborar primeiro o esboço integral do curso ABC, com sequência, objetivos, unidades e conexões antes de ampliar módulos isolados
+- [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
+- [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
+- [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados
+- [ ] Incorporar mais de mil palavras Pareto únicas aos capítulos adaptados, com sinônimos, usos e práticas vinculadas
+- [ ] Cobrir sentidos, combinações frequentes, registros e variações regionais comparadas entre idioma nativo e estudado
 - [ ] Posicionar cenas imersivas como demonstração, aplicação contextual e lazer pedagógico depois do estudo no curso ABC
 - [ ] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC
 - [ ] Criar jogo de adivinhação nas cenas com objeto, descrição, escrita, fala, frase e retorno ao Pareto
