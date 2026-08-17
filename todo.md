@@ -1527,7 +1527,7 @@
 - [ ] Incorporar mais de mil palavras Pareto únicas aos capítulos adaptados, com sinônimos, usos e práticas vinculadas
 - [ ] Cobrir sentidos, combinações frequentes, registros e variações regionais comparadas entre idioma nativo e estudado
 - [ ] Posicionar cenas imersivas como demonstração, aplicação contextual e lazer pedagógico depois do estudo no curso ABC
-- [ ] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC
+- [x] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC — após responder, o professor oferece reforço contextual para entendimento, Pareto, frases e conversa; regressão dedicada aprovada
 - [x] Criar jogo de adivinhação nas cenas com objeto, descrição, escrita, fala, frase e retorno ao Pareto — estrela apresenta pista falada do professor, o acerto conduz à fala, fixação Pareto e próxima recuperação; regressão dedicada aprovada
 - [ ] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual
 - [ ] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar
