@@ -19,6 +19,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(protectedContent).toContain("A1_CHAPTERS");
     expect(protectedContent).toContain("STRUCTURED_A1_UNITS");
     expect(protectedContent).toContain("chapters: A1_CHAPTERS");
+    expect(protectedContent).toContain("isPortugueseEnglish");
+    expect(protectedContent).toContain("available: false");
   });
 
   it("renderiza a ficha simples a partir da entrega protegida, sem duplicar o termo no cliente", () => {
@@ -29,6 +31,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain("book.chapters.map");
     expect(bookPage).toContain("Capítulos contínuos para estudar");
     expect(bookPage).toContain("chapter.writingPrompt");
+    expect(bookPage).toContain("if (!book.available)");
+    expect(bookPage).toContain("Edição em preparação");
     expect(bookPage).not.toContain('const TERM_CARD');
   });
 });

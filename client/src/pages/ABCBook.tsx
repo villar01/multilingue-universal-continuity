@@ -42,6 +42,25 @@ export default function ABCBook() {
 
   const book = bookQuery.data;
 
+  if (!book.available) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-stone-100 px-6 text-center text-slate-900">
+        <section className="max-w-xl rounded-sm bg-white p-8 shadow-[0_18px_55px_rgba(15,23,42,0.14)] sm:p-10">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-amber-100 text-amber-700"><BookOpen className="h-6 w-6" /></div>
+          <p className="mt-5 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Livro ABC por dupla</p>
+          <h1 className="mt-2 font-serif text-3xl font-bold">Edição em preparação</h1>
+          <p className="mt-4 leading-7 text-slate-600">{book.unavailableMessage}</p>
+          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+            <a href={`/base-de-estudos?returnTo=${encodeURIComponent(returnTo)}`} className="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.97]">Abrir Base de Estudos</a>
+            <button type="button" onClick={() => setLocation(returnTo)} className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">
+              <ArrowLeft className="h-4 w-4" /> Voltar à atividade
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-stone-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
       <article className="mx-auto max-w-4xl overflow-hidden rounded-sm bg-white shadow-[0_18px_55px_rgba(15,23,42,0.14)]">

@@ -23,6 +23,7 @@ export type ABCBookPhrase = {
 };
 
 export type ABCBookDelivery = {
+  available: true;
   edition: string;
   nativeLabel: string;
   targetLabel: string;
@@ -50,6 +51,14 @@ export type ABCBookDelivery = {
   phrases: ABCBookPhrase[];
 };
 
+export type ABCBookUnavailableDelivery = {
+  available: false;
+  edition: string;
+  nativeLabel: string;
+  targetLabel: string;
+  unavailableMessage: string;
+};
+
 const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit) => ({
   title: unit.unit,
   objective: unit.objective,
@@ -61,6 +70,7 @@ const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit) => ({
 }));
 
 const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
+  available: true,
   edition: "Português → Inglês",
   nativeLabel: "Português",
   targetLabel: "Inglês",
@@ -126,8 +136,17 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   ],
 };
 
-export function getABCBookDelivery(_input: { nativeLanguage: string; targetLanguage: string }): ABCBookDelivery {
-  // A primeira edição comercial é PT-BR → inglês. A entrega continua no servidor
-  // para que futuras edições por dupla reutilizem o mesmo contrato protegido.
-  return PORTUGUESE_ENGLISH_BOOK;
+export function getABCBookDelivery(input: { nativeLanguage: string; targetLanguage: string }): ABCBookDelivery | ABCBookUnavailableDelivery {
+  const isPortugueseEnglish = input.nativeLanguage.toLowerCase().startsWith("pt") && input.targetLanguage.toLowerCase().startsWith("en");
+  if (isPortugueseEnglish) {
+    return PORTUGUESE_ENGLISH_BOOK;
+  }
+
+  return {
+    available: false,
+    edition: `${input.nativeLanguage} → ${input.targetLanguage}`,
+    nativeLabel: input.nativeLanguage,
+    targetLabel: input.targetLanguage,
+    unavailableMessage: "A edição completa para esta dupla está sendo preparada com conteúdo próprio. Enquanto isso, continue pela Base de Estudos, pelo Pareto e pelas cenas com o seu par de idiomas ativo.",
+  };
 }
