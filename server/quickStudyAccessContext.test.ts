@@ -28,6 +28,7 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(hrefs.memorize).toBe("/pareto-1000?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.practice).toBe("/base-de-estudos?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.apply).toBe("/immersive-scene?scene=beach&returnTo=%2Flesson%2F390001%3Funit%3D2");
+    expect(hrefs.teacher).toBe("/free-talk?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=beach")).toBe(true);
     expect(shouldShowPedagogicalQuickAccess("/abc-book")).toBe(false);
   });
@@ -44,5 +45,9 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(bookSource).toContain("getSafeReturnTo");
     expect(bookSource).toContain("pareto-1000?returnTo=");
     expect(appSource).toContain("QuickStudyAccess");
+
+    const freeTalkSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/FreeTalk.tsx"), "utf8");
+    expect(freeTalkSource).toContain('!destination.startsWith("//")');
+    expect(freeTalkSource).toContain('aria-label="Voltar ao estudo de origem"');
   });
 });

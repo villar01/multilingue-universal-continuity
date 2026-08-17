@@ -14,6 +14,7 @@ export function getPedagogicalShortcutHrefs(location: string) {
     memorize: `/pareto-1000?returnTo=${returnTo}`,
     practice: `/base-de-estudos?returnTo=${returnTo}`,
     apply: `/immersive-scene?scene=beach&returnTo=${returnTo}`,
+    teacher: `/free-talk?returnTo=${returnTo}`,
   };
 }
 
@@ -32,6 +33,7 @@ export function PedagogicalQuickAccess() {
     { href: hrefs.memorize, label: "Memorizar", detail: "Pareto", icon: BrainCircuit },
     { href: hrefs.practice, label: "Praticar", detail: "Escrita", icon: PenLine },
     { href: hrefs.apply, label: "Aplicar", detail: "Cena", icon: MessageCircleMore },
+    { href: hrefs.teacher, label: "Conversar", detail: "Professor", icon: MessageCircleMore },
   ];
 
   return (

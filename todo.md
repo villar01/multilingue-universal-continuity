@@ -1542,7 +1542,7 @@
 - [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis
 - [ ] Catalogar os objetos das 29 cenas e produzir clipes roteirizados próprios com fala correspondente por palavra
 - [x] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos — catálogo único Pareto, auditoria das 29 cenas, contratos de currículo/mídia/voz e atalhos contextuais foram entregues e validados antes de qualquer expansão adicional de clipes
-- [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
+- [x] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem — o grupo de atalhos envia a origem completa ao Livro, Pareto, Base, cena e Professor; a conversa rejeita destinos externos e devolve o aluno ao estudo de origem; TypeScript e regressões aprovados
 - [x] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular — a prática recebe o item ativo como retorno e volta somente ao ponto curricular da Base; regressão dedicada aprovada
 - [x] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço — a trilha aceita somente retorno interno da Base e preserva o destino curricular seguro; regressão dedicada aprovada
 - [ ] Revisar conteúdos dominados periodicamente e exigir frases, escrita e conversa com vocabulário em todos os níveis e áreas curriculares

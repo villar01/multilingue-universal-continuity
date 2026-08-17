@@ -42,7 +42,7 @@ export default function FreeTalk() {
   const t = useI18n();
   const returnTo = useMemo(() => {
     const destination = new URLSearchParams(window.location.search).get("returnTo");
-    return destination?.startsWith("/") ? destination : "/dashboard";
+    return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/dashboard";
   }, []);
 
   const nativeLang = localStorage.getItem("ml_native_lang") || "pt-BR";
@@ -291,7 +291,8 @@ export default function FreeTalk() {
       <div className="flex items-center justify-between px-4 py-3 bg-black/30 backdrop-blur-sm border-b border-white/10">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setShowSetup(true)}
+            onClick={() => navigate(returnTo)}
+            aria-label="Voltar ao estudo de origem"
             className="p-1.5 rounded-full bg-white/10 hover:bg-white/20"
           >
             <ArrowLeft className="w-4 h-4" />
