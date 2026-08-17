@@ -1518,7 +1518,7 @@
 - [x] Atingir os mesmos objetivos pedagógicos da sequência validada e aperfeiçoá-los com recuperação Pareto, produção ativa e revisão espaçada — o Pareto exige recuperação sem olhar, escrita e frase nova; cada acerto agenda revisão local por dupla de idiomas em intervalos progressivos de 1, 3, 7, 14 e 30 dias, com fila de pendências; TypeScript e regressões aprovados
 - [ ] Criar ilustrações autorais monocromáticas de alto contraste para apoiar memorização, sem reproduzir figuras do PDF
 - [x] Abrir a cena imersiva relacionada a partir da Base de Estudos e retornar ao mesmo ponto curricular após a prática — a cena recebe o item curricular no retorno e a Base restaura o mesmo ponto após a prática; regressão dedicada aprovada
-- [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
+- [x] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos — a Base encaminha para Livro ABC, Pareto e cena com item ativo; lições e Professor preservam a origem; cena oferece reforços contextuais; TypeScript e 11 regressões de ponte e retorno aprovadas
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
 - [ ] Concluir primeiro o núcleo ABC: Pareto prático, exercícios de produção ativa e links permanentes entre todos os blocos
