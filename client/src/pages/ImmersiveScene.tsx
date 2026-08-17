@@ -1379,16 +1379,11 @@ export default function ImmersiveScene() {
       releaseRequest();
       setDlgFeedback("A voz não carregou. Use o botão Ouvir James ou a voz do navegador para tentar novamente.");
     };
-    try {
-      await audio.play();
-    } catch (error) {
-      if (updatesActiveDialog()) setDlgAudioClock(false);
-      if (audioRef.current === audio) audioRef.current = null;
-      setIsPreparingNeuralAudio(false);
-      setIsSpeaking(false);
-      setDlgFeedback("A reprodução automática foi bloqueada. Use o controle de áudio visível para tentar novamente.");
-      throw error;
-    }
+    // A faixa é preparada no início do diálogo, mas nunca toca sozinha. O
+    // navegador aceita a execução somente no gesto explícito em Ouvir James.
+    setIsPreparingNeuralAudio(false);
+    setIsSpeaking(false);
+    setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");
   }, [dialogSpeechRate, stopVisemeSync]);
 
   const replayVisibleDialogAudio = useCallback(async () => {

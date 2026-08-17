@@ -28,6 +28,16 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("document.body.appendChild(audio)");
   });
 
+  it("prepara a faixa de James sem disparar reprodução automática", () => {
+    const neuralPreparation = source.slice(
+      source.indexOf("const playTeacherAudio = useCallback"),
+      source.indexOf("const replayVisibleDialogAudio = useCallback"),
+    );
+    expect(neuralPreparation).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");
+    expect(neuralPreparation).not.toContain("audio.play()");
+    expect(source).toContain("await audio.play();");
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");

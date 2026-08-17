@@ -18,7 +18,8 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');
-    expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
+    expect(sceneSource).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");
+    expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(0);
   });
 
   it("limits neural hotspot waits so an audible fallback can run promptly", () => {
