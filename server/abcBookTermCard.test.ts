@@ -24,6 +24,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(protectedContent).toContain('term: "tomorrow"');
     expect(protectedContent).toContain('term: "book"');
     expect(protectedContent).toContain('term: "work"');
+    expect(protectedContent).toContain('term: "can"');
+    expect(protectedContent).toContain('term: "please"');
     expect(protectedContent).toContain('pronunciation: string');
     expect(protectedContent).toContain('pronunciation: "/ˈstʌd.i/"');
     expect(protectedContent).toContain("A1_CHAPTERS");
