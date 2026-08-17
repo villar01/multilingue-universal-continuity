@@ -8,6 +8,7 @@ import { getParetoProgramWords, PARETO_VOCAB } from "./curriculum/paretoContent"
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
+import { getABCBookDelivery } from "./curriculum/abcBookContent";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
 
@@ -21,6 +22,17 @@ async function assertCurriculumDelivery(userId: number, lessonKey: string) {
 }
 
 export const curriculumRouter = router({
+  abcBook: protectedProcedure.input(accessInput.extend({
+    targetLanguage: z.string().trim().min(2).max(16),
+    nativeLanguage: z.string().trim().min(2).max(16),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    return getABCBookDelivery({
+      nativeLanguage: input.nativeLanguage,
+      targetLanguage: input.targetLanguage,
+    });
+  }),
+
   studyBase: protectedProcedure.input(accessInput).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     return entitlement.isPaid

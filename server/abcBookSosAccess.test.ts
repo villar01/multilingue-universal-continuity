@@ -5,6 +5,8 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const appSource = readFileSync(path.join(root, "client/src/App.tsx"), "utf8");
 const bookSource = readFileSync(path.join(root, "client/src/pages/ABCBook.tsx"), "utf8");
+const protectedBookSource = readFileSync(path.join(root, "server/curriculum/abcBookContent.ts"), "utf8");
+const curriculumRouterSource = readFileSync(path.join(root, "server/curriculum-router.ts"), "utf8");
 const sosSource = readFileSync(path.join(root, "client/src/components/FlyingSOSBook.tsx"), "utf8");
 const sceneSource = readFileSync(path.join(root, "client/src/pages/ImmersiveScene.tsx"), "utf8");
 const lessonSource = readFileSync(path.join(root, "client/src/pages/Lesson.tsx"), "utf8");
@@ -13,6 +15,17 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
   it("registra a rota protegida de leitura do Livro ABC", () => {
     expect(appSource).toContain('const ABCBook = lazy(() => import("./pages/ABCBook"))');
     expect(appSource).toContain('<Route path="/abc-book" component={ABCBook} />');
+  });
+
+  it("entrega o conteúdo da edição inicial somente pelo roteador curricular protegido", () => {
+    expect(curriculumRouterSource).toContain("abcBook: protectedProcedure.input(accessInput.extend");
+    expect(curriculumRouterSource).toContain("await assertCurriculumDelivery(ctx.user.id, input.lessonKey)");
+    expect(curriculumRouterSource).toContain("getABCBookDelivery");
+    expect(bookSource).toContain("trpc.curriculum.abcBook.useQuery");
+    expect(bookSource).toContain("createTrialLessonKey(location)");
+    expect(bookSource).not.toContain("const PORTUGUESE_ENGLISH_STARTER =");
+    expect(bookSource).not.toContain("Hello. How are you?");
+    expect(protectedBookSource).toContain("Hello. How are you?");
   });
 
   it("cria um destino SOS interno que preserva a atividade de origem", () => {
