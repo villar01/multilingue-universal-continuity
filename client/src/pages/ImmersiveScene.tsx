@@ -1405,10 +1405,10 @@ export default function ImmersiveScene() {
       if (!acceptPlayableTrack() || !isObjectPronunciation || objectPlaybackAttempted) return;
       objectPlaybackAttempted = true;
       // A pronúncia foi pedida pelo botão explícito do cartão. Tentamos tocar
-      // no mesmo fluxo; se o navegador exigir outro gesto, o player visível
-      // abaixo do cartão permite concluir a reprodução sem perder a faixa.
+      // no mesmo fluxo; se o navegador exigir outro gesto, o aluno repete o
+      // mesmo botão do cartão, sem uma barra nativa sobrepondo o conteúdo.
       void audio.play().catch(() => {
-        setDlgFeedback("Pronúncia pronta. Toque no controle de áudio abaixo do cartão para ouvir.");
+        setDlgFeedback("Pronúncia pronta. Toque novamente no botão de áudio do cartão para ouvir.");
       });
     };
     audio.ontimeupdate = updateDialogWordsFromAudio;
@@ -2686,9 +2686,9 @@ export default function ImmersiveScene() {
         <audio
           ref={dialogAudioElementRef}
           src={dialogAudioSource || undefined}
-          controls={Boolean(dialogAudioSource && !dlgOpen)}
+          controls={false}
           preload="auto"
-          className={dialogAudioSource && !dlgOpen ? "absolute left-1/2 top-[160px] z-[75] h-9 w-[min(88vw,320px)] -translate-x-1/2" : "hidden"}
+          className="hidden"
           aria-label="Áudio da fala em inglês"
         />
 

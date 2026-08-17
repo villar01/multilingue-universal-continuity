@@ -78,24 +78,26 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("Pronúncias de objetos usam o fluxo");
   });
 
-  it("mantém o único elemento de áudio montado quando o diálogo está fechado para os cartões de objeto", () => {
+  it("mantém o único elemento de áudio montado e oculto quando o diálogo está fechado para os cartões de objeto", () => {
     const teacherIndex = source.indexOf("<TeacherAvatar");
     const dialogPanelIndex = source.indexOf("{/* ── Dialog Panel:");
     const audioIndex = source.indexOf("ref={dialogAudioElementRef}");
     expect(audioIndex).toBeGreaterThan(teacherIndex);
     expect(audioIndex).toBeLessThan(dialogPanelIndex);
-    expect(source).toContain("controls={Boolean(dialogAudioSource && !dlgOpen)}");
+    expect(source).toContain("controls={false}");
+    expect(source).toContain('className="hidden"');
     expect(source).toContain("os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural");
   });
 
-  it("inicia a pronúncia de objeto pelo gesto explícito e mantém controle visível quando outro gesto é necessário", () => {
+  it("inicia a pronúncia de objeto pelo gesto explícito e mantém o botão do cartão como única recuperação", () => {
     expect(source).toContain('const isObjectPronunciation = requestKey.startsWith("hotspot:")');
     expect(source).toContain("void audio.play().catch(() =>");
-    expect(source).toContain("Pronúncia pronta. Toque no controle de áudio abaixo do cartão para ouvir.");
+    expect(source).toContain("Pronúncia pronta. Toque novamente no botão de áudio do cartão para ouvir.");
   });
 
-  it("mantém o player de objeto na zona livre superior, sem cobrir a frase ou os botões do cartão", () => {
-    expect(source).toContain('top-[160px] z-[75] h-9');
+  it("não renderiza barra nativa sobre a frase ou os botões do cartão", () => {
+    expect(source).not.toContain('top-[160px] z-[75] h-9');
     expect(source).not.toContain('bottom-[112px] left-1/2 z-[75]');
+    expect(source).toContain("controls={false}");
   });
 });

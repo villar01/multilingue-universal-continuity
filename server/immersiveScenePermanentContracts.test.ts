@@ -14,7 +14,7 @@ describe("permanent Tropical Beach scene contracts", () => {
   it("keeps a single visible, persistent dialogue audio control", () => {
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("src={dialogAudioSource || undefined}");
-    expect(sceneSource).toContain("controls={Boolean(dialogAudioSource && !dlgOpen)}");
+    expect(sceneSource).toContain("controls={false}");
     expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');
