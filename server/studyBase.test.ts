@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import { filterStudyEntriesByUnit, getSentenceStarter, getSentenceTransformation, getStructuredStudyUnit, getStudyBaseTeacherReply, getStudyUnits, reviewStudySentence, reviewStudyTransformation, searchStudyBase } from "../client/src/lib/studyBase";
 import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBaseContent";
 
@@ -60,5 +62,12 @@ describe("Base de Estudos A1", () => {
     expect(getSentenceTransformation(entry)).toMatchObject({ source: "Where is the pool?", hint: "Where is the hotel?" });
     expect(reviewStudyTransformation(entry, "Where is the pool?")).toContain("altere uma informação");
     expect(reviewStudyTransformation(entry, "Where is the hotel?")).toContain("Boa transformação");
+  });
+
+  it("apresenta a cena como exploração aplicada após o estudo, com retorno curricular", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain("Explorar em cena");
+    expect(source).toContain("interagir e retornar ao estudo");
+    expect(source).toContain("openRelatedScene(activeEntry)");
   });
 });

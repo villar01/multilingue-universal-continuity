@@ -500,7 +500,7 @@ export default function StudyBase() {
                     className="flex items-center gap-3 rounded-2xl border border-emerald-300/30 bg-emerald-300/10 p-4 text-left transition-colors hover:bg-emerald-300/20"
                   >
                     <Sparkles className="h-5 w-5 text-emerald-200" />
-                    <span><strong className="block text-emerald-100">Aplicar na cena</strong><span className="text-sm text-slate-300">Praticar em {activeEntry.relatedScene} e retornar</span></span>
+                    <span><strong className="block text-emerald-100">Explorar em cena</strong><span className="text-sm text-slate-300">Ver o conteúdo em {activeEntry.relatedScene}, interagir e retornar ao estudo</span></span>
                   </button>
                 </div>
 

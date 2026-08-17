@@ -10,7 +10,8 @@ describe("ponte entre Base de Estudos e Cena Imersiva", () => {
     expect(studyBaseSource).toContain("const openRelatedScene = useCallback");
     expect(studyBaseSource).toContain("/immersive-scene?scene=${encodeURIComponent(sceneId)}&returnTo=${encodeURIComponent(returnPath)}");
     expect(studyBaseSource).toContain("/base-de-estudos?entry=${encodeURIComponent(entry.id)}");
-    expect(studyBaseSource).toContain("Aplicar na cena");
+    expect(studyBaseSource).toContain("Explorar em cena");
+    expect(studyBaseSource).toContain("interagir e retornar ao estudo");
   });
 
   it("restaura o item curricular e respeita o destino interno de retorno da cena", () => {

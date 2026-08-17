@@ -945,6 +945,13 @@ export default function ImmersiveScene() {
     const destination = new URLSearchParams(window.location.search).get("returnTo");
     return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/";
   }, []);
+  const sceneStudyReturnPath = useMemo(() => {
+    if (typeof window === "undefined") return "/immersive-scene";
+    return `${window.location.pathname}${window.location.search}`;
+  }, []);
+  const openSceneReinforcement = useCallback((destination: "/base-de-estudos" | "/pareto-1000" | "/lessons" | "/free-talk") => {
+    setLocation(`${destination}?returnTo=${encodeURIComponent(sceneStudyReturnPath)}`);
+  }, [sceneStudyReturnPath, setLocation]);
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -2915,6 +2922,15 @@ export default function ImmersiveScene() {
                       <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Resposta escrita do professor</p>
                       <div role="status" aria-live="polite" className="whitespace-pre-line text-sm font-medium text-amber-100">
                         {dlgFeedback}
+                      </div>
+                      <div className="mt-3 border-t border-amber-300/20 pt-3">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Aprofundar esta dúvida no curso ABC</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <button type="button" onClick={() => openSceneReinforcement("/base-de-estudos")} className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-2.5 py-1 text-xs font-bold text-cyan-50 hover:bg-cyan-300/20">Entender no curso</button>
+                          <button type="button" onClick={() => openSceneReinforcement("/pareto-1000")} className="rounded-full border border-violet-300/40 bg-violet-300/10 px-2.5 py-1 text-xs font-bold text-violet-50 hover:bg-violet-300/20">Memorizar no Pareto</button>
+                          <button type="button" onClick={() => openSceneReinforcement("/lessons")} className="rounded-full border border-emerald-300/40 bg-emerald-300/10 px-2.5 py-1 text-xs font-bold text-emerald-50 hover:bg-emerald-300/20">Praticar frases</button>
+                          <button type="button" onClick={() => openSceneReinforcement("/free-talk")} className="rounded-full border border-fuchsia-300/40 bg-fuchsia-300/10 px-2.5 py-1 text-xs font-bold text-fuchsia-50 hover:bg-fuchsia-300/20">Conversar mais</button>
+                        </div>
                       </div>
                     </div>
                   )}

@@ -1516,6 +1516,8 @@
 - [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
+- [ ] Posicionar cenas imersivas como demonstração, aplicação contextual e lazer pedagógico depois do estudo no curso ABC
+- [ ] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC
 - [ ] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual
 - [ ] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar
 - [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
