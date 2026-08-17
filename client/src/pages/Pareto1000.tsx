@@ -100,7 +100,8 @@ export default function Pareto1000() {
   const dueReviewSet = useMemo(() => new Set(dueReviewIds), [dueReviewIds]);
   const returnTo = useMemo(() => {
     const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
-    return requestedDestination?.startsWith("/base-de-estudos") || requestedDestination?.startsWith("/abc-book")
+    const allowedReturnPrefixes = ["/base-de-estudos", "/abc-book", "/immersive-scene", "/lesson/", "/structured-lesson", "/dashboard"];
+    return requestedDestination && allowedReturnPrefixes.some((prefix) => requestedDestination.startsWith(prefix))
       ? requestedDestination
       : "/base-de-estudos";
   }, [location]);
@@ -120,18 +121,6 @@ export default function Pareto1000() {
     setPracticeWord(dueWord);
     setPendingReviewId(null);
   }, [pendingReviewId, words]);
-
-  if (paretoQuery.isLoading) {
-    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
-  }
-
-  if (paretoQuery.isError) {
-    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Não foi possível autorizar a entrega do vocabulário Pareto.</main>;
-  }
-
-  if (paretoQuery.data?.status !== "ready") {
-    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">O material desta dupla de idiomas está sendo preparado com segurança. Escolha outra prática disponível ou tente novamente em instantes.</main>;
-  }
 
   const speak = useCallback(async (text: string) => {
     if (!text.trim()) return;
@@ -185,6 +174,18 @@ export default function Pareto1000() {
       ?? null;
     setPracticeWord(candidate);
   }, [completed, practiceWord, words]);
+
+  if (paretoQuery.isLoading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
+  }
+
+  if (paretoQuery.isError) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Não foi possível autorizar a entrega do vocabulário Pareto.</main>;
+  }
+
+  if (paretoQuery.data?.status !== "ready") {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">O material desta dupla de idiomas está sendo preparado com segurança. Escolha outra prática disponível ou tente novamente em instantes.</main>;
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">

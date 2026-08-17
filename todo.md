@@ -1533,8 +1533,10 @@
 - [x] Posicionar cenas imersivas como demonstração, aplicação contextual e lazer pedagógico depois do estudo no curso ABC — a Base apresenta a cena como etapa de aplicação posterior, direciona o item curricular e restaura o ponto de estudo no retorno; TypeScript e regressões Base–Cena aprovados
 - [x] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC — após responder, o professor oferece reforço contextual para entendimento, Pareto, frases e conversa; regressão dedicada aprovada
 - [x] Criar jogo de adivinhação nas cenas com objeto, descrição, escrita, fala, frase e retorno ao Pareto — estrela apresenta pista falada do professor, o acerto conduz à fala, fixação Pareto e próxima recuperação; regressão dedicada aprovada
-- [ ] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual
-- [ ] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar
+- [x] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual — componente global compacto oferece Livro ABC, Pareto, Base de Estudos e cena com retorno seguro ao ponto de origem; preserva SOS e controles existentes; TypeScript e regressões aprovados
+- [x] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar — os atalhos agora aparecem agrupados e recolhíveis, sem substituir o Livro SOS nem sobrepor a atividade principal; TypeScript e regressões aprovados
+
+- [x] Corrigir o erro de execução visual na página Pareto após a inclusão dos atalhos pedagógicos e revisar a compatibilidade do retorno contextual — retornos de carregamento foram movidos após os hooks, eliminando a falha de renderização; TypeScript, regressões e captura visual da página Pareto aprovados
 - [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
 - [ ] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto
 - [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis

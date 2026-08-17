@@ -18,7 +18,7 @@ describe("ponte Base de Estudos–Pareto", () => {
   });
 
   it("faz o Pareto voltar apenas à Base de Estudos contextual", () => {
-    expect(paretoSource).toContain('requestedDestination?.startsWith("/base-de-estudos")');
+    expect(paretoSource).toContain('allowedReturnPrefixes = ["/base-de-estudos", "/abc-book", "/immersive-scene", "/lesson/", "/structured-lesson", "/dashboard"]');
     expect(paretoSource).toContain('<Link href={returnTo}>');
   });
 });

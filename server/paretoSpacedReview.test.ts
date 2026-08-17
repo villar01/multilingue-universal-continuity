@@ -33,5 +33,6 @@ describe("revisão espaçada Pareto", () => {
     expect(source).toContain("getDueParetoReviewIds");
     expect(source).toContain("Revisar pendências");
     expect(source).toContain("recordSuccessfulParetoReview");
+    expect(source.indexOf("const speak = useCallback")).toBeLessThan(source.indexOf("if (paretoQuery.isLoading)"));
   });
 });

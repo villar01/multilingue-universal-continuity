@@ -1,4 +1,5 @@
 import { FlyingSOSBook, getABCBookHref } from "@/components/FlyingSOSBook";
+import { PedagogicalQuickAccess } from "@/components/PedagogicalQuickAccess";
 import { useLocation } from "wouter";
 
 const EXCLUDED_PATHS = ["/", "/abc-book", "/immersive-scene", "/lesson", "/onboarding"];
@@ -14,5 +15,10 @@ export function getQuickStudyHref(location: string): string | null {
 
 export function QuickStudyAccess() {
   const [location] = useLocation();
-  return getQuickStudyHref(location) ? <FlyingSOSBook /> : null;
+  return (
+    <>
+      {getQuickStudyHref(location) && <FlyingSOSBook />}
+      <PedagogicalQuickAccess />
+    </>
+  );
 }
