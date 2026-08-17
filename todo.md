@@ -1513,7 +1513,7 @@
 - [ ] Preservar a ordem sucessiva do método: apresentação, compreensão, memorização, escrita, fala, frases, conversa e revisão
 - [ ] Atingir os mesmos objetivos pedagógicos da sequência validada e aperfeiçoá-los com recuperação Pareto, produção ativa e revisão espaçada
 - [ ] Criar ilustrações autorais monocromáticas de alto contraste para apoiar memorização, sem reproduzir figuras do PDF
-- [ ] Abrir a cena imersiva relacionada a partir da Base de Estudos e retornar ao mesmo ponto curricular após a prática
+- [x] Abrir a cena imersiva relacionada a partir da Base de Estudos e retornar ao mesmo ponto curricular após a prática — a cena recebe o item curricular no retorno e a Base restaura o mesmo ponto após a prática; regressão dedicada aprovada
 - [ ] Conectar Base de Estudos, lições, Pareto, exercícios, conversa e cenas com retorno contextual e reforço por pontos fracos
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
