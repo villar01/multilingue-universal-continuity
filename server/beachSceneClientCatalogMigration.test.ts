@@ -171,4 +171,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("富士山は高いです。");
     expect(clientSceneSource).toContain('selectedScene?.id === "tokyo"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Deserto do Saara do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("مرحباً! أنا عمر. أهلاً بك في الصحراء الكبرى!");
+    expect(clientSceneSource).not.toContain("الرمل ساخن جداً.");
+    expect(serverSeedSource).toContain("مرحباً! أنا عمر. أهلاً بك في الصحراء الكبرى!");
+    expect(serverSeedSource).toContain("الرمل ساخن جداً.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "desert"');
+  });
 });

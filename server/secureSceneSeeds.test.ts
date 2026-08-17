@@ -122,6 +122,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(tokyo?.hotspots.map((hotspot) => hotspot.id)).toEqual(["fuji", "street", "billboard", "screen", "building", "sign"]);
   });
 
+  it("mantém o conteúdo do Deserto do Saara disponível somente no contrato do servidor", () => {
+    const desert = getSecureSceneSeed("desert");
+    expect(desert?.dialog).toHaveLength(7);
+    expect(desert?.hotspots.map((hotspot) => hotspot.id)).toEqual(["sand2", "caravan", "sun2", "footprints", "dune"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });

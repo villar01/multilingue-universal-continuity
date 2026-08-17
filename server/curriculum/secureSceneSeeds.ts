@@ -220,6 +220,24 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "exit", x: 15, y: 55, label: "Exit", translation: "Saída", pronunciation: "EK-sit", example: "Where is the exit?", examplePt: "Onde fica a saída?", icon: "🚪", color: "#0ea5e9" },
     ],
   },
+  desert: {
+    dialog: [
+      { speaker: "teacher", text: "مرحباً! أنا عمر. أهلاً بك في الصحراء الكبرى!", textPt: "Olá! Sou Omar. Bem-vindo ao Saara!" },
+      { speaker: "user", text: "مرحباً يا عمر! الصحراء جميلة جداً!", textPt: "Olá Omar! O deserto é muito bonito!", options: ["مرحباً يا عمر! الصحراء جميلة جداً!", "لا أحب الصحراء.", "أين الفندق؟"], correctIndex: 0 },
+      { speaker: "teacher", text: "شكراً! انظر إلى الجمل — هو حيوان الصحراء. كيف تقول 'جمل' بالعربية؟", textPt: "Obrigado! Olhe para o camelo — ele é o animal do deserto. Como se diz 'camelo' em árabe?" },
+      { speaker: "user", text: "جمل! وأرى الرمال الذهبية والواحة بعيداً!", textPt: "Jamal! E vejo a areia dourada e o oásis ao longe!", options: ["جمل! وأرى الرمال الذهبية والواحة بعيداً!", "لا أرى شيئاً.", "أين الماء؟"], correctIndex: 0 },
+      { speaker: "teacher", text: "ممتاز! الواحة هي مكان الماء في الصحراء. الشمس حارة جداً هنا.", textPt: "Excelente! O oásis é o lugar da água no deserto. O sol está muito quente aqui." },
+      { speaker: "user", text: "نعم، الشمس قوية جداً! وأرى الكثبان الرملية الجميلة.", textPt: "Sim, o sol é muito forte! E vejo as belas dunas de areia.", options: ["نعم، الشمس قوية جداً! وأرى الكثبان الرملية الجميلة.", "أريد الذهاب.", "هذا صعب جداً."], correctIndex: 0 },
+      { speaker: "teacher", text: "رائع! عربيتك تتحسن كثيراً. استمر في التعلم!", textPt: "Maravilhoso! Seu árabe está melhorando muito. Continue aprendendo!" },
+    ],
+    hotspots: [
+      { id: "sand2", x: 50, y: 75, label: "رمل", translation: "Areia", pronunciation: "raml", example: "الرمل ساخن جداً.", examplePt: "A areia está muito quente.", icon: "🏜️", color: "#f59e0b" },
+      { id: "caravan", x: 82, y: 55, label: "قافلة", translation: "Caravana", pronunciation: "qa-fi-la", example: "القافلة تسير في الصحراء.", examplePt: "A caravana caminha no deserto.", icon: "🐪", color: "#a16207" },
+      { id: "sun2", x: 70, y: 15, label: "شمس", translation: "Sol", pronunciation: "SHAMS", example: "الشمس حارة جداً.", examplePt: "O sol está muito quente.", icon: "☀️", color: "#eab308" },
+      { id: "footprints", x: 55, y: 72, label: "آثار", translation: "Pegadas", pronunciation: "aa-THAAR", example: "الآثار في الرمل.", examplePt: "As pegadas estão na areia.", icon: "👣", color: "#22c55e" },
+      { id: "dune", x: 55, y: 45, label: "كثيب", translation: "Duna", pronunciation: "ka-THIIB", example: "الكثيب رملي.", examplePt: "A duna é de areia.", icon: "🏔️", color: "#d97706" },
+    ],
+  },
   tokyo: {
     dialog: [
       { speaker: "teacher", text: "こんにちは！私はゆきです。東京へようこそ！", textPt: "Olá! Sou Yuki. Bem-vindo a Tóquio!" },
