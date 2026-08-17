@@ -41,8 +41,12 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain('aria-label="Sumário dos capítulos A1"');
     expect(bookPage).toContain('id="sumario-a1"');
     expect(bookPage).toContain('href={`#capitulo-a1-${index + 1}`}');
-    expect(bookPage).toContain('id={`capitulo-a1-${index + 1}`}');
+    expect(bookPage).toContain('const chapterId = `capitulo-a1-${index + 1}`');
+    expect(bookPage).toContain("id={chapterId}");
     expect(bookPage).toContain('href="#sumario-a1"');
+    expect(bookPage).toContain("const chapterParetoHref");
+    expect(bookPage).toContain("Praticar no Pareto");
+    expect(bookPage).toContain("${paretoReturnTo}#${chapterId}");
     expect(bookPage).toContain("if (!book.available)");
     expect(bookPage).toContain("Edição em preparação");
     expect(bookPage).not.toContain('const TERM_CARD');
