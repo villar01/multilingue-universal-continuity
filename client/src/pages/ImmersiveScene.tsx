@@ -384,23 +384,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Добро пожаловать в офис! Учим деловую лексику!",
     greetingPt:"Bem-vindo ao escritório! Vamos aprender vocabulário de negócios!",
     difficulty:"intermediate", premium:true,
-    dialog:[
-      {speaker:"teacher", text:"Добрый день! Я Иван. Добро пожаловать в наш офис!", textPt:"Boa tarde! Sou Ivan. Bem-vindo ao nosso escritório!"},
-      {speaker:"user", text:"Добрый день, Иван! Очень красивый офис. Как дела на работе?", textPt:"Boa tarde, Ivan! Escritório muito bonito. Como vai o trabalho?", options:["Добрый день, Иван! Очень красивый офис. Как дела на работе?","Не знаю.","Я заблудился."], correctIndex:0},
-      {speaker:"teacher", text:"Всё хорошо, спасибо! Вот мой компьютер и рабочий стол.", textPt:"Tudo bem, obrigado! Aqui está meu computador e mesa de trabalho."},
-      {speaker:"user", text:"Понятно! А телефон звонит — нужно ответить?", textPt:"Entendi! E o telefone está tocando — precisa atender?", options:["Понятно! А телефон звонит — нужно ответить?","Не обращайте внимания.","Выключите телефон."], correctIndex:0},
-      {speaker:"teacher", text:"Да, это важный звонок. Окно открыто — свежий воздух помогает работать.", textPt:"Sim, é uma ligação importante. A janela está aberta — o ar fresco ajuda a trabalhar."},
-      {speaker:"user", text:"Согласен! Можно взять кофе из кофемашины?", textPt:"Concordo! Posso pegar café da cafeteira?", options:["Согласен! Можно взять кофе из кофемашины?","Я не пью кофе.","Где столовая?"], correctIndex:0},
-      {speaker:"teacher", text:"Конечно! Папка с документами на столе. Ваш русский отличный!", textPt:"Claro! A pasta com documentos está na mesa. Seu russo está excelente!"},
-    ],
-    hotspots:[
-      {id:"komputer", x:50, y:45, label:"Компьютер", translation:"Computador", pronunciation:"kom-PIU-ter", example:"Компьютер работает.", examplePt:"O computador está funcionando.", icon:"💻", color:"#6366f1"},
-      {id:"stol", x:35, y:65, label:"Стол", translation:"Mesa", pronunciation:"STOL", example:"Стол большой.", examplePt:"A mesa é grande.", icon:"🪑", color:"#a16207"},
-      {id:"telefon", x:70, y:55, label:"Телефон", translation:"Telefone", pronunciation:"te-li-FON", example:"Телефон звонит.", examplePt:"O telefone está tocando.", icon:"📞", color:"#22c55e"},
-      {id:"okno", x:80, y:25, label:"Окно", translation:"Janela", pronunciation:"ak-NO", example:"Окно открыто.", examplePt:"A janela está aberta.", icon:"🪟", color:"#0ea5e9"},
-      {id:"kofejnik", x:20, y:50, label:"Кофемашина", translation:"Cafeteira", pronunciation:"ko-fe-MA-shi-na", example:"Кофемашина работает.", examplePt:"A cafeteira está funcionando.", icon:"☕", color:"#f59e0b"},
-      {id:"papka", x:60, y:30, label:"Папка", translation:"Pasta", pronunciation:"PAP-ka", example:"Папка на столе.", examplePt:"A pasta está na mesa.", icon:"📁", color:"#dc2626"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"metro", name:"Metrô de Paris", nameEn:"Paris Metro", flag:"🚇",
@@ -1214,7 +1200,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1223,7 +1209,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
