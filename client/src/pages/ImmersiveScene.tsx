@@ -1207,7 +1207,6 @@ export default function ImmersiveScene() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null);
   const dialogAudioObjectUrlRef = useRef<string | null>(null);
-  const preloadedDialogAudioRef = useRef<{ requestKey: string; text: string; language: string; source: string } | null>(null);
   const localSpeechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const activeDialogLineRef = useRef<string | null>(null);
   const activeDialogWordCountRef = useRef(0);
@@ -1413,36 +1412,13 @@ export default function ImmersiveScene() {
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
       const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (AudioContextConstructor) {
-        const context = dialogAudioContextRef.current || new AudioContextConstructor();
-        dialogAudioContextRef.current = context;
+      if (!AudioContextConstructor) return;
+      const context = dialogAudioContextRef.current || new AudioContextConstructor();
+      dialogAudioContextRef.current = context;
       // Resume happens synchronously in the visitor's click. The actual neural
       // MP3 arrives asynchronously, so this preserves playback eligibility for
       // the first scripted line instead of relying on a later autoplay attempt.
-        void context.resume();
-      }
-      const audio = dialogAudioElementRef.current;
-      if (!audio) return;
-      const silentWav = new Uint8Array([
-        0x52, 0x49, 0x46, 0x46, 0x26, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45,
-        0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
-        0x44, 0xac, 0x00, 0x00, 0x88, 0x58, 0x01, 0x00, 0x02, 0x00, 0x10, 0x00,
-        0x64, 0x61, 0x74, 0x61, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
-      ]);
-      const silentSource = URL.createObjectURL(new Blob([silentWav], { type: "audio/wav" }));
-      audio.pause();
-      audio.src = silentSource;
-      audio.muted = true;
-      void audio.play().finally(() => {
-        if (audio.src === silentSource) {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.src = "";
-          audio.load();
-          audio.muted = false;
-        }
-        URL.revokeObjectURL(silentSource);
-      });
+      void context.resume();
     } catch {
       // The visible Ouvir inglês control remains available as an explicit retry.
     }
@@ -1458,33 +1434,6 @@ export default function ImmersiveScene() {
     await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
-
-  useEffect(() => {
-    const dialogueScene = teachingScene ?? selectedScene;
-    const firstLine = activeSceneDialog[0];
-    if (!dialogueScene || !firstLine || !shouldStartSceneTeacherAudio(firstLine)) return;
-    const teacherSpeech = getImmersiveDialogTeacherSpeech(firstLine.text, dialogueScene);
-    const teacherGender = teacherSpeech.gender || dialogueScene.teacherGender || "female";
-    const requestKey = `preload:${teacherSpeech.language}:${teacherGender}:${teacherSpeech.text}`;
-    if (preloadedDialogAudioRef.current?.requestKey === requestKey) return;
-    let cancelled = false;
-    void sceneDialogueVoiceMut.mutateAsync({
-      text: teacherSpeech.text.slice(0, 500),
-      language: teacherSpeech.language,
-      gender: teacherGender,
-    }).then((result) => {
-      if (cancelled || !result.success || !("audioBase64" in result) || !result.audioBase64) return;
-      const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mp3");
-      if (cancelled) {
-        URL.revokeObjectURL(source);
-        return;
-      }
-      const previous = preloadedDialogAudioRef.current;
-      if (previous && previous.source !== source) URL.revokeObjectURL(previous.source);
-      preloadedDialogAudioRef.current = { requestKey, text: teacherSpeech.text, language: teacherSpeech.language, source };
-    }).catch(() => undefined);
-    return () => { cancelled = true; };
-  }, [activeSceneDialog, sceneDialogueVoiceMut, selectedScene, teachingScene]);
 
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher") => {
@@ -1804,23 +1753,14 @@ export default function ImmersiveScene() {
       // This runs directly from the Iniciar Diálogo click. Guests use the public
       // scene voice; authenticated students keep the protected neural path.
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
-      const preloadKey = `preload:${teacherSpeech.language}:${teacherSpeech.gender}:${teacherSpeech.text}`;
-      const preloaded = preloadedDialogAudioRef.current;
-      if (preloaded?.requestKey === preloadKey) {
-        preloadedDialogAudioRef.current = null;
-        void playTeacherAudio(preloaded.source, teacherSpeech.text, teacherSpeech.language, `dialog:${teacherSpeech.text}`).catch(() => {
-          requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-        });
-      } else {
-        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
-      }
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);

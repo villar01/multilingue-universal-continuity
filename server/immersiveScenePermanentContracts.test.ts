@@ -29,21 +29,6 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender))");
   });
 
-  it("unlocks the dialogue media element during the student's explicit gesture", () => {
-    expect(sceneSource).toContain("const silentWav = new Uint8Array([");
-    expect(sceneSource).toContain("new Blob([silentWav], { type: \"audio/wav\" })");
-    expect(sceneSource).toContain("audio.muted = true;");
-    expect(sceneSource).toContain("void audio.play().finally(() => {");
-    expect(sceneSource).toContain("audio.muted = false;");
-  });
-
-  it("preloads James's first neural line and plays it directly from the dialogue click", () => {
-    expect(sceneSource).toContain("const preloadedDialogAudioRef = useRef");
-    expect(sceneSource).toContain("const requestKey = `preload:${teacherSpeech.language}:${teacherGender}:${teacherSpeech.text}`;");
-    expect(sceneSource).toContain("const preloadKey = `preload:${teacherSpeech.language}:${teacherSpeech.gender}:${teacherSpeech.text}`;");
-    expect(sceneSource).toContain("void playTeacherAudio(preloaded.source, teacherSpeech.text, teacherSpeech.language");
-  });
-
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
     expect(sceneSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
     expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');
