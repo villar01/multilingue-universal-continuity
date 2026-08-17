@@ -34,7 +34,7 @@ export type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 import { isInitialCommercialTargetLanguage } from "@shared/commercialLanguageBlocks";
 import { JAMES_TROPICAL_PILOT_CLIPS, type JamesTropicalPilotClip, type JamesTropicalPilotClipId } from "@shared/jamesTropicalPilotClips";
 import { SOPHIE_CAFE_PILOT_CLIPS, type SophieCafePilotClip, type SophieCafePilotClipId } from "@shared/sophieCafePilotClips";
-import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
+import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, Shell, Shirt, Sparkles, Square, Star, Sun, TreePalm, Umbrella, Utensils, Waves, type LucideIcon } from "lucide-react";
 
 type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;
 
@@ -1618,6 +1618,7 @@ export default function ImmersiveScene() {
   const [quizOpen, setQuizOpen] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [quizHintVisible, setQuizHintVisible] = useState(false);
   const sceneXpMut = trpc.gamification.addXP.useMutation();
   const [filter, setFilter] = useState<"all" | ImmersiveCEFRLevel>("all");
   const [search, setSearch] = useState("");
@@ -1640,14 +1641,16 @@ export default function ImmersiveScene() {
     if (!quizQuestion || quizFeedback) return;
     const correct = answer === quizQuestion.translation;
     setQuizFeedback(correct ? "correct" : "wrong");
+    setQuizHintVisible(!correct);
     if (correct) {
       setScore((current) => current + 10);
       sceneXpMut.mutate({ xp: 10, type: "exercise" });
     }
-    window.setTimeout(() => {
-      setQuizFeedback(null);
-      setQuizIndex((current) => current + 1);
-    }, 900);
+  };
+  const advanceSceneGuess = () => {
+    setQuizFeedback(null);
+    setQuizHintVisible(false);
+    setQuizIndex((current) => current + 1);
   };
   // ── Native language label for dialog panel ──
   const nativeLangLabel = (() => {
@@ -2653,11 +2656,26 @@ export default function ImmersiveScene() {
             aria-label="Quiz da cena"
           >
             <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-indigo-200">
-              <span>Revisão da cena</span>
+              <span>Estrela da cena</span>
               <span>+10 XP</span>
             </div>
-            <p className="mb-1 text-sm text-slate-300">Qual é a tradução de:</p>
-            <p className="mb-5 text-3xl font-black text-white">{getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuizHintVisible(true);
+                requestSpeechSafely(quizQuestion.example, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot");
+              }}
+              className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-amber-300/60 bg-amber-300/15 text-amber-200 shadow-lg transition hover:scale-105 hover:bg-amber-300/25"
+              aria-label="Ouvir pista do professor para o objeto escondido"
+            >
+              <Star className="h-10 w-10 fill-current" aria-hidden="true" />
+            </button>
+            <p className="mb-1 text-center text-sm text-slate-300">Toque na estrela para ouvir a pista do professor. Qual objeto ela esconde?</p>
+            {quizHintVisible && (
+              <div className="mb-4 rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm text-cyan-50">
+                <strong>Pista:</strong> {quizQuestion.example}
+              </div>
+            )}
             <div className="grid gap-2">
               {quizOptions.map((option) => {
                 const isCorrectOption = option === quizQuestion.translation;
@@ -2678,9 +2696,17 @@ export default function ImmersiveScene() {
               })}
             </div>
             {quizFeedback && (
-              <p className={`mt-4 text-sm font-bold ${quizFeedback === "correct" ? "text-emerald-300" : "text-amber-200"}`}>
-                {quizFeedback === "correct" ? "Correto! Você ganhou 10 XP." : `Quase. A resposta é “${quizQuestion.translation}”.`}
-              </p>
+              <div className={`mt-4 rounded-xl border p-3 ${quizFeedback === "correct" ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-100" : "border-amber-300/40 bg-amber-300/10 text-amber-100"}`}>
+                <p className="text-sm font-bold">
+                  {quizFeedback === "correct" ? `Correto! “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}” é ${quizQuestion.translation}.` : `Quase. A estrela escondia “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}”.`}
+                </p>
+                <p className="mt-1 text-sm">Diga a palavra, escreva uma frase e fixe o vocabulário no Pareto.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => requestSpeechSafely(quizQuestion.label, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot")} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Ouvir professor</button>
+                  <button type="button" onClick={() => setPracticeHotspot(quizQuestion)} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Fixar no Pareto</button>
+                  <button type="button" onClick={advanceSceneGuess} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Próxima estrela</button>
+                </div>
+              </div>
             )}
           </div>
         )}

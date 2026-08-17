@@ -1518,6 +1518,7 @@
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
 - [ ] Posicionar cenas imersivas como demonstração, aplicação contextual e lazer pedagógico depois do estudo no curso ABC
 - [ ] Direcionar dúvidas livres ao professor da cena para Pareto, escrita, frases, conversa ou lições adequadas no curso ABC
+- [ ] Criar jogo de adivinhação nas cenas com objeto, descrição, escrita, fala, frase e retorno ao Pareto
 - [ ] Oferecer em todas as seções atalhos para entender, memorizar, escrever, conversar e aplicar vocabulário, com retorno contextual
 - [ ] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar
 - [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
