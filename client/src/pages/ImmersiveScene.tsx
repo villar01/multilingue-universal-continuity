@@ -2345,7 +2345,7 @@ export default function ImmersiveScene() {
               right: 8px !important;
               width: 112px !important;
             }
-            .immersive-start-dialog { bottom: 52px !important; }
+            .immersive-start-dialog { top: 108px !important; bottom: auto !important; }
             .immersive-dialog {
               bottom: 52px !important;
               padding-right: 116px !important;
@@ -2698,7 +2698,7 @@ export default function ImmersiveScene() {
             onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
             className="immersive-start-dialog absolute z-[80] flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
-              bottom: "100px", left: "50%", transform: "translateX(-50%)",
+              top: "108px", left: "50%", transform: "translateX(-50%)",
               background: "rgba(99,102,241,0.85)", backdropFilter: "blur(8px)",
               border: "1px solid rgba(99,102,241,0.6)", fontSize: "clamp(12px,1.4vw,15px)",
               boxShadow: "0 4px 20px rgba(99,102,241,0.4)",

@@ -26,6 +26,8 @@ describe("contrato crítico da cena imersiva", () => {
   it("mantém o comando Iniciar Diálogo acima do cartão de vocabulário aberto", () => {
     expect(sceneSource).toContain('className="immersive-start-dialog absolute z-[80]');
     expect(sceneSource).toContain('className="absolute z-50 rounded-2xl shadow-2xl overflow-hidden"');
+    expect(sceneSource).toContain('top: "108px", left: "50%"');
+    expect(sceneSource).toContain('.immersive-start-dialog { top: 108px !important; bottom: auto !important; }');
   });
 
   it("mantém Pareto como painel independente e acionável", () => {
