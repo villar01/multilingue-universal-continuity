@@ -143,6 +143,11 @@ export default function StudyBase() {
     setLocation(`/immersive-scene?scene=${encodeURIComponent(sceneId)}&returnTo=${encodeURIComponent(returnPath)}`);
   }, [setLocation]);
 
+  const openUnitConversation = useCallback((entry: StudyEntry) => {
+    const returnPath = `/base-de-estudos?entry=${encodeURIComponent(entry.id)}`;
+    setLocation(`/free-talk?returnTo=${encodeURIComponent(returnPath)}`);
+  }, [setLocation]);
+
   const playTargetVoice = useCallback(async (text: string) => {
     if (!text.trim()) return;
     if (audioRef.current) {
@@ -438,10 +443,16 @@ export default function StudyBase() {
                     <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/60 p-4">
                       <p className="text-base font-semibold leading-7 text-white">{structuredUnit.reading}</p>
                       <p className="mt-3 border-l-2 border-fuchsia-300 pl-3 text-sm leading-6 text-slate-300">{structuredUnit.readingTranslation}</p>
-                      <Button type="button" onClick={() => playTargetVoice(structuredUnit.reading)} disabled={speakMutation.isPending} className="mt-4 gap-2 bg-fuchsia-300 font-bold text-slate-950 hover:bg-fuchsia-200">
-                        <Headphones className="h-4 w-4" />
-                        Ouvir o texto
-                      </Button>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <Button type="button" onClick={() => playTargetVoice(structuredUnit.reading)} disabled={speakMutation.isPending} className="gap-2 bg-fuchsia-300 font-bold text-slate-950 hover:bg-fuchsia-200">
+                          <Headphones className="h-4 w-4" />
+                          Ouvir o texto
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => openUnitConversation(activeEntry)} className="gap-2 border-fuchsia-300/50 text-fuchsia-100 hover:bg-fuchsia-300/10 hover:text-fuchsia-50">
+                          <MessageCircleMore className="h-4 w-4" />
+                          Falar com o Professor
+                        </Button>
+                      </div>
                     </div>
                     <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4">
                       <p className="text-sm font-bold text-cyan-100">{structuredUnit.grammarTitle}</p>

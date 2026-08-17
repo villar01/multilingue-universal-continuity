@@ -108,4 +108,12 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain('destination?.startsWith("/") && !destination.startsWith("//")');
     expect(source).toContain('return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/dashboard";');
   });
+
+  it("abre a conversa do Professor a partir da unidade e preserva o item de origem", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(source).toContain("const openUnitConversation");
+    expect(source).toContain("/free-talk?returnTo=");
+    expect(source).toContain("Falar com o Professor");
+    expect(source).toContain("openUnitConversation(activeEntry)");
+  });
 });
