@@ -1556,7 +1556,7 @@
 - [x] Revisar a comunicação do guia inicial de IA local e animação facial para priorizar recursos disponíveis e próximos passos úteis, mantendo limites técnicos reais e sem reaparecer em cenas ou lições — TypeScript, 514 testes e validação visual do início de jornada aprovados
 - [x] Produzir o piloto de quatro clipes pedagógicos da Professora Sophie no Café Parisiense, em francês, com gatilhos de abertura, objeto, acerto e nova tentativa, preservando a foto original como fallback — quatro MP4 H.264/AAC 720p publicados, manifesto com fallback obrigatório e 516 testes aprovados
 - [x] Integrar opcionalmente os quatro clipes de Sophie ao Café Parisiense nos gatilhos de abertura, croissant, acerto e nova tentativa, mantendo a foto original no DOM e preservando diálogo, hotspots, pergunta livre e áudio existente — TypeScript, 519 testes e validação visual do Café aprovados
-- [ ] Produzir e integrar clipes roteirizados próprios de James para Wave, Ocean e Sand, em inglês, preservando a foto original e a voz neural como fallback
+- [x] Produzir e integrar clipes roteirizados próprios de James para Wave, Ocean e Sand, em inglês, preservando a foto original e a voz neural como fallback — manifesto registra Palm Tree, Wave, Ocean e Sand com MP4 próprio, fala en-US, retrato original e fallback; regressão dedicada aprovada
 - [ ] Produzir o piloto de quatro clipes pedagógicos de Yuki no Jardim Japonês, em japonês, com gatilhos de abertura, objeto, acerto e nova tentativa, preservando a foto original como fallback — pausado por prioridade: primeiro adaptar professores às cenas por idioma estudado
 - [ ] Transformar as 29 cenas imersivas no núcleo reutilizável do Pareto e do curso PDF para materiais completos por dupla universal: qualquer idioma nativo pode apoiar qualquer idioma estudado; iniciar cobertura completa em português, inglês, espanhol, francês, italiano e alemão, com professor, retrato, voz, diálogos, vocabulário, exemplos e apoio nativo; preparar liberação comercial protegida e contratos de réplica estrutural com localização real para a expansão futura aos 143 idiomas, sem substituir fotos, degradar voz regional ou expor conteúdo curricular ao visitante
 - [x] Corrigir a documentação interna da Cena Imersiva para refletir as 29 cenas atualmente declaradas, sem alterar quaisquer cenas, materiais ou controles — TypeScript aprovado
@@ -1656,6 +1656,8 @@
 - [x] Finalizar a primeira edição do Livro ABC do Socorro para o par Português–Inglês, mantendo a arquitetura pronta para os demais pares — leitura em folhas brancas, frases PT→EN, prática Pareto contextual e retorno em cascata; TypeScript sem erros e 603 testes aprovados
 
 - [ ] Validar visualmente o Livro ABC e o botão voador SOS em cena após restabelecer a sessão de preview — captura indisponível no ambiente atual; TypeScript e testes permanecem como validações já executadas
+
+- [ ] Eliminar a instância duplicada da porta 3001 e recuperar o preview visual da porta 3000 para validar o Livro SOS em cena
 
 - [ ] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação
 
