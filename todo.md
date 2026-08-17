@@ -1566,3 +1566,5 @@
 - [x] Estabilizar a autorização da cena para impedir repetição de requisições e garantir que o carregamento protegido seja concluído — a autorização usa referência estável da mutação e evita novo ciclo de carregamento a cada renderização; TypeScript sem erros e suíte completa com 220 arquivos/559 testes aprovados
 
 - [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão à Cozinha Moderna, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 32 regressões dedicadas e suíte completa com 220 arquivos/563 testes aprovados
+
+- [x] Expandir o pacote determinístico PT-BR para espanhol, francês, italiano e alemão ao Supermercado, mantendo a entrega exclusivamente autorizada no servidor — diálogo e quatro objetos revisados por idioma agora são entregues do servidor sem geração; TypeScript sem erros, 36 regressões dedicadas e suíte completa com 220 arquivos/567 testes aprovados

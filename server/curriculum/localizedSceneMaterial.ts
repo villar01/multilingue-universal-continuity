@@ -357,6 +357,61 @@ const PT_BR_KITCHEN_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialR
   },
 };
 
+const PT_BR_SUPERMARKET_LAUNCH_MATERIAL: Record<string, Omit<LocalizedSceneMaterialResult, "status">> = {
+  es: {
+    turns: [
+      { targetText: "Estamos en el supermercado. Necesito comprar fruta y pan.", nativeHelp: "Estamos no supermercado. Preciso comprar fruta e pão." },
+      { targetText: "Las manzanas están en la cesta y la leche está en el carrito.", nativeHelp: "As maçãs estão na cesta e o leite está no carrinho." },
+      { targetText: "¿Cuánto cuesta esta botella de agua?", nativeHelp: "Quanto custa esta garrafa de água?" },
+    ],
+    objects: [
+      { targetText: "carrito", nativeHelp: "carrinho" },
+      { targetText: "cesta", nativeHelp: "cesta" },
+      { targetText: "manzana", nativeHelp: "maçã" },
+      { targetText: "leche", nativeHelp: "leite" },
+    ],
+  },
+  fr: {
+    turns: [
+      { targetText: "Nous sommes au supermarché. Je dois acheter des fruits et du pain.", nativeHelp: "Estamos no supermercado. Preciso comprar fruta e pão." },
+      { targetText: "Les pommes sont dans le panier et le lait est dans le chariot.", nativeHelp: "As maçãs estão na cesta e o leite está no carrinho." },
+      { targetText: "Combien coûte cette bouteille d’eau ?", nativeHelp: "Quanto custa esta garrafa de água?" },
+    ],
+    objects: [
+      { targetText: "chariot", nativeHelp: "carrinho" },
+      { targetText: "panier", nativeHelp: "cesta" },
+      { targetText: "pomme", nativeHelp: "maçã" },
+      { targetText: "lait", nativeHelp: "leite" },
+    ],
+  },
+  it: {
+    turns: [
+      { targetText: "Siamo al supermercato. Devo comprare frutta e pane.", nativeHelp: "Estamos no supermercado. Preciso comprar fruta e pão." },
+      { targetText: "Le mele sono nel cestino e il latte è nel carrello.", nativeHelp: "As maçãs estão na cesta e o leite está no carrinho." },
+      { targetText: "Quanto costa questa bottiglia d’acqua?", nativeHelp: "Quanto custa esta garrafa de água?" },
+    ],
+    objects: [
+      { targetText: "carrello", nativeHelp: "carrinho" },
+      { targetText: "cestino", nativeHelp: "cesta" },
+      { targetText: "mela", nativeHelp: "maçã" },
+      { targetText: "latte", nativeHelp: "leite" },
+    ],
+  },
+  de: {
+    turns: [
+      { targetText: "Wir sind im Supermarkt. Ich muss Obst und Brot kaufen.", nativeHelp: "Estamos no supermercado. Preciso comprar fruta e pão." },
+      { targetText: "Die Äpfel sind im Korb und die Milch ist im Einkaufswagen.", nativeHelp: "As maçãs estão na cesta e o leite está no carrinho." },
+      { targetText: "Wie viel kostet diese Flasche Wasser?", nativeHelp: "Quanto custa esta garrafa de água?" },
+    ],
+    objects: [
+      { targetText: "Einkaufswagen", nativeHelp: "carrinho" },
+      { targetText: "Korb", nativeHelp: "cesta" },
+      { targetText: "Apfel", nativeHelp: "maçã" },
+      { targetText: "Milch", nativeHelp: "leite" },
+    ],
+  },
+};
+
 function getReviewedLaunchSceneMaterial(input: {
   sceneId: string;
   targetLanguage: string;
@@ -370,6 +425,7 @@ function getReviewedLaunchSceneMaterial(input: {
     cafe: PT_BR_CAFE_LAUNCH_MATERIAL,
     restaurant: PT_BR_RESTAURANT_LAUNCH_MATERIAL,
     kitchen: PT_BR_KITCHEN_LAUNCH_MATERIAL,
+    supermarket: PT_BR_SUPERMARKET_LAUNCH_MATERIAL,
   };
   return materialsByScene[input.sceneId]?.[languageBase(input.targetLanguage)] || null;
 }
