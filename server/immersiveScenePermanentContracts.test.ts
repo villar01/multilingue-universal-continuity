@@ -16,6 +16,7 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("src={dialogAudioSource || undefined}");
     expect(sceneSource).toContain("controls={Boolean(dialogAudioSource)}");
     expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
+    expect(sceneSource).toContain("Preparar voz de James");
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');
     expect((sceneSource.match(/A reprodução automática foi bloqueada/g) || [])).toHaveLength(1);
@@ -74,5 +75,13 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
     expect(sceneSource).toContain('aria-label={`Abrir vocabulário: ${hotspot.label}`}');
     expect(sceneSource).toContain("tabIndex={0}");
+  });
+
+  it("prepares James's neural audio without starting an automatic browser-blocked playback", () => {
+    expect(sceneSource).toContain("options?: { autoPlay?: boolean }");
+    expect(sceneSource).toContain("const autoPlay = options?.autoPlay ?? true;");
+    expect(sceneSource).toContain("A voz está pronta. Toque em Ouvir James para reproduzir.");
+    expect(sceneSource).toContain("{ autoPlay: false }");
+    expect(sceneSource).toContain("Toque em Ouvir James para preparar e ouvir a voz natural.");
   });
 });

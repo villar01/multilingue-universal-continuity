@@ -15,7 +15,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("const playLocalDialogFallback = useCallback");
     expect(source).toContain("window.speechSynthesis.speak(utterance);");
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
-    expect(source).toContain('"Ouvir inglês"');
+    expect(source).toContain('"Preparar voz de James"');
     expect(source).toContain("audioBase64ToObjectUrl");
     expect(source).toContain("dialogAudioObjectUrlRef");
     expect(source).toContain("const replayVisibleDialogAudio = useCallback");

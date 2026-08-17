@@ -1572,7 +1572,8 @@
 - [x] Corrigir a reprodução do botão “Ouvir voz natural” da Praia Tropical, mantendo voz neural autorizada e fallback audível ao aluno — provedores neurais agora têm limite de seis segundos por tentativa, sinalização de preparo e fallback de voz disponível após indisponibilidade; TypeScript sem erros e suíte completa com 220 arquivos/568 testes aprovados
 
 - [ ] Garantir fallback audível de voz natural mesmo quando o navegador não expõe uma voz masculina nomeada para o idioma da cena
-- [ ] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada
+- [x] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada — o controle agora prepara a voz e, quando pronta, a reproduz explicitamente; TypeScript sem erros e suíte completa com 220 arquivos/571 testes aprovados
+- [x] Remover a tentativa automática de áudio no início do diálogo e manter apenas a reprodução manual por “Ouvir James” — início e avanço do diálogo mostram o texto e orientam o controle manual, sem disparar `audio.play()` após resposta assíncrona; TypeScript sem erros e suíte completa com 220 arquivos/571 testes aprovados
 - [x] Restaurar a resposta da pergunta livre ao professor na Praia Tropical, com retorno escrito e reprodução acionável — a validação usa o diálogo canônico autorizado em vez do catálogo cliente vazio; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 - [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 
