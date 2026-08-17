@@ -1542,6 +1542,8 @@
 
 - [x] Impedir que a notificação técnica de IA local apareça automaticamente na tela inicial, mantendo a configuração opcional disponível somente por escolha explícita — banner e notificação exigem ?setup=local-ai; a abertura normal foi validada visualmente sem modal, banner ou aviso técnico; TypeScript e 2 regressões de abertura voluntária aprovadas
 
+- [x] Corrigir as bandeiras quebradas da abertura, removendo a dependência de imagens externas instáveis no fundo da página inicial — bandeiras flutuantes usam emojis locais com rótulo acessível, sem downloads externos; TypeScript, regressão e validação visual aprovados
+
 - [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas

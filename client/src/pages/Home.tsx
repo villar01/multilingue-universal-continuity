@@ -46,6 +46,12 @@ const FLOAT_FLAGS = [
   { cc: "fi", sigla: "FI" }, { cc: "cz", sigla: "CZ" }, { cc: "hu", sigla: "HU" },
 ];
 
+const FLOAT_FLAG_EMOJIS: Record<string, string> = {
+  us: "🇺🇸", br: "🇧🇷", fr: "🇫🇷", de: "🇩🇪", jp: "🇯🇵", cn: "🇨🇳", es: "🇪🇸", it: "🇮🇹", ru: "🇷🇺", kr: "🇰🇷",
+  sa: "🇸🇦", in: "🇮🇳", pt: "🇵🇹", nl: "🇳🇱", pl: "🇵🇱", se: "🇸🇪", tr: "🇹🇷", gr: "🇬🇷", ua: "🇺🇦", vn: "🇻🇳",
+  id: "🇮🇩", th: "🇹🇭", il: "🇮🇱", ph: "🇵🇭", za: "🇿🇦", no: "🇳🇴", dk: "🇩🇰", fi: "🇫🇮", cz: "🇨🇿", hu: "🇭🇺",
+};
+
 // Todas as escolhas iniciais vêm do catálogo ativo; idiomas em preparação ficam fora deste seletor.
 const POPULAR_LANGS = AVAILABLE_LANGUAGES.map(({ code, flag, label }) => ({ code, flag, name: label }));
 
@@ -77,14 +83,7 @@ function FloatingFlag({ cc, sigla, style }: { cc: string; sigla: string; style: 
       className="absolute select-none pointer-events-none opacity-60 flex flex-col items-center gap-1"
       style={style}
     >
-      <img
-        src={`https://flagcdn.com/w40/${cc}.png`}
-        alt={sigla}
-        width={36}
-        height={24}
-        className="rounded shadow-md"
-        loading="lazy"
-      />
+      <span role="img" aria-label={sigla} className="text-2xl leading-none drop-shadow-md">{FLOAT_FLAG_EMOJIS[cc] ?? "🌐"}</span>
       <span className="text-[10px] font-bold text-white tracking-widest drop-shadow">{sigla}</span>
     </div>
   );
