@@ -10,6 +10,6 @@ describe("persistência do painel de diálogo imersivo", () => {
   });
 
   it("mantém o painel renderizado durante a fala da linha ativa", () => {
-    expect(source).toContain("{(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog[dlgStep] && (");
+    expect(source).toContain("{(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && selectedScene.dialog[dlgStep] && (");
   });
 });

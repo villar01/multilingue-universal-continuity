@@ -13,7 +13,6 @@ import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
 import { consumePublicErrorReportQuota, sanitizePublicErrorReport } from "./httpRouteSecurity";
-import { requireLearningRouteAccess } from "../immersiveSceneAccess";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -54,9 +53,6 @@ async function startServer() {
   registerStorageProxy(app);
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
-  // Curriculum routes must not receive the application shell before a valid
-  // session is established. Client gates remain as a defensive second layer.
-  app.use(requireLearningRouteAccess(sdk));
   // Scheduled: expansão diária de vocabulário Pareto (+200 palavras/dia via IA)
   const { handleVocabExpand } = await import("../scheduled/vocab-expand");
   app.post("/api/scheduled/vocab-expand", handleVocabExpand);

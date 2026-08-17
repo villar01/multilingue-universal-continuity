@@ -9,8 +9,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';
-import { IMMERSIVE_SCENES } from '@/pages/ImmersiveScene';
-import type { Scene, Hotspot } from '@shared/immersiveSceneTypes';
+import { IMMERSIVE_SCENES, type Scene, type Hotspot } from '@/pages/ImmersiveScene';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getScriptedExerciseFeedback } from '@/lib/scriptedExerciseFeedback';
 
@@ -884,7 +883,7 @@ export default function SceneLesson({
 
             {/* Quick replies from dialog */}
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
-              {selectedScene.dialog.filter((d: Scene["dialog"][number]) => d.speaker === 'user' && d.options).slice(0, 3).map((d: Scene["dialog"][number], i: number) => (
+              {selectedScene.dialog.filter(d => d.speaker === 'user' && d.options).slice(0, 3).map((d, i) => (
                 <button key={i} onClick={() => setChatInput(d.options![0])} style={{ background: `${phaseColor}15`, border: `1px solid ${phaseColor}30`, borderRadius: 16, padding: '4px 10px', color: phaseColor, fontSize: 11, cursor: 'pointer' }}>
                   {d.options![0]}
                 </button>
