@@ -1508,7 +1508,7 @@
 - [x] Expor o banco Pareto existente em um programa real de memorização por idioma — a entrega protegida usa a trilha canônica de 1.000 formas únicas para a dupla escolhida, com paginação de dez itens, recuperação ativa, escrita, frase nova, progresso por dupla e retorno contextual; TypeScript e regressões de entrega e cobertura aprovados
 
 - [x] Corrigir o rótulo da Base de Estudos para informar a trilha Pareto de 1.000 palavras únicas, sem confundir as entradas do piloto curricular com o programa de memorização — a Base comunica a trilha única e a regressão impede o retorno do texto antigo; TypeScript e testes da Base aprovados
-- [ ] Corrigir duplicatas do banco Pareto — a auditoria encontrou 780 formas inglesas distintas entre 1.130 entradas; acrescentar termos autorais até obter mil palavras inglesas únicas antes de declarar o programa completo
+- [x] Corrigir duplicatas do catálogo Pareto — a fonte histórica foi consolidada em uma saída pública de 1.000 formas inglesas únicas; o programa e as cenas recebem apenas o catálogo deduplicado, com regressão que impede retorno de duplicatas
 - [x] Acrescentar 220 termos ingleses únicos, práticos e contextualizados para completar a primeira trilha de mil palavras do Pareto — lote autoral cobre rotina, serviços, tecnologia, saúde, estudo, trabalho, viagem, compras, cidade, relações e prática; regressão confirma 1.000 formas inglesas únicas e IDs estáveis na primeira trilha
 
 - [x] Corrigir o progresso do programa Pareto para contar os termos concluídos de toda a trilha autorizada, e não somente da sessão de dez palavras exibida — cálculo usa o conjunto persistido da dupla de idiomas, limitado ao total autorizado; TypeScript e regressões de progresso e cobertura Pareto aprovados

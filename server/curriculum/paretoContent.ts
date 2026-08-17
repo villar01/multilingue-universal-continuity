@@ -78,7 +78,7 @@ export const CATEGORY_LABELS: Record<ParetoCategory, { label: string; icon: stri
   general:     { label: "Geral", icon: "📝" },
 };
 
-export const PARETO_VOCAB: ParetoWord[] = [
+const PARETO_SOURCE_VOCAB: ParetoWord[] = [
   // GREETINGS
   { id:"g001", ptBR:"Olá", enUS:"Hello", pronunciation:"həˈloʊ", category:"greetings", frequency:10, example:"Hello, how are you?", examplePt:"Olá, como vai você?", scene:"beach" },
   { id:"g002", ptBR:"Bom dia", enUS:"Good morning", pronunciation:"ɡʊd ˈmɔːrnɪŋ", category:"greetings", frequency:10, example:"Good morning! Did you sleep well?", examplePt:"Bom dia! Você dormiu bem?", scene:"paris" },
@@ -1237,6 +1237,14 @@ export const PARETO_VOCAB: ParetoWord[] = [
   ...PARETO_CORE_ADDITIONS,
 ];
 
+function normalizeParetoEnglish(word: string): string {
+  return word.trim().toLocaleLowerCase("en-US");
+}
+
+export const PARETO_VOCAB: ParetoWord[] = PARETO_SOURCE_VOCAB.filter((word, index, allWords) =>
+  allWords.findIndex((candidate) => normalizeParetoEnglish(candidate.enUS) === normalizeParetoEnglish(word.enUS)) === index,
+);
+
 export function getWordsByCategory(category: ParetoCategory): ParetoWord[] {
   return PARETO_VOCAB.filter(w => w.category === category);
 }
@@ -1268,7 +1276,7 @@ export function getParetoProgramWords(): ParetoWord[] {
   const uniqueWords = [...PARETO_VOCAB]
     .sort((a, b) => b.frequency - a.frequency || a.enUS.localeCompare(b.enUS))
     .filter((word) => {
-      const normalized = word.enUS.trim().toLocaleLowerCase("en-US");
+      const normalized = normalizeParetoEnglish(word.enUS);
       if (seenEnglish.has(normalized)) return false;
       seenEnglish.add(normalized);
       return true;

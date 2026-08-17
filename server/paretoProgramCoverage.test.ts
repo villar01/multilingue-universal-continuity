@@ -14,6 +14,7 @@ describe("cobertura canônica do programa Pareto", () => {
   it("entrega exatamente mil formas inglesas únicas para a primeira trilha", () => {
     const program = getParetoProgramWords();
     expect(PARETO_PROGRAM_WORD_COUNT).toBe(1000);
+    expect(PARETO_VOCAB).toHaveLength(1000);
     expect(new Set(PARETO_VOCAB.map((word) => normalizedEnglish(word.enUS))).size).toBe(1000);
     expect(program).toHaveLength(1000);
     expect(new Set(program.map((word) => normalizedEnglish(word.enUS))).size).toBe(1000);
