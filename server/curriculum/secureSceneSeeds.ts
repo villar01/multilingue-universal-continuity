@@ -47,6 +47,46 @@ const SECURE_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "chochin2", x: 45, y: 40, label: "提灯", translation: "Lanterna", pronunciation: "cho-chin", example: "提灯が光る。", examplePt: "A lanterna brilha.", icon: "🏮", color: "#ea580c" },
     ],
   },
+  family_home: {
+    dialog: [
+      { speaker: "teacher", text: "Who is in your family?", textPt: "Quem está na sua família?" },
+      { speaker: "user", text: "I have a mom, a dad, and a sister.", textPt: "Tenho uma mãe, um pai e uma irmã.", options: ["I have a mom, a dad, and a sister.", "I live alone.", "I don't know."], correctIndex: 0 },
+      { speaker: "teacher", text: "Great! What do you see in the living room?", textPt: "Ótimo! O que você vê na sala de estar?" },
+      { speaker: "user", text: "I see a sofa, a TV, and a table.", textPt: "Vejo um sofá, uma TV e uma mesa.", options: ["I see a sofa, a TV, and a table.", "I see nothing.", "I see a car."], correctIndex: 0 },
+      { speaker: "teacher", text: "Perfect! Tell me about your morning routine at home.", textPt: "Perfeito! Me conte sobre sua rotina matinal em casa." },
+      { speaker: "user", text: "We eat breakfast together every morning.", textPt: "Tomamos café da manhã juntos toda manhã.", options: ["We eat breakfast together every morning.", "We never eat together.", "We sleep all day."], correctIndex: 0 },
+    ],
+    hotspots: [
+      { id: "sofa", x: 35, y: 65, label: "Sofa", translation: "Sofá", pronunciation: "SOU-fa", example: "The family sits on the sofa.", examplePt: "A família senta no sofá.", icon: "🛋️", color: "#a16207" },
+      { id: "tv", x: 60, y: 40, label: "Television", translation: "Televisão", pronunciation: "te-li-VI-zhon", example: "We watch television together.", examplePt: "Assistimos televisão juntos.", icon: "📺", color: "#1d4ed8" },
+      { id: "table", x: 50, y: 75, label: "Table", translation: "Mesa", pronunciation: "TEY-bel", example: "We eat at the table.", examplePt: "Comemos na mesa.", icon: "🪑", color: "#92400e" },
+      { id: "window", x: 80, y: 30, label: "Window", translation: "Janela", pronunciation: "WIN-dou", example: "Open the window.", examplePt: "Abra a janela.", icon: "🪟", color: "#0ea5e9" },
+      { id: "door", x: 15, y: 50, label: "Door", translation: "Porta", pronunciation: "DOOR", example: "Close the door please.", examplePt: "Feche a porta por favor.", icon: "🚪", color: "#7c3aed" },
+      { id: "kitchen2", x: 25, y: 80, label: "Kitchen", translation: "Cozinha", pronunciation: "KI-tchin", example: "Mom cooks in the kitchen.", examplePt: "A mãe cozinha na cozinha.", icon: "🍳", color: "#dc2626" },
+      { id: "bedroom", x: 70, y: 20, label: "Bedroom", translation: "Quarto", pronunciation: "BED-ruum", example: "My bedroom is upstairs.", examplePt: "Meu quarto fica em cima.", icon: "🛏️", color: "#6366f1" },
+      { id: "family_pic", x: 45, y: 55, label: "Family", translation: "Família", pronunciation: "FÆM-i-li", example: "My family is very close.", examplePt: "Minha família é muito unida.", icon: "👨‍👩‍👧‍👦", color: "#f59e0b" },
+    ],
+  },
+  airport_family: {
+    dialog: [
+      { speaker: "teacher", text: "The family is going on vacation! Where are they going?", textPt: "A família vai de férias! Para onde eles vão?" },
+      { speaker: "user", text: "They are going to London!", textPt: "Eles vão para Londres!", options: ["They are going to London!", "They are going home.", "They are lost."], correctIndex: 0 },
+      { speaker: "teacher", text: "Excellent! Dad needs to find the gate. What does he ask?", textPt: "Excelente! O pai precisa encontrar o portão. O que ele pergunta?" },
+      { speaker: "user", text: "Excuse me, where is gate B12?", textPt: "Com licença, onde fica o portão B12?", options: ["Excuse me, where is gate B12?", "I don't speak English.", "I'm also lost."], correctIndex: 0 },
+      { speaker: "teacher", text: "Perfect! Mom is checking the luggage. What does she say?", textPt: "Perfeito! A mãe está despachando a bagagem. O que ela diz?" },
+      { speaker: "user", text: "I have two bags to check in, please.", textPt: "Tenho duas malas para despachar, por favor.", options: ["I have two bags to check in, please.", "I have no bags.", "I lost my bags."], correctIndex: 0 },
+      { speaker: "teacher", text: "Wonderful! The children are excited. What do they say?", textPt: "Maravilhoso! As crianças estão animadas. O que elas dizem?" },
+      { speaker: "user", text: "We are so excited about our vacation!", textPt: "Estamos muito animados com nossas férias!", options: ["We are so excited about our vacation!", "We want to go home.", "We are tired."], correctIndex: 0 },
+    ],
+    hotspots: [
+      { id: "passport2", x: 45, y: 60, label: "Passport", translation: "Passaporte", pronunciation: "PÆS-port", example: "Show your passport at the gate.", examplePt: "Mostre seu passaporte no portão.", icon: "📘", color: "#1d4ed8" },
+      { id: "suitcase", x: 30, y: 75, label: "Suitcase", translation: "Mala", pronunciation: "SUUT-keys", example: "The suitcase is heavy.", examplePt: "A mala está pesada.", icon: "🧳", color: "#f59e0b" },
+      { id: "boarding_pass", x: 65, y: 50, label: "Boarding Pass", translation: "Cartão de Embarque", pronunciation: "BOR-ding PÆS", example: "Keep your boarding pass safe.", examplePt: "Guarde seu cartão de embarque.", icon: "🎫", color: "#22c55e" },
+      { id: "gate2", x: 75, y: 30, label: "Gate", translation: "Portão", pronunciation: "GEYT", example: "Go to gate B12.", examplePt: "Vá ao portão B12.", icon: "🚪", color: "#6366f1" },
+      { id: "flight_board", x: 20, y: 35, label: "Flight Board", translation: "Painel de Voos", pronunciation: "FLAYT BORD", example: "Check the flight board.", examplePt: "Verifique o painel de voos.", icon: "📋", color: "#0ea5e9" },
+      { id: "security2", x: 50, y: 85, label: "Security", translation: "Segurança", pronunciation: "si-KYUR-iti", example: "Pass through security check.", examplePt: "Passe pela verificação de segurança.", icon: "🔒", color: "#dc2626" },
+    ],
+  },
   airport: {
     dialog: [
       { speaker: "teacher", text: "Welcome to the airport! Do you have your passport ready?", textPt: "Bem-vindo ao aeroporto! Você tem seu passaporte pronto?" },
