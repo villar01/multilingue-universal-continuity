@@ -1627,7 +1627,7 @@
 
 - [x] Restaurar a reprodução neural dos objetos Wave, Ocean, Palm Tree e Sand sem alterar os cartões pedagógicos — os quatro objetos usam a mesma faixa neural preparada, com fallback e cartões preservados; TypeScript e 18 regressões de áudio, fluxo e mídia aprovados
 
-- [ ] Manter o elemento de áudio neural montado quando o diálogo está fechado para que os objetos possam falar
+- [x] Manter o elemento de áudio neural montado quando o diálogo está fechado para que os objetos possam falar — o player oculto permanece montado acima do painel de diálogo e serve Wave, Ocean, Palm Tree e Sand sem barra nativa; TypeScript e 12 regressões de áudio e segurança aprovados
 
 - [ ] Fazer o clique explícito de pronúncia em Wave, Ocean, Palm Tree e Sand iniciar a faixa neural preparada
 
