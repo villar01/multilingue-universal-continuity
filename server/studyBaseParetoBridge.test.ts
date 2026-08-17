@@ -7,6 +7,11 @@ const studyBaseSource = fs.readFileSync(path.join(root, "client/src/pages/StudyB
 const paretoSource = fs.readFileSync(path.join(root, "client/src/pages/Pareto1000.tsx"), "utf8");
 
 describe("ponte Base de Estudos–Pareto", () => {
+  it("abre a Cartilha Completa no Livro ABC e preserva o item ativo no retorno", () => {
+    expect(studyBaseSource).toContain('/abc-book?returnTo=${encodeURIComponent(returnPath)}');
+    expect(studyBaseSource).toContain('if (path === "cartilha")');
+  });
+
   it("envia o item ativo como retorno ao abrir a prática Pareto", () => {
     expect(studyBaseSource).toContain("/pareto-1000?returnTo=${encodeURIComponent(returnPath)}");
     expect(studyBaseSource).toContain("/base-de-estudos?entry=${encodeURIComponent(activeEntry.id)}");

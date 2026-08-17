@@ -119,16 +119,20 @@ export default function StudyBase() {
       window.setTimeout(() => searchInputRef.current?.focus(), 0);
       return;
     }
+    const returnPath = activeEntry
+      ? `/base-de-estudos?entry=${encodeURIComponent(activeEntry.id)}`
+      : "/base-de-estudos";
+    if (path === "cartilha") {
+      setLocation(`/abc-book?returnTo=${encodeURIComponent(returnPath)}`);
+      return;
+    }
     if (path === "pareto") {
-      const returnPath = activeEntry
-        ? `/base-de-estudos?entry=${encodeURIComponent(activeEntry.id)}`
-        : "/base-de-estudos";
       setLocation(`/pareto-1000?returnTo=${encodeURIComponent(returnPath)}`);
       return;
     }
     setQuery("");
     setKind("all");
-    setUnit(path === "cartilha" ? "all" : "Unidade 1 · Cumprimentos e identidade");
+    setUnit("Unidade 1 · Cumprimentos e identidade");
     setSelectedEntry(null);
   }, [activeEntry, setLocation]);
 

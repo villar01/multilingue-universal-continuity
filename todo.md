@@ -1510,7 +1510,7 @@
 - [x] Acrescentar 220 termos ingleses únicos, práticos e contextualizados para completar a primeira trilha de mil palavras do Pareto — lote autoral cobre rotina, serviços, tecnologia, saúde, estudo, trabalho, viagem, compras, cidade, relações e prática; regressão confirma 1.000 formas inglesas únicas e IDs estáveis na primeira trilha
 
 - [x] Corrigir o progresso do programa Pareto para contar os termos concluídos de toda a trilha autorizada, e não somente da sessão de dez palavras exibida — cálculo usa o conjunto persistido da dupla de idiomas, limitado ao total autorizado; TypeScript e regressões de progresso e cobertura Pareto aprovados
-- [ ] Criar links de escolha do aluno para Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total, com retorno ao ponto de estudo e complementaridade entre conteúdo, exercícios e revisão
+- [x] Criar links de escolha do aluno para Cartilha Completa, Pareto · 1.000 palavras, Estudar por unidade e Consulta Rápida e Total, com retorno ao ponto de estudo e complementaridade entre conteúdo, exercícios e revisão — Cartilha abre o Livro ABC, Pareto abre a prática contextual e os demais caminhos mantêm estudo por unidade ou foco de consulta; regressão de ponte aprovada
 - [ ] Organizar a jornada Base de Estudos → memorização Pareto → cenas imersivas → exercícios e revisão, tornando as cenas a etapa de consolidação contextual
 - [ ] Preservar a ordem sucessiva do método: apresentação, compreensão, memorização, escrita, fala, frases, conversa e revisão
 - [ ] Atingir os mesmos objetivos pedagógicos da sequência validada e aperfeiçoá-los com recuperação Pareto, produção ativa e revisão espaçada
