@@ -1538,7 +1538,7 @@
 
 - [x] Corrigir o erro de execução visual na página Pareto após a inclusão dos atalhos pedagógicos e revisar a compatibilidade do retorno contextual — retornos de carregamento foram movidos após os hooks, eliminando a falha de renderização; TypeScript, regressões e captura visual da página Pareto aprovados
 - [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
-- [ ] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto
+- [x] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto — auditoria automática valida as 29 sementes protegidas, diálogos, objetos, frases, traduções, cenário visual, retrato, professor, idioma de voz, clipes piloto e atalhos globais; TypeScript e 25 regressões de cena aprovados
 - [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis
 - [ ] Catalogar os objetos das 29 cenas e produzir clipes roteirizados próprios com fala correspondente por palavra
 - [ ] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos

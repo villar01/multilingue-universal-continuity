@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getSecureSceneSeed, getSecureSceneSeedCatalog } from "./curriculum/secureSceneSeeds";
+import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
+import { readFileSync } from "node:fs";
 
 const CANONICAL_SCENES = [
   "beach", "cafe", "forest", "paris", "newyork", "kitchen", "restaurant", "hotel", "supermarket", "school",
@@ -27,5 +29,22 @@ describe("catálogo automático de cobertura das 29 cenas", () => {
         expect(hotspot.examplePt.trim(), `${sceneId}:${hotspot.id} precisa ter tradução da frase`).not.toHaveLength(0);
       }
     }
+  });
+
+  it("mantém mídia, professor, voz e atalhos pedagógicos auditáveis nas 29 cenas", () => {
+    expect(IMMERSIVE_SCENES).toHaveLength(29);
+    for (const scene of IMMERSIVE_SCENES) {
+      expect(scene.bgImage, `${scene.id} precisa de cenário visual`).toMatch(/^(\/manus-storage\/|https:\/\/)/);
+      expect(scene.teacherImage, `${scene.id} precisa preservar retrato docente`).toMatch(/^(\/manus-storage\/|https:\/\/)/);
+      expect(scene.teacherName.trim(), `${scene.id} precisa de professor`).not.toHaveLength(0);
+      expect(scene.teacherLang, `${scene.id} precisa de idioma de voz`).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
+      expect(["male", "female"], `${scene.id} precisa de gênero de voz`).toContain(scene.teacherGender);
+    }
+
+    const appSource = readFileSync("client/src/App.tsx", "utf8");
+    const quickAccessSource = readFileSync("client/src/components/QuickStudyAccess.tsx", "utf8");
+    expect(appSource).toContain("<QuickStudyAccess />");
+    expect(quickAccessSource).toContain("<PedagogicalQuickAccess />");
+    expect(quickAccessSource).toContain("<FlyingSOSBook />");
   });
 });
