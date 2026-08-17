@@ -33,6 +33,8 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("const sceneMaterialNeedsAccess");
     expect(sceneSource).toContain("const [sceneMaterialTimedOut");
     expect(sceneSource).toContain("window.setTimeout(() => setSceneMaterialTimedOut(true), 8000)");
+    expect(sceneSource).toContain("const authorizeSceneLesson = authorizeLessonMut.mutateAsync;");
+    expect(sceneSource).toContain("void authorizeSceneLesson({ lessonKey })");
     expect(sceneSource).toContain("const sceneMaterialActionLabel");
     expect(sceneSource).toContain("Ative o acesso para iniciar esta cena.");
     expect(sceneSource).toContain("Atualizar cena");

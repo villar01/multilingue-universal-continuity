@@ -1121,6 +1121,7 @@ export default function ImmersiveScene() {
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
   const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation();
+  const authorizeSceneLesson = authorizeLessonMut.mutateAsync;
   const dialogTranscribeMut = trpc.voiceTranscription.transcribe.useMutation();
   const dialogTranslateMut = trpc.translate.dialogueText.useMutation();
   const immersiveSceneTutorMut = trpc.immersiveSceneTutor.chat.useMutation();
@@ -1173,7 +1174,7 @@ export default function ImmersiveScene() {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
     let cancelled = false;
     const lessonKey = `scene:${selectedScene.id}`;
-    void authorizeLessonMut.mutateAsync({ lessonKey })
+    void authorizeSceneLesson({ lessonKey })
       .then((access) => {
         if (!cancelled) {
           setAuthorizedSceneMaterial(access.allowed ? {
@@ -1188,7 +1189,7 @@ export default function ImmersiveScene() {
         if (!cancelled) setAuthorizedSceneMaterial(null);
       });
     return () => { cancelled = true; };
-  }, [authorizeLessonMut, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
+  }, [authorizeSceneLesson, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
 
   useEffect(() => {
     setSceneMaterialTimedOut(false);
