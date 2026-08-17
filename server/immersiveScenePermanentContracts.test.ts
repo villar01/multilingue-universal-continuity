@@ -29,6 +29,14 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender))");
   });
 
+  it("unlocks the dialogue media element during the student's explicit gesture", () => {
+    expect(sceneSource).toContain("const silentWav = new Uint8Array([");
+    expect(sceneSource).toContain("new Blob([silentWav], { type: \"audio/wav\" })");
+    expect(sceneSource).toContain("audio.muted = true;");
+    expect(sceneSource).toContain("void audio.play().finally(() => {");
+    expect(sceneSource).toContain("audio.muted = false;");
+  });
+
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
     expect(sceneSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
     expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');

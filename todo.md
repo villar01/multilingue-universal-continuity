@@ -1575,3 +1575,5 @@
 - [ ] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada
 - [x] Restaurar a resposta da pergunta livre ao professor na Praia Tropical, com retorno escrito e reprodução acionável — a validação usa o diálogo canônico autorizado em vez do catálogo cliente vazio; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
 - [x] Corrigir a autorização protegida bloqueada da Praia Tropical para liberar a lição autenticada sem expor diálogo ou objetos ao navegador público — a chamada de autorização mantém referência estável e não reinicia durante renderizações; TypeScript sem erros e suíte completa com 220 arquivos/569 testes aprovados
+- [x] Corrigir o portão LearningAccessGate que ainda bloqueia a Praia Tropical apesar de a lição já estar autorizada para a conta autenticada — o portão agora usa `scene:beach` em vez da URL com query, igualando a chave da cena e do currículo protegido; TypeScript sem erros e suíte completa com 221 arquivos/571 testes aprovados
+- [ ] Corrigir a reprodução real da voz neural e do áudio de reserva da Praia Tropical após o clique explícito do aluno

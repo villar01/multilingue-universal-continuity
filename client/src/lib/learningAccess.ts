@@ -26,5 +26,10 @@ export function hasLearningAccess(input: { isAuthenticated: boolean; acceptedPro
 export function createTrialLessonKey(pathname: string): string {
   const normalizedPath = pathname.split("?")[0].replace(/\/+$/, "") || "/";
   const lessonMatch = normalizedPath.match(/^\/lesson\/(\d+)$/);
+  if (normalizedPath === "/immersive-scene") {
+    const query = pathname.includes("?") ? pathname.slice(pathname.indexOf("?") + 1) : "";
+    const sceneId = new URLSearchParams(query).get("scene")?.trim();
+    return sceneId ? `scene:${sceneId}` : "scene:catalog";
+  }
   return lessonMatch ? `lesson:${lessonMatch[1]}` : normalizedPath;
 }

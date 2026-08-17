@@ -1412,13 +1412,36 @@ export default function ImmersiveScene() {
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
       const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextConstructor) return;
-      const context = dialogAudioContextRef.current || new AudioContextConstructor();
-      dialogAudioContextRef.current = context;
+      if (AudioContextConstructor) {
+        const context = dialogAudioContextRef.current || new AudioContextConstructor();
+        dialogAudioContextRef.current = context;
       // Resume happens synchronously in the visitor's click. The actual neural
       // MP3 arrives asynchronously, so this preserves playback eligibility for
       // the first scripted line instead of relying on a later autoplay attempt.
-      void context.resume();
+        void context.resume();
+      }
+      const audio = dialogAudioElementRef.current;
+      if (!audio) return;
+      const silentWav = new Uint8Array([
+        0x52, 0x49, 0x46, 0x46, 0x26, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45,
+        0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+        0x44, 0xac, 0x00, 0x00, 0x88, 0x58, 0x01, 0x00, 0x02, 0x00, 0x10, 0x00,
+        0x64, 0x61, 0x74, 0x61, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ]);
+      const silentSource = URL.createObjectURL(new Blob([silentWav], { type: "audio/wav" }));
+      audio.pause();
+      audio.src = silentSource;
+      audio.muted = true;
+      void audio.play().finally(() => {
+        if (audio.src === silentSource) {
+          audio.pause();
+          audio.currentTime = 0;
+          audio.src = "";
+          audio.load();
+          audio.muted = false;
+        }
+        URL.revokeObjectURL(silentSource);
+      });
     } catch {
       // The visible Ouvir inglês control remains available as an explicit retry.
     }
