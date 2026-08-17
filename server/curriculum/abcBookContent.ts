@@ -102,6 +102,22 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       example: "Could I have some water, please? — Eu poderia tomar um pouco de água, por favor?",
       paretoPrompt: "Crie um pedido educado com water e pratique-o sem consultar o modelo.",
     },
+    {
+      term: "where",
+      meaning: "onde",
+      grammar: "advérbio interrogativo usado para perguntar por lugar ou localização",
+      pattern: "Where is + lugar/coisa?: Where is the hotel?",
+      example: "Where is the airport? — Onde fica o aeroporto?",
+      paretoPrompt: "Escreva uma pergunta de localização com where e responda usando in, on ou near.",
+    },
+    {
+      term: "airport",
+      meaning: "aeroporto",
+      grammar: "substantivo contável; use the quando falar de um aeroporto específico conhecido no contexto",
+      pattern: "at/to the airport: I am at the airport. / I need to go to the airport.",
+      example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
+      paretoPrompt: "Crie uma frase de necessidade ou localização usando airport e pratique-a em voz alta.",
+    },
   ],
   chapters: A1_CHAPTERS,
   phrases: [

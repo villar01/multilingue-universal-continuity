@@ -1534,6 +1534,8 @@
 
 - [x] Ampliar o primeiro grupo de fichas protegidas do Livro ABC PT-BR → inglês — help e water foram acrescentados com função, padrão, exemplo e prática Pareto, mantendo a leitura simples e a entrega protegida; TypeScript e 7 regressões do Livro aprovadas
 
+- [x] Ampliar as fichas protegidas do Livro ABC com localização e serviços — where e airport foram acrescentados com função, padrão, exemplo e prática Pareto, vinculando o Livro às unidades A1 de localização; TypeScript e 22 regressões do Livro e Base aprovadas
+
 - [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas
