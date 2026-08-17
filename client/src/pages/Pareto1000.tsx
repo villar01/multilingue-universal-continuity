@@ -2,6 +2,7 @@ import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import type { ParetoWord } from "@/lib/curriculum-types";
 import { completedProgramCount } from "@/lib/paretoProgress";
+import { getDueParetoReviewIds, getParetoProgramIndex, recordSuccessfulParetoReview, type ParetoReviewSchedule } from "@/lib/paretoSpacedReview";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
@@ -10,9 +11,14 @@ import { Link, useLocation } from "wouter";
 
 const SESSION_SIZE = 10;
 const PROGRESS_KEY_PREFIX = "multilingue_pareto_1000_completed";
+const REVIEW_KEY_PREFIX = "multilingue_pareto_1000_reviews";
 
 function progressKey(targetLanguage: string, nativeLanguage: string): string {
   return `${PROGRESS_KEY_PREFIX}:${targetLanguage.trim().toLowerCase()}:${nativeLanguage.trim().toLowerCase()}`;
+}
+
+function reviewKey(targetLanguage: string, nativeLanguage: string): string {
+  return `${REVIEW_KEY_PREFIX}:${targetLanguage.trim().toLowerCase()}:${nativeLanguage.trim().toLowerCase()}`;
 }
 
 function loadCompletedWords(key: string): Set<string> {
@@ -32,6 +38,23 @@ function saveCompletedWords(key: string, words: Set<string>) {
   }
 }
 
+function loadReviewSchedule(key: string): ParetoReviewSchedule {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) as ParetoReviewSchedule : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveReviewSchedule(key: string, schedule: ParetoReviewSchedule) {
+  try {
+    localStorage.setItem(key, JSON.stringify(schedule));
+  } catch {
+    // The current practice remains available if local review persistence is unavailable.
+  }
+}
+
 export default function Pareto1000() {
   const [location] = useLocation();
   const [page, setPage] = useState(0);
@@ -39,6 +62,7 @@ export default function Pareto1000() {
   const targetLanguage = profile.targetCode || "en-US";
   const nativeLanguage = profile.nativeCode || "pt-BR";
   const activeProgressKey = useMemo(() => progressKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
+  const activeReviewKey = useMemo(() => reviewKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
   const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
     lessonKey: "/pareto-1000",
     targetLanguage,
@@ -58,7 +82,9 @@ export default function Pareto1000() {
     scene: word.scene,
   })), [paretoQuery.data]);
   const [completed, setCompleted] = useState<Set<string>>(() => loadCompletedWords(activeProgressKey));
+  const [reviewSchedule, setReviewSchedule] = useState<ParetoReviewSchedule>(() => loadReviewSchedule(activeReviewKey));
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
+  const [pendingReviewId, setPendingReviewId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const sessionStart = page * SESSION_SIZE;
@@ -70,6 +96,8 @@ export default function Pareto1000() {
     () => completedProgramCount(completed, programReadyCount),
     [completed, programReadyCount],
   );
+  const dueReviewIds = useMemo(() => getDueParetoReviewIds(reviewSchedule), [reviewSchedule]);
+  const dueReviewSet = useMemo(() => new Set(dueReviewIds), [dueReviewIds]);
   const returnTo = useMemo(() => {
     const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
     return requestedDestination?.startsWith("/base-de-estudos") || requestedDestination?.startsWith("/abc-book")
@@ -79,9 +107,19 @@ export default function Pareto1000() {
 
   useEffect(() => {
     setCompleted(loadCompletedWords(activeProgressKey));
+    setReviewSchedule(loadReviewSchedule(activeReviewKey));
     setPage(0);
     setPracticeWord(null);
-  }, [activeProgressKey]);
+    setPendingReviewId(null);
+  }, [activeProgressKey, activeReviewKey]);
+
+  useEffect(() => {
+    if (!pendingReviewId) return;
+    const dueWord = words.find((word) => word.id === pendingReviewId);
+    if (!dueWord) return;
+    setPracticeWord(dueWord);
+    setPendingReviewId(null);
+  }, [pendingReviewId, words]);
 
   if (paretoQuery.isLoading) {
     return <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-200">Carregando vocabulário Pareto protegido…</main>;
@@ -125,7 +163,20 @@ export default function Pareto1000() {
       saveCompletedWords(activeProgressKey, next);
       return next;
     });
-  }, [activeProgressKey, practiceWord]);
+    setReviewSchedule((previous) => {
+      const next = recordSuccessfulParetoReview(previous, practiceWord.id);
+      saveReviewSchedule(activeReviewKey, next);
+      return next;
+    });
+  }, [activeProgressKey, activeReviewKey, practiceWord]);
+
+  const openDueReview = useCallback(() => {
+    const wordId = dueReviewIds[0];
+    if (!wordId) return;
+    const programIndex = getParetoProgramIndex(wordId);
+    if (programIndex !== null) setPage(Math.floor(programIndex / SESSION_SIZE));
+    setPendingReviewId(wordId);
+  }, [dueReviewIds]);
 
   const openNextWord = useCallback(() => {
     const currentIndex = practiceWord ? words.findIndex((word) => word.id === practiceWord.id) : -1;
@@ -152,7 +203,7 @@ export default function Pareto1000() {
             <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. {programReadyCount.toLocaleString("pt-BR")} termos do idioma estudado foram autorizados para esta trilha.</p>
           </div>
           <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Progresso de memória</p><p className="mt-1 text-2xl font-black">{completedCount} <span className="text-base font-semibold text-slate-300">/ {programReadyCount} palavras únicas liberadas</span></p><p className="mt-1 text-xs text-slate-400">Meta do programa: 1.000 palavras únicas.</p></div><Button type="button" onClick={() => setPracticeWord(nextWord)} disabled={!nextWord} className="gap-2 bg-amber-300 font-bold text-slate-950 hover:bg-amber-200"><Sparkles className="h-4 w-4" />{nextWord ? "Continuar memorização" : "Trilha atual concluída"}</Button></div>
+            <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Progresso de memória</p><p className="mt-1 text-2xl font-black">{completedCount} <span className="text-base font-semibold text-slate-300">/ {programReadyCount} palavras únicas liberadas</span></p><p className="mt-1 text-xs text-slate-400">Meta do programa: 1.000 palavras únicas.</p>{dueReviewIds.length > 0 && <p className="mt-2 text-xs font-semibold text-cyan-100">{dueReviewIds.length} revisão{dueReviewIds.length === 1 ? "" : "ões"} pendente{dueReviewIds.length === 1 ? "" : "s"} para reforçar a memória.</p>}</div><Button type="button" onClick={dueReviewIds.length > 0 ? openDueReview : () => setPracticeWord(nextWord)} disabled={dueReviewIds.length === 0 && !nextWord} className="gap-2 bg-amber-300 font-bold text-slate-950 hover:bg-amber-200"><Sparkles className="h-4 w-4" />{dueReviewIds.length > 0 ? "Revisar pendências" : nextWord ? "Continuar memorização" : "Trilha atual concluída"}</Button></div>
             <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-amber-300 transition-all" style={{ width: `${Math.max(1, (completedCount / Math.max(programReadyCount, 1)) * 100)}%` }} /></div>
           </div>
         </section>
@@ -166,9 +217,10 @@ export default function Pareto1000() {
           <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-xl sm:p-7">
             <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-cyan-200">Sessão {page + 1} de {totalPages}</p><h2 className="mt-1 text-2xl font-black">Dez palavras para praticar agora</h2></div><Button type="button" variant="outline" onClick={() => setPracticeWord(sessionWords.find((word) => !completed.has(word.id)) ?? sessionWords[0] ?? null)} className="border-amber-300/45 text-amber-100 hover:bg-amber-300/10 hover:text-amber-50">Iniciar esta sessão</Button></div>
             <div className="mt-5 space-y-3">
-              {sessionWords.map((word, index) => (
-                <div key={word.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4"><div><p className="text-xs font-bold text-slate-500">{sessionStart + index + 1} / {programReadyCount} · {word.category}</p><p className="mt-1 text-lg font-black text-white">{word.enUS} <span className="text-sm font-semibold text-cyan-100">· {word.ptBR}</span></p><p className="mt-1 text-sm text-slate-300">{word.example}</p></div><div className="flex gap-2"><Button type="button" size="sm" variant="outline" onClick={() => speak(word.enUS)} disabled={speakMutation.isPending} className="border-cyan-300/45 text-cyan-100 hover:bg-cyan-300/10 hover:text-cyan-50"><Headphones className="h-4 w-4" /></Button><Button type="button" size="sm" onClick={() => setPracticeWord(word)} className={completed.has(word.id) ? "bg-emerald-300 text-slate-950 hover:bg-emerald-200" : "bg-amber-300 text-slate-950 hover:bg-amber-200"}>{completed.has(word.id) ? <CheckCircle2 className="h-4 w-4" /> : "Praticar"}</Button></div></div>
-              ))}
+              {sessionWords.map((word, index) => {
+                const reviewDue = dueReviewSet.has(word.id);
+                return <div key={word.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4"><div><p className="text-xs font-bold text-slate-500">{sessionStart + index + 1} / {programReadyCount} · {word.category}</p><p className="mt-1 text-lg font-black text-white">{word.enUS} <span className="text-sm font-semibold text-cyan-100">· {word.ptBR}</span></p><p className="mt-1 text-sm text-slate-300">{word.example}</p></div><div className="flex gap-2"><Button type="button" size="sm" variant="outline" onClick={() => speak(word.enUS)} disabled={speakMutation.isPending} className="border-cyan-300/45 text-cyan-100 hover:bg-cyan-300/10 hover:text-cyan-50"><Headphones className="h-4 w-4" /></Button><Button type="button" size="sm" onClick={() => setPracticeWord(word)} className={reviewDue ? "bg-cyan-300 text-slate-950 hover:bg-cyan-200" : completed.has(word.id) ? "bg-emerald-300 text-slate-950 hover:bg-emerald-200" : "bg-amber-300 text-slate-950 hover:bg-amber-200"}>{reviewDue ? "Revisar" : completed.has(word.id) ? <CheckCircle2 className="h-4 w-4" /> : "Praticar"}</Button></div></div>;
+              })}
             </div>
             <div className="mt-6 flex items-center justify-between"><Button type="button" variant="outline" disabled={page === 0} onClick={() => setPage((current) => current - 1)}>Sessão anterior</Button><Button type="button" variant="outline" disabled={page >= totalPages - 1} onClick={() => setPage((current) => current + 1)}>Próximas 10 palavras</Button></div>
           </section>
