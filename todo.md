@@ -1633,7 +1633,7 @@
 
 - [x] Fazer a frase de exemplo do cartão Wave iniciar após a pronúncia principal já ter tocado — o botão da frase permanece indisponível até o aluno iniciar a pronúncia principal do cartão, preservando a sequência pedagógica; TypeScript e 16 regressões de áudio e fluxo aprovados
 
-- [ ] Posicionar o player de objeto abaixo do cartão, sem bloquear frase ou controles pedagógicos
+- [x] Posicionar o player de objeto abaixo do cartão, sem bloquear frase ou controles pedagógicos — o elemento de áudio permanece oculto fora do cartão e o cartão oferece somente controles explícitos de pronúncia e frase; TypeScript e 16 regressões de áudio e fluxo aprovados
 
 - [x] Substituir a barra nativa sobreposta por botão explícito para tocar a frase em inglês do cartão — o cartão usa botão explícito de frase e o elemento de áudio permanece oculto, sem sobrepor texto ou controles; TypeScript e 16 regressões de áudio e fluxo aprovados
 
