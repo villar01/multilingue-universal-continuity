@@ -1582,6 +1582,10 @@
 
 - [x] Adicionar trecho contínuo de som, escrita e leitura consciente ao Livro ABC — orientação protegida conecta IPA, escuta, soletração, registro e revisão sem alterar SOS ou retornos; TypeScript, 7 regressões e verificação visual aprovados
 
+- [x] Adicionar fichas protegidas de saudações e cortesia A1 ao Livro ABC PT-BR→inglês — fichas de hello e thank you conectam abertura e agradecimento às unidades A1, com IPA, padrão, exemplo e prática Pareto; TypeScript, 7 regressões e verificação visual aprovados
+
+- [x] Adicionar fichas protegidas de recuperação e compreensão A1 ao Livro ABC PT-BR→inglês — fichas de sorry, again, slowly e understand conectam reparo, repetição e compreensão às unidades A1, com IPA, padrões, exemplos e prática Pareto; TypeScript, 7 regressões e verificação visual aprovados
+
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
