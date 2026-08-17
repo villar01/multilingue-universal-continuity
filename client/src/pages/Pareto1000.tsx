@@ -1,6 +1,7 @@
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import type { ParetoWord } from "@/lib/curriculum-types";
+import { completedProgramCount } from "@/lib/paretoProgress";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
@@ -63,9 +64,12 @@ export default function Pareto1000() {
   const sessionStart = page * SESSION_SIZE;
   const sessionWords = words;
   const totalPages = paretoQuery.data?.totalPages ?? 1;
-  const completedCount = words.filter((word) => completed.has(word.id)).length;
   const nextWord = words.find((word) => !completed.has(word.id)) ?? null;
   const programReadyCount = paretoQuery.data?.total ?? 0;
+  const completedCount = useMemo(
+    () => completedProgramCount(completed, programReadyCount),
+    [completed, programReadyCount],
+  );
   const returnTo = useMemo(() => {
     const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
     return requestedDestination?.startsWith("/base-de-estudos") || requestedDestination?.startsWith("/abc-book")
