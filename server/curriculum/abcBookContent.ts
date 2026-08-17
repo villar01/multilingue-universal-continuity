@@ -226,6 +226,16 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       text: "Depois de compreender e memorizar, responda ao professor, descreva a cena e escreva uma frase própria. A correção mostra exatamente o próximo ponto a praticar.",
       example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
     },
+    {
+      title: "Escute, repita e responda",
+      text: "Primeiro escute uma frase inteira. Depois repita em partes curtas, juntando as palavras sem pressa. Por fim, responda com uma frase parecida, mas com uma informação sua. Falar não é copiar um som isolado: é recuperar uma ideia e torná-la útil na conversa.",
+      example: "Can you speak slowly, please? — Depois responda: Yes, I can speak slowly.",
+    },
+    {
+      title: "Escreva, corrija e reveja",
+      text: "Escreva uma frase curta sem consultar o modelo. Compare com o exemplo, corrija somente o ponto necessário e volte a ela nos intervalos de revisão. Um erro identificado vira uma nova oportunidade de recuperação ativa, não uma interrupção do estudo.",
+      example: "I study English in the morning. — Revise amanhã e acrescente uma nova informação.",
+    },
   ],
 };
 

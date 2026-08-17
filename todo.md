@@ -1578,6 +1578,8 @@
 
 - [x] Adicionar fichas protegidas de pedidos educados A1 ao Livro ABC PT-BR→inglês — fichas de can e please conectam pedidos educados às unidades A1, com IPA, padrão, exemplo e prática Pareto; TypeScript, 7 regressões e verificação visual aprovados
 
+- [x] Ampliar o trecho contínuo do Livro ABC com orientação de escuta, fala, escrita e revisão — seções protegidas orientam escuta, repetição, resposta, escrita, correção e revisão sem alterar SOS ou retornos; TypeScript, 7 regressões e verificação visual aprovados
+
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma

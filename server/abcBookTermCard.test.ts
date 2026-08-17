@@ -29,6 +29,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(protectedContent).toContain('pronunciation: string');
     expect(protectedContent).toContain('pronunciation: "/ˈstʌd.i/"');
     expect(protectedContent).toContain("A1_CHAPTERS");
+    expect(protectedContent).toContain('title: "Escute, repita e responda"');
+    expect(protectedContent).toContain('title: "Escreva, corrija e reveja"');
     expect(protectedContent).toContain("STRUCTURED_A1_UNITS");
     expect(protectedContent).toContain("chapters: A1_CHAPTERS");
     expect(protectedContent).toContain("isPortugueseEnglish");
