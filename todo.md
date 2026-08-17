@@ -1524,7 +1524,7 @@
 - [ ] Concluir primeiro o núcleo ABC: Pareto prático, exercícios de produção ativa e links permanentes entre todos os blocos
 - [ ] Estruturar o curso ABC como manual completo e consultável do idioma, com ficha de termo, exemplos, gramática, Pareto e prática ativa
 - [ ] Expandir o piloto ABC para módulos completos de explicação, gramática, leitura, escuta, escrita, fala, frases, conversa, revisão e consulta
-- [ ] Elaborar primeiro o esboço integral do curso ABC, com sequência, objetivos, unidades e conexões antes de ampliar módulos isolados
+- [x] Elaborar primeiro o esboço integral do curso ABC, com sequência, objetivos, unidades e conexões antes de ampliar módulos isolados — o esboço mestre define os níveis A1–C2, os objetivos comunicativos, a ordem metodológica, a ficha universal, o ciclo Pareto, o tutor e as saídas de cada bloco; documento revisado e links pedagógicos já validados no aplicativo
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados
