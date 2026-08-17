@@ -1639,7 +1639,7 @@
 
 - [ ] Ativar a animação estável de James em Wave, Ocean, Palm Tree e Sand durante a fala de cada objeto
 
-- [ ] Manter animação somente em objetos com clipe roteirizado próprio, preservando Palm Tree e foto estável nos demais
+- [x] Manter animação somente em objetos com clipe roteirizado próprio, preservando Palm Tree e foto estável nos demais — o catálogo associa cada objeto ao respectivo clipe aprovado e mantém retrato estável quando não há mídia roteirizada; TypeScript e 10 regressões de mídia e consistência aprovados
 
 - [ ] Impedir que o cartão de objeto Wave permaneça sobre o início do diálogo e bloqueie a voz neural de James
 
