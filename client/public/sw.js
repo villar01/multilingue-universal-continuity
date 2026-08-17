@@ -1,8 +1,8 @@
 /**
- * MultiLingue Universal — Service Worker v4
+ * MultiLingue Universal — Service Worker v7
  * Cache agressivo: Shell, Estático, API, Áudio, Imagens
  */
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const SHELL_CACHE = `multilingue-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `multilingue-static-${CACHE_VERSION}`;
 const API_CACHE = `multilingue-api-${CACHE_VERSION}`;
@@ -37,6 +37,14 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => Promise.all(keys.filter((k) => !VALID.includes(k)).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// A página solicita esta ativação quando uma versão publicada já foi baixada.
+// A nova cena assume sem depender de uma reabertura manual do navegador.
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (event) => {

@@ -1584,6 +1584,8 @@
 
 - [ ] Corrigir diálogo, avanço e voz principal da Praia Tropical preservando os cartões de objetos que já funcionam
 
+- [x] Garantir que o Service Worker ative e assuma a versão nova imediatamente, sem manter interface antiga após publicação — worker v7 ativa sob demanda, assume clientes e o navegador recarrega uma única vez por versão; TypeScript sem erros e suíte completa com 222 arquivos/577 testes aprovados
+
 - [x] Impedir que o Service Worker reutilize respostas tRPC em autorizações, materiais curriculares e voz da cena — o Service Worker não intercepta mais tRPC, evitando sessão e currículo obsoletos; TypeScript sem erros e suíte completa com 220 arquivos/570 testes aprovados
 
 - [ ] Auditar fluxos críticos do aplicativo e criar regressões permanentes para impedir o retorno de falhas reproduzíveis

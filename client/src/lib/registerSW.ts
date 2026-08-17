@@ -1,10 +1,31 @@
 export async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
+      const reloadKey = 'multilingue-sw-version-reload';
+      const activateWaitingWorker = (registration: ServiceWorkerRegistration) => {
+        registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+      };
       const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/',
       });
       console.log('✅ Service Worker registrado:', registration);
+
+      // Novos bundles não ficam aguardando uma nova abertura manual. O
+      // recarregamento é limitado a uma vez por versão para evitar ciclos.
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (window.sessionStorage.getItem(reloadKey) === '1') return;
+        window.sessionStorage.setItem(reloadKey, '1');
+        window.location.reload();
+      });
+      registration.addEventListener('updatefound', () => {
+        const installing = registration.installing;
+        installing?.addEventListener('statechange', () => {
+          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+            activateWaitingWorker(registration);
+          }
+        });
+      });
+      activateWaitingWorker(registration);
 
       // Escutar mensagens do SW
       navigator.serviceWorker.addEventListener('message', (event) => {
