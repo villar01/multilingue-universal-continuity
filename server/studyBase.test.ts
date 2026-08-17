@@ -116,4 +116,14 @@ describe("Base de Estudos A1", () => {
     expect(source).toContain("Falar com o Professor");
     expect(source).toContain("openUnitConversation(activeEntry)");
   });
+
+  it("mantém ações de leitura, escuta, gramática, escrita, conversa e revisão para o primeiro volume A1", () => {
+    const source = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/StudyBase.tsx"), "utf8");
+    expect(STRUCTURED_A1_UNITS).toHaveLength(10);
+    expect(source).toContain("Ouvir o texto");
+    expect(source).toContain("structuredUnit.grammarExplanation");
+    expect(source).toContain("structuredUnit.writingPrompt");
+    expect(source).toContain("Falar com o Professor");
+    expect(source).toContain("Praticar Pareto");
+  });
 });

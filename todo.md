@@ -1523,7 +1523,7 @@
 - [ ] Tratar o curso ABC como camada mestre de exercícios, dicionário curricular, Pareto e interação verbal e escrita com professores
 - [ ] Concluir primeiro o núcleo ABC: Pareto prático, exercícios de produção ativa e links permanentes entre todos os blocos
 - [ ] Estruturar o curso ABC como manual completo e consultável do idioma, com ficha de termo, exemplos, gramática, Pareto e prática ativa
-- [ ] Expandir o piloto ABC para módulos completos de explicação, gramática, leitura, escuta, escrita, fala, frases, conversa, revisão e consulta
+- [x] Expandir o piloto ABC para módulos completos de explicação, gramática, leitura, escuta, escrita, fala, frases, conversa, revisão e consulta — as dez unidades estruturadas A1 oferecem leitura, escuta neural, gramática, compreensão, escrita, conversa com Professor, Pareto e Livro ABC; TypeScript e 22 regressões da Base, Livro e atalhos aprovadas
 - [x] Elaborar primeiro o esboço integral do curso ABC, com sequência, objetivos, unidades e conexões antes de ampliar módulos isolados — o esboço mestre define os níveis A1–C2, os objetivos comunicativos, a ordem metodológica, a ficha universal, o ciclo Pareto, o tutor e as saídas de cada bloco; documento revisado e links pedagógicos já validados no aplicativo
 
 - [x] Adicionar regressão dedicada para a rota do Livro ABC, o ícone SOS voluntário em cena e lição e o retorno contextual à atividade de origem — teste cobre rota protegida, destino interno seguro, botão voluntário em Cena e Lição e retorno em cascata após Pareto; TypeScript e 4 regressões dedicadas aprovados
@@ -1687,6 +1687,6 @@
 
 - [x] Eliminar a instância duplicada da porta 3001 e recuperar o preview da porta 3000 — servidor principal voltou a iniciar na porta 3000, com autenticação e banco inicializados; a captura visual segue pendente em item separado por indisponibilidade da sessão visual
 
-- [ ] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação
+- [x] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação — foram concluídos e publicados, uma alteração por vez, SOS/ABC, Pareto, Base, Cena, áudio, retorno contextual, controle parental e auditorias; itens sem validação permanecem pendentes
 
 - [ ] Registrar para correção posterior cada item que não passar em TypeScript, testes ou validação funcional, sem marcar como concluído
