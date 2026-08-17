@@ -49,9 +49,10 @@ describe("Base de Estudos A1", () => {
   });
 
   it("expande o primeiro volume contínuo com leitura, gramática, compreensão e escrita até a conversa", () => {
-    expect(STRUCTURED_A1_UNITS).toHaveLength(9);
+    expect(STRUCTURED_A1_UNITS).toHaveLength(10);
     expect(getStructuredStudyUnit(STRUCTURED_A1_UNITS, "Unidade 2 · Necessidades imediatas")?.reading).toContain("Ana needs help");
     expect(getStructuredStudyUnit(STRUCTURED_A1_UNITS, "Unidade 3 · Lugares e localização")?.reading).toContain("Where is the pool");
+    expect(getStructuredStudyUnit(STRUCTURED_A1_UNITS, "Unidade 4 · Pessoas e rotina")?.reading).toContain("Maria is my friend");
     expect(STRUCTURED_A1_UNITS.slice(1).every((unit) => unit.questions.length === 2)).toBe(true);
     expect(searchStudyBase(STUDY_BASE_A1_ENTRIES, "finally").map((entry) => entry.id)).toContain("a1-connect-ideas");
     expect(searchStudyBase(STUDY_BASE_A1_ENTRIES, "sandwich").map((entry) => entry.id)).toContain("a1-cafe-order");

@@ -1537,6 +1537,8 @@
 - [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 
 - [x] Estruturar a Unidade 3 A1 do ABC sobre lugares e localização — leitura contextual, gramática de Where is/in/on/near, escrita e compreensão sobre piscina, mapa e hotel foram adicionadas à entrega curricular; TypeScript e 14 regressões da Base e da ponte Cena aprovadas
+
+- [x] Estruturar a Unidade 4 A1 do ABC sobre pessoas e rotina — leitura contextual, gramática de she/her e presente, escrita e compreensão sobre hábitos cotidianos foram adicionadas à entrega curricular; TypeScript e 17 regressões da Base e das pontes pedagógicas aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados

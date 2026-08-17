@@ -87,6 +87,21 @@ export const STRUCTURED_A1_UNITS: StructuredStudyUnit[] = [
       { id: "a1-location-map", prompt: "Where is the map?", options: ["On the table.", "In the pool.", "Near the airport."], correctIndex: 0, explanation: "O texto informa que o mapa está sobre a mesa." },
     ],
   },
+  {
+    id: "a1-unit-routine",
+    unit: "Unidade 4 · Pessoas e rotina",
+    objective: "Descrever pessoas próximas e hábitos cotidianos com frases simples no presente.",
+    readingTitle: "Texto guiado · A rotina de Maria",
+    reading: "Maria is my friend. She works in the morning and studies English in the evening. Her mom is at home today. They eat dinner together, then Maria practices new words before bed.",
+    readingTranslation: "Maria é minha amiga. Ela trabalha de manhã e estuda inglês à noite. A mãe dela está em casa hoje. Elas jantam juntas e depois Maria pratica palavras novas antes de dormir.",
+    grammarTitle: "Gramática útil · she, her e rotina no presente",
+    grammarExplanation: "Use she para falar de uma mulher ou menina. Use her antes de um substantivo para indicar posse. Para rotina, use o verbo no presente: She works, she studies e they eat.",
+    writingPrompt: "Descreva uma pessoa próxima em três frases: quem ela é, o que faz em um momento do dia e uma rotina que vocês compartilham.",
+    questions: [
+      { id: "a1-routine-work", prompt: "When does Maria work?", options: ["In the morning.", "In the evening.", "At night."], correctIndex: 0, explanation: "O texto diz que ela trabalha de manhã." },
+      { id: "a1-routine-practice", prompt: "What does Maria do before bed?", options: ["She practices new words.", "She goes to the airport.", "She reads a map."], correctIndex: 0, explanation: "A última frase informa a prática de palavras novas antes de dormir." },
+    ],
+  },
 ];
 
 export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
