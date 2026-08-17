@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
 const teacherSource = readFileSync("client/src/data/teachers57.ts", "utf8");
@@ -21,6 +22,20 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     const teacherAssignments = sceneSource.match(/teacherImage:"[^\"]+",\n?\s*teacherName:"[^\"]+", teacherLang:"[^\"]+", langCode:"[^\"]+"/g) || [];
     expect(teacherAssignments).toHaveLength(29);
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
+  });
+
+  it("faz as 29 cenas passarem pelo mesmo início de diálogo e pelos objetos protegidos", () => {
+    const sceneIds = [...sceneSource.matchAll(/^    id:"([^"]+)"/gm)].map((match) => match[1]);
+    expect(sceneIds).toHaveLength(29);
+    expect(sceneSource).toContain("const launchDialogFromGesture = useCallback");
+    expect(sceneSource).toContain("onPointerUp={(e) => { e.stopPropagation(); launchDialogFromGesture(); }}");
+    expect(sceneSource).toContain("activeSceneHotspots.map((hotspot) => {");
+    expect(sceneSource).toContain("handleHotspotClick(hotspot);");
+    for (const sceneId of sceneIds) {
+      const seed = getSecureSceneSeed(sceneId);
+      expect(seed?.dialog.length, sceneId).toBeGreaterThan(0);
+      expect(seed?.hotspots.length, sceneId).toBeGreaterThan(0);
+    }
   });
 
   it("preserva perfis com retrato para as seis línguas iniciais", () => {
