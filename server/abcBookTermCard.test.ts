@@ -47,6 +47,9 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain("const chapterParetoHref");
     expect(bookPage).toContain("Praticar no Pareto");
     expect(bookPage).toContain("${paretoReturnTo}#${chapterId}");
+    expect(bookPage).toContain("const chapterTeacherHref");
+    expect(bookPage).toContain("/free-talk?returnTo=");
+    expect(bookPage).toContain("Falar com o Professor");
     expect(bookPage).toContain("if (!book.available)");
     expect(bookPage).toContain("Edição em preparação");
     expect(bookPage).not.toContain('const TERM_CARD');

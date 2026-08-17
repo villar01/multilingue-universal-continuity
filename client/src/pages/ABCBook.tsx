@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { createTrialLessonKey } from "@/lib/learningAccess";
-import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, PenLine, Volume2 } from "lucide-react";
+import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, MessageCircle, PenLine, Volume2 } from "lucide-react";
 import { useMemo } from "react";
 import { useLocation } from "wouter";
 
@@ -156,6 +156,7 @@ export default function ABCBook() {
                 const chapterId = `capitulo-a1-${index + 1}`;
                 const chapterReturnTo = `${paretoReturnTo}#${chapterId}`;
                 const chapterParetoHref = `/pareto-1000?returnTo=${encodeURIComponent(chapterReturnTo)}`;
+                const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
 
                 return (
                 <article id={chapterId} key={chapter.title} className="scroll-mt-6 border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
@@ -176,6 +177,7 @@ export default function ABCBook() {
                   <div className="mt-5 flex flex-wrap gap-3">
                     <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="inline-flex rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">Estudar este capítulo na Base</a>
                     <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-3 py-2 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Praticar no Pareto</a>
+                    <a href={chapterTeacherHref} className="inline-flex items-center gap-2 rounded-md border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-bold text-sky-900 transition hover:bg-sky-100 active:scale-[0.97]"><MessageCircle className="h-4 w-4" /> Falar com o Professor</a>
                     <a href="#sumario-a1" className="inline-flex items-center rounded-md px-3 py-2 text-sm font-bold text-slate-600 underline-offset-4 transition hover:text-amber-800 hover:underline">Voltar ao sumário</a>
                   </div>
                 </article>
