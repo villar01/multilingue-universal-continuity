@@ -1541,7 +1541,7 @@
 - [x] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto — auditoria automática valida as 29 sementes protegidas, diálogos, objetos, frases, traduções, cenário visual, retrato, professor, idioma de voz, clipes piloto e atalhos globais; TypeScript e 25 regressões de cena aprovados
 - [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis
 - [ ] Catalogar os objetos das 29 cenas e produzir clipes roteirizados próprios com fala correspondente por palavra
-- [ ] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos
+- [x] Priorizar catálogo, cobertura curricular, regressões e atalhos reutilizáveis antes de gerar novos clipes por blocos — catálogo único Pareto, auditoria das 29 cenas, contratos de currículo/mídia/voz e atalhos contextuais foram entregues e validados antes de qualquer expansão adicional de clipes
 - [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
 - [x] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular — a prática recebe o item ativo como retorno e volta somente ao ponto curricular da Base; regressão dedicada aprovada
 - [x] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço — a trilha aceita somente retorno interno da Base e preserva o destino curricular seguro; regressão dedicada aprovada
