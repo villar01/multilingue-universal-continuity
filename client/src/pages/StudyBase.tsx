@@ -120,14 +120,17 @@ export default function StudyBase() {
       return;
     }
     if (path === "pareto") {
-      setLocation("/pareto-1000");
+      const returnPath = activeEntry
+        ? `/base-de-estudos?entry=${encodeURIComponent(activeEntry.id)}`
+        : "/base-de-estudos";
+      setLocation(`/pareto-1000?returnTo=${encodeURIComponent(returnPath)}`);
       return;
     }
     setQuery("");
     setKind("all");
     setUnit(path === "cartilha" ? "all" : "Unidade 1 · Cumprimentos e identidade");
     setSelectedEntry(null);
-  }, [setLocation]);
+  }, [activeEntry, setLocation]);
 
   const openRelatedScene = useCallback((entry: StudyEntry) => {
     const sceneId = STUDY_SCENE_IDS[entry.relatedScene];

@@ -5,7 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 const SESSION_SIZE = 10;
 const PROGRESS_KEY_PREFIX = "multilingue_pareto_1000_completed";
@@ -32,6 +32,7 @@ function saveCompletedWords(key: string, words: Set<string>) {
 }
 
 export default function Pareto1000() {
+  const [location] = useLocation();
   const [page, setPage] = useState(0);
   const { profile } = useLanguage();
   const targetLanguage = profile.targetCode || "en-US";
@@ -65,6 +66,10 @@ export default function Pareto1000() {
   const completedCount = words.filter((word) => completed.has(word.id)).length;
   const nextWord = words.find((word) => !completed.has(word.id)) ?? null;
   const programReadyCount = paretoQuery.data?.total ?? 0;
+  const returnTo = useMemo(() => {
+    const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
+    return requestedDestination?.startsWith("/base-de-estudos") ? requestedDestination : "/base-de-estudos";
+  }, [location]);
 
   useEffect(() => {
     setCompleted(loadCompletedWords(activeProgressKey));
@@ -128,7 +133,7 @@ export default function Pareto1000() {
     <main className="min-h-screen bg-slate-950 text-white">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/95 backdrop-blur">
         <div className="container flex items-center justify-between gap-3 py-4">
-          <Link href="/base-de-estudos"><Button variant="ghost" className="gap-2 text-slate-200 hover:bg-white/10 hover:text-white"><ArrowLeft className="h-4 w-4" />Voltar à Base</Button></Link>
+          <Link href={returnTo}><Button variant="ghost" className="gap-2 text-slate-200 hover:bg-white/10 hover:text-white"><ArrowLeft className="h-4 w-4" />Voltar à Base</Button></Link>
           <span className="text-sm font-bold text-amber-100">Pareto · 1.000 palavras</span>
         </div>
       </header>
