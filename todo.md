@@ -1637,7 +1637,7 @@
 
 - [ ] Substituir a barra nativa sobreposta por botão explícito para tocar a frase em inglês do cartão
 
-- [ ] Ativar a animação estável de James em Wave, Ocean, Palm Tree e Sand durante a fala de cada objeto
+- [x] Ativar a animação estável de James em Wave, Ocean, Palm Tree e Sand durante a fala de cada objeto — Palm Tree, Wave, Ocean e Sand possuem clipes roteirizados próprios com fala correspondente e fallback fotográfico; TypeScript e 10 regressões de mídia e consistência aprovados
 
 - [x] Manter animação somente em objetos com clipe roteirizado próprio, preservando Palm Tree e foto estável nos demais — o catálogo associa cada objeto ao respectivo clipe aprovado e mantém retrato estável quando não há mídia roteirizada; TypeScript e 10 regressões de mídia e consistência aprovados
 
