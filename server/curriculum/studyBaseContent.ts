@@ -72,6 +72,21 @@ export const STRUCTURED_A1_UNITS: StructuredStudyUnit[] = [
       { id: "a1-needs-extra", prompt: "What else does Ana need?", options: ["Water.", "A book.", "A ticket."], correctIndex: 0, explanation: "Ana diz: “I need water.”" },
     ],
   },
+  {
+    id: "a1-unit-location",
+    unit: "Unidade 3 · Lugares e localização",
+    objective: "Perguntar onde lugares e objetos estão e compreender respostas curtas com in, on e near.",
+    readingTitle: "Texto guiado · Encontrando a piscina",
+    reading: "James is at the hotel. He asks, “Where is the pool?” The receptionist says, “The pool is near the beach. The map is on the table, next to the door.” James says, “Thank you. I can see it now.”",
+    readingTranslation: "James está no hotel. Ele pergunta: “Onde fica a piscina?” A recepcionista responde: “A piscina fica perto da praia. O mapa está sobre a mesa, ao lado da porta.” James diz: “Obrigado. Agora consigo vê-la.”",
+    grammarTitle: "Gramática útil · where is, in, on e near",
+    grammarExplanation: "Use Where is + lugar ou objeto para perguntar a localização. Use in para algo dentro de um espaço, on para algo sobre uma superfície e near para dizer que dois lugares ficam próximos.",
+    writingPrompt: "Escreva uma pergunta com Where is e duas respostas: uma usando on e outra usando near.",
+    questions: [
+      { id: "a1-location-pool", prompt: "Where is the pool?", options: ["Near the beach.", "On the table.", "In the airport."], correctIndex: 0, explanation: "A recepcionista diz: “The pool is near the beach.”" },
+      { id: "a1-location-map", prompt: "Where is the map?", options: ["On the table.", "In the pool.", "Near the airport."], correctIndex: 0, explanation: "O texto informa que o mapa está sobre a mesa." },
+    ],
+  },
 ];
 
 export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [
