@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getQuickStudyHref, getQuickTeacherHref } from "../client/src/components/QuickStudyAccess";
+import { getJamesSceneHref, getQuickStudyHref, getQuickTeacherHref } from "../client/src/components/QuickStudyAccess";
 
 describe("Consulta Rápida e Total global", () => {
   it("preserva a página de estudo como destino de retorno", () => {
@@ -16,5 +16,11 @@ describe("Consulta Rápida e Total global", () => {
     expect(getQuickTeacherHref("/word-game?mode=daily")).toBe("/free-talk?returnTo=%2Fword-game");
     expect(getQuickTeacherHref("/free-talk")).toBeNull();
     expect(getQuickTeacherHref("/immersive-scene")).toBeNull();
+  });
+
+  it("mantém a Cena James disponível por atalho em todo o aplicativo, exceto dentro da própria cena", () => {
+    expect(getJamesSceneHref("/dashboard")).toBe("/immersive-scene?scene=beach");
+    expect(getJamesSceneHref("/structured-lesson?teacher=james")).toBe("/immersive-scene?scene=beach");
+    expect(getJamesSceneHref("/immersive-scene?scene=beach")).toBeNull();
   });
 });
