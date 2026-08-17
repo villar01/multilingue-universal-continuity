@@ -940,6 +940,11 @@ export default function ImmersiveScene() {
   // ── Single source of truth: LanguageContext ──
   const { profile, setProfile, immersionMode } = useLanguage();
   const { isAuthenticated, loading: isAuthLoading } = useAuth();
+  const sceneReturnTo = useMemo(() => {
+    if (typeof window === "undefined") return "/";
+    const destination = new URLSearchParams(window.location.search).get("returnTo");
+    return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/";
+  }, []);
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -2410,7 +2415,7 @@ export default function ImmersiveScene() {
           style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)" }}
         >
           <button
-            onClick={() => { stopEdgeTTS(); setLocation("/"); }}
+            onClick={() => { stopEdgeTTS(); setLocation(sceneReturnTo); }}
             className="flex items-center gap-2 text-white font-semibold px-3 py-1.5 rounded-full"
             style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)" }}
           >

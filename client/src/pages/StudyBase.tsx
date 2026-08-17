@@ -27,7 +27,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 
 const FILTERS: Array<{ id: StudyEntryKind | "all"; label: string }> = [
@@ -38,6 +38,16 @@ const FILTERS: Array<{ id: StudyEntryKind | "all"; label: string }> = [
 ];
 
 type StudyPath = "cartilha" | "pareto" | "unidade" | "consulta";
+
+const STUDY_SCENE_IDS: Record<string, string> = {
+  "Praia Tropical": "beach",
+  "Nova York": "newyork",
+  "Cozinha": "kitchen",
+  "Cozinha Moderna": "kitchen",
+  "Restaurante Brasileiro": "restaurant",
+  "Aeroporto Internacional": "airport",
+  "Sala de Aula": "school",
+};
 
 function getStoredLevel(): CEFRLevel {
   try {
@@ -67,6 +77,10 @@ export default function StudyBase() {
   const [blockDraft, setBlockDraft] = useState("");
   const [blockFeedback, setBlockFeedback] = useState("");
   const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
+  const [returnEntryId] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("entry");
+  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
@@ -92,6 +106,14 @@ export default function StudyBase() {
     : entries[0] ?? null;
   const structuredUnit = getStructuredStudyUnit(structuredStudyUnits, activeEntry?.unit);
 
+  useEffect(() => {
+    if (!returnEntryId || selectedEntry) return;
+    const returnedEntry = studyEntries.find((entry) => entry.id === returnEntryId);
+    if (!returnedEntry) return;
+    setUnit(returnedEntry.unit);
+    setSelectedEntry(returnedEntry);
+  }, [returnEntryId, selectedEntry, studyEntries]);
+
   const chooseStudyPath = useCallback((path: StudyPath) => {
     if (path === "consulta") {
       window.setTimeout(() => searchInputRef.current?.focus(), 0);
@@ -105,6 +127,13 @@ export default function StudyBase() {
     setKind("all");
     setUnit(path === "cartilha" ? "all" : "Unidade 1 · Cumprimentos e identidade");
     setSelectedEntry(null);
+  }, [setLocation]);
+
+  const openRelatedScene = useCallback((entry: StudyEntry) => {
+    const sceneId = STUDY_SCENE_IDS[entry.relatedScene];
+    if (!sceneId) return;
+    const returnPath = `/base-de-estudos?entry=${encodeURIComponent(entry.id)}`;
+    setLocation(`/immersive-scene?scene=${encodeURIComponent(sceneId)}&returnTo=${encodeURIComponent(returnPath)}`);
   }, [setLocation]);
 
   const playTargetVoice = useCallback(async (text: string) => {
@@ -445,7 +474,7 @@ export default function StudyBase() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
                   <button
                     type="button"
                     onClick={() => setPracticeEntry(activeEntry)}
@@ -461,6 +490,14 @@ export default function StudyBase() {
                   >
                     <MessageCircleMore className="h-5 w-5 text-violet-200" />
                     <span><strong className="block text-violet-100">Pedir orientação</strong><span className="text-sm text-slate-300">Professor explica o próximo passo</span></span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openRelatedScene(activeEntry)}
+                    className="flex items-center gap-3 rounded-2xl border border-emerald-300/30 bg-emerald-300/10 p-4 text-left transition-colors hover:bg-emerald-300/20"
+                  >
+                    <Sparkles className="h-5 w-5 text-emerald-200" />
+                    <span><strong className="block text-emerald-100">Aplicar na cena</strong><span className="text-sm text-slate-300">Praticar em {activeEntry.relatedScene} e retornar</span></span>
                   </button>
                 </div>
 
