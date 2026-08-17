@@ -155,4 +155,12 @@ describe("migração protegida da Praia Tropical", () => {
     expect(serverSeedSource).toContain("The screen is huge.");
     expect(clientSceneSource).toContain('selectedScene?.id === "cinema"');
   });
+
+  it("remove também o roteiro e os objetos canônicos do Spa & Bem-Estar do catálogo cliente", () => {
+    expect(clientSceneSource).not.toContain("Welcome to the spa! I'm Priya. How do you feel today?");
+    expect(clientSceneSource).not.toContain("The pool is warm.");
+    expect(serverSeedSource).toContain("Welcome to the spa! I'm Priya. How do you feel today?");
+    expect(serverSeedSource).toContain("The pool is warm.");
+    expect(clientSceneSource).toContain('selectedScene?.id === "spa"');
+  });
 });

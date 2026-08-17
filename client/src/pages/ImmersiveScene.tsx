@@ -529,23 +529,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
     teacherGreeting:"Welcome to the spa! Let's relax and learn wellness vocabulary!",
     greetingPt:"Bem-vindo ao spa! Vamos relaxar e aprender vocabulário de bem-estar!",
     difficulty:"intermediate", premium:false,
-    dialog:[
-      {speaker:"teacher", text:"Welcome to the spa! I'm Priya. How do you feel today?", textPt:"Bem-vindo ao spa! Sou Priya. Como você se sente hoje?"},
-      {speaker:"user", text:"I feel a bit stressed. I need to relax!", textPt:"Me sinto um pouco estressado. Preciso relaxar!", options:["I feel a bit stressed. I need to relax!","I feel great already.","I don't know."], correctIndex:0},
-      {speaker:"teacher", text:"Perfect place to be! The warm pool will help you relax completely.", textPt:"Lugar perfeito para estar! A piscina quente vai te ajudar a relaxar completamente."},
-      {speaker:"user", text:"The pool looks amazing! And I can smell the candles — they smell wonderful.", textPt:"A piscina parece incrível! E consigo sentir o cheiro das velas — cheiram maravilhosamente.", options:["The pool looks amazing! And I can smell the candles — they smell wonderful.","I don't like pools.","The smell is too strong."], correctIndex:0},
-      {speaker:"teacher", text:"Those are aromatherapy candles. After the pool, you can have a massage.", textPt:"Essas são velas de aromaterapia. Depois da piscina, você pode fazer uma massagem."},
-      {speaker:"user", text:"A massage sounds perfect! And the calm music makes everything better.", textPt:"Uma massagem parece perfeito! E a música calma torna tudo melhor.", options:["A massage sounds perfect! And the calm music makes everything better.","I don't like massages.","Can I take the towel home?"], correctIndex:0},
-      {speaker:"teacher", text:"Wonderful! Use the fresh towel after your swim. Enjoy your wellness day!", textPt:"Maravilhoso! Use a toalha fresca depois do banho. Aproveite seu dia de bem-estar!"},
-    ],
-    hotspots:[
-      {id:"pool", x:50, y:55, label:"Pool", translation:"Piscina", pronunciation:"PUUL", example:"The pool is warm.", examplePt:"A piscina está quente.", icon:"🏊", color:"#0ea5e9"},
-      {id:"towel", x:25, y:65, label:"Towel", translation:"Toalha", pronunciation:"TAU-el", example:"Use a clean towel.", examplePt:"Use uma toalha limpa.", icon:"🏖️", color:"#e2e8f0"},
-      {id:"candle", x:70, y:40, label:"Candle", translation:"Vela", pronunciation:"KÆN-del", example:"The candle smells nice.", examplePt:"A vela cheira bem.", icon:"🕯️", color:"#f59e0b"},
-      {id:"flower3", x:80, y:60, label:"Flower", translation:"Flor", pronunciation:"FLAU-er", example:"The flower is beautiful.", examplePt:"A flor é bonita.", icon:"🌺", color:"#ec4899"},
-      {id:"massage", x:35, y:45, label:"Massage", translation:"Massagem", pronunciation:"ma-SAAJ", example:"A massage is relaxing.", examplePt:"Uma massagem é relaxante.", icon:"💆", color:"#8b5cf6"},
-      {id:"music", x:60, y:25, label:"Music", translation:"Música", pronunciation:"MIUU-zik", example:"The music is calm.", examplePt:"A música é calma.", icon:"🎵", color:"#22c55e"},
-    ]
+    // Curriculum is delivered only after lesson authorization from the server.
+    dialog: [],
+    hotspots: []
   },
   {
     id:"garden", name:"Jardim Japonês", nameEn:"Japanese Garden", flag:"🌸",
@@ -1297,7 +1283,7 @@ export default function ImmersiveScene() {
     sceneId: selectedScene?.id || "pending",
   }, {
     enabled: isAuthenticated
-      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
+      && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
       && authorizedSceneMaterial?.sceneId === selectedScene?.id
       && authorizedSceneMaterial?.targetLanguage === targetLang
       && authorizedSceneMaterial?.nativeLanguage === nativeLang,
@@ -1306,7 +1292,7 @@ export default function ImmersiveScene() {
   });
   const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
   const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
-  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
+  const sceneMaterialIsPreparing = (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "forest" || selectedScene?.id === "hospital" || selectedScene?.id === "medieval" || selectedScene?.id === "museum" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain") && activeSceneDialog.length === 0;
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;

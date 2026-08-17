@@ -110,6 +110,12 @@ describe("sementes canônicas protegidas de cena", () => {
     expect(cinema?.hotspots.map((hotspot) => hotspot.id)).toEqual(["screen2", "popcorn", "seat", "ticket", "projector", "exit"]);
   });
 
+  it("mantém o conteúdo do Spa & Bem-Estar disponível somente no contrato do servidor", () => {
+    const spa = getSecureSceneSeed("spa");
+    expect(spa?.dialog).toHaveLength(7);
+    expect(spa?.hotspots.map((hotspot) => hotspot.id)).toEqual(["pool", "towel", "candle", "flower3", "massage", "music"]);
+  });
+
   it("não inventa conteúdo para cenas ainda não migradas", () => {
     expect(getSecureSceneSeed("unmigrated-scene")).toBeNull();
   });
