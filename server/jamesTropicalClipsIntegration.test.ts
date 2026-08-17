@@ -5,8 +5,8 @@ import { JAMES_TROPICAL_PILOT_CLIPS } from "../shared/jamesTropicalPilotClips";
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
 
 describe("integração de clipes de James na Praia Tropical", () => {
-  it("mantém os quatro clipes publicados e associados somente a James na praia", () => {
-    expect(JAMES_TROPICAL_PILOT_CLIPS).toHaveLength(4);
+  it("mantém os sete clipes publicados e associados somente a James na praia", () => {
+    expect(JAMES_TROPICAL_PILOT_CLIPS).toHaveLength(7);
     expect(JAMES_TROPICAL_PILOT_CLIPS.every((clip) => (
       clip.sceneId === "beach"
       && clip.teacherName === "James"
@@ -28,10 +28,13 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('pointerEvents: "none"');
   });
 
-  it("cobre abertura, palmeira, acerto e nova tentativa sem criar outro controle de áudio", () => {
+  it("cobre abertura, quatro objetos, acerto e nova tentativa sem criar outro controle de áudio", () => {
     expect(sceneSource).toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(sceneSource).toContain('hotspot.id === "palm"');
-    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-point-palm")');
+    expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
+    expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
+    expect(sceneSource).toContain('wave: "james-tropical-point-wave"');
+    expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
+    expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-praise")');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-retry")');
     expect(sceneSource).toContain('activeClip={activeJamesClip || activeSophieClip}');

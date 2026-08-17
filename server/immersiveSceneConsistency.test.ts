@@ -33,10 +33,13 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
   });
 
-  it("reserva a animação estável de James ao objeto com clipe roteirizado próprio", () => {
-    expect(sceneSource).toContain('const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"');
-    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-point-palm")');
-    expect(sceneSource).toContain('requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);');
+  it("associa cada objeto da Praia Tropical ao seu clipe roteirizado próprio de James", () => {
+    expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
+    expect(sceneSource).toContain('palm: "james-tropical-point-palm"');
+    expect(sceneSource).toContain('wave: "james-tropical-point-wave"');
+    expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
+    expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
+    expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
   });
 
   it("preserva perfis com retrato para as seis línguas iniciais", () => {

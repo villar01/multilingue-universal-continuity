@@ -2068,8 +2068,16 @@ export default function ImmersiveScene() {
     setGreetingText(interaction.greeting);
     setShowGreeting(true);
     // A fala do objeto sempre usa o idioma da cena; tradução fica só como apoio visual.
-    const objectFocusClip = activeTeacherScene.teacherName === "James" && hotspot.id === "palm"
-      ? playJamesTropicalClip("james-tropical-point-palm")
+    const jamesObjectClipId = activeTeacherScene.teacherName === "James"
+      ? ({
+        palm: "james-tropical-point-palm",
+        wave: "james-tropical-point-wave",
+        ocean: "james-tropical-point-ocean",
+        sand: "james-tropical-point-sand",
+      } as const)[hotspot.id]
+      : null;
+    const objectFocusClip = jamesObjectClipId
+      ? playJamesTropicalClip(jamesObjectClipId)
       : activeTeacherScene.teacherName === "Sophie" && hotspot.id === "croissant"
         ? playSophieCafeClip("sophie-cafe-point-croissant")
         : null;

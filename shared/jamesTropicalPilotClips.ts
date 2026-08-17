@@ -1,6 +1,9 @@
 export type JamesTropicalPilotClipId =
   | "james-tropical-greeting"
   | "james-tropical-point-palm"
+  | "james-tropical-point-wave"
+  | "james-tropical-point-ocean"
+  | "james-tropical-point-sand"
   | "james-tropical-praise"
   | "james-tropical-retry";
 
@@ -42,6 +45,45 @@ export const JAMES_TROPICAL_PILOT_CLIPS: readonly JamesTropicalPilotClip[] = [
     dialogue: "Look at the palm tree. Palm tree.",
     referenceImageUrl: "/manus-storage/james-tropical-point-palm-reference_d860de91.png",
     videoUrl: "/manus-storage/james-tropical-point-palm_d1aa1130.mp4",
+    preserveOriginalPortrait: true,
+    fallback: "original_portrait",
+  },
+  {
+    id: "james-tropical-point-wave",
+    trigger: "object_focus",
+    teacherName: "James",
+    sceneId: "beach",
+    language: "en-US",
+    durationSeconds: 8,
+    dialogue: "Look at the wave. Wave.",
+    referenceImageUrl: "/manus-storage/james-tropical-point-palm-reference_d860de91.png",
+    videoUrl: "/manus-storage/james-tropical-point-wave_4276a883.mp4",
+    preserveOriginalPortrait: true,
+    fallback: "original_portrait",
+  },
+  {
+    id: "james-tropical-point-ocean",
+    trigger: "object_focus",
+    teacherName: "James",
+    sceneId: "beach",
+    language: "en-US",
+    durationSeconds: 8,
+    dialogue: "This is the ocean. Ocean.",
+    referenceImageUrl: "/manus-storage/james-tropical-point-palm-reference_d860de91.png",
+    videoUrl: "/manus-storage/james-tropical-point-ocean_582f6b37.mp4",
+    preserveOriginalPortrait: true,
+    fallback: "original_portrait",
+  },
+  {
+    id: "james-tropical-point-sand",
+    trigger: "object_focus",
+    teacherName: "James",
+    sceneId: "beach",
+    language: "en-US",
+    durationSeconds: 8,
+    dialogue: "This is sand. Sand.",
+    referenceImageUrl: "/manus-storage/james-tropical-point-palm-reference_d860de91.png",
+    videoUrl: "/manus-storage/james-tropical-point-sand_366b3bf5.mp4",
     preserveOriginalPortrait: true,
     fallback: "original_portrait",
   },
