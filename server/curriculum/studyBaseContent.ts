@@ -57,6 +57,21 @@ export const STRUCTURED_A1_UNITS: StructuredStudyUnit[] = [
       { id: "a1-identity-place", prompt: "Where is the lesson?", options: ["At a tropical beach.", "At an airport.", "At a school."], correctIndex: 0, explanation: "The text says: “This is a tropical beach.”" },
     ],
   },
+  {
+    id: "a1-unit-needs",
+    unit: "Unidade 2 · Necessidades imediatas",
+    objective: "Pedir ajuda, água ou repetição com clareza e educação em uma situação cotidiana.",
+    readingTitle: "Texto guiado · Um pedido de ajuda",
+    reading: "At the airport, Ana needs help. She says, “Excuse me, can you help me, please?” The assistant says, “Of course. Do you need water too?” Ana answers, “Yes, please. I need water.”",
+    readingTranslation: "No aeroporto, Ana precisa de ajuda. Ela diz: “Com licença, você pode me ajudar, por favor?” O atendente responde: “Claro. Você também precisa de água?” Ana responde: “Sim, por favor. Eu preciso de água.”",
+    grammarTitle: "Gramática útil · need, can you e please",
+    grammarExplanation: "Use I need + coisa para dizer uma necessidade. Use Can you + verbo para fazer um pedido educado. Acrescente please para tornar o pedido mais cordial, especialmente com pessoas que você não conhece.",
+    writingPrompt: "Escreva três frases: uma com I need, uma pedindo ajuda com Can you help me e uma resposta educada usando please.",
+    questions: [
+      { id: "a1-needs-place", prompt: "Where does Ana need help?", options: ["At the airport.", "At the library.", "At the beach."], correctIndex: 0, explanation: "O texto começa com “At the airport, Ana needs help.”" },
+      { id: "a1-needs-extra", prompt: "What else does Ana need?", options: ["Water.", "A book.", "A ticket."], correctIndex: 0, explanation: "Ana diz: “I need water.”" },
+    ],
+  },
 ];
 
 export const STUDY_BASE_A1_ENTRIES: StudyEntry[] = [

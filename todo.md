@@ -1533,6 +1533,8 @@
 - [x] Adicionar a primeira ficha de termo protegida ao Livro ABC PT-BR → inglês — a ficha de need apresenta sentido, função, pronúncia, padrão, exemplo e prática Pareto, todos recebidos pelo contrato curricular protegido; TypeScript e 7 regressões do Livro aprovadas
 
 - [x] Ampliar o primeiro grupo de fichas protegidas do Livro ABC PT-BR → inglês — help e water foram acrescentados com função, padrão, exemplo e prática Pareto, mantendo a leitura simples e a entrega protegida; TypeScript e 7 regressões do Livro aprovadas
+
+- [x] Estruturar a Unidade 2 A1 do ABC sobre necessidades imediatas — leitura contextual, gramática de need/Can you/please, escrita e compreensão sobre ajuda e água foram adicionadas à entrega curricular; TypeScript e 15 regressões da Base e da ponte Pareto aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados
