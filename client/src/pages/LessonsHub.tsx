@@ -1472,7 +1472,9 @@ function SceneLesson({ scene, cefrLevel, curricularLessonNumber, onComplete }: {
 
 // ─── Main LessonsHub Page ──────────────────────────────────────────────────────
 export default function LessonsHub() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const requestedReturnTo = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
+  const lessonsReturnTo = requestedReturnTo?.startsWith("/base-de-estudos") ? requestedReturnTo : "/dashboard";
   const { profile } = useLanguage();
   const [selectedLevel, setSelectedLevel] = useState<CEFRLevel>(() => {
     const saved = localStorage.getItem("lessonsHub_cefr");
@@ -1563,7 +1565,7 @@ export default function LessonsHub() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <button
-            onClick={() => setLocation("/dashboard")}
+            onClick={() => setLocation(lessonsReturnTo)}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             ← Voltar

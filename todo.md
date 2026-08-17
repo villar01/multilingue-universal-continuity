@@ -1517,6 +1517,7 @@
 - [ ] Tornar o curso ABC, Pareto prático e metodologia completa o núcleo de acesso permanente em todas as áreas do aplicativo
 - [ ] Preservar parâmetros de contexto nos atalhos globais de Consulta Rápida e Professor para não perder a atividade de origem
 - [ ] Fazer Pareto retornar ao mesmo item da Base de Estudos quando iniciado como reforço curricular
+- [ ] Fazer a trilha de lições retornar ao item da Base de Estudos que iniciou o reforço
 - [ ] Revisar conteúdos dominados periodicamente e exigir frases, escrita e conversa com vocabulário em todos os níveis e áreas curriculares
 - [x] Expandir a sequência curricular A1 autoral da Base de Estudos — 11 entradas pesquisáveis em quatro unidades (identidade, necessidades, localização e rotina), com Pareto, pronúncia figurativa, cena relacionada, modelo de frase e prática; TypeScript sem erros, regressão dedicada e 185 arquivos/424 testes aprovados. Expansão de todos os níveis e idiomas permanece aberta
 - [x] Expor a progressão curricular A1 na Base de Estudos — filtro por quatro unidades autorais, identificação de unidade no conteúdo e ligação visível ao ciclo Pareto, frase e consulta do professor; TypeScript sem erros, validação visual e 185 arquivos/427 testes aprovados
