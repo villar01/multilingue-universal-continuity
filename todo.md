@@ -1529,6 +1529,8 @@
 - [x] Adicionar regressão dedicada para a rota do Livro ABC, o ícone SOS voluntário em cena e lição e o retorno contextual à atividade de origem — teste cobre rota protegida, destino interno seguro, botão voluntário em Cena e Lição e retorno em cascata após Pareto; TypeScript e 4 regressões dedicadas aprovados
 
 - [x] Migrar o conteúdo exibido do Livro ABC para entrega curricular protegida, removendo frases e método do pacote do navegador sem alterar o retorno SOS — a edição PT-BR → inglês é entregue por procedimento protegido, validado por autorização curricular; o cliente mantém apenas a leitura e o retorno SOS; TypeScript e 5 regressões dedicadas aprovados
+
+- [x] Adicionar a primeira ficha de termo protegida ao Livro ABC PT-BR → inglês — a ficha de need apresenta sentido, função, pronúncia, padrão, exemplo e prática Pareto, todos recebidos pelo contrato curricular protegido; TypeScript e 7 regressões do Livro aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados

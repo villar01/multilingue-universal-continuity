@@ -84,6 +84,19 @@ export default function ABCBook() {
             </div>
           </section>
 
+          <section className="border-y border-stone-200 bg-stone-50 px-5 py-6 sm:px-6">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Ficha de termo</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">{book.termCard.term}</h2>
+            <p className="mt-1 text-sm font-semibold text-slate-600">{book.termCard.meaning}</p>
+            <dl className="mt-5 grid gap-4 text-sm leading-6 sm:grid-cols-2">
+              <div><dt className="font-bold text-slate-900">Função</dt><dd className="mt-1 text-slate-700">{book.termCard.grammar}</dd></div>
+              <div><dt className="font-bold text-slate-900">Pronúncia</dt><dd className="mt-1 text-slate-700">{book.termCard.pronunciation}</dd></div>
+              <div><dt className="font-bold text-slate-900">Padrão útil</dt><dd className="mt-1 text-slate-700">{book.termCard.pattern}</dd></div>
+              <div><dt className="font-bold text-slate-900">Exemplo</dt><dd className="mt-1 text-slate-700">{book.termCard.example}</dd></div>
+            </dl>
+            <p className="mt-5 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700">{book.termCard.paretoPrompt}</p>
+          </section>
+
           {book.sections.map((section, index) => (
             <section key={section.title} className="border-b border-stone-200 pb-8 last:border-b-0">
               <div className="flex items-start gap-3"><span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span><div><h2 className="font-serif text-xl font-bold">{section.title}</h2><p className="mt-2 leading-7 text-slate-700">{section.text}</p><blockquote className="mt-4 border-l-2 border-slate-300 bg-stone-50 px-4 py-3 text-sm font-semibold italic leading-6 text-slate-700">{section.example}</blockquote></div></div>

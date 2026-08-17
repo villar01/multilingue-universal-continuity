@@ -16,6 +16,15 @@ export type ABCBookDelivery = {
   targetLabel: string;
   introduction: string;
   survivalIntro: string;
+  termCard: {
+    term: string;
+    meaning: string;
+    grammar: string;
+    pronunciation: string;
+    pattern: string;
+    example: string;
+    paretoPrompt: string;
+  };
   sections: ABCBookSection[];
   phrases: ABCBookPhrase[];
 };
@@ -26,6 +35,15 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   targetLabel: "Inglês",
   introduction: "Quando uma frase, uma palavra ou uma resposta parecer difícil, use este livro como um caderno de apoio. Comece pelo sentido, observe o padrão, recupere a palavra sem consultar e aplique-a em uma nova frase. O professor e a cena continuam disponíveis depois que você fechar o livro.",
   survivalIntro: "Leia primeiro em inglês, confirme o sentido em português e depois cubra a linha em inglês para recuperá-la de memória. Estas frases também servem como ponto de partida para falar com o professor.",
+  termCard: {
+    term: "need",
+    meaning: "precisar; ter necessidade de",
+    grammar: "verbo principal; costuma ser seguido de um substantivo ou de to + verbo",
+    pronunciation: "/niːd/ — alongue a vogal central antes do d final",
+    pattern: "I need + coisa/ação: I need water. / I need to study.",
+    example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
+    paretoPrompt: "Sem olhar, escreva uma necessidade real sua usando need e leve a frase para a prática Pareto.",
+  },
   phrases: [
     { english: "Hello. How are you?", portuguese: "Olá. Como você está?", focus: "Saudação e pergunta" },
     { english: "I am learning English.", portuguese: "Eu estou aprendendo inglês.", focus: "Identidade e objetivo" },
