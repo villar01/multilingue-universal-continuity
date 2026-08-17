@@ -1588,6 +1588,6 @@
 
 - [ ] Auditar fluxos críticos do aplicativo e criar regressões permanentes para impedir o retorno de falhas reproduzíveis
 
-- [ ] Criar contrato integrado para acesso autenticado, abertura de diálogo, Pareto, objetos e voz manual sem cache tRPC
+- [x] Criar contrato integrado para acesso autenticado, abertura de diálogo, Pareto, objetos e voz manual sem cache tRPC — nova regressão valida os quatro contratos compartilhados; TypeScript sem erros e suíte completa com 221 arquivos/575 testes aprovados
 
 - [x] Retomar uma única vez às 21h pela validação visual do Pareto, suíte completa e correções críticas comprovadas — agendamento ativo para 21h no fuso America/Sao_Paulo, sem repetição e com expiração às 23h30
