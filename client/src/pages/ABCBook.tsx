@@ -124,6 +124,7 @@ export default function ABCBook() {
                 <article key={card.term} className="border border-stone-200 bg-white p-5 shadow-sm">
                   <h3 className="font-serif text-xl font-bold text-slate-950">{card.term}</h3>
                   <p className="mt-1 text-sm font-semibold text-slate-600">{card.meaning}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Pronúncia:</strong> {card.pronunciation}</p>
                   <p className="mt-4 text-sm leading-6 text-slate-700"><strong>Função:</strong> {card.grammar}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Padrão:</strong> {card.pattern}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Exemplo:</strong> {card.example}</p>

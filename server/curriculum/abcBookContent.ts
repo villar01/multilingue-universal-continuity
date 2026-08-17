@@ -41,6 +41,7 @@ export type ABCBookDelivery = {
   additionalTermCards: Array<{
     term: string;
     meaning: string;
+    pronunciation: string;
     grammar: string;
     pattern: string;
     example: string;
@@ -89,6 +90,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "help",
       meaning: "ajuda; ajudar",
+      pronunciation: "/hɛlp/",
       grammar: "substantivo contável ou verbo; com need, atua como substantivo",
       pattern: "I need help with + assunto: I need help with this word.",
       example: "Can you help me, please? — Você pode me ajudar, por favor?",
@@ -97,6 +99,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "water",
       meaning: "água",
+      pronunciation: "/ˈwɔː.t̬ɚ/",
       grammar: "substantivo não contável; use some ou a glass of para indicar quantidade",
       pattern: "I would like + água/bebida: I would like water, please.",
       example: "Could I have some water, please? — Eu poderia tomar um pouco de água, por favor?",
@@ -105,6 +108,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "where",
       meaning: "onde",
+      pronunciation: "/wɛr/",
       grammar: "advérbio interrogativo usado para perguntar por lugar ou localização",
       pattern: "Where is + lugar/coisa?: Where is the hotel?",
       example: "Where is the airport? — Onde fica o aeroporto?",
@@ -113,6 +117,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "airport",
       meaning: "aeroporto",
+      pronunciation: "/ˈɛr.pɔːrt/",
       grammar: "substantivo contável; use the quando falar de um aeroporto específico conhecido no contexto",
       pattern: "at/to the airport: I am at the airport. / I need to go to the airport.",
       example: "I need help at the airport. — Eu preciso de ajuda no aeroporto.",
@@ -121,6 +126,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "friend",
       meaning: "amigo; amiga",
+      pronunciation: "/frɛnd/",
       grammar: "substantivo contável; use my, your, his ou her para indicar de quem é a amizade",
       pattern: "My friend + verbo: My friend studies English.",
       example: "My friend practices with me. — Minha amiga pratica comigo.",
@@ -129,6 +135,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "morning",
       meaning: "manhã",
+      pronunciation: "/ˈmɔːr.nɪŋ/",
       grammar: "substantivo de período do dia; use in the morning para situar uma rotina",
       pattern: "ação + in the morning: I study English in the morning.",
       example: "I practice new words in the morning. — Eu pratico palavras novas de manhã.",
@@ -137,6 +144,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "study",
       meaning: "estudar",
+      pronunciation: "/ˈstʌd.i/",
       grammar: "verbo regular; com I, you, we e they, use study; com he, she e it, use studies",
       pattern: "I study + idioma/assunto: I study English every day.",
       example: "We study new words together. — Nós estudamos palavras novas juntos.",
@@ -145,6 +153,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "tomorrow",
       meaning: "amanhã",
+      pronunciation: "/təˈmɑːr.oʊ/",
       grammar: "advérbio de tempo; pode aparecer no fim ou no início de uma frase sobre um plano próximo",
       pattern: "I will + ação + tomorrow: I will practice tomorrow.",
       example: "I will review this word tomorrow. — Vou revisar esta palavra amanhã.",
@@ -153,6 +162,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "book",
       meaning: "livro",
+      pronunciation: "/bʊk/",
       grammar: "substantivo contável; use a/an para um livro e the para um livro específico no contexto",
       pattern: "This is + a book: This is a useful book.",
       example: "I have a book for my English class. — Eu tenho um livro para minha aula de inglês.",
@@ -161,6 +171,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     {
       term: "work",
       meaning: "trabalhar; trabalho",
+      pronunciation: "/wɝːk/",
       grammar: "pode ser verbo ou substantivo não contável; como verbo, use work com I, you, we e they",
       pattern: "I work + lugar/horário: I work in the morning.",
       example: "I work and study English every day. — Eu trabalho e estudo inglês todos os dias.",
