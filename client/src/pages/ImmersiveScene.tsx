@@ -1938,7 +1938,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -1977,7 +1977,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
