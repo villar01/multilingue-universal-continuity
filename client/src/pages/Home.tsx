@@ -520,7 +520,7 @@ export default function Home() {
                 icon: <Users className="h-8 w-8 text-green-600" />,
                 bg: "bg-green-50",
                 border: "border-green-200",
-                title: "143 Professores Virtuais",
+                title: "94 Professores Virtuais",
                 desc: "Cada professor é nativo do seu idioma. Fotos reais, animação labial sincronizada, personalidade única e voz autêntica.",
               },
               {
