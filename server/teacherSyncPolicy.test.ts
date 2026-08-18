@@ -52,6 +52,30 @@ describe("teacher sync policy", () => {
         prefersReducedMotion: false,
       })
     ).toBe("stable_portrait");
+
+    expect(
+      selectTeacherSyncMode({
+        hasExactAudioVideoPair: false,
+        isOnlineResponse: true,
+        localVisemeEngineValidated: true,
+        supportsAudioWorklet: false,
+        hardwareConcurrency: 8,
+        deviceMemoryGb: 8,
+        prefersReducedMotion: false,
+      })
+    ).toBe("stable_portrait");
+
+    expect(
+      selectTeacherSyncMode({
+        hasExactAudioVideoPair: false,
+        isOnlineResponse: true,
+        localVisemeEngineValidated: true,
+        supportsAudioWorklet: true,
+        hardwareConcurrency: 8,
+        deviceMemoryGb: 8,
+        prefersReducedMotion: true,
+      })
+    ).toBe("stable_portrait");
   });
 
   it("does not degrade the free local mode when an optional advanced service exists", () => {
