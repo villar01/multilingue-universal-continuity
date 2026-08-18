@@ -66,6 +66,13 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("if (fallback?.immediate) {");
   });
 
+  it("separa pergunta livre do avanço automático das alternativas roteirizadas", () => {
+    expect(sceneSource).toContain("if (!line.options || line.correctIndex === undefined) {");
+    expect(sceneSource).toContain("void askImmersiveTutor(provided);");
+    expect(sceneSource).toContain("return;");
+    expect(sceneSource).toContain("window.setTimeout(() => dlgNext(), 1400);");
+  });
+
   it("keeps James on a named male browser voice instead of substituting another gender", () => {
     expect(sceneSource).toContain("const maleVoicePattern");
     expect(sceneSource).toContain("if (gender && !preferredVoice) return false;");
