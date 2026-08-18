@@ -14,8 +14,11 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("scene-dialogue-speech-timeout");
     expect(source).toContain("const playLocalDialogFallback = useCallback");
     expect(source).toContain("synth.speak(utterance);");
-    expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
+    expect(source).toContain("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
     expect(source).toContain('"Ouvir inglês"');
+    expect(source).not.toContain("A voz neural não respondeu.");
+    expect(source).not.toContain("A faixa neural não ficou disponível.");
+    expect(source).not.toContain("A voz da cena não está disponível agora.");
     expect(source).toContain("audioBase64ToDataUrl");
     expect(source).toContain('audioBase64ToDataUrl(result.audioBase64, "audio/mpeg")');
     expect(source).toContain('audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg")');
@@ -50,7 +53,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
     expect(neuralPreparation).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
-    expect(neuralPreparation).toContain("James está usando a voz masculina de reserva do navegador.");
+    expect(neuralPreparation).toContain("Sua frase está pronta para repetir. Toque em Ouvir inglês para continuar.");
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 

@@ -1433,14 +1433,14 @@ export default function ImmersiveScene() {
       // nomes explicitamente femininos e prioriza uma voz regional masculina.
       // Assim uma faixa neural inválida não deixa a pergunta do aluno silenciosa.
       if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
-        setDlgAudioNotice("A faixa neural não ficou disponível. James está usando a voz masculina de reserva do navegador.");
+        setDlgAudioNotice("Sua frase está pronta para repetir. Toque em Ouvir inglês para continuar.");
         return;
       }
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(false);
       setActiveSpeechText("");
       releaseRequest();
-      setDlgAudioNotice("A faixa neural não ficou disponível. Toque em Ouvir inglês para tentar novamente.");
+      setDlgAudioNotice("Toque em Ouvir inglês para continuar a prática de pronúncia.");
     };
     audio.onplay = () => {
       setIsPreparingNeuralAudio(false);
@@ -1526,7 +1526,7 @@ export default function ImmersiveScene() {
       await audio.play();
       setDlgAudioNotice("");
     } catch {
-      setDlgAudioNotice("Não foi possível iniciar esta voz. Use a voz do navegador para ouvir a fala.");
+      setDlgAudioNotice("Toque em Ouvir inglês para escutar a frase e continuar a prática.");
     }
   }, [dialogAudioSource, dialogSpeechRate]);
 
@@ -1606,11 +1606,11 @@ export default function ImmersiveScene() {
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
     if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
-      setDlgAudioNotice("A voz neural não respondeu. A fala está usando a voz disponível neste navegador; toque em Ouvir inglês para repetir.");
+      setDlgAudioNotice("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
       return;
     }
     if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-    setGreetingText("A voz neural não está disponível agora. Toque novamente para ouvir a pronúncia natural.");
+    setGreetingText("Toque em Ouvir inglês para escutar a pronúncia e continuar a prática.");
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setActiveSpeechText("");
@@ -1627,7 +1627,7 @@ export default function ImmersiveScene() {
       const requestKey = `local-dialog:${language}:${effectiveGender}:${text}`;
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
-      setGreetingText("A sessão ativa a voz neural. Enquanto isso, a fala em inglês usa a voz disponível neste navegador.");
+      setGreetingText("Toque em Ouvir inglês quando quiser escutar a fala do professor.");
       setShowGreeting(true);
       setActiveSpeechText(text);
       setIsPreparingNeuralAudio(true);
@@ -1638,14 +1638,14 @@ export default function ImmersiveScene() {
           if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
-          setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
+          setDlgFeedback("Leia a frase e toque em Ouvir inglês quando quiser escutá-la.");
         })
         .catch(() => {
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
           if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
-          setDlgFeedback("A voz da cena não está disponível agora. Leia a fala em inglês e tente novamente.");
+          setDlgFeedback("Leia a frase e toque em Ouvir inglês quando quiser escutá-la.");
         });
       return;
     }
