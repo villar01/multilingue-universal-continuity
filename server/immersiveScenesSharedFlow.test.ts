@@ -11,6 +11,8 @@ describe("fluxo compartilhado das cenas imersivas", () => {
   it("mantém o catálogo de 29 cenas em uma única tela com uma única cadeia de pergunta, resposta e voz", () => {
     expect(scenesStart).toBeGreaterThan(-1);
     expect((scenesCatalog.match(/^\s*id:\s*"/gm) || [])).toHaveLength(29);
+    expect((scenesCatalog.match(/^\s*teacherName:\s*"/gm) || [])).toHaveLength(29);
+    expect((scenesCatalog.match(/^\s*teacherImage:\s*"/gm) || [])).toHaveLength(29);
     expect((source.match(/const askImmersiveTutor = useCallback/g) || [])).toHaveLength(1);
     expect((source.match(/const requestSpeechSafely = useCallback/g) || [])).toHaveLength(1);
     expect((source.match(/const playTeacherAudio = useCallback/g) || [])).toHaveLength(1);
@@ -21,5 +23,11 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     expect(sharedSpeech.indexOf("if (await playEdgeNeural()) return;")).toBeLessThan(sharedSpeech.indexOf("const googleAudio"));
     expect(sharedSpeech).toContain('audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg")');
     expect(sharedSpeech).not.toContain('selectedScene?.id === "beach"');
+  });
+
+  it("renderiza o professor fora de cartões condicionais, para que permaneça presente em toda cena aberta", () => {
+    expect(source).toContain("scene={teachingScene ?? selectedScene!}");
+    expect(source).toContain("<TeacherAvatar");
+    expect(source.indexOf("<TeacherAvatar")).toBeLessThan(source.indexOf("{/* ── Dialog Panel:"));
   });
 });
