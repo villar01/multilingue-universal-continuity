@@ -8,10 +8,12 @@ const source = readFileSync(
 );
 
 describe("rotina automática de diagnóstico", () => {
-  it("usa o cliente assíncrono do pool antes de desestruturar resultados SQL", () => {
-    expect(source).toContain("const pool = (db.$client as any).promise();");
-    expect(source).toContain("const [telemetryRows] = await pool.execute(");
-    expect(source).toContain(") as [TelemetryRow[], unknown];");
+  it("normaliza o cliente e resultados SQL sem desestruturar respostas incompatíveis", () => {
+    expect(source).toContain('const pool = typeof client.promise === "function" ? client.promise() : client;');
+    expect(source).toContain("function extractTelemetryRows(result: unknown): TelemetryRow[]");
+    expect(source).toContain("function extractInsertId(result: unknown): number");
+    expect(source).not.toContain("const [telemetryRows] = await pool.execute(");
+    expect(source).not.toContain("const [result] = await pool.execute(");
   });
 
   it("mantém a rotina em modo de diagnóstico sem aplicar alterações autônomas", () => {

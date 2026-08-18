@@ -17,16 +17,29 @@ interface TelemetryRow {
   count: number;
 }
 
+function extractTelemetryRows(result: unknown): TelemetryRow[] {
+  const rows = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+  return Array.isArray(rows) ? rows as TelemetryRow[] : [];
+}
+
+function extractInsertId(result: unknown): number {
+  const header = Array.isArray(result) ? result[0] : result;
+  const insertId = (header as { insertId?: unknown } | undefined)?.insertId;
+  return typeof insertId === "number" ? insertId : 0;
+}
+
 export async function runAISelfImprove(): Promise<{ success: boolean; message: string; insightId?: number }> {
   const db = await getDb();
   const today = new Date().toISOString().split("T")[0];
   if (!db) return { success: false, message: "Banco de dados não disponível." };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pool = (db.$client as any).promise();
+  // O adaptador pode expor um pool MySQL de callback ou um cliente de Promise.
+  // Ambos são aceitos; o resultado é normalizado antes de ser consumido.
+  const client = db.$client as any;
+  const pool = typeof client.promise === "function" ? client.promise() : client;
 
   try {
     // 1. Coletar telemetria das últimas 24h
-    const [telemetryRows] = await pool.execute(`
+    const telemetryResult = await pool.execute(`
       SELECT 
         event_type,
         context,
@@ -36,7 +49,8 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
       GROUP BY event_type, context
       ORDER BY count DESC
       LIMIT 50
-    `) as [TelemetryRow[], unknown];
+    `);
+    const telemetryRows = extractTelemetryRows(telemetryResult);
 
     if (!telemetryRows || telemetryRows.length === 0) {
       return { success: true, message: "Sem telemetria para analisar nas últimas 24h." };
@@ -87,7 +101,7 @@ IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permiss�
     const diagnosis = typeof content === "string" ? JSON.parse(content) : content;
 
     // 4. Salvar insight no banco
-    const [result] = await pool.execute(`
+    const insertResult = await pool.execute(`
       INSERT INTO ai_insights 
         (insight_type, title, description, data_source, affected_users, recommendations, severity, status)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -100,9 +114,9 @@ IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permiss�
       JSON.stringify(diagnosis.recommendations),
       totalErrors > 10 ? "critical" : totalErrors > 3 ? "warning" : "info",
       "new"
-    ]) as [{ insertId: number }, unknown];
+    ]);
 
-    const insightId = result.insertId;
+    const insightId = extractInsertId(insertResult);
 
     // 5. Notificar owner se há alertas de segurança ou erros críticos
     const hasSecurityAlerts = diagnosis.securityAlerts?.length > 0;
