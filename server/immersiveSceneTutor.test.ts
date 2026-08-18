@@ -26,6 +26,13 @@ describe("tutor contextual da cena imersiva", () => {
     expect(getSceneTutorReply("where is my house near to the beach?", beachObjects)?.text).toContain("can’t see a house");
   });
 
+  it("explica que a praia é uma cena genérica ao receber uma pergunta de localização", () => {
+    const reply = getSceneTutorReply("Where is the beach?", beachObjects);
+    expect(reply?.immediate).toBe(true);
+    expect(reply?.text).toContain("generic tropical beach learning scene");
+    expect(reply?.text).toContain("not a real beach in a specific country");
+  });
+
   it("recusa linguagem abusiva sem repetir ofensa ao aluno", () => {
     const reply = getSceneTutorReply("you are an asshole", beachObjects);
     expect(reply?.blocked).toBe(true);

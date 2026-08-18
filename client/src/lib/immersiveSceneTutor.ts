@@ -75,12 +75,14 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     const needsSingularCorrection = /\bwhere\s+are\b/.test(normalizedQuestion);
     const location = mentionedHotspot
       ? `I can see ${subject} in this scene.`
-      : "This is our tropical beach scene.";
+      : "This is a generic tropical beach learning scene, not a real beach in a specific country.";
     return {
       text: `James: ${needsSingularCorrection ? `Say: ‘${correctedQuestion}’ ` : ""}${location}`,
       nativeText: needsSingularCorrection
         ? `Correção: use ‘is’ porque “${mentionedHotspot?.label || "beach"}” é singular. Em português: “Onde fica ${mentionedHotspot ? `a/o ${mentionedHotspot.translation}` : "esta praia"}?”`
-        : `Em português: “Onde fica ${mentionedHotspot ? `a/o ${mentionedHotspot.translation}` : "esta praia"}?”`,
+        : mentionedHotspot
+          ? `Em português: “Onde fica a/o ${mentionedHotspot.translation}?”`
+          : "Esta é uma cena de aprendizagem de praia tropical genérica, não uma praia real de um país específico.",
       hotspotId: mentionedHotspot?.id,
       immediate: true,
     };
