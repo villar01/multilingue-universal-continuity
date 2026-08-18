@@ -35,14 +35,14 @@ export const curriculumRouter = router({
 
   studyBase: protectedProcedure.input(accessInput).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
-    return entitlement.isPaid
+    return entitlement.hasFullCurriculum
       ? { entries: STUDY_BASE_A1_ENTRIES, structuredUnits: STRUCTURED_A1_UNITS }
       : { entries: STUDY_BASE_A1_ENTRIES.slice(0, 1), structuredUnits: STRUCTURED_A1_UNITS.slice(0, 1) };
   }),
 
   pareto: protectedProcedure.input(accessInput.extend({ scene: z.string().trim().max(80).optional() })).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
-    if (!entitlement.isPaid) return PARETO_VOCAB.slice(0, 10);
+    if (!entitlement.hasFullCurriculum) return PARETO_VOCAB.slice(0, 10);
     return input.scene ? PARETO_VOCAB.filter((word) => word.scene === input.scene) : PARETO_VOCAB;
   }),
 
@@ -53,9 +53,9 @@ export const curriculumRouter = router({
     page: z.number().int().min(0).default(0),
     pageSize: z.number().int().min(1).max(10).default(10),
   })).query(async ({ ctx, input }) => {
-    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     const programWords = getParetoProgramWords();
-    const authorizedWords = programWords;
+    const authorizedWords = entitlement.hasFullCurriculum ? programWords : programWords.slice(0, 10);
     const scopedWords = input.scene ? authorizedWords.filter((word) => word.scene === input.scene) : authorizedWords;
     const start = input.page * input.pageSize;
     const pageWords = scopedWords.slice(start, start + input.pageSize);
@@ -102,7 +102,7 @@ export const curriculumRouter = router({
 
   languageBlocks: protectedProcedure.input(accessInput.extend({ level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).optional() })).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
-    if (!entitlement.isPaid) return LANGUAGE_BLOCKS.slice(0, 2);
+    if (!entitlement.hasFullCurriculum) return LANGUAGE_BLOCKS.slice(0, 2);
     return input.level ? LANGUAGE_BLOCKS.filter((block) => block.cefr === input.level) : LANGUAGE_BLOCKS;
   }),
 });

@@ -1,0 +1,1 @@
+ALTER TABLE `learning_trials` ADD `expires_at` timestamp;

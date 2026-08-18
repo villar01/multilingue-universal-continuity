@@ -20,7 +20,7 @@ export function getPedagogicalShortcutHrefs(location: string) {
 
 export function shouldShowPedagogicalQuickAccess(location: string) {
   const path = location.split("?")[0] || "/";
-  return !["/", "/abc-book", "/onboarding"].includes(path) && !path.startsWith("/admin") && !path.startsWith("/checkout");
+  return !["/", "/abc-book", "/pareto-1000", "/onboarding"].includes(path) && !path.startsWith("/admin") && !path.startsWith("/checkout");
 }
 
 export function PedagogicalQuickAccess() {

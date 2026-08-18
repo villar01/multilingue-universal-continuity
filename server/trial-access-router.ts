@@ -4,6 +4,7 @@ import { z } from "zod";
 import { learningTrials, parentalConsents, termsAcceptances, trialLessonAccesses, userSafetyProfile, users } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { getTrialExpiryDate, hasFullCurriculumAccess, isTrialExpired } from "./trial-access-policy";
 
 export const TRIAL_LESSON_LIMIT = 10;
 
@@ -78,17 +79,33 @@ async function assertAcceptedTerms(userId: number) {
 
 export async function getLearningContentEntitlement(userId: number) {
   const db = await assertAcceptedTerms(userId);
-  const [account] = await db.select({ subscriptionType: users.subscriptionType }).from(users).where(eq(users.id, userId)).limit(1);
-  const [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, userId)).limit(1);
+  const [account] = await db.select({ subscriptionType: users.subscriptionType, role: users.role }).from(users).where(eq(users.id, userId)).limit(1);
+  let [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, userId)).limit(1);
   const isPaid = account?.subscriptionType !== "free" && account?.subscriptionType != null;
+  const hasFullCurriculum = hasFullCurriculumAccess(account ?? {});
   const lessonLimit = trial?.lessonLimit ?? TRIAL_LESSON_LIMIT;
   const lessonsUsed = trial?.lessonsUsed ?? 0;
+  let expiresAt = trial?.expiresAt ?? null;
 
-  if (!isPaid && lessonsUsed >= lessonLimit) {
+  if (!hasFullCurriculum && trial) {
+    expiresAt = getTrialExpiryDate(trial.expiresAt);
+    if (!trial.expiresAt) {
+      await db.update(learningTrials).set({ expiresAt }).where(eq(learningTrials.id, trial.id));
+      trial = { ...trial, expiresAt };
+    }
+    if (isTrialExpired(expiresAt)) {
+      if (trial.status !== "expired") {
+        await db.update(learningTrials).set({ status: "expired" }).where(eq(learningTrials.id, trial.id));
+      }
+      throw new TRPCError({ code: "FORBIDDEN", message: "O período gratuito de 14 dias foi concluído." });
+    }
+  }
+
+  if (!hasFullCurriculum && lessonsUsed >= lessonLimit) {
     throw new TRPCError({ code: "FORBIDDEN", message: "O período gratuito de 10 lições foi concluído." });
   }
 
-  return { db, isPaid, lessonLimit, lessonsUsed };
+  return { db, isPaid, hasFullCurriculum, lessonLimit, lessonsUsed, expiresAt };
 }
 
 /**
@@ -98,7 +115,7 @@ export async function getLearningContentEntitlement(userId: number) {
  */
 export async function getAuthorizedTrialLessonIds(userId: number, entitlement?: Awaited<ReturnType<typeof getLearningContentEntitlement>>) {
   const resolvedEntitlement = entitlement ?? await getLearningContentEntitlement(userId);
-  if (resolvedEntitlement.isPaid) return null;
+  if (resolvedEntitlement.hasFullCurriculum) return null;
 
   const accesses = await resolvedEntitlement.db
     .select({ lessonKey: trialLessonAccesses.lessonKey })
@@ -113,7 +130,7 @@ export async function getAuthorizedTrialLessonIds(userId: number, entitlement?: 
 
 export async function hasAuthorizedTrialLessonKey(userId: number, lessonKey: string, entitlement?: Awaited<ReturnType<typeof getLearningContentEntitlement>>): Promise<boolean> {
   const resolvedEntitlement = entitlement ?? await getLearningContentEntitlement(userId);
-  if (resolvedEntitlement.isPaid) return true;
+  if (resolvedEntitlement.hasFullCurriculum) return true;
   const [access] = await resolvedEntitlement.db
     .select({ id: trialLessonAccesses.id })
     .from(trialLessonAccesses)
@@ -131,18 +148,35 @@ export function filterLessonsForEntitlement<T extends { id: number }>(lessons: T
 export const trialAccessRouter = router({
   status: protectedProcedure.query(async ({ ctx }) => {
     const db = await assertAcceptedTerms(ctx.user.id);
-    const [account] = await db.select({ subscriptionType: users.subscriptionType }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
-    const [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
+    const [account] = await db.select({ subscriptionType: users.subscriptionType, role: users.role }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+    let [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
     const isPaid = account?.subscriptionType !== "free" && account?.subscriptionType != null;
+    const hasFullCurriculum = hasFullCurriculumAccess(account ?? {});
     const lessonsUsed = trial?.lessonsUsed ?? 0;
     const lessonLimit = trial?.lessonLimit ?? TRIAL_LESSON_LIMIT;
+    let expiresAt = trial?.expiresAt ?? null;
+
+    if (!hasFullCurriculum && trial) {
+      expiresAt = getTrialExpiryDate(trial.expiresAt);
+      if (!trial.expiresAt) {
+        await db.update(learningTrials).set({ expiresAt }).where(eq(learningTrials.id, trial.id));
+        trial = { ...trial, expiresAt };
+      }
+      if (isTrialExpired(expiresAt) && trial.status !== "expired") {
+        await db.update(learningTrials).set({ status: "expired" }).where(eq(learningTrials.id, trial.id));
+      }
+    }
+    const expired = !hasFullCurriculum && isTrialExpired(expiresAt);
 
     return {
       isPaid,
+      hasFullCurriculum,
       lessonsUsed,
       lessonLimit,
-      remainingLessons: isPaid ? null : Math.max(0, lessonLimit - lessonsUsed),
-      limitReached: !isPaid && lessonsUsed >= lessonLimit,
+      expiresAt,
+      expired,
+      remainingLessons: hasFullCurriculum ? null : Math.max(0, lessonLimit - lessonsUsed),
+      limitReached: !hasFullCurriculum && lessonsUsed >= lessonLimit,
     };
   }),
 
@@ -150,15 +184,26 @@ export const trialAccessRouter = router({
     .input(z.object({ lessonKey: z.string().trim().min(1).max(160) }))
     .mutation(async ({ ctx, input }) => {
       const db = await assertAcceptedTerms(ctx.user.id);
-      const [account] = await db.select({ subscriptionType: users.subscriptionType }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+      const [account] = await db.select({ subscriptionType: users.subscriptionType, role: users.role }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
       const isPaid = account?.subscriptionType !== "free" && account?.subscriptionType != null;
+      const hasFullCurriculum = hasFullCurriculumAccess(account ?? {});
 
       let [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
       if (!trial) {
-        await db.insert(learningTrials).values({ userId: ctx.user.id, lessonLimit: TRIAL_LESSON_LIMIT, lessonsUsed: 0, status: "active" });
+        await db.insert(learningTrials).values({ userId: ctx.user.id, lessonLimit: TRIAL_LESSON_LIMIT, lessonsUsed: 0, status: "active", expiresAt: getTrialExpiryDate(null) });
         [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
       }
       if (!trial) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Não foi possível iniciar o período gratuito." });
+
+      const expiresAt = getTrialExpiryDate(trial.expiresAt);
+      if (!trial.expiresAt) {
+        await db.update(learningTrials).set({ expiresAt }).where(eq(learningTrials.id, trial.id));
+        trial = { ...trial, expiresAt };
+      }
+      if (!hasFullCurriculum && isTrialExpired(expiresAt)) {
+        await db.update(learningTrials).set({ status: "expired" }).where(eq(learningTrials.id, trial.id));
+        return { allowed: false, expired: true, remainingLessons: 0, lessonLimit: trial.lessonLimit, lessonsUsed: trial.lessonsUsed, expiresAt };
+      }
 
       const [previousAccess] = await db.select({ id: trialLessonAccesses.id })
         .from(trialLessonAccesses)
@@ -166,7 +211,7 @@ export const trialAccessRouter = router({
         .limit(1);
 
       const decision = decideTrialLessonAccess({
-        isPaid,
+        isPaid: hasFullCurriculum,
         lessonsUsed: trial.lessonsUsed,
         lessonLimit: trial.lessonLimit,
         isPreviouslyAuthorized: Boolean(previousAccess),
@@ -174,7 +219,7 @@ export const trialAccessRouter = router({
 
       if (!decision.allowed) {
         await db.update(learningTrials).set({ status: "limit_reached", limitReachedAt: new Date() }).where(eq(learningTrials.id, trial.id));
-        return { allowed: false, remainingLessons: 0, lessonLimit: trial.lessonLimit, lessonsUsed: trial.lessonsUsed };
+        return { allowed: false, expired: false, remainingLessons: 0, lessonLimit: trial.lessonLimit, lessonsUsed: trial.lessonsUsed, expiresAt };
       }
 
       let lessonsUsed = trial.lessonsUsed;
@@ -192,7 +237,9 @@ export const trialAccessRouter = router({
 
       return {
         allowed: true,
-        remainingLessons: isPaid ? null : Math.max(0, trial.lessonLimit - lessonsUsed),
+        expired: false,
+        expiresAt,
+        remainingLessons: hasFullCurriculum ? null : Math.max(0, trial.lessonLimit - lessonsUsed),
         lessonLimit: trial.lessonLimit,
         lessonsUsed,
       };

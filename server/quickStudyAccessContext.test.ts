@@ -31,6 +31,7 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(hrefs.teacher).toBe("/free-talk?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=beach")).toBe(true);
     expect(shouldShowPedagogicalQuickAccess("/abc-book")).toBe(false);
+    expect(shouldShowPedagogicalQuickAccess("/pareto-1000?returnTo=%2Fabc-book")).toBe(false);
   });
 
   it("registra a rota do Livro ABC e coloca SOS em cena e lição", () => {

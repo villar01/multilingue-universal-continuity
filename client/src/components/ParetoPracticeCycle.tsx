@@ -51,29 +51,29 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
   };
 
   return (
-    <section className={`${embedded ? "relative" : "absolute inset-x-3 bottom-3 z-[70]"} mx-auto max-w-xl rounded-3xl border border-amber-300/60 bg-slate-950/95 p-4 text-white shadow-2xl backdrop-blur-xl`} aria-label="Prática Pareto">
+    <section className={`${embedded ? "relative" : "absolute inset-x-3 bottom-3 z-[70]"} mx-auto max-w-xl rounded-3xl border border-amber-200 bg-[#fffefb] p-4 text-slate-900 shadow-2xl shadow-amber-950/15`} aria-label="Prática Pareto">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-300">Ciclo Pareto de memória</p>
-          <h3 className="mt-1 text-xl font-black">{term.word} <span className="text-sm font-medium text-slate-300">— {term.translation}</span></h3>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-800">Ciclo Pareto de memória</p>
+          <h3 className="mt-1 text-xl font-black">{term.word} <span className="text-sm font-medium text-slate-600">— {term.translation}</span></h3>
         </div>
-        <button type="button" onClick={onClose} className="rounded-full bg-white/10 px-3 py-1 text-sm hover:bg-white/20">Fechar</button>
+        <button type="button" onClick={onClose} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm hover:bg-amber-50">Fechar</button>
       </div>
 
       <div className="mb-4 grid grid-cols-4 gap-1 text-center text-[10px] font-bold sm:text-xs">
         {(Object.keys(STEP_LABEL) as ParetoPracticeStep[]).map((key, index) => (
-          <span key={key} className={`rounded-full px-1 py-1.5 ${index <= activeStep ? "bg-amber-400 text-slate-950" : "bg-white/10 text-slate-400"}`}>{STEP_LABEL[key]}</span>
+          <span key={key} className={`rounded-full px-1 py-1.5 ${index <= activeStep ? "bg-amber-400 text-slate-950" : "bg-amber-50 text-slate-500"}`}>{STEP_LABEL[key]}</span>
         ))}
       </div>
 
       {step === "observe" && (
         <div className="space-y-3">
-          <p className="text-sm text-slate-200">Primeiro compreenda o sentido em português. Depois leia, ouça e associe a palavra ao uso antes de tentar lembrar sem olhar.</p>
+          <p className="text-sm text-slate-700">Primeiro compreenda o sentido em português. Depois leia, ouça e associe a palavra ao uso antes de tentar lembrar sem olhar.</p>
           {term.example && (
-            <div className="rounded-xl border border-cyan-300/20 bg-white/5 p-3">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-200">Uso em inglês</p>
+            <div className="rounded-xl border border-sky-200 bg-sky-50 p-3">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-sky-800">Uso em inglês</p>
               <p className="mt-1 text-base font-semibold">{term.example}</p>
-              <p className="mt-2 text-sm font-medium text-amber-100"><span className="font-bold">Em português:</span> {term.exampleTranslation ?? `Sentido da palavra: ${term.translation}.`}</p>
+              <p className="mt-2 text-sm font-medium text-amber-800"><span className="font-bold">Em português:</span> {term.exampleTranslation ?? `Sentido da palavra: ${term.translation}.`}</p>
             </div>
           )}
           <div className="flex flex-wrap gap-2">
@@ -85,31 +85,31 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
 
       {step === "recall" && (
         <div className="space-y-3">
-          <p className="text-sm text-slate-200">Sem olhar: escreva em inglês a palavra para <strong>{term.translation}</strong>.</p>
-          <input value={recall} onChange={(event) => setRecall(event.target.value)} className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white outline-none focus:border-amber-300" autoComplete="off" />
+          <p className="text-sm text-slate-700">Sem olhar: escreva em inglês a palavra para <strong>{term.translation}</strong>.</p>
+          <input value={recall} onChange={(event) => setRecall(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-950 outline-none focus:border-amber-400" autoComplete="off" />
           <button type="button" onClick={() => checkRecall(recall, "write")} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Conferir memória</button>
         </div>
       )}
 
       {step === "write" && (
         <div className="space-y-3">
-          <p className="text-sm text-slate-200">Escreva novamente a palavra para fixar a grafia.</p>
-          <input value={written} onChange={(event) => setWritten(event.target.value)} className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white outline-none focus:border-amber-300" autoComplete="off" />
+          <p className="text-sm text-slate-700">Escreva novamente a palavra para fixar a grafia.</p>
+          <input value={written} onChange={(event) => setWritten(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-950 outline-none focus:border-amber-400" autoComplete="off" />
           <button type="button" onClick={() => checkRecall(written, "create")} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Validar escrita</button>
         </div>
       )}
 
       {step === "create" && !completed && (
         <div className="space-y-3">
-          <p className="text-sm text-slate-200">{levelRequirement.guidance} Use <strong>{term.word}</strong> em uma nova frase de {levelRequirement.minSentenceWords} a {levelRequirement.maxSentenceWords} palavras.</p>
-          <textarea value={sentence} onChange={(event) => setSentence(event.target.value)} rows={2} className="w-full resize-none rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white outline-none focus:border-amber-300" placeholder={`I see ${term.word}.`} />
+          <p className="text-sm text-slate-700">{levelRequirement.guidance} Use <strong>{term.word}</strong> em uma nova frase de {levelRequirement.minSentenceWords} a {levelRequirement.maxSentenceWords} palavras.</p>
+          <textarea value={sentence} onChange={(event) => setSentence(event.target.value)} rows={2} className="w-full resize-none rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-950 outline-none focus:border-amber-400" placeholder={`I see ${term.word}.`} />
           <button type="button" onClick={checkSentence} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Concluir prática</button>
         </div>
       )}
 
       {completed && (
-        <div className="space-y-3 rounded-2xl border border-emerald-300/35 bg-emerald-400/10 p-3">
-          <p className="font-bold text-emerald-100">Memória concluída: você lembrou, escreveu e criou uma frase com <strong>{term.word}</strong>.</p>
+        <div className="space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+          <p className="font-bold text-emerald-900">Memória concluída: você lembrou, escreveu e criou uma frase com <strong>{term.word}</strong>.</p>
           <button type="button" onClick={onNext || onClose} className="rounded-xl bg-emerald-300 px-3 py-2 text-sm font-bold text-slate-950">
             {onNext ? "Praticar próxima palavra" : "Concluir ciclo"}
           </button>
