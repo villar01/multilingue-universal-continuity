@@ -124,6 +124,13 @@ export default function Pareto1000() {
       ? requestedDestination
       : "/base-de-estudos";
   }, [searchParams]);
+  const returnLabel = useMemo(() => {
+    if (returnTo.startsWith("/immersive-scene")) return "Voltar à cena";
+    if (returnTo.startsWith("/abc-book")) return "Voltar ao Livro ABC";
+    if (returnTo.startsWith("/lesson/") || returnTo.startsWith("/structured-lesson")) return "Voltar à lição";
+    if (returnTo.startsWith("/base-de-estudos")) return "Voltar à Base";
+    return "Voltar ao painel";
+  }, [returnTo]);
 
   const selectParetoPath = useCallback((nextPath: (typeof PARETO_PATHS)[number]) => {
     const params = new URLSearchParams({ path: nextPath, returnTo });
@@ -234,7 +241,7 @@ export default function Pareto1000() {
       <article className="mx-auto max-w-4xl border border-stone-200 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.08)]">
         <header className="border-b border-stone-200 px-6 py-5 sm:px-10 sm:py-7">
           <div className="flex items-center justify-between gap-3">
-            <Link href={returnTo}><Button variant="ghost" className="h-auto gap-2 px-0 py-1 text-sm font-bold text-slate-600 hover:bg-transparent hover:text-slate-950"><ArrowLeft className="h-4 w-4" />Voltar à Base</Button></Link>
+            <Link href={returnTo}><Button variant="ghost" className="h-auto gap-2 px-0 py-1 text-sm font-bold text-slate-600 hover:bg-transparent hover:text-slate-950"><ArrowLeft className="h-4 w-4" />{returnLabel}</Button></Link>
             <span className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Pareto · 1.000 palavras</span>
           </div>
           <p className="mt-6 text-xs font-black uppercase tracking-[0.14em] text-amber-800">{paretoPath === "book" ? paretoQuery.data?.bookContext?.bookStep : sceneId ? "Pareto da cena imersiva" : "Curso Pareto avançado"}</p>

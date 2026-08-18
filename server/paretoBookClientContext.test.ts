@@ -23,4 +23,11 @@ describe("contextos do Pareto do Livro no cliente", () => {
     expect(clientSource).toContain('const requestedContext = searchParams.get("bookContext");');
     expect(clientSource).toContain('bookContext: paretoPath === "book" ? bookContext : undefined');
   });
+
+  it("nomeia o retorno de acordo com a origem contextual preservada", () => {
+    expect(clientSource).toContain('if (returnTo.startsWith("/immersive-scene")) return "Voltar à cena";');
+    expect(clientSource).toContain('if (returnTo.startsWith("/abc-book")) return "Voltar ao Livro ABC";');
+    expect(clientSource).toContain('if (returnTo.startsWith("/lesson/") || returnTo.startsWith("/structured-lesson")) return "Voltar à lição";');
+    expect(clientSource).toContain('<ArrowLeft className="h-4 w-4" />{returnLabel}');
+  });
 });
