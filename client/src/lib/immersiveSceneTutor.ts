@@ -45,6 +45,15 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     };
   }
 
+  if (/\bocean\b/.test(normalizedQuestion) && /\b(big|wide|large|vast)\b/.test(normalizedQuestion)) {
+    return {
+      text: "James: Yes. The ocean can be big and wide. In this scene, the ocean looks wide because we can see a long stretch of blue water. Practise: ‘The ocean is big and wide.’",
+      nativeText: "Sim. O oceano pode ser grande e amplo. Nesta cena ele parece amplo porque vemos uma longa extensão de água azul. Pratique: ‘The ocean is big and wide.’",
+      hotspotId: hotspots.find((hotspot) => normalize(hotspot.label).includes("ocean"))?.id,
+      immediate: true,
+    };
+  }
+
   const isLocationQuestion = /\bwhere\s+(is|are)\b/.test(normalizedQuestion);
   if (isLocationQuestion && /\bhouse\b|\bhome\b/.test(normalizedQuestion)) {
     const visibleObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");

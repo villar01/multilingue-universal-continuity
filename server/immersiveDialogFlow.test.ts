@@ -20,6 +20,15 @@ describe("fluxo livre do diálogo imersivo", () => {
     expect(reply?.immediate).toBe(true);
   });
 
+  it("responde imediatamente se o aluno pergunta se o ocean é big and wide", () => {
+    const reply = getFreeDialogQuestionReply("Is the ocean big and wide?", beachObjects);
+    expect(reply?.text).toContain("The ocean can be big and wide.");
+    expect(reply?.text).toContain("The ocean is big and wide.");
+    expect(reply?.nativeText).toContain("O oceano pode ser grande e amplo.");
+    expect(reply?.hotspotId).toBe("ocean");
+    expect(reply?.immediate).toBe(true);
+  });
+
   it("corrige uma pergunta singular com gramática inicial incorreta e mantém explicação em português", () => {
     const reply = getFreeDialogQuestionReply("where are this beach?", beachObjects);
     expect(reply?.text).toContain("Where is this beach?");

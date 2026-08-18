@@ -49,8 +49,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("const useFallbackForInvalidTrack");
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
-    expect(neuralPreparation).toContain('const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:")');
-    expect(neuralPreparation).toContain("if (!preserveJamesVoice && playLocalDialogFallback");
+    expect(neuralPreparation).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
+    expect(neuralPreparation).toContain("James está usando a voz masculina de reserva do navegador.");
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 
@@ -75,9 +75,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
   });
 
-  it("mantém a reserva de pronúncia disponível para objetos sem aplicar a restrição exclusiva do diálogo de James", () => {
-    expect(source).toContain('requestKey.startsWith("teacher:")');
-    expect(source).toContain("Pronúncias de objetos usam o fluxo");
+  it("mantém a reserva masculina de James disponível tanto para pergunta quanto para pronúncia", () => {
+    expect(source).toContain("James continua exclusivamente masculino");
+    expect(source).toContain("prioriza uma voz regional masculina");
+    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
   });
 
   it("mantém o único elemento de áudio montado e oculto quando o diálogo está fechado para os cartões de objeto", () => {

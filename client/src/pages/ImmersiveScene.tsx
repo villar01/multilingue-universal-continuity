@@ -1395,12 +1395,11 @@ export default function ImmersiveScene() {
         URL.revokeObjectURL(source);
         dialogAudioObjectUrlRef.current = null;
       }
-      // A exigência de não substituir James por uma voz feminina vale apenas
-      // para suas falas de professor. Pronúncias de objetos usam o fluxo
-      // próprio de reserva para não ficarem silenciosas por essa proteção.
-      const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:");
-      if (!preserveJamesVoice && playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
-        setDlgAudioNotice("A faixa neural não ficou disponível. A fala está usando a voz de reserva do navegador.");
+      // James continua exclusivamente masculino: o resolvedor local já exclui
+      // nomes explicitamente femininos e prioriza uma voz regional masculina.
+      // Assim uma faixa neural inválida não deixa a pergunta do aluno silenciosa.
+      if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
+        setDlgAudioNotice("A faixa neural não ficou disponível. James está usando a voz masculina de reserva do navegador.");
         return;
       }
       setIsPreparingNeuralAudio(false);
@@ -1903,6 +1902,15 @@ export default function ImmersiveScene() {
       ? fallback.text.replace(/^[^:]+:\s*/, "")
       : `${scene.teacherName}: I heard you. I will help you practise this lesson step by step.`;
     const immediateFeedback = `${scene.teacherName}: ${immediateReply.replace(/^[^:]+:\s*/, "")}${fallback?.immediate && fallback.nativeText ? `\n${nativeLangLabel}: ${fallback.nativeText}` : ""}`;
+    if (scene.id === "beach" && scene.teacherName === "James" && fallback?.hotspotId) {
+      const objectClipId = ({
+        palm: "james-tropical-point-palm",
+        wave: "james-tropical-point-wave",
+        ocean: "james-tropical-point-ocean",
+        sand: "james-tropical-point-sand",
+      } as const)[fallback.hotspotId as "palm" | "wave" | "ocean" | "sand"];
+      if (objectClipId) playJamesTropicalClip(objectClipId);
+    }
     setDlgFeedback(immediateFeedback);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
     requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);
@@ -1955,7 +1963,7 @@ export default function ImmersiveScene() {
       window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
     }
-  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
     const scene = teachingScene ?? selectedScene;

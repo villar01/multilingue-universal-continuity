@@ -23,13 +23,13 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
 
-  it("aplica a rejeição de faixa vazia pelo fluxo compartilhado das 29 cenas sem trocar James por outra voz", () => {
+  it("aplica a rejeição de faixa vazia pelo fluxo compartilhado das 29 cenas com reserva masculina para James", () => {
     const sceneIds = sceneSource.match(/^    id:"[^"]+"/gm) || [];
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const useFallbackForInvalidTrack");
     expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
-    expect(sceneSource).toContain('const preserveJamesVoice = selectedScene?.teacherName === "James" && requestKey.startsWith("teacher:")');
-    expect(sceneSource).toContain("if (!preserveJamesVoice && playLocalDialogFallback");
+    expect(sceneSource).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
+    expect(sceneSource).toContain("regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice");
     expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
   });
 
