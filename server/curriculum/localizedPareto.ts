@@ -21,6 +21,7 @@ export type LocalizedParetoWord = {
   frequency: number;
   targetExample: string;
   nativeExample: string;
+  regionalVariant?: { locale: "en-GB"; word: string };
   scene?: string;
 };
 
@@ -37,10 +38,18 @@ export function isInitialCommercialLanguageCode(languageCode: string): languageC
   return INITIAL_COMMERCIAL_LANGUAGE_CODES.includes(languageCode as InitialCommercialLanguageCode);
 }
 
-function directText(word: ParetoWord, languageCode: string): { word: string; example: string; pronunciation: string } | null {
+function directText(word: ParetoWord, languageCode: string): { word: string; example: string; pronunciation: string; regionalVariant?: { locale: "en-GB"; word: string } } | null {
   switch (languageBase(languageCode)) {
-    case "en":
-      return { word: word.enUS, example: word.example, pronunciation: word.pronunciation };
+    case "en": {
+      const requestedBritish = languageCode.trim().toLowerCase() === "en-gb";
+      const hasBritishVariant = Boolean(word.enGB && word.enGB !== word.enUS);
+      return {
+        word: requestedBritish && word.enGB ? word.enGB : word.enUS,
+        example: word.example,
+        pronunciation: requestedBritish && word.pronunciationGB ? word.pronunciationGB : word.pronunciation,
+        regionalVariant: !requestedBritish && hasBritishVariant ? { locale: "en-GB", word: word.enGB! } : undefined,
+      };
+    }
     case "pt":
       return { word: word.ptBR, example: word.examplePt, pronunciation: word.pronunciation };
     default:
@@ -68,6 +77,7 @@ export function resolveDirectParetoWords(
       frequency: word.frequency,
       targetExample: target.example,
       nativeExample: native.example,
+      regionalVariant: target.regionalVariant,
       scene: word.scene,
     } satisfies LocalizedParetoWord;
   });

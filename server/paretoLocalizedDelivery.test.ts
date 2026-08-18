@@ -29,6 +29,7 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(pageSource).toContain("bookContext,");
     expect(pageSource).toContain("chapter: paretoPath === \"book\" ? paretoChapter ?? undefined : undefined");
     expect(pageSource).toContain("paretoQuery.data?.bookContext?.grammarFocus");
+    expect(pageSource).toContain("No inglês britânico: {word.regionalVariant.word}");
     expect(pageSource).toContain("Desafio de estrutura");
     expect(pageSource).toContain("Conferir ordem");
     expect(pageSource).toContain("voiceLang: targetLanguage");

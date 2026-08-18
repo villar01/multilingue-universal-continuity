@@ -19,6 +19,16 @@ describe("Pareto localizado por dupla universal de idiomas", () => {
     ]));
   });
 
+  it("usa a grafia britânica revisada apenas quando a dupla a solicita e informa a alternativa no inglês americano", () => {
+    const goodbye = PARETO_VOCAB.find((word) => word.enUS === "Goodbye" && word.enGB === "Cheerio");
+    expect(goodbye).toBeDefined();
+    const american = resolveDirectParetoWords([goodbye!], "en-US", "pt-BR");
+    const british = resolveDirectParetoWords([goodbye!], "en-GB", "pt-BR");
+    expect(american?.[0]).toMatchObject({ targetWord: "Goodbye", regionalVariant: { locale: "en-GB", word: "Cheerio" } });
+    expect(british?.[0]).toMatchObject({ targetWord: "Cheerio" });
+    expect(british?.[0].regionalVariant).toBeUndefined();
+  });
+
   it("aceita qualquer código no contrato e nunca devolve outro idioma como fallback direto", () => {
     expect(resolveDirectParetoWords(PARETO_VOCAB.slice(0, 1), "es-ES", "ja-JP")).toBeNull();
     expect(resolveDirectParetoWords(PARETO_VOCAB.slice(0, 1), "fr-FR", "de-DE")).toBeNull();

@@ -63,6 +63,7 @@ export interface ParetoWord {
   frequency: number;
   example: string;
   examplePt: string;
+  regionalVariant?: { locale: "en-GB"; word: string };
   scene?: string;
 }
 
