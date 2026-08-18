@@ -65,7 +65,7 @@ export default function ABCBook() {
     );
   }
 
-  const totalBookPages = 10 + book.soundLessons.length + book.contextGroups.length + book.sections.length;
+  const totalBookPages = 10 + book.soundLessons.length + book.progressiveLessons.length + book.contextGroups.length + book.sections.length;
   const goBookPage = (page: number) => {
     const container = bookPagesRef.current;
     if (!container) return;
@@ -146,6 +146,34 @@ export default function ABCBook() {
                   <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
                 </article>
               </div>
+            </section>
+          ))}
+
+          {book.progressiveLessons.map((lesson, lessonIndex) => (
+            <section key={lesson.title} className="border-b border-stone-200 pb-8">
+              {lessonIndex === 0 && <><p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras e contextos em expansão</p><h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Uma ideia completa por folha</h2><p className="mt-3 max-w-3xl leading-7 text-slate-700">Leia a explicação, compare poucos exemplos, escreva e só então teste a ordem da frase. O Pareto reforça esta folha depois; ele não substitui a leitura.</p></>}
+              <article className={lessonIndex === 0 ? "mt-6" : ""}>
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">{lesson.section}</p>
+                <h3 className="mt-1 font-serif text-xl font-bold text-slate-950">{lesson.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
+                <p className="mt-3 border-l-2 border-amber-400 pl-4 text-sm font-semibold leading-6 text-slate-800"><strong className="text-slate-950">Observe:</strong> {lesson.languageFocus}</p>
+                <ol className="mt-5 divide-y divide-stone-200 border-y border-stone-200">
+                  {lesson.examples.map((example, index) => (
+                    <li key={example.target} className="grid gap-1 py-3 sm:grid-cols-[2rem_1fr_1fr] sm:gap-3">
+                      <span className="font-serif font-bold text-amber-700">{index + 1}</span>
+                      <p className="font-semibold text-slate-950">{example.target} <span className="font-normal text-slate-600">— {example.native}</span></p>
+                      <p className="text-sm leading-6 text-slate-700">{example.note}</p>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
+                <div className="mt-5 border-y border-stone-200 bg-stone-50 px-4 py-5 sm:px-5">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Prática depois da explicação</p>
+                  <p className="mt-2 text-sm font-semibold leading-7 text-slate-950">{lesson.scrambled.join(" · ")}</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Resposta-modelo:</strong> {lesson.answer}</p>
+                </div>
+                <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Pareto do Livro:</strong> {lesson.paretoPrompt}</p>
+              </article>
             </section>
           ))}
 

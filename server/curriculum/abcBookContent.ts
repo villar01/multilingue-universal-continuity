@@ -82,6 +82,22 @@ export type ABCBookSoundLesson = {
   writingPrompt: string;
 };
 
+export type ABCBookProgressiveLesson = {
+  section: string;
+  title: string;
+  explanation: string;
+  languageFocus: string;
+  examples: Array<{
+    target: string;
+    native: string;
+    note: string;
+  }>;
+  writingPrompt: string;
+  scrambled: string[];
+  answer: string;
+  paretoPrompt: string;
+};
+
 export type ABCBookDelivery = {
   available: true;
   edition: string;
@@ -92,6 +108,7 @@ export type ABCBookDelivery = {
   alphabetIntroduction: string;
   alphabetLetters: ABCAlphabetLetter[];
   soundLessons: ABCBookSoundLesson[];
+  progressiveLessons: ABCBookProgressiveLesson[];
   termCard: {
     term: string;
     meaning: string;
@@ -340,6 +357,368 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
         { target: "word", pronunciation: "/wɝːd/", native: "palavra" },
       ],
       writingPrompt: "Escreva: I learn one word. Leia learn e word preservando o final da palavra.",
+    },
+  ],
+  progressiveLessons: [
+    {
+      section: "Som e escrita",
+      title: "C e G: um som pode mudar",
+      explanation: "As letras c e g não têm sempre o mesmo som. Em palavras frequentes, observe a letra ao lado e trate cada palavra como uma combinação completa, não como uma letra isolada.",
+      languageFocus: "Compare o c de cat com o c de city e o g de go com o g de gentle.",
+      examples: [
+        { target: "cat", native: "gato", note: "c com som /k/" },
+        { target: "city", native: "cidade", note: "c com som /s/" },
+        { target: "go", native: "ir", note: "g com som /g/" },
+      ],
+      writingPrompt: "Copie cat e city. Depois escreva: I go to the city.",
+      scrambled: ["go", "I", "to", "the", "city"],
+      answer: "I go to the city.",
+      paretoPrompt: "No Pareto, recupere go e city pelo sentido e crie outra frase com to.",
+    },
+    {
+      section: "Som e escrita",
+      title: "O e silencioso no fim",
+      explanation: "Em muitas palavras, a letra e final não ganha uma sílaba própria, mas muda o som da vogal anterior. Compare uma forma curta e outra com e final.",
+      languageFocus: "A palavra final ajuda a perceber o som longo da vogal: cap/cape, kit/kite.",
+      examples: [
+        { target: "cap / cape", native: "boné / capa", note: "a muda de /æ/ para /eɪ/" },
+        { target: "kit / kite", native: "kit / pipa", note: "i muda de /ɪ/ para /aɪ/" },
+        { target: "not / note", native: "não / nota", note: "o muda de som" },
+      ],
+      writingPrompt: "Escreva os pares e circule a letra e final. Leia cada par lentamente.",
+      scrambled: ["a", "write", "note", "I"],
+      answer: "I write a note.",
+      paretoPrompt: "No Pareto, recupere note e write; depois descreva o que você escreve.",
+    },
+    {
+      section: "Som e escrita",
+      title: "Final -s: mais de uma forma de ouvir",
+      explanation: "O final -s pode indicar plural ou uma ação com he, she ou it. O som varia, mas a escrita ajuda a perceber a função da palavra na frase.",
+      languageFocus: "Veja books como plural e studies como ação de uma pessoa.",
+      examples: [
+        { target: "books", native: "livros", note: "plural de book" },
+        { target: "friends", native: "amigos", note: "plural de friend" },
+        { target: "she studies", native: "ela estuda", note: "verbo no presente com she" },
+      ],
+      writingPrompt: "Escreva uma frase com two books e outra com she studies.",
+      scrambled: ["studies", "English", "She", "every", "day"],
+      answer: "She studies English every day.",
+      paretoPrompt: "No Pareto, recupere book, friend e study; compare plural e verbo com s.",
+    },
+    {
+      section: "Som e escrita",
+      title: "Final -ed: ação concluída",
+      explanation: "O final -ed aparece em muitas ações no passado. Nesta etapa, primeiro reconheça o padrão e a ideia de ação concluída; a pronúncia detalhada será retomada mais adiante.",
+      languageFocus: "Palavras como worked e studied mostram que a ação aconteceu antes de agora.",
+      examples: [
+        { target: "worked", native: "trabalhou", note: "ação concluída" },
+        { target: "studied", native: "estudou", note: "y muda para i antes de ed" },
+        { target: "helped", native: "ajudou", note: "ação concluída" },
+      ],
+      writingPrompt: "Copie: I studied English yesterday. Depois troque studied por worked.",
+      scrambled: ["studied", "I", "English", "yesterday"],
+      answer: "I studied English yesterday.",
+      paretoPrompt: "No Pareto, recupere study, work e help e observe a ideia de ação concluída.",
+    },
+    {
+      section: "Palavras que constroem frases",
+      title: "Pronomes: quem aparece na frase",
+      explanation: "Em inglês, o sujeito normalmente é dito. Os pronomes substituem nomes e ajudam o leitor a saber quem faz a ação.",
+      languageFocus: "I, you, we e they acompanham pessoas; he, she e it apontam para uma pessoa ou coisa já conhecida.",
+      examples: [
+        { target: "I study.", native: "Eu estudo.", note: "quem fala" },
+        { target: "She works.", native: "Ela trabalha.", note: "uma pessoa mencionada" },
+        { target: "They live here.", native: "Eles moram aqui.", note: "mais de uma pessoa" },
+      ],
+      writingPrompt: "Escreva uma frase com I e outra com he, she ou they.",
+      scrambled: ["live", "They", "near", "here"],
+      answer: "They live near here.",
+      paretoPrompt: "No Pareto, recupere os pronomes e escolha o sujeito certo para cada ação.",
+    },
+    {
+      section: "Palavras que constroem frases",
+      title: "O verbo be: ser e estar",
+      explanation: "O verbo be liga uma pessoa, lugar ou coisa a uma informação. Ele muda conforme o sujeito: am, is e are.",
+      languageFocus: "Use I am, you are, he/she/it is e we/they are.",
+      examples: [
+        { target: "I am ready.", native: "Eu estou pronto ou pronta.", note: "am com I" },
+        { target: "She is my friend.", native: "Ela é minha amiga.", note: "is com she" },
+        { target: "We are at home.", native: "Nós estamos em casa.", note: "are com we" },
+      ],
+      writingPrompt: "Complete três frases verdadeiras com am, is ou are.",
+      scrambled: ["ready", "I", "am", "to", "learn"],
+      answer: "I am ready to learn.",
+      paretoPrompt: "No Pareto, recupere am, is, are, ready e home; monte frases sem consultar.",
+    },
+    {
+      section: "Palavras que constroem frases",
+      title: "Possessivos: de quem é?",
+      explanation: "My, your, his, her, our e their vêm antes do nome para indicar a quem algo pertence. Eles evitam repetir o nome da pessoa.",
+      languageFocus: "O possessivo vem antes do substantivo: my book, her name, our class.",
+      examples: [
+        { target: "my name", native: "meu nome", note: "quem fala" },
+        { target: "her book", native: "o livro dela", note: "uma mulher ou menina" },
+        { target: "our class", native: "nossa turma", note: "grupo de quem fala" },
+      ],
+      writingPrompt: "Escreva uma frase com my e uma frase com your.",
+      scrambled: ["is", "My", "this", "book"],
+      answer: "This is my book.",
+      paretoPrompt: "No Pareto, recupere my, your e book; troque apenas o possessivo e explique o sentido.",
+    },
+    {
+      section: "Palavras que constroem frases",
+      title: "A, an e the: apresentar e retomar",
+      explanation: "Use a ou an para apresentar uma coisa ainda não identificada. Use the quando a pessoa já sabe qual coisa é ou quando há uma referência específica no contexto.",
+      languageFocus: "A aparece antes de som consonantal; an, antes de som vocálico. The retoma algo conhecido.",
+      examples: [
+        { target: "a book", native: "um livro", note: "apresentação geral" },
+        { target: "an airport", native: "um aeroporto", note: "som inicial vocálico" },
+        { target: "the airport", native: "o aeroporto", note: "lugar específico no contexto" },
+      ],
+      writingPrompt: "Escreva uma frase com a e outra com the usando um objeto ou lugar real.",
+      scrambled: ["is", "the", "Where", "airport"],
+      answer: "Where is the airport?",
+      paretoPrompt: "No Pareto, recupere book, airport e os artigos; escolha a forma adequada pela situação.",
+    },
+    {
+      section: "Números e quantidade",
+      title: "Números de um a dez",
+      explanation: "Números aparecem em horários, preços, endereços e quantidades. Leia em ordem, depois fora de ordem, até reconhecer cada forma rapidamente.",
+      languageFocus: "one, two, three, four, five, six, seven, eight, nine, ten.",
+      examples: [
+        { target: "one book", native: "um livro", note: "quantidade singular" },
+        { target: "two friends", native: "dois amigos", note: "quantidade plural" },
+        { target: "ten words", native: "dez palavras", note: "meta de estudo" },
+      ],
+      writingPrompt: "Escreva três quantidades reais que você vê hoje.",
+      scrambled: ["have", "I", "two", "books"],
+      answer: "I have two books.",
+      paretoPrompt: "No Pareto, recupere números, book e friend; crie frases de quantidade.",
+    },
+    {
+      section: "Números e quantidade",
+      title: "Números em horários e preços",
+      explanation: "O mesmo número muda de função conforme o contexto. Com time, ele organiza uma hora; com price, organiza uma compra; com page, organiza a leitura.",
+      languageFocus: "Use at para hora e combine número com a unidade que dá sentido à informação.",
+      examples: [
+        { target: "at eight", native: "às oito", note: "horário" },
+        { target: "five dollars", native: "cinco dólares", note: "preço" },
+        { target: "page ten", native: "página dez", note: "posição no livro" },
+      ],
+      writingPrompt: "Escreva uma hora e um preço fictício usando números em inglês.",
+      scrambled: ["at", "I", "study", "eight"],
+      answer: "I study at eight.",
+      paretoPrompt: "No Pareto, recupere números e tempo; diga uma rotina com at.",
+    },
+    {
+      section: "Objetos e estudo",
+      title: "Objetos da mesa de estudo",
+      explanation: "Aprender objetos próximos permite criar frases úteis e imediatas. Primeiro nomeie; depois indique posse, posição e ação.",
+      languageFocus: "book, pen, notebook, paper, phone e computer.",
+      examples: [
+        { target: "a pen", native: "uma caneta", note: "objeto para escrever" },
+        { target: "a notebook", native: "um caderno", note: "objeto para registrar" },
+        { target: "my phone", native: "meu telefone", note: "objeto pessoal" },
+      ],
+      writingPrompt: "Liste três objetos da sua mesa e escreva uma frase com um deles.",
+      scrambled: ["on", "The", "is", "table", "pen", "the"],
+      answer: "The pen is on the table.",
+      paretoPrompt: "No Pareto, recupere pen, notebook e phone; use cada termo em uma frase curta.",
+    },
+    {
+      section: "Descrição cotidiana",
+      title: "Cores ajudam a identificar",
+      explanation: "Uma cor acrescenta uma informação simples ao substantivo. Em inglês, o adjetivo vem antes da coisa descrita.",
+      languageFocus: "Use a ordem adjetivo + substantivo: a blue pen, a red book.",
+      examples: [
+        { target: "a blue pen", native: "uma caneta azul", note: "adjetivo antes do nome" },
+        { target: "a red book", native: "um livro vermelho", note: "cor identifica objeto" },
+        { target: "a green bag", native: "uma bolsa verde", note: "mesma ordem" },
+      ],
+      writingPrompt: "Descreva dois objetos com cor e nome em inglês.",
+      scrambled: ["have", "a", "blue", "I", "pen"],
+      answer: "I have a blue pen.",
+      paretoPrompt: "No Pareto, recupere uma cor e um objeto; preserve a ordem do inglês.",
+    },
+    {
+      section: "Descrição cotidiana",
+      title: "Tamanho e quantidade",
+      explanation: "Small, big, long e short descrevem tamanho. Some, many e a little ajudam a falar de quantidade. Escolha apenas uma informação nova por frase no início.",
+      languageFocus: "O adjetivo vem antes do substantivo; expressões de quantidade organizam o que é contado ou não contado.",
+      examples: [
+        { target: "a small house", native: "uma casa pequena", note: "tamanho antes do nome" },
+        { target: "many books", native: "muitos livros", note: "plural contável" },
+        { target: "a little water", native: "um pouco de água", note: "quantidade não contável" },
+      ],
+      writingPrompt: "Escreva uma frase com small ou big e outra com many ou a little.",
+      scrambled: ["a", "small", "My", "house", "is"],
+      answer: "My house is small.",
+      paretoPrompt: "No Pareto, recupere house, water e um adjetivo ou expressão de quantidade.",
+    },
+    {
+      section: "Necessidades e pedidos",
+      title: "Querer e precisar",
+      explanation: "Need fala de necessidade. Want fala de vontade ou escolha. A diferença muda o tom da mensagem e ajuda o aluno a ser preciso em situações reais.",
+      languageFocus: "Use I need para algo necessário e I want para algo desejado ou escolhido.",
+      examples: [
+        { target: "I need help.", native: "Eu preciso de ajuda.", note: "necessidade" },
+        { target: "I want water.", native: "Eu quero água.", note: "vontade ou escolha" },
+        { target: "I would like water, please.", native: "Eu gostaria de água, por favor.", note: "pedido educado" },
+      ],
+      writingPrompt: "Escreva uma necessidade e um pedido educado em duas frases.",
+      scrambled: ["like", "I", "would", "water", "please"],
+      answer: "I would like water, please.",
+      paretoPrompt: "No Pareto, compare need, want e would like usando o mesmo objeto.",
+    },
+    {
+      section: "Vida cotidiana",
+      title: "Comida e bebida em contexto",
+      explanation: "Palavras de comida funcionam melhor dentro de um pedido, uma preferência ou uma rotina. Combine nome do item com want, like ou have.",
+      languageFocus: "food, coffee, tea, bread, fruit, water e meal aparecem em pedidos e hábitos.",
+      examples: [
+        { target: "I like tea.", native: "Eu gosto de chá.", note: "preferência" },
+        { target: "We have bread.", native: "Nós temos pão.", note: "disponibilidade" },
+        { target: "I would like coffee.", native: "Eu gostaria de café.", note: "pedido" },
+      ],
+      writingPrompt: "Escreva uma frase sobre algo que você gosta e outra sobre um pedido educado.",
+      scrambled: ["like", "I", "tea", "and", "bread"],
+      answer: "I like tea and bread.",
+      paretoPrompt: "No Pareto, recupere uma bebida, um alimento e um verbo de preferência.",
+    },
+    {
+      section: "Casa e cidade",
+      title: "Lugares que você usa todos os dias",
+      explanation: "Home, school, work, store e park organizam a vida diária. Uma frase clara mostra para onde você vai ou onde você está.",
+      languageFocus: "Use at para estar em um lugar e to para indicar direção ou destino.",
+      examples: [
+        { target: "at home", native: "em casa", note: "localização" },
+        { target: "go to school", native: "ir à escola", note: "destino" },
+        { target: "at work", native: "no trabalho", note: "localização" },
+      ],
+      writingPrompt: "Escreva uma frase com at e outra com go to.",
+      scrambled: ["go", "to", "work", "I", "at", "nine"],
+      answer: "I go to work at nine.",
+      paretoPrompt: "No Pareto, recupere home, school, work e os conectores at/to.",
+    },
+    {
+      section: "Casa e cidade",
+      title: "Serviços úteis na cidade",
+      explanation: "Bank, pharmacy, market, hospital e library nomeiam lugares que resolvem necessidades práticas. Aprenda o lugar junto da pergunta que você realmente faria.",
+      languageFocus: "Use Where is the…? para perguntar localização de um serviço.",
+      examples: [
+        { target: "the pharmacy", native: "a farmácia", note: "saúde e remédio" },
+        { target: "the market", native: "o mercado", note: "compras" },
+        { target: "the library", native: "a biblioteca", note: "estudo e leitura" },
+      ],
+      writingPrompt: "Escreva duas perguntas com Where is the…? usando lugares diferentes.",
+      scrambled: ["is", "the", "Where", "pharmacy"],
+      answer: "Where is the pharmacy?",
+      paretoPrompt: "No Pareto, recupere pharmacy, market e library e pratique perguntas de localização.",
+    },
+    {
+      section: "Deslocamento",
+      title: "Chegar e sair",
+      explanation: "Arrive e leave organizam começo e fim de um trajeto. Acrescente o lugar ou horário depois do verbo para explicar melhor a situação.",
+      languageFocus: "Use arrive at para lugar específico e leave + lugar para ponto de saída.",
+      examples: [
+        { target: "arrive at the station", native: "chegar à estação", note: "chegada" },
+        { target: "leave home", native: "sair de casa", note: "saída" },
+        { target: "take the bus", native: "pegar o ônibus", note: "meio de transporte" },
+      ],
+      writingPrompt: "Escreva uma frase sobre como você sai de casa ou chega a um lugar.",
+      scrambled: ["the", "take", "I", "bus", "to", "work"],
+      answer: "I take the bus to work.",
+      paretoPrompt: "No Pareto, recupere bus, station, arrive e leave e monte um trajeto simples.",
+    },
+    {
+      section: "Tempo e clima",
+      title: "Falar do tempo de hoje",
+      explanation: "Weather não serve apenas para conversa pequena: ele ajuda a explicar roupa, planos e sensação do dia. Comece com It is e uma condição simples.",
+      languageFocus: "Use It is + adjetivo para muitas condições: sunny, cold, warm e rainy.",
+      examples: [
+        { target: "It is sunny.", native: "Está ensolarado.", note: "sol" },
+        { target: "It is cold today.", native: "Está frio hoje.", note: "temperatura" },
+        { target: "It is rainy.", native: "Está chuvoso.", note: "chuva" },
+      ],
+      writingPrompt: "Descreva o tempo de hoje e diga uma atividade possível nesse clima.",
+      scrambled: ["is", "It", "warm", "today"],
+      answer: "It is warm today.",
+      paretoPrompt: "No Pareto, recupere today, warm, cold e sunny; descreva o dia sem consultar.",
+    },
+    {
+      section: "Trabalho e estudo",
+      title: "Ações de uma rotina produtiva",
+      explanation: "Read, write, learn, work, practice e rest ajudam a contar o que você faz. Junte uma ação a um horário ou lugar para construir uma ideia mais completa.",
+      languageFocus: "No presente simples, o sujeito vem antes da ação; informação de tempo costuma completar a frase.",
+      examples: [
+        { target: "I read at night.", native: "Eu leio à noite.", note: "ação e horário" },
+        { target: "We practice English.", native: "Nós praticamos inglês.", note: "ação e objeto" },
+        { target: "They work today.", native: "Eles trabalham hoje.", note: "sujeito plural" },
+      ],
+      writingPrompt: "Escreva três ações que fazem parte do seu dia usando tempos diferentes.",
+      scrambled: ["practice", "We", "English", "after", "work"],
+      answer: "We practice English after work.",
+      paretoPrompt: "No Pareto, recupere read, write, learn, work e practice; crie uma rotina com duas ações.",
+    },
+    {
+      section: "Tecnologia e comunicação",
+      title: "Uma mensagem curta e clara",
+      explanation: "Mensagens úteis precisam de pessoa, ação e informação principal. Use o vocabulário digital para pedir, confirmar ou avisar algo sem escrever uma frase longa demais.",
+      languageFocus: "message, call, email, phone, computer e online aparecem em ações de comunicação.",
+      examples: [
+        { target: "Send me a message.", native: "Envie-me uma mensagem.", note: "pedido" },
+        { target: "I check my email.", native: "Eu verifico meu e-mail.", note: "rotina" },
+        { target: "The class is online.", native: "A aula é on-line.", note: "informação" },
+      ],
+      writingPrompt: "Escreva uma mensagem curta para combinar um horário de estudo.",
+      scrambled: ["a", "Send", "me", "message", "please"],
+      answer: "Send me a message, please.",
+      paretoPrompt: "No Pareto, recupere message, email, phone e online e crie um aviso útil.",
+    },
+    {
+      section: "Revisão do bloco",
+      title: "Da palavra ao pequeno texto",
+      explanation: "Agora reúna sons, palavras frequentes, lugar, tempo e ação. Um pequeno texto não precisa ter palavras difíceis: precisa manter a ordem compreensível de cada ideia.",
+      languageFocus: "Escreva começo, informação principal e complemento de tempo ou lugar. Use and ou then para ligar duas ações.",
+      examples: [
+        { target: "I study at home.", native: "Eu estudo em casa.", note: "ideia principal" },
+        { target: "Then I write new words.", native: "Depois eu escrevo palavras novas.", note: "sequência" },
+        { target: "My friend reads with me.", native: "Meu amigo lê comigo.", note: "pessoa e companhia" },
+      ],
+      writingPrompt: "Escreva três frases sobre uma sessão de estudo. Ligue duas delas com then ou and.",
+      scrambled: ["study", "at", "home", "I", "and", "write", "new", "words"],
+      answer: "I study at home and write new words.",
+      paretoPrompt: "No Pareto, escolha dez palavras deste bloco e recupere-as em três frases conectadas.",
+    },
+    {
+      section: "Vida cotidiana",
+      title: "Como você está hoje?",
+      explanation: "Estados pessoais ajudam a começar uma conversa real. Use o verbo be para dizer como você está; em seguida, acrescente uma razão simples apenas se ela for útil para a mensagem.",
+      languageFocus: "Use I am + estado: ready, tired, happy, hungry ou fine. A resposta curta pode virar uma frase mais completa.",
+      examples: [
+        { target: "I am ready.", native: "Eu estou pronto ou pronta.", note: "disposição" },
+        { target: "I am tired today.", native: "Eu estou cansado ou cansada hoje.", note: "estado e tempo" },
+        { target: "She is happy.", native: "Ela está feliz.", note: "estado de outra pessoa" },
+      ],
+      writingPrompt: "Escreva como você está hoje e acrescente uma atividade que pretende fazer.",
+      scrambled: ["today", "I", "am", "ready", "to", "learn"],
+      answer: "I am ready to learn today.",
+      paretoPrompt: "No Pareto, recupere ready, tired, happy e today; diga uma frase verdadeira sem olhar.",
+    },
+    {
+      section: "Vida cotidiana",
+      title: "Uma conversa curta sobre o dia",
+      explanation: "Uma conversa básica tem abertura, pergunta, resposta e continuação. O objetivo não é decorar um diálogo inteiro, mas reconhecer a ordem de uma troca real.",
+      languageFocus: "Comece com uma saudação, use How are you? e responda com I am…; depois acrescente uma informação curta.",
+      examples: [
+        { target: "Hello. How are you?", native: "Olá. Como você está?", note: "abertura e pergunta" },
+        { target: "I am fine, thank you.", native: "Estou bem, obrigado ou obrigada.", note: "resposta educada" },
+        { target: "I am fine. I study today.", native: "Estou bem. Eu estudo hoje.", note: "continuação simples" },
+      ],
+      writingPrompt: "Escreva um diálogo de quatro linhas com saudação, pergunta, resposta e uma informação sobre hoje.",
+      scrambled: ["are", "How", "you", "today"],
+      answer: "How are you today?",
+      paretoPrompt: "No Pareto, recupere hello, how, are, fine e today; faça a pergunta e responda sem consultar.",
     },
   ],
   memorySteps: [
