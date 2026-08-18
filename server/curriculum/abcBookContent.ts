@@ -24,6 +24,13 @@ export type ABCBookChapter = {
   objective: string;
   reading: string;
   translation: string;
+  comprehensionQuestions: Array<{
+    id: string;
+    prompt: string;
+    options: string[];
+    correctIndex: number;
+    explanation: string;
+  }>;
   grammarTitle: string;
   grammarExplanation: string;
   writingPrompt: string;
@@ -894,6 +901,7 @@ const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit, index) => (
   objective: unit.objective,
   reading: unit.reading,
   translation: unit.readingTranslation,
+  comprehensionQuestions: unit.questions,
   grammarTitle: unit.grammarTitle,
   grammarExplanation: unit.grammarExplanation,
   writingPrompt: unit.writingPrompt,

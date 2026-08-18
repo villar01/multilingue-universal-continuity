@@ -45,6 +45,7 @@ export default function ABCBook() {
   const paretoHref = `/pareto-1000?returnTo=${encodeURIComponent(paretoReturnTo)}`;
   const [orderingAnswers, setOrderingAnswers] = useState<Record<number, string>>({});
   const [checkedOrdering, setCheckedOrdering] = useState<Record<number, boolean>>({});
+  const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
   const bookPagesRef = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(1);
   const [playingNativeText, setPlayingNativeText] = useState<string | null>(null);
@@ -389,6 +390,17 @@ export default function ABCBook() {
                 <p className="mt-5 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
                 <button type="button" onClick={() => playNativeReference(chapter.reading)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === chapter.reading ? "Falando…" : "Ouvir texto em inglês nativo"}</button>
                 <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
+                <div className="mt-5 border-t border-stone-200 pt-4">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Compreensão do texto</p>
+                  <div className="mt-3 space-y-4">
+                    {chapter.comprehensionQuestions.map((question) => {
+                      const selected = comprehensionAnswers[question.id];
+                      const answered = selected !== undefined;
+                      const correct = selected === question.correctIndex;
+                      return <article key={question.id} className="border-l-2 border-stone-200 pl-4"><p className="text-sm font-semibold leading-6 text-slate-950">{question.prompt}</p><div className="mt-2 flex flex-wrap gap-2">{question.options.map((option, optionIndex) => <button key={option} type="button" onClick={() => setComprehensionAnswers((current) => ({ ...current, [question.id]: optionIndex }))} className={`rounded border px-2.5 py-1.5 text-left text-xs font-semibold transition ${selected === optionIndex ? optionIndex === question.correctIndex ? "border-emerald-500 bg-emerald-50 text-emerald-900" : "border-amber-500 bg-amber-50 text-amber-900" : "border-stone-300 bg-white text-slate-700 hover:bg-stone-50"}`}>{option}</button>)}</div>{answered && <p className={`mt-2 text-xs leading-5 ${correct ? "text-emerald-800" : "text-slate-700"}`}><strong>{correct ? "Correto." : "Observe o texto."}</strong> {question.explanation}</p>}</article>;
+                    })}
+                  </div>
+                </div>
               </section>,
               <section key={`${chapter.title}-estrutura`} className="abc-book-chapter-leaf p-5 sm:p-6">
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Estrutura</p>

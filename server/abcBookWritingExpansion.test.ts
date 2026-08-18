@@ -35,4 +35,15 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
     ]));
     expect(book.manualLeaves.every((leaf) => leaf.paragraphs.length === 2 && leaf.model.length > 20 && leaf.practice.length > 30)).toBe(true);
   });
+
+  it("entrega duas perguntas de compreensão revisadas em cada capítulo A1", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.chapters).toHaveLength(10);
+    expect(book.chapters.every((chapter) => chapter.comprehensionQuestions.length >= 2)).toBe(true);
+    expect(book.chapters.flatMap((chapter) => chapter.comprehensionQuestions).every((question) => question.prompt.trim() && question.options.length >= 3 && question.explanation.trim())).toBe(true);
+  });
 });
