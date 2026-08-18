@@ -1,0 +1,40 @@
+const lesson = (
+  section: string,
+  title: string,
+  explanation: string,
+  languageFocus: string,
+  target: string,
+  native: string,
+  writingPrompt: string,
+  scrambled: string[],
+  paretoPrompt: string,
+) => ({
+  section,
+  title,
+  explanation,
+  languageFocus,
+  examples: [
+    { target, native, note: "modelo para ouvir e entender" },
+    { target: `Listen and repeat: ${target}`, native: `Ouça e repita: ${native}`, note: "referência nativa" },
+    { target: `Write your version: ${target}`, native: `Escreva sua versão: ${native}`, note: "produção guiada" },
+  ],
+  writingPrompt,
+  scrambled,
+  answer: target,
+  paretoPrompt,
+});
+
+export const SIXTH_BLOCK_PROGRESSIVE_LESSONS = [
+  lesson("Revisão de escuta", "Distinguir palavras próximas", "A escuta melhora quando o aluno compara palavras reais em frases curtas. Ouça primeiro, identifique a palavra central e só depois repita.", "Procure a palavra principal antes de tentar repetir todos os sons.", "I need a quiet place to read.", "Eu preciso de um lugar silencioso para ler.", "Escreva três pares de palavras que parecem próximas ao ouvir e use uma em cada frase.", ["need", "I", "a", "quiet", "place", "to", "read"], "No Pareto, recupere need, quiet, place, read e listen; volte à frase nativa quando houver dúvida."),
+  lesson("Revisão de escuta", "Repetir uma frase inteira", "Repetir uma frase inteira treina ritmo, pausa e sentido ao mesmo tempo. Não interrompa a fala em cada palavra; acompanhe grupos pequenos de ideia.", "Repita em blocos: sujeito e ação; depois lugar ou complemento.", "We are ready for the next lesson.", "Nós estamos prontos para a próxima lição.", "Grave ou diga a frase três vezes e escreva qual bloco foi mais difícil.", ["we", "are", "ready", "for", "the", "next", "lesson"], "No Pareto, recupere ready, next, lesson, we e are; produza uma frase de continuação."),
+  lesson("Palavras em famílias", "Transformar palavra em ideia", "Uma palavra conhecida fica mais útil quando se relaciona a outras do mesmo grupo. A família de study pode incluir student, class, lesson e practice.", "Agrupe palavras por situação, não apenas por tradução.", "The student practises after class.", "O estudante pratica depois da aula.", "Monte quatro grupos de palavras: estudo, casa, trabalho e cidade; escreva uma frase para cada grupo.", ["the", "student", "practises", "after", "class"], "No Pareto, recupere student, practise, class, study e lesson; conecte os termos em uma frase."),
+  lesson("Ordem de ideias", "Da frase curta ao parágrafo", "Um parágrafo simples nasce de frases em ordem: apresentação, detalhe, motivo e conclusão. Organize as ideias antes de adicionar vocabulário novo.", "Use first, then e finally para mostrar a sequência do pensamento.", "First, I study. Then, I practise. Finally, I review.", "Primeiro, eu estudo. Depois, pratico. Por fim, reviso.", "Escreva um parágrafo de quatro frases usando os três conectores de sequência.", ["first", "I", "study", "then", "practise", "finally", "review"], "No Pareto, recupere first, then, finally, study, practise e review; ordene uma rotina."),
+  lesson("Diálogo", "Organizar uma conversa útil", "Uma conversa útil tem abertura, pergunta, resposta, confirmação e despedida. Essa ordem dá segurança mesmo quando o vocabulário ainda é pequeno.", "Confirme o que entendeu antes de mudar de assunto.", "Can we meet after work? Yes, that is a good time.", "Podemos nos encontrar depois do trabalho? Sim, esse é um bom horário.", "Escreva um diálogo de oito falas que combine um encontro ou atividade.", ["can", "we", "meet", "after", "work", "yes", "that", "is", "a", "good", "time"], "No Pareto, recupere meet, work, good, time, after e can; simule os dois lados do diálogo."),
+  lesson("Leitura", "Compreender uma história curta", "Uma história curta pode ser compreendida por suas etapas: quem, situação inicial, mudança e resultado. Localize essas partes antes de traduzir detalhes.", "Pergunte quem fez o quê, onde e por quê.", "Maria missed the bus, so she walked to the station.", "Maria perdeu o ônibus, então caminhou até a estação.", "Resuma a frase em português e escreva uma nova consequência possível em inglês.", ["Maria", "missed", "the", "bus", "so", "she", "walked", "to", "the", "station"], "No Pareto, recupere bus, walked, station, missed e so; conte uma sequência de duas ações."),
+  lesson("Leitura", "Comparar dois pontos de vista", "Dois textos podem falar do mesmo assunto de modos diferentes. Compare a ideia principal, uma razão e uma preferência antes de decidir qual texto o convence.", "Use but para contrastar e because para explicar a razão.", "I like the city, but my brother prefers the countryside.", "Eu gosto da cidade, mas meu irmão prefere o campo.", "Escreva duas opiniões diferentes sobre um lugar e acrescente uma razão para cada uma.", ["I", "like", "the", "city", "but", "my", "brother", "prefers", "the", "countryside"], "No Pareto, recupere city, countryside, prefer, but, because e opinion; compare duas escolhas."),
+  lesson("Escrita funcional", "Planejar uma visita", "Planejar uma visita exige lugar, horário, transporte e uma ação combinada. Use frases curtas para deixar a mensagem clara para quem recebe.", "Inclua quando, onde e como a pessoa pode responder.", "Let us meet at the museum at ten.", "Vamos nos encontrar no museu às dez.", "Escreva uma mensagem de cinco linhas convidando alguém para uma visita.", ["let", "us", "meet", "at", "the", "museum", "at", "ten"], "No Pareto, recupere meet, museum, ten, visit, invite e plan; prepare uma mensagem real."),
+  lesson("Escrita funcional", "Explicar uma mudança", "Uma mudança clara descreve a situação anterior, o que aconteceu e o novo plano. Essa estrutura serve para mensagens pessoais e de trabalho.", "Use before para o estado anterior e now para a nova decisão.", "Before, the meeting was online. Now, it is in person.", "Antes, a reunião era on-line. Agora, é presencial.", "Escreva uma mensagem avisando uma mudança de horário, lugar ou plano.", ["before", "the", "meeting", "was", "online", "now", "it", "is", "in", "person"], "No Pareto, recupere meeting, online, now, before, change e plan; explique uma atualização."),
+  lesson("Revisão consciente", "Escolher o melhor conector", "Conectores deixam clara a relação entre ideias. Escolha and para soma, but para contraste, because para razão e so para resultado.", "A escolha do conector depende da relação de sentido, não apenas da posição na frase.", "I stayed home because I was tired.", "Eu fiquei em casa porque estava cansado.", "Escreva quatro pares de frases e una cada par com um conector diferente.", ["stayed", "I", "home", "because", "was", "tired"], "No Pareto, recupere and, but, because, so, tired e home; justifique a escolha do conector."),
+  lesson("Revisão consciente", "Construir uma resposta completa", "Uma resposta completa retoma a pergunta, acrescenta a informação principal e fecha com um detalhe ou próximo passo. Esse padrão serve para estudo, trabalho e conversa.", "Não responda apenas yes ou no quando puder explicar uma razão curta.", "Yes, I can help you after lunch.", "Sim, eu posso ajudar você depois do almoço.", "Responda a cinco perguntas simples com frases completas e uma informação adicional.", ["yes", "I", "can", "help", "you", "after", "lunch"], "No Pareto, recupere yes, can, help, after, lunch e answer; transforme respostas curtas em completas."),
+  lesson("Autonomia", "Plano pessoal de continuidade", "O final do volume não encerra a aprendizagem. Escolha o que já domina, o que ainda confunde e quando fará a próxima revisão ou conversa.", "Defina uma ação de escuta, uma de escrita e uma de fala para a próxima semana.", "I will practise a little every day.", "Eu vou praticar um pouco todos os dias.", "Crie um plano de sete dias com uma pequena ação de inglês por dia.", ["will", "I", "practise", "a", "little", "every", "day"], "No Pareto, escolha termos difíceis, agende a revisão espaçada e use uma frase nova em cada retorno."),
+];

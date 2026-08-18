@@ -1,6 +1,7 @@
 import { STRUCTURED_A1_UNITS } from "./studyBaseContent";
 
 import { FIFTH_BLOCK_PROGRESSIVE_LESSONS } from "./abcBookFifthBlock";
+import { SIXTH_BLOCK_PROGRESSIVE_LESSONS } from "./abcBookSixthBlock";
 
 export type ABCBookSection = {
   title: string;
@@ -1380,6 +1381,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     ...THIRD_BLOCK_PROGRESSIVE_LESSONS,
     ...FOURTH_BLOCK_PROGRESSIVE_LESSONS,
     ...FIFTH_BLOCK_PROGRESSIVE_LESSONS,
+    ...SIXTH_BLOCK_PROGRESSIVE_LESSONS,
   ],
   memorySteps: [
     {
