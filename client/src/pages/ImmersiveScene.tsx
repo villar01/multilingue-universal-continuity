@@ -952,9 +952,6 @@ export default function ImmersiveScene() {
     if (typeof window === "undefined") return "/immersive-scene";
     return `${window.location.pathname}${window.location.search}`;
   }, []);
-  const openSceneReinforcement = useCallback((destination: "/base-de-estudos" | "/pareto-1000" | "/lessons" | "/free-talk") => {
-    setLocation(`${destination}?returnTo=${encodeURIComponent(sceneStudyReturnPath)}`);
-  }, [sceneStudyReturnPath, setLocation]);
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -987,6 +984,13 @@ export default function ImmersiveScene() {
   };
 
   const [selectedScene, setSelectedScene] = useState<Scene | null>(() => getInitialScene());
+  const openSceneReinforcement = useCallback((destination: "/base-de-estudos" | "/pareto-1000" | "/lessons" | "/free-talk") => {
+    const params = new URLSearchParams({ returnTo: sceneStudyReturnPath });
+    if (destination === "/pareto-1000" && selectedScene?.id) {
+      params.set("scene", selectedScene.id);
+    }
+    setLocation(`${destination}?${params.toString()}`);
+  }, [sceneStudyReturnPath, selectedScene?.id, setLocation]);
   const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
   const [activeJamesClipId, setActiveJamesClipId] = useState<JamesTropicalPilotClipId | null>(null);
   const [activeSophieClipId, setActiveSophieClipId] = useState<SophieCafePilotClipId | null>(null);
