@@ -6,6 +6,17 @@ import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronLeft, ChevronRi
 import { useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
+const CONTEXT_ILLUSTRATIONS = [
+  { match: /família|family/i, src: "/manus-storage/abc-family-monochrome_bdfa331e.png", alt: "Desenho autoral monocromático de uma família estudando junta à mesa" },
+  { match: /casa|home/i, src: "/manus-storage/abc-home-monochrome_fcf760e9.png", alt: "Desenho autoral monocromático de uma casa com objetos cotidianos" },
+  { match: /cidade|city|deslocamento|transport/i, src: "/manus-storage/abc-city-monochrome_ba326ddc.png", alt: "Desenho autoral monocromático de pessoas aprendendo a se orientar na cidade" },
+  { match: /alimenta|food|refeiç|meal/i, src: "/manus-storage/abc-food-monochrome_34623dbe.png", alt: "Desenho autoral monocromático de uma refeição simples com itens do cotidiano" },
+];
+
+function getContextIllustration(title: string, purpose: string) {
+  return CONTEXT_ILLUSTRATIONS.find((illustration) => illustration.match.test(`${title} ${purpose}`));
+}
+
 function getSafeReturnTo(location: string) {
   const requested = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
   return requested?.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
@@ -233,6 +244,15 @@ export default function ABCBook() {
             <section key={group.title} className="border-b border-stone-200 pb-8">
               {groupIndex === 0 && <><p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras por contexto</p><h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Aprenda palavras que vivem na mesma ideia</h2><p className="mt-3 max-w-3xl leading-7 text-slate-700">Não memorize listas misturadas. Leia um contexto, compare as palavras próximas e só depois escreva e recupere no Pareto.</p></>}
               <article className={groupIndex === 0 ? "mt-6" : ""}>
+                {(() => {
+                  const illustration = getContextIllustration(group.title, group.purpose);
+                  return illustration ? (
+                    <figure className="mx-auto mb-5 max-w-[11rem] rounded-sm border border-stone-200 bg-stone-50 p-2 shadow-sm sm:float-right sm:mb-4 sm:ml-6">
+                      <img src={illustration.src} alt={illustration.alt} className="aspect-[4/5] w-full rounded-sm object-cover" loading="lazy" />
+                      <figcaption className="px-1 pt-2 text-center text-[11px] font-semibold leading-4 text-slate-600">Observe o contexto antes de recuperar as palavras.</figcaption>
+                    </figure>
+                  ) : null;
+                })()}
                 <h3 className="font-serif text-xl font-bold text-slate-950">{group.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-700">{group.purpose}</p>
                 <ol className="mt-4 divide-y divide-stone-200 border-y border-stone-200">
