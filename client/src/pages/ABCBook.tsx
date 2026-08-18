@@ -377,7 +377,7 @@ export default function ABCBook() {
           {book.chapters.flatMap((chapter, index) => {
             const chapterId = `capitulo-a1-${index + 1}`;
             const chapterReturnTo = `${paretoReturnTo}#${chapterId}`;
-            const chapterParetoHref = `/pareto-1000?bookContext=${encodeURIComponent(chapter.paretoContext)}&returnTo=${encodeURIComponent(chapterReturnTo)}`;
+            const chapterParetoHref = `/pareto-1000?bookContext=${encodeURIComponent(chapter.paretoContext)}&chapter=${chapter.paretoChapter}&returnTo=${encodeURIComponent(chapterReturnTo)}`;
             const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
 
             return [

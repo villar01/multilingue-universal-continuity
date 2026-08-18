@@ -4,7 +4,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { hasAuthorizedTrialLessonKey, getLearningContentEntitlement } from "./trial-access-router";
 import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBaseContent";
 import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
-import { getParetoProgramWords, getParetoWordsForScene, PARETO_VOCAB } from "./curriculum/paretoContent";
+import { getParetoProgramWords, getParetoWordsForChapter, getParetoWordsForScene, PARETO_CHAPTER_COUNT, PARETO_VOCAB } from "./curriculum/paretoContent";
 import { getParetoBookContext, getParetoBookContextWords, PARETO_BOOK_CONTEXT_IDS } from "./curriculum/paretoBookContexts";
 import { getParetoAdvancedChallenge } from "./curriculum/paretoAdvancedChallenges";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
@@ -51,6 +51,7 @@ export const curriculumRouter = router({
   localizedPareto: protectedProcedure.input(accessInput.extend({
     scene: z.string().trim().max(80).optional(),
     bookContext: z.enum(PARETO_BOOK_CONTEXT_IDS).optional(),
+    chapter: z.number().int().min(1).max(PARETO_CHAPTER_COUNT).optional(),
     targetLanguage: z.string().trim().min(2).max(16),
     nativeLanguage: z.string().trim().min(2).max(16),
     page: z.number().int().min(0).default(0),
@@ -59,9 +60,10 @@ export const curriculumRouter = router({
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     const programWords = getParetoProgramWords();
     const bookContext = getParetoBookContext(input.bookContext);
-    const advancedChallenge = bookContext ? null : getParetoAdvancedChallenge(input.page);
+    const chapterWords = input.chapter ? getParetoWordsForChapter(input.chapter, programWords) : null;
+    const advancedChallenge = bookContext || chapterWords ? null : getParetoAdvancedChallenge(input.page);
     const contextWords = getParetoBookContextWords(input.bookContext, programWords);
-    const candidateWords = contextWords ?? programWords;
+    const candidateWords = chapterWords ?? contextWords ?? programWords;
     const authorizedWords = entitlement.hasFullCurriculum ? candidateWords : candidateWords.slice(0, 10);
     const scopedWords = input.scene ? getParetoWordsForScene(input.scene, authorizedWords) : authorizedWords;
     const start = input.page * input.pageSize;
@@ -88,6 +90,7 @@ export const curriculumRouter = router({
         orderPrompt: bookContext.orderPrompt,
         orderAnswer: bookContext.orderAnswer,
       } : null,
+      chapter: input.chapter ? { number: input.chapter, totalWords: chapterWords?.length ?? 0 } : null,
       advancedChallenge,
     };
   }),

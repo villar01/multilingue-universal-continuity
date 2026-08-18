@@ -77,12 +77,17 @@ export default function Pareto1000() {
     const requestedContext = searchParams.get("bookContext");
     return BOOK_CONTEXT_IDS.find((contextId) => contextId === requestedContext) ?? "foundation";
   }, [searchParams]);
+  const paretoChapter = useMemo(() => {
+    const requestedChapter = Number(searchParams.get("chapter"));
+    return Number.isInteger(requestedChapter) && requestedChapter >= 1 && requestedChapter <= 10 ? requestedChapter : null;
+  }, [searchParams]);
   const sceneId = useMemo(() => searchParams.get("scene")?.trim() || undefined, [searchParams]);
   const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
     lessonKey: "/pareto-1000",
     targetLanguage,
     nativeLanguage,
     bookContext: paretoPath === "book" ? bookContext : undefined,
+    chapter: paretoPath === "book" ? paretoChapter ?? undefined : undefined,
     scene: paretoPath === "advanced" ? sceneId : undefined,
     page,
     pageSize: SESSION_SIZE,
@@ -134,9 +139,12 @@ export default function Pareto1000() {
 
   const selectParetoPath = useCallback((nextPath: (typeof PARETO_PATHS)[number]) => {
     const params = new URLSearchParams({ path: nextPath, returnTo });
-    if (nextPath === "book") params.set("bookContext", bookContext);
+    if (nextPath === "book") {
+      params.set("bookContext", bookContext);
+      if (paretoChapter) params.set("chapter", String(paretoChapter));
+    }
     setLocation(`/pareto-1000?${params.toString()}`);
-  }, [bookContext, returnTo, setLocation]);
+  }, [bookContext, paretoChapter, returnTo, setLocation]);
 
   useEffect(() => {
     setCompleted(loadCompletedWords(activeProgressKey));
@@ -244,9 +252,9 @@ export default function Pareto1000() {
             <Link href={returnTo}><Button variant="ghost" className="h-auto gap-2 px-0 py-1 text-sm font-bold text-slate-600 hover:bg-transparent hover:text-slate-950"><ArrowLeft className="h-4 w-4" />{returnLabel}</Button></Link>
             <span className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Pareto · 1.000 palavras</span>
           </div>
-          <p className="mt-6 text-xs font-black uppercase tracking-[0.14em] text-amber-800">{paretoPath === "book" ? paretoQuery.data?.bookContext?.bookStep : sceneId ? "Pareto da cena imersiva" : "Curso Pareto avançado"}</p>
-          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{paretoPath === "book" ? (paretoQuery.data?.bookContext?.title ?? "Uma palavra de cada vez") : sceneId ? "Palavras desta cena para lembrar e usar" : "Mil palavras para lembrar e usar"}</h1>
-          <p className="mt-3 max-w-3xl leading-7 text-slate-700">{paretoPath === "book" ? (paretoQuery.data?.bookContext?.grammarFocus ?? "Leia o sentido, ouça, escreva sem olhar e crie uma frase.") : sceneId ? "Pratique o vocabulário entregue para a cena atual. Leia o sentido, recupere sem olhar, escreva e retorne ao mesmo ponto para usar as palavras com o Professor." : "Percurso completo com mil palavras, recuperação ativa, escrita, voz e revisões espaçadas. Escolha este caminho quando quiser praticar além do capítulo atual."}</p>
+          <p className="mt-6 text-xs font-black uppercase tracking-[0.14em] text-amber-800">{paretoPath === "book" ? (paretoChapter ? `Pareto do capítulo A1 · ${paretoChapter}` : paretoQuery.data?.bookContext?.bookStep) : sceneId ? "Pareto da cena imersiva" : "Curso Pareto avançado"}</p>
+          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{paretoPath === "book" ? (paretoChapter ? `Bloco ${paretoChapter} de 100 palavras` : paretoQuery.data?.bookContext?.title ?? "Uma palavra de cada vez") : sceneId ? "Palavras desta cena para lembrar e usar" : "Mil palavras para lembrar e usar"}</h1>
+          <p className="mt-3 max-w-3xl leading-7 text-slate-700">{paretoPath === "book" ? (paretoChapter ? "Este bloco recupera cem palavras do catálogo Pareto associadas ao capítulo atual. Leia o sentido, ouça, escreva sem olhar e crie uma frase antes de seguir." : paretoQuery.data?.bookContext?.grammarFocus ?? "Leia o sentido, ouça, escreva sem olhar e crie uma frase.") : sceneId ? "Pratique o vocabulário entregue para a cena atual. Leia o sentido, recupere sem olhar, escreva e retorne ao mesmo ponto para usar as palavras com o Professor." : "Percurso completo com mil palavras, recuperação ativa, escrita, voz e revisões espaçadas. Escolha este caminho quando quiser praticar além do capítulo atual."}</p>
           <div className="mt-5 flex flex-wrap gap-2 border-y border-stone-200 py-3"><Button type="button" variant={paretoPath === "book" ? "default" : "outline"} onClick={() => selectParetoPath("book")} className={paretoPath === "book" ? "bg-slate-900 text-white hover:bg-slate-800" : "border-stone-300 bg-white text-slate-700 hover:bg-stone-50"}>Pareto do Livro</Button><Button type="button" variant={paretoPath === "advanced" ? "default" : "outline"} onClick={() => selectParetoPath("advanced")} className={paretoPath === "advanced" ? "bg-slate-900 text-white hover:bg-slate-800" : "border-stone-300 bg-white text-slate-700 hover:bg-stone-50"}>Curso Pareto avançado</Button></div>
           <div className="mt-6 border-y border-stone-200 py-4">
             <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.12em] text-amber-800">Progresso</p><p className="mt-1 font-serif text-2xl font-bold text-slate-950">{completedCount} <span className="text-base font-semibold text-slate-600">de {programReadyCount} palavras</span></p>{dueReviewIds.length > 0 && <p className="mt-1 text-sm font-semibold text-sky-800">Há {dueReviewIds.length} revisão{dueReviewIds.length === 1 ? "" : "ões"} para retomar.</p>}</div><Button type="button" onClick={dueReviewIds.length > 0 ? openDueReview : () => setPracticeWord(nextWord)} disabled={dueReviewIds.length === 0 && !nextWord} className="bg-slate-900 font-bold text-white hover:bg-slate-800">{dueReviewIds.length > 0 ? "Revisar pendências" : nextWord ? "Começar a próxima palavra" : "Trilha concluída"}</Button></div>

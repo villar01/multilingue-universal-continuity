@@ -29,6 +29,7 @@ export type ABCBookChapter = {
   writingPrompt: string;
   orderingExercise: ABCBookOrderingExercise;
   paretoContext: "foundation" | "family" | "social-circle" | "routine-time" | "home" | "transport";
+  paretoChapter: number;
 };
 
 export type ABCBookOrderingExercise = {
@@ -898,6 +899,7 @@ const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit, index) => (
   writingPrompt: unit.writingPrompt,
   orderingExercise: A1_ORDERING_EXERCISES[index] ?? A1_ORDERING_EXERCISES[0],
   paretoContext: A1_PARETO_CONTEXTS[index] ?? "foundation",
+  paretoChapter: index + 1,
 }));
 
 const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {

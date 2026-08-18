@@ -1280,6 +1280,16 @@ export const PARETO_VOCAB: ParetoWord[] = PARETO_SOURCE_VOCAB.filter((word, inde
   allWords.findIndex((candidate) => normalizeParetoEnglish(candidate.enUS) === normalizeParetoEnglish(word.enUS)) === index,
 );
 
+export const PARETO_CHAPTER_COUNT = 10;
+export const PARETO_WORDS_PER_CHAPTER = 100;
+
+/** Seleciona um percurso cumulativo do catálogo canônico sem entregá-lo ao cliente. */
+export function getParetoWordsForChapter(chapter: number, programWords: ParetoWord[] = PARETO_VOCAB): ParetoWord[] {
+  const normalizedChapter = Math.min(PARETO_CHAPTER_COUNT, Math.max(1, Math.trunc(chapter)));
+  const start = (normalizedChapter - 1) * PARETO_WORDS_PER_CHAPTER;
+  return programWords.slice(start, start + PARETO_WORDS_PER_CHAPTER);
+}
+
 export function getParetoWordsForScene(scene: string, programWords: ParetoWord[] = PARETO_VOCAB): ParetoWord[] {
   const directWords = programWords.filter((word) => word.scene === scene);
   if (directWords.length >= 5) return directWords;
