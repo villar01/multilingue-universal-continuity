@@ -57,6 +57,18 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 
+  it("tenta uma segunda rota neural de MP3 direto antes de recorrer ao provedor remoto ou à voz local", () => {
+    const speechFlow = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
+    expect(source).toContain("const playPublicSceneDialogue = useCallback");
+    expect(source).toContain('await playTeacherAudio(source, text, language, requestKey, false, autoPlay);');
+    const edgeAttempt = speechFlow.indexOf("if (await playEdgeNeural()) return;");
+    const directAttempt = speechFlow.indexOf("if (await playPublicSceneDialogue(text, lang, teacherGender, requestKey, autoPlay)) return;");
+    const remoteAttempt = speechFlow.indexOf("const googleAudio");
+    expect(edgeAttempt).toBeGreaterThan(-1);
+    expect(directAttempt).toBeGreaterThan(edgeAttempt);
+    expect(remoteAttempt).toBeGreaterThan(directAttempt);
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");

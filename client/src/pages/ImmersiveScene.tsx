@@ -1545,14 +1545,14 @@ export default function ImmersiveScene() {
     }
   }, []);
 
-  const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string) => {
+  const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string, autoPlay = false) => {
     const result = await waitForSpeechResult(
       sceneDialogueVoiceMut.mutateAsync({ text: text.slice(0, 500), language, gender }),
       12_000,
     );
     if (!result.success || !("audioBase64" in result) || !result.audioBase64.trim()) return false;
     const source = audioBase64ToDataUrl(result.audioBase64, "audio/mpeg");
-    await playTeacherAudio(source, text, language, requestKey);
+    await playTeacherAudio(source, text, language, requestKey, false, autoPlay);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
 
@@ -1591,6 +1591,9 @@ export default function ImmersiveScene() {
     try {
       if (await playEdgeNeural()) return;
     } catch { /* Try the secondary neural provider below. */ }
+    try {
+      if (await playPublicSceneDialogue(text, lang, teacherGender, requestKey, autoPlay)) return;
+    } catch { /* Try the remote neural provider below. */ }
     try {
       const googleAudio = await waitForSpeechResult(
         googleTtsMut.mutateAsync({
