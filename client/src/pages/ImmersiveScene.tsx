@@ -662,6 +662,7 @@ function TeacherAvatar({
               objectFit: "cover",
               borderRadius: "12px",
               pointerEvents: "none",
+              zIndex: 2,
             }}
           />
         )}

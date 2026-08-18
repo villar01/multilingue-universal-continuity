@@ -28,6 +28,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
+    expect(sceneSource).toContain("zIndex: 2,");
   });
 
   it("cobre abertura, quatro objetos, acerto e nova tentativa sem criar outro controle de áudio", () => {
