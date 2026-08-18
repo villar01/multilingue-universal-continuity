@@ -31,6 +31,7 @@ import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } 
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
+import { selectTeacherMedia } from "@shared/teacherMediaStrategy";
 import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 export type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 import { isInitialCommercialTargetLanguage } from "@shared/commercialLanguageBlocks";
@@ -574,8 +575,13 @@ function TeacherAvatar({
     : ["C", "E", "G"].includes(viseme);
   // O retrato permanece sem boca sintética até haver mídia docente aprovada.
   const showSyntheticMouth = false;
+  const teacherMedia = selectTeacherMedia({
+    kind: activeClip?.videoUrl ? "scripted" : "interactive",
+    hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),
+  });
   const showPilotClip = Boolean(
-    activeClip?.videoUrl
+    teacherMedia.mode === "pre_generated_video"
+      && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
   );

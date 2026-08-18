@@ -19,4 +19,12 @@ describe("fallback de retrato do professor na cena imersiva", () => {
     expect(source).toContain('const showPilotClip = Boolean(');
     expect(source).toContain('const showSyntheticMouth = false;');
   });
+
+  it("usa vídeo somente após a estratégia confirmar um clipe pré-gerado aprovado", () => {
+    expect(source).toContain('import { selectTeacherMedia } from "@shared/teacherMediaStrategy";');
+    expect(source).toContain("const teacherMedia = selectTeacherMedia({");
+    expect(source).toContain('kind: activeClip?.videoUrl ? "scripted" : "interactive",');
+    expect(source).toContain('hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),');
+    expect(source).toContain('teacherMedia.mode === "pre_generated_video"');
+  });
 });
