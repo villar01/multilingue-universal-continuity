@@ -64,7 +64,7 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain("book.termCard.term");
     expect(bookPage).toContain("book.termCard.paretoPrompt");
     expect(bookPage).toContain("book.additionalTermCards.map");
-    expect(bookPage).toContain("card.pronunciation");
+    expect(bookPage).toContain("playNativeReference(card.term)");
     expect(bookPage).toContain("book.chapters.map");
     expect(bookPage).toContain("book.memorySteps");
     expect(bookPage).toContain("book.sentenceStructure");

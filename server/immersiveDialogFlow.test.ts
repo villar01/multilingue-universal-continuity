@@ -15,6 +15,9 @@ describe("fluxo livre do diálogo imersivo", () => {
   it("retorna uma resposta contextual para pergunta livre antes de validar alternativas", () => {
     const reply = getFreeDialogQuestionReply("what is pool?", beachObjects);
     expect(reply?.text).toContain("piscina");
+    expect(reply?.text).toContain("A pool is a place where people swim.");
+    expect(reply?.nativeText).toContain("pool significa piscina");
+    expect(reply?.immediate).toBe(true);
   });
 
   it("corrige uma pergunta singular com gramática inicial incorreta e mantém explicação em português", () => {

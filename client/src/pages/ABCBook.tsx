@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+import { speakEdgeTTS } from "@/lib/edgeTTSClient";
 import { createTrialLessonKey } from "@/lib/learningAccess";
 import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronLeft, ChevronRight, MessageCircle, PenLine, Volume2 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
@@ -20,6 +21,7 @@ export default function ABCBook() {
   const [checkedOrdering, setCheckedOrdering] = useState<Record<number, boolean>>({});
   const bookPagesRef = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(1);
+  const [playingNativeText, setPlayingNativeText] = useState<string | null>(null);
   const bookQuery = trpc.curriculum.abcBook.useQuery({
     lessonKey: createTrialLessonKey(location),
     nativeLanguage: profile.nativeCode,
@@ -45,6 +47,14 @@ export default function ABCBook() {
   }
 
   const book = bookQuery.data;
+  const nativeVoiceLocale = profile.targetCode.toLowerCase().startsWith("en") ? "en-US" : profile.targetCode;
+  const playNativeReference = (text: string) => {
+    setPlayingNativeText(text);
+    void speakEdgeTTS(text, nativeVoiceLocale, {
+      gender: "male",
+      onEnd: () => setPlayingNativeText((current) => current === text ? null : current),
+    });
+  };
 
   if (!book.available) {
     return (
@@ -125,7 +135,7 @@ export default function ABCBook() {
                 <li key={item.letter} className="border-b border-r border-stone-200 px-2 py-3 text-center last:border-b-0">
                   <p className="font-serif text-2xl font-bold text-slate-950">{item.letter}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-700">{item.name}</p>
-                  <p className="mt-1 text-[11px] text-slate-500">{item.guide}</p>
+                  <button type="button" onClick={() => playNativeReference(item.letter)} className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3 w-3" /> {playingNativeText === item.letter ? "Falando…" : "Ouvir"}</button>
                 </li>
               ))}
             </ol>
@@ -140,7 +150,7 @@ export default function ABCBook() {
                   <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
                   <div className="mt-4 grid divide-y divide-stone-200 border-y border-stone-200 text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                     {lesson.examples.map((example) => (
-                      <div key={example.target} className="px-3 py-3"><p className="font-semibold text-slate-950">{example.target}</p><p className="mt-1 text-slate-600">{example.pronunciation}</p><p className="mt-1 text-slate-600">{example.native}</p></div>
+                      <div key={example.target} className="px-3 py-3"><p className="font-semibold text-slate-950">{example.target}</p><button type="button" onClick={() => playNativeReference(example.target)} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> {playingNativeText === example.target ? "Falando…" : "Ouvir inglês nativo"}</button><p className="mt-2 text-slate-600">Em português: {example.native}</p></div>
                     ))}
                   </div>
                   <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
@@ -161,7 +171,7 @@ export default function ABCBook() {
                   {lesson.examples.map((example, index) => (
                     <li key={example.target} className="grid gap-1 py-3 sm:grid-cols-[2rem_1fr_1fr] sm:gap-3">
                       <span className="font-serif font-bold text-amber-700">{index + 1}</span>
-                      <p className="font-semibold text-slate-950">{example.target} <span className="font-normal text-slate-600">— {example.native}</span></p>
+                      <p className="font-semibold text-slate-950">{example.target} <button type="button" onClick={() => playNativeReference(example.target)} className="ml-1 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> {playingNativeText === example.target ? "Falando…" : "Ouvir"}</button> <span className="font-normal text-slate-600">— {example.native}</span></p>
                       <p className="text-sm leading-6 text-slate-700">{example.note}</p>
                     </li>
                   ))}
@@ -170,7 +180,7 @@ export default function ABCBook() {
                 <div className="mt-5 border-y border-stone-200 bg-stone-50 px-4 py-5 sm:px-5">
                   <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Prática depois da explicação</p>
                   <p className="mt-2 text-sm font-semibold leading-7 text-slate-950">{lesson.scrambled.join(" · ")}</p>
-                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Resposta-modelo:</strong> {lesson.answer}</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Resposta-modelo:</strong> {lesson.answer} <button type="button" onClick={() => playNativeReference(lesson.answer)} className="ml-1 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> Ouvir frase</button></p>
                 </div>
                 <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Pareto do Livro:</strong> {lesson.paretoPrompt}</p>
               </article>
@@ -245,7 +255,7 @@ export default function ABCBook() {
               {book.phrases.map((item, index) => (
                 <div key={item.english} className="grid gap-1 py-4 sm:grid-cols-[2.3rem_1fr_auto] sm:items-center sm:gap-4">
                   <span className="text-sm font-black text-amber-700">{String(index + 1).padStart(2, "0")}</span>
-                  <div><p className="font-serif text-lg font-bold text-slate-950">{item.english}</p><p className="mt-1 text-sm text-slate-600">{item.portuguese}</p></div>
+                  <div><p className="font-serif text-lg font-bold text-slate-950">{item.english}</p><button type="button" onClick={() => playNativeReference(item.english)} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> {playingNativeText === item.english ? "Falando…" : "Ouvir inglês nativo"}</button><p className="mt-1 text-sm text-slate-600">{item.portuguese}</p></div>
                   <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{item.focus}</span>
                 </div>
               ))}
@@ -258,7 +268,7 @@ export default function ABCBook() {
             <p className="mt-1 text-sm font-semibold text-slate-600">{book.termCard.meaning}</p>
             <dl className="mt-5 grid gap-4 text-sm leading-6 sm:grid-cols-2">
               <div><dt className="font-bold text-slate-900">Função</dt><dd className="mt-1 text-slate-700">{book.termCard.grammar}</dd></div>
-              <div><dt className="font-bold text-slate-900">Pronúncia</dt><dd className="mt-1 text-slate-700">{book.termCard.pronunciation}</dd></div>
+              <div><dt className="font-bold text-slate-900">Referência de fala</dt><dd className="mt-1 text-slate-700"><button type="button" onClick={() => playNativeReference(book.termCard.term)} className="inline-flex items-center gap-1 font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === book.termCard.term ? "Falando…" : "Ouvir inglês nativo"}</button><p className="mt-1">Ouça a palavra e depois repita antes de ler o padrão.</p></dd></div>
               <div><dt className="font-bold text-slate-900">Padrão útil</dt><dd className="mt-1 text-slate-700">{book.termCard.pattern}</dd></div>
               <div><dt className="font-bold text-slate-900">Exemplo</dt><dd className="mt-1 text-slate-700">{book.termCard.example}</dd></div>
             </dl>
@@ -273,7 +283,7 @@ export default function ABCBook() {
                 <article key={card.term} className="border border-stone-200 bg-white p-5 shadow-sm">
                   <h3 className="font-serif text-xl font-bold text-slate-950">{card.term}</h3>
                   <p className="mt-1 text-sm font-semibold text-slate-600">{card.meaning}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Pronúncia:</strong> {card.pronunciation}</p>
+                  <button type="button" onClick={() => playNativeReference(card.term)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === card.term ? "Falando…" : "Ouvir inglês nativo"}</button>
                   <p className="mt-4 text-sm leading-6 text-slate-700"><strong>Função:</strong> {card.grammar}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Padrão:</strong> {card.pattern}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Exemplo:</strong> {card.example}</p>
@@ -318,6 +328,7 @@ export default function ABCBook() {
                     </div>
                   </div>
                   <p className="mt-4 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
+                  <button type="button" onClick={() => playNativeReference(chapter.reading)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === chapter.reading ? "Falando…" : "Ouvir texto em inglês nativo"}</button>
                   <p className="mt-3 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
                   <div className="mt-4 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
                     <p className="font-bold text-slate-900">{chapter.grammarTitle}</p>

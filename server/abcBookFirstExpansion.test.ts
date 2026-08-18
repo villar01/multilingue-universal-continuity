@@ -8,9 +8,11 @@ describe("primeiro bloco ampliado do Livro ABC", () => {
     const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
     if (!book.available) throw new Error("A edição PT-BR → inglês precisa estar disponível");
 
-    expect(book.progressiveLessons).toHaveLength(24);
+    expect(book.progressiveLessons.length).toBeGreaterThanOrEqual(39);
     expect(book.progressiveLessons.map((lesson) => lesson.title)).toEqual(expect.arrayContaining([
       "C e G: um som pode mudar",
+      "As pessoas da família",
+      "Perguntar sobre hábitos",
       "Pronomes: quem aparece na frase",
       "Números de um a dez",
       "Uma mensagem curta e clara",

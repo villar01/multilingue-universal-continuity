@@ -1889,6 +1889,10 @@ export default function ImmersiveScene() {
     setDlgFeedback(immediateFeedback);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
     requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher");
+    if (fallback?.immediate) {
+      setDlgTutorLoading(false);
+      return;
+    }
     const loadingTimeout = window.setTimeout(() => {
       if (requestId === dlgTutorRequestRef.current) {
         setDlgTutorLoading(false);
