@@ -16,6 +16,7 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
       "Ligue duas ideias",
       "Escreva um pequeno retrato",
     ]));
+    expect(book.sections.filter((section) => section.paretoPrompt).length).toBeGreaterThanOrEqual(10);
     expect(book.sections.every((section) => section.text.length > 80 && section.example.includes(" "))).toBe(true);
   });
 });
