@@ -1713,7 +1713,7 @@
 
 - [x] Corrigir a reprodução do botão “Ouvir voz natural” da Praia Tropical, mantendo voz neural autorizada e fallback audível ao aluno — provedores neurais agora têm limite de seis segundos por tentativa, sinalização de preparo e fallback de voz disponível após indisponibilidade; TypeScript sem erros e suíte completa com 220 arquivos/568 testes aprovados
 
-- [ ] Garantir fallback audível de voz natural mesmo quando o navegador não expõe uma voz masculina nomeada para o idioma da cena
+- [x] Garantir fallback audível de voz natural mesmo quando o navegador não expõe uma voz masculina nomeada para o idioma da cena — James prioriza voz en-US masculina nomeada e, na ausência dela, usa uma voz regional sem rótulo feminino explícito; a regressão bloqueia a troca para nomes femininos, TypeScript e suíte completa com 668 testes aprovados
 
 - [x] Impedir que James use voz feminina de reserva e liberar integralmente os controles após falha da faixa neural — James permanece em voz masculina em todos os caminhos de recuperação; a prática e os controles não ficam bloqueados por falha de áudio; TypeScript e 14 regressões de voz e segurança aprovados
 - [x] Permitir que o botão explícito “Ouvir James” reproduza a voz natural sem tentativa automática bloqueada — a voz é preparada sem `audio.play()` automático e o botão manual permanece como único gatilho; TypeScript sem erros e suíte completa com 220 arquivos/571 testes aprovados

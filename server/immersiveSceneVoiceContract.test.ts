@@ -22,6 +22,14 @@ describe("contrato regional de voz das cenas imersivas", () => {
     expect(sceneSource).toContain('playLocalDialogFallback(text, language, requestKey, effectiveGender)');
   });
 
+  it("mantém James audível sem aceitar voz feminina nomeada quando o navegador não expõe uma voz masculina", () => {
+    expect(sceneSource).toContain("const maleVoicePattern =");
+    expect(sceneSource).toContain("const femaleVoicePattern =");
+    expect(sceneSource).toContain("const nonFemaleRegionalVoice = regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name));");
+    expect(sceneSource).toContain("? regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice");
+    expect(sceneSource).toContain("if (gender && !preferredVoice) return false;");
+  });
+
   it("exige locale e gênero explícitos em toda cena para selecionar uma voz neural regional", () => {
     const teacherEntries = sceneData.match(/teacherName:/g) ?? [];
     const voicedEntries = sceneData.match(/teacherName:"[^"]+", teacherLang:"[^"]+", langCode:"[^"]+", teacherGender:"(?:male|female)"/g) ?? [];
