@@ -948,10 +948,6 @@ export default function ImmersiveScene() {
     const destination = new URLSearchParams(window.location.search).get("returnTo");
     return destination?.startsWith("/") && !destination.startsWith("//") ? destination : "/";
   }, []);
-  const sceneStudyReturnPath = useMemo(() => {
-    if (typeof window === "undefined") return "/immersive-scene";
-    return `${window.location.pathname}${window.location.search}`;
-  }, []);
 
   // Auto-select scene based on user's target language from LanguageContext profile
   const getInitialScene = (): Scene | null => {
@@ -984,6 +980,13 @@ export default function ImmersiveScene() {
   };
 
   const [selectedScene, setSelectedScene] = useState<Scene | null>(() => getInitialScene());
+  const sceneStudyReturnPath = useMemo(() => {
+    if (typeof window === "undefined") return "/immersive-scene";
+    const params = new URLSearchParams(window.location.search);
+    if (selectedScene?.id) params.set("scene", selectedScene.id);
+    const search = params.toString();
+    return `${window.location.pathname}${search ? `?${search}` : ""}`;
+  }, [selectedScene?.id]);
   const openSceneReinforcement = useCallback((destination: "/base-de-estudos" | "/pareto-1000" | "/lessons" | "/free-talk") => {
     const params = new URLSearchParams({ returnTo: sceneStudyReturnPath });
     if (destination === "/pareto-1000" && selectedScene?.id) {

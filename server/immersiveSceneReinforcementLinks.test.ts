@@ -7,6 +7,8 @@ describe("links de reforço do professor na cena", () => {
   it("preserva o contexto imersivo ao encaminhar uma dúvida para o curso ABC", () => {
     expect(source).toContain("const sceneStudyReturnPath");
     expect(source).toContain("const openSceneReinforcement");
+    expect(source).toContain('if (selectedScene?.id) params.set("scene", selectedScene.id);');
+    expect(source).toContain('}, [selectedScene?.id]);');
     expect(source).toContain('const params = new URLSearchParams({ returnTo: sceneStudyReturnPath });');
     expect(source).toContain('setLocation(`${destination}?${params.toString()}`);');
   });
