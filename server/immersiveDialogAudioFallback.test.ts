@@ -13,7 +13,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("12_000,");
     expect(source).toContain("scene-dialogue-speech-timeout");
     expect(source).toContain("const playLocalDialogFallback = useCallback");
-    expect(source).toContain("window.speechSynthesis.speak(utterance);");
+    expect(source).toContain("synth.speak(utterance);");
     expect(source).toContain("A voz neural não respondeu. A fala está usando a voz disponível neste navegador");
     expect(source).toContain('"Ouvir inglês"');
     expect(source).toContain("audioBase64ToObjectUrl");
@@ -73,6 +73,15 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("|| nonFemaleRegionalVoice");
     expect(source).toContain("if (gender && !preferredVoice) return false;");
     expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
+  });
+
+  it("repete a tentativa local de James quando o navegador ainda está carregando as vozes", () => {
+    expect(source).toContain("const startWithAvailableVoices = (retriesRemaining: number): boolean");
+    expect(source).toContain("const voices = synth.getVoices();");
+    expect(source).toContain("if (!voices.length)");
+    expect(source).toContain("startWithAvailableVoices(retriesRemaining - 1)");
+    expect(source).toContain("return startWithAvailableVoices(2);");
+    expect(source).toContain("A voz inglesa ainda está preparando neste navegador");
   });
 
   it("mantém a reserva masculina de James disponível tanto para pergunta quanto para pronúncia", () => {

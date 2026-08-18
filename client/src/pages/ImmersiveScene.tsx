@@ -1281,55 +1281,72 @@ export default function ImmersiveScene() {
 
   const playLocalDialogFallback = useCallback((text: string, language: string, requestKey: string, gender?: 'male' | 'female') => {
     if (!("speechSynthesis" in window) || !text.trim()) return false;
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices.length) return false;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    utterance.rate = dialogSpeechRate;
-    utterance.pitch = 1;
-    const languagePrefix = language.toLowerCase().split("-")[0];
-    const regionalVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(languagePrefix));
-    const maleVoicePattern = /(^|\s)(david|mark|guy|daniel|george|james|ryan|andrew|matthew|eric|brian|michael|christopher|male)(\s|$)/i;
-    const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
-    // Alguns navegadores não identificam gênero no nome da voz. Para James,
-    // priorizamos homem nomeado e, se não existir, uma voz regional sem rótulo
-    // feminino explícito em vez de deixar a cena sem áudio.
-    const nonFemaleRegionalVoice = regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name));
-    const preferredVoice = gender === "male"
-      ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice
-      : gender === "female"
-        ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
-        : regionalVoices[0];
-    if (gender && !preferredVoice) return false;
-    if (preferredVoice) utterance.voice = preferredVoice;
-    const releaseRequest = () => {
-      if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
-    };
-    const finish = () => {
-      stopVisemeSync();
-      setAudioViseme(null);
-      setIsSpeaking(false);
-      setIsPreparingNeuralAudio(false);
-      if (localSpeechRef.current === utterance) {
-        localSpeechRef.current = null;
+    const synth = window.speechSynthesis;
+    const startWithAvailableVoices = (retriesRemaining: number): boolean => {
+      const voices = synth.getVoices();
+      if (!voices.length) {
+        if (retriesRemaining > 0) {
+          window.setTimeout(() => {
+            if (activeSpeechRequestRef.current === requestKey) startWithAvailableVoices(retriesRemaining - 1);
+          }, retriesRemaining === 2 ? 280 : 700);
+          return true;
+        }
+        setIsPreparingNeuralAudio(false);
+        setIsSpeaking(false);
         setActiveSpeechText("");
+        setDlgAudioNotice("A voz inglesa ainda está preparando neste navegador. Toque em Ouvir inglês novamente.");
+        if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
+        return false;
       }
-      releaseRequest();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = language;
+      utterance.rate = dialogSpeechRate;
+      utterance.pitch = 1;
+      const languagePrefix = language.toLowerCase().split("-")[0];
+      const regionalVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(languagePrefix));
+      const maleVoicePattern = /(^|\s)(david|mark|guy|daniel|george|james|ryan|andrew|matthew|eric|brian|michael|christopher|male)(\s|$)/i;
+      const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
+      // Alguns navegadores não identificam gênero no nome da voz. Para James,
+      // priorizamos homem nomeado e, se não existir, uma voz regional sem rótulo
+      // feminino explícito em vez de deixar a cena sem áudio.
+      const nonFemaleRegionalVoice = regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name));
+      const preferredVoice = gender === "male"
+        ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice
+        : gender === "female"
+          ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
+          : regionalVoices[0];
+      if (gender && !preferredVoice) return false;
+      if (preferredVoice) utterance.voice = preferredVoice;
+      const releaseRequest = () => {
+        if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
+      };
+      const finish = () => {
+        stopVisemeSync();
+        setAudioViseme(null);
+        setIsSpeaking(false);
+        setIsPreparingNeuralAudio(false);
+        if (localSpeechRef.current === utterance) {
+          localSpeechRef.current = null;
+          setActiveSpeechText("");
+        }
+        releaseRequest();
+      };
+      utterance.onstart = () => {
+        setIsPreparingNeuralAudio(false);
+        setIsSpeaking(true);
+        if (activeDialogLineRef.current === text) setDlgAudioClock(false);
+      };
+      utterance.onend = finish;
+      utterance.onerror = () => {
+        finish();
+        setDlgAudioNotice("Não foi possível iniciar o áudio neste navegador. Leia a fala em inglês e tente novamente.");
+      };
+      localSpeechRef.current = utterance;
+      synth.cancel();
+      synth.speak(utterance);
+      return true;
     };
-    utterance.onstart = () => {
-      setIsPreparingNeuralAudio(false);
-      setIsSpeaking(true);
-      if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-    };
-    utterance.onend = finish;
-    utterance.onerror = () => {
-      finish();
-      setDlgAudioNotice("Não foi possível iniciar o áudio neste navegador. Leia a fala em inglês e tente novamente.");
-    };
-    localSpeechRef.current = utterance;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    return true;
+    return startWithAvailableVoices(2);
   }, [dialogSpeechRate, stopVisemeSync]);
 
   const playGuestBrowserVoice = useCallback((text: string, language: string, gender?: 'male' | 'female') => {
