@@ -11,7 +11,8 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(routerSource).toContain("assertCurriculumDelivery(ctx.user.id, input.lessonKey)");
     expect(routerSource).toContain("pageSize: z.number().int().min(1).max(10)");
     expect(routerSource).toContain("const programWords = getParetoProgramWords()");
-    expect(routerSource).toContain("entitlement.isPaid ? programWords : programWords.slice(0, 10)");
+    expect(routerSource).toContain("const authorizedWords = programWords;");
+    expect(routerSource).not.toContain("entitlement.isPaid ? programWords : programWords.slice(0, 10)");
     expect(localizerSource).toContain("preferredProvider: \"ollama\"");
     expect(localizerSource).not.toContain("allowRemoteFallback: false");
   });

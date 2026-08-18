@@ -1605,6 +1605,7 @@
 - [x] Agrupar atalhos semelhantes por finalidade: Entender, Memorizar, Praticar e Aplicar — os atalhos agora aparecem agrupados e recolhíveis, sem substituir o Livro SOS nem sobrepor a atividade principal; TypeScript e regressões aprovados
 
 - [x] Corrigir o erro de execução visual na página Pareto após a inclusão dos atalhos pedagógicos e revisar a compatibilidade do retorno contextual — retornos de carregamento foram movidos após os hooks, eliminando a falha de renderização; TypeScript, regressões e captura visual da página Pareto aprovados
+- [x] Corrigir a entrega protegida do Pareto que mostra 10 em vez de 1.000 palavras únicas para PT-BR→inglês — após autorização da conta, a trilha retorna as 1.000 formas canônicas protegidas em sessões de dez; TypeScript, regressões e suíte completa com 634 testes aprovados; interface validada com 1.000/1.000 e 100 sessões
 - [ ] Após os atalhos, expandir clipes roteirizados próprios de professores por objeto e situação nas cenas imersivas, sem reutilizar mídia indevida
 - [x] Auditar as 29 cenas por currículo, professor, voz, objetos, diálogo, mídia e atalhos antes de declarar o conjunto plenamente correto — auditoria automática valida as 29 sementes protegidas, diálogos, objetos, frases, traduções, cenário visual, retrato, professor, idioma de voz, clipes piloto e atalhos globais; TypeScript e 25 regressões de cena aprovados
 - [ ] Ampliar cada uma das 29 cenas com trilhas Pareto de vocabulário, expressões, frases e exercícios além dos objetos visíveis

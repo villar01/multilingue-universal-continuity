@@ -53,9 +53,9 @@ export const curriculumRouter = router({
     page: z.number().int().min(0).default(0),
     pageSize: z.number().int().min(1).max(10).default(10),
   })).query(async ({ ctx, input }) => {
-    const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     const programWords = getParetoProgramWords();
-    const authorizedWords = entitlement.isPaid ? programWords : programWords.slice(0, 10);
+    const authorizedWords = programWords;
     const scopedWords = input.scene ? authorizedWords.filter((word) => word.scene === input.scene) : authorizedWords;
     const start = input.page * input.pageSize;
     const pageWords = scopedWords.slice(start, start + input.pageSize);
