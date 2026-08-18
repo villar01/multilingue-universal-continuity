@@ -3,6 +3,7 @@ import { STRUCTURED_A1_UNITS } from "./studyBaseContent";
 import { FIFTH_BLOCK_PROGRESSIVE_LESSONS } from "./abcBookFifthBlock";
 import { SIXTH_BLOCK_PROGRESSIVE_LESSONS } from "./abcBookSixthBlock";
 import { SEVENTH_BLOCK_LITERACY_LABS } from "./abcBookSeventhBlock";
+import { getLanguageBlocks } from "./languageBlocksContent";
 
 export type ABCBookSection = {
   title: string;
@@ -810,6 +811,16 @@ export type ABCBookDelivery = {
   memorySteps: ABCBookMemoryStep[];
   sentenceStructure: ABCBookSentenceStructure;
   contextGroups: ABCBookContextGroup[];
+  languageBlocks: Array<{
+    id: string;
+    kind: "essential_phrase" | "everyday_expression" | "natural_reply" | "contextual_slang";
+    english: string;
+    portuguese: string;
+    figurativePronunciation: string;
+    example: string;
+    examplePortuguese: string;
+    writingPrompt: string;
+  }>;
   sections: ABCBookSection[];
   chapters: ABCBookChapter[];
   phrases: ABCBookPhrase[];
@@ -1915,6 +1926,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     { english: "Where is the airport?", portuguese: "Onde fica o aeroporto?", focus: "Localização" },
     { english: "I would like water, please.", portuguese: "Eu gostaria de água, por favor.", focus: "Necessidade e cortesia" },
   ],
+  languageBlocks: getLanguageBlocks("A1"),
   sections: [
     {
       title: "Comece pela ideia completa",

@@ -109,7 +109,7 @@ export default function ABCBook() {
     book.progressiveLessons.length +
     2 +
     book.contextGroups.length +
-    4 +
+    5 +
     book.chapters.length * 3 +
     book.sections.length +
     2;
@@ -350,6 +350,26 @@ export default function ABCBook() {
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Padrão:</strong> {card.pattern}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700"><strong>Exemplo:</strong> {card.example}</p>
                   <p className="mt-4 border-l-2 border-violet-300 pl-3 text-sm font-semibold leading-6 text-slate-700">{card.paretoPrompt}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="border-y border-stone-200 bg-stone-50 px-5 py-6 sm:px-6">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Blocos de linguagem A1</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Use uma expressão inteira</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Uma expressão curta ajuda a pedir ajuda ou continuar a conversa sem montar cada palavra do zero. Leia, ouça, copie e depois adapte o exemplo.</p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {book.languageBlocks.map((block) => (
+                <article key={block.id} className="border border-stone-200 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">{block.kind === "essential_phrase" ? "Frase essencial" : block.kind}</p>
+                  <h3 className="mt-2 font-serif text-xl font-bold text-slate-950">{block.english}</h3>
+                  <p className="mt-1 text-sm font-semibold text-sky-800">{block.portuguese}</p>
+                  <button type="button" onClick={() => playNativeReference(block.english)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === block.english ? "Falando…" : "Ouvir inglês nativo"}</button>
+                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Referência de fala:</strong> {block.figurativePronunciation}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{block.example}</p>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">Em português: {block.examplePortuguese}</p>
+                  <p className="mt-3 border-l-2 border-violet-300 pl-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {block.writingPrompt}</p>
                 </article>
               ))}
             </div>

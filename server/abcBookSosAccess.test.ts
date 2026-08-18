@@ -86,5 +86,7 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain("Compreensão do texto");
     expect(bookSource).toContain("chapter.guidedDialogue.map");
     expect(bookSource).toContain("Diálogo curto");
+    expect(bookSource).toContain("book.languageBlocks.map");
+    expect(bookSource).toContain("Blocos de linguagem A1");
   });
 });

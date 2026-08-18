@@ -75,4 +75,14 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
     expect(book.chapters.every((chapter) => chapter.guidedDialogue.length === 2)).toBe(true);
     expect(book.chapters.flatMap((chapter) => chapter.guidedDialogue).every((line) => line.speaker.trim() && line.target.trim() && line.native.trim())).toBe(true);
   });
+
+  it("entrega blocos A1 de expressão com sentido, fala, exemplo e escrita", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.languageBlocks.map((block) => block.english)).toEqual(expect.arrayContaining(["Can you help me?", "I don't understand."]));
+    expect(book.languageBlocks.every((block) => block.portuguese && block.figurativePronunciation && block.example && block.examplePortuguese && block.writingPrompt)).toBe(true);
+  });
 });
