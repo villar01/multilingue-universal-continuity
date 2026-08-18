@@ -30,4 +30,11 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     expect(source).toContain("<TeacherAvatar");
     expect(source.indexOf("<TeacherAvatar")).toBeLessThan(source.indexOf("{/* ── Dialog Panel:"));
   });
+
+  it("orienta o uso dos objetos em toda apresentação, mesmo quando a saudação original é breve", () => {
+    expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene): string");
+    expect(source).toContain("/objetos?/i.test(greeting)");
+    expect(source).toContain("Clique nos objetos para aprender.");
+    expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene));");
+  });
 });

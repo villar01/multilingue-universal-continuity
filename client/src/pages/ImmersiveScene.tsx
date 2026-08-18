@@ -113,6 +113,13 @@ function getSceneLocationDisclosure(scene: Scene): string {
     || `This is a generic educational illustration called ${scene.nameEn}; it is not assigned to a real country or city.`;
 }
 
+function getSceneObjectGuidancePt(scene: Scene): string {
+  const greeting = scene.greetingPt.trim();
+  return /objetos?/i.test(greeting)
+    ? greeting
+    : `${greeting} Clique nos objetos para aprender.`;
+}
+
 type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
 const IMMERSIVE_CEFR_LEVELS: Array<{ value: ImmersiveCEFRLevel; label: string }> = [
@@ -1902,7 +1909,7 @@ export default function ImmersiveScene() {
     setLearnedWords(new Set());
     setQuizIndex(0);
     setQuizFeedback(null);
-    setGreetingText(selectedScene.greetingPt);
+    setGreetingText(getSceneObjectGuidancePt(selectedScene));
     setShowGreeting(true);
     if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
     greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
