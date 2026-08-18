@@ -11,7 +11,10 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(routerSource).toContain("assertCurriculumDelivery(ctx.user.id, input.lessonKey)");
     expect(routerSource).toContain("pageSize: z.number().int().min(1).max(10)");
     expect(routerSource).toContain("const programWords = getParetoProgramWords()");
-    expect(routerSource).toContain("const authorizedWords = entitlement.hasFullCurriculum ? programWords : programWords.slice(0, 10);");
+    expect(routerSource).toContain("bookContext: z.enum(PARETO_BOOK_CONTEXT_IDS).optional()");
+    expect(routerSource).toContain("const contextWords = getParetoBookContextWords(input.bookContext, programWords);");
+    expect(routerSource).toContain("const candidateWords = contextWords ?? programWords;");
+    expect(routerSource).toContain("const advancedChallenge = bookContext ? null : getParetoAdvancedChallenge(input.page);");
     expect(routerSource).toContain("await assertCurriculumDelivery(ctx.user.id, input.lessonKey)");
     expect(localizerSource).toContain("preferredProvider: \"ollama\"");
     expect(localizerSource).not.toContain("allowRemoteFallback: false");
@@ -21,6 +24,10 @@ describe("entrega localizada e protegida do Pareto", () => {
     expect(pageSource).toContain("trpc.curriculum.localizedPareto.useQuery");
     expect(pageSource).toContain("targetLanguage,");
     expect(pageSource).toContain("nativeLanguage,");
+    expect(pageSource).toContain("bookContext,");
+    expect(pageSource).toContain("paretoQuery.data?.bookContext?.grammarFocus");
+    expect(pageSource).toContain("Desafio de estrutura");
+    expect(pageSource).toContain("Conferir ordem");
     expect(pageSource).toContain("voiceLang: targetLanguage");
     expect(pageSource).not.toContain("voiceLang: \"en-US\"");
   });

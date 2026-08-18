@@ -46,4 +46,10 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain('const paretoReturnTo = `/abc-book?returnTo=${encodeURIComponent(returnTo)}`');
     expect(bookSource).toContain('onClick={() => setLocation(returnTo)}');
   });
+
+  it("mantém a leitura de cartilha com ilustração autoral e uma ação principal por capítulo", () => {
+    expect(bookSource).toContain('/manus-storage/abc-cartilha-greeting-monochrome_8e5662a6.png');
+    expect(bookSource).toContain("Próximo passo: Praticar no Pareto");
+    expect(bookSource).toContain("Opções desta unidade");
+  });
 });

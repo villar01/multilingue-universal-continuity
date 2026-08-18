@@ -5,6 +5,8 @@ import { hasAuthorizedTrialLessonKey, getLearningContentEntitlement } from "./tr
 import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBaseContent";
 import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
 import { getParetoProgramWords, PARETO_VOCAB } from "./curriculum/paretoContent";
+import { getParetoBookContext, getParetoBookContextWords, PARETO_BOOK_CONTEXT_IDS } from "./curriculum/paretoBookContexts";
+import { getParetoAdvancedChallenge } from "./curriculum/paretoAdvancedChallenges";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
@@ -48,6 +50,7 @@ export const curriculumRouter = router({
 
   localizedPareto: protectedProcedure.input(accessInput.extend({
     scene: z.string().trim().max(80).optional(),
+    bookContext: z.enum(PARETO_BOOK_CONTEXT_IDS).optional(),
     targetLanguage: z.string().trim().min(2).max(16),
     nativeLanguage: z.string().trim().min(2).max(16),
     page: z.number().int().min(0).default(0),
@@ -55,7 +58,11 @@ export const curriculumRouter = router({
   })).query(async ({ ctx, input }) => {
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     const programWords = getParetoProgramWords();
-    const authorizedWords = entitlement.hasFullCurriculum ? programWords : programWords.slice(0, 10);
+    const bookContext = getParetoBookContext(input.bookContext);
+    const advancedChallenge = bookContext ? null : getParetoAdvancedChallenge(input.page);
+    const contextWords = getParetoBookContextWords(input.bookContext, programWords);
+    const candidateWords = contextWords ?? programWords;
+    const authorizedWords = entitlement.hasFullCurriculum ? candidateWords : candidateWords.slice(0, 10);
     const scopedWords = input.scene ? authorizedWords.filter((word) => word.scene === input.scene) : authorizedWords;
     const start = input.page * input.pageSize;
     const pageWords = scopedWords.slice(start, start + input.pageSize);
@@ -72,6 +79,16 @@ export const curriculumRouter = router({
       page: input.page,
       pageSize: input.pageSize,
       totalPages: Math.max(1, Math.ceil(scopedWords.length / input.pageSize)),
+      bookContext: bookContext ? {
+        id: bookContext.id,
+        title: bookContext.title,
+        bookStep: bookContext.bookStep,
+        grammarFocus: bookContext.grammarFocus,
+        recallPrompt: bookContext.recallPrompt,
+        orderPrompt: bookContext.orderPrompt,
+        orderAnswer: bookContext.orderAnswer,
+      } : null,
+      advancedChallenge,
     };
   }),
 

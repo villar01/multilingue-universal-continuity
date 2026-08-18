@@ -27,6 +27,7 @@ describe("proteção temporal da avaliação", () => {
     expect(schema).toContain('expiresAt: timestamp("expires_at")');
     expect(router).toContain("O período gratuito de 14 dias foi concluído.");
     expect(router).toContain('status: "expired"');
-    expect(curriculumRouter).toContain("entitlement.hasFullCurriculum ? programWords : programWords.slice(0, 10)");
+    expect(curriculumRouter).toContain("const candidateWords = contextWords ?? programWords;");
+    expect(curriculumRouter).toContain("entitlement.hasFullCurriculum ? candidateWords : candidateWords.slice(0, 10)");
   });
 });

@@ -1,4 +1,9 @@
 export async function registerServiceWorker() {
+  if (import.meta.env.DEV) {
+    await unregisterServiceWorker();
+    return null;
+  }
+
   if ('serviceWorker' in navigator) {
     try {
       const reloadKey = 'multilingue-sw-version-reload';

@@ -5,13 +5,15 @@ import { completedProgramCount } from "@/lib/paretoProgress";
 import { getDueParetoReviewIds, getParetoProgramIndex, recordSuccessfulParetoReview, type ParetoReviewSchedule } from "@/lib/paretoSpacedReview";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowLeft, BookOpen, CheckCircle2, Headphones, PenLine, Sparkles, Target } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Headphones, PenLine } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 
 const SESSION_SIZE = 10;
 const PROGRESS_KEY_PREFIX = "multilingue_pareto_1000_completed";
 const REVIEW_KEY_PREFIX = "multilingue_pareto_1000_reviews";
+const PARETO_PATHS = ["book", "advanced"] as const;
+const BOOK_CONTEXT_IDS = ["foundation", "family", "social-circle"] as const;
 
 function progressKey(targetLanguage: string, nativeLanguage: string): string {
   return `${PROGRESS_KEY_PREFIX}:${targetLanguage.trim().toLowerCase()}:${nativeLanguage.trim().toLowerCase()}`;
@@ -56,17 +58,26 @@ function saveReviewSchedule(key: string, schedule: ParetoReviewSchedule) {
 }
 
 export default function Pareto1000() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [page, setPage] = useState(0);
   const { profile } = useLanguage();
   const targetLanguage = profile.targetCode || "en-US";
   const nativeLanguage = profile.nativeCode || "pt-BR";
   const activeProgressKey = useMemo(() => progressKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
   const activeReviewKey = useMemo(() => reviewKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
+  const paretoPath = useMemo(() => {
+    const requestedPath = new URLSearchParams(location.split("?")[1] ?? "").get("path");
+    return PARETO_PATHS.find((path) => path === requestedPath) ?? "advanced";
+  }, [location]);
+  const bookContext = useMemo(() => {
+    const requestedContext = new URLSearchParams(location.split("?")[1] ?? "").get("bookContext");
+    return BOOK_CONTEXT_IDS.find((contextId) => contextId === requestedContext) ?? "foundation";
+  }, [location]);
   const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
     lessonKey: "/pareto-1000",
     targetLanguage,
     nativeLanguage,
+    bookContext: paretoPath === "book" ? bookContext : undefined,
     page,
     pageSize: SESSION_SIZE,
   });
@@ -85,6 +96,8 @@ export default function Pareto1000() {
   const [reviewSchedule, setReviewSchedule] = useState<ParetoReviewSchedule>(() => loadReviewSchedule(activeReviewKey));
   const [practiceWord, setPracticeWord] = useState<ParetoWord | null>(null);
   const [pendingReviewId, setPendingReviewId] = useState<string | null>(null);
+  const [structureAttempt, setStructureAttempt] = useState("");
+  const [structureChecked, setStructureChecked] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speakMutation = trpc.tts.speak.useMutation();
   const sessionStart = page * SESSION_SIZE;
@@ -106,6 +119,12 @@ export default function Pareto1000() {
       : "/base-de-estudos";
   }, [location]);
 
+  const selectParetoPath = useCallback((nextPath: (typeof PARETO_PATHS)[number]) => {
+    const params = new URLSearchParams({ path: nextPath, returnTo });
+    if (nextPath === "book") params.set("bookContext", bookContext);
+    setLocation(`/pareto-1000?${params.toString()}`);
+  }, [bookContext, returnTo, setLocation]);
+
   useEffect(() => {
     setCompleted(loadCompletedWords(activeProgressKey));
     setReviewSchedule(loadReviewSchedule(activeReviewKey));
@@ -113,6 +132,18 @@ export default function Pareto1000() {
     setPracticeWord(null);
     setPendingReviewId(null);
   }, [activeProgressKey, activeReviewKey]);
+
+  useEffect(() => {
+    setPage(0);
+    setPracticeWord(null);
+    setStructureAttempt("");
+    setStructureChecked(false);
+  }, [paretoPath, bookContext]);
+
+  useEffect(() => {
+    setStructureAttempt("");
+    setStructureChecked(false);
+  }, [page]);
 
   useEffect(() => {
     if (!pendingReviewId) return;
@@ -175,6 +206,11 @@ export default function Pareto1000() {
     setPracticeWord(candidate);
   }, [completed, practiceWord, words]);
 
+  const advancedChallenge = paretoPath === "advanced" ? paretoQuery.data?.advancedChallenge : null;
+  const structureAnswerIsCorrect = advancedChallenge
+    ? structureAttempt.trim().toLocaleLowerCase("en-US") === advancedChallenge.answer.toLocaleLowerCase("en-US")
+    : false;
+
   if (paretoQuery.isLoading) {
     return <main className="flex min-h-screen items-center justify-center bg-[#f8f6ef] px-6 text-center text-sm text-slate-700">Carregando vocabulário Pareto protegido…</main>;
   }
@@ -188,45 +224,49 @@ export default function Pareto1000() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f6ef] text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-amber-100 bg-white/95 shadow-sm backdrop-blur">
-        <div className="container flex items-center justify-between gap-3 py-4">
-          <Link href={returnTo}><Button variant="ghost" className="gap-2 text-slate-700 hover:bg-amber-50 hover:text-slate-950"><ArrowLeft className="h-4 w-4" />Voltar à Base</Button></Link>
-          <span className="text-sm font-bold text-amber-800">Pareto · 1.000 palavras</span>
-        </div>
-      </header>
+    <main className="min-h-screen bg-[#f8f6ef] px-4 py-6 text-slate-900 sm:px-6 sm:py-10">
+      <article className="mx-auto max-w-4xl border border-stone-200 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.08)]">
+        <header className="border-b border-stone-200 px-6 py-5 sm:px-10 sm:py-7">
+          <div className="flex items-center justify-between gap-3">
+            <Link href={returnTo}><Button variant="ghost" className="h-auto gap-2 px-0 py-1 text-sm font-bold text-slate-600 hover:bg-transparent hover:text-slate-950"><ArrowLeft className="h-4 w-4" />Voltar à Base</Button></Link>
+            <span className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Pareto · 1.000 palavras</span>
+          </div>
+          <p className="mt-6 text-xs font-black uppercase tracking-[0.14em] text-amber-800">{paretoPath === "book" ? paretoQuery.data?.bookContext?.bookStep : "Curso Pareto avançado"}</p>
+          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{paretoPath === "book" ? (paretoQuery.data?.bookContext?.title ?? "Uma palavra de cada vez") : "Mil palavras para lembrar e usar"}</h1>
+          <p className="mt-3 max-w-3xl leading-7 text-slate-700">{paretoPath === "book" ? (paretoQuery.data?.bookContext?.grammarFocus ?? "Leia o sentido, ouça, escreva sem olhar e crie uma frase.") : "Percurso completo com mil palavras, recuperação ativa, escrita, voz e revisões espaçadas. Escolha este caminho quando quiser praticar além do capítulo atual."}</p>
+          <div className="mt-5 flex flex-wrap gap-2 border-y border-stone-200 py-3"><Button type="button" variant={paretoPath === "book" ? "default" : "outline"} onClick={() => selectParetoPath("book")} className={paretoPath === "book" ? "bg-slate-900 text-white hover:bg-slate-800" : "border-stone-300 bg-white text-slate-700 hover:bg-stone-50"}>Pareto do Livro</Button><Button type="button" variant={paretoPath === "advanced" ? "default" : "outline"} onClick={() => selectParetoPath("advanced")} className={paretoPath === "advanced" ? "bg-slate-900 text-white hover:bg-slate-800" : "border-stone-300 bg-white text-slate-700 hover:bg-stone-50"}>Curso Pareto avançado</Button></div>
+          <div className="mt-6 border-y border-stone-200 py-4">
+            <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.12em] text-amber-800">Progresso</p><p className="mt-1 font-serif text-2xl font-bold text-slate-950">{completedCount} <span className="text-base font-semibold text-slate-600">de {programReadyCount} palavras</span></p>{dueReviewIds.length > 0 && <p className="mt-1 text-sm font-semibold text-sky-800">Há {dueReviewIds.length} revisão{dueReviewIds.length === 1 ? "" : "ões"} para retomar.</p>}</div><Button type="button" onClick={dueReviewIds.length > 0 ? openDueReview : () => setPracticeWord(nextWord)} disabled={dueReviewIds.length === 0 && !nextWord} className="bg-slate-900 font-bold text-white hover:bg-slate-800">{dueReviewIds.length > 0 ? "Revisar pendências" : nextWord ? "Começar a próxima palavra" : "Trilha concluída"}</Button></div>
+            <div className="mt-4 h-1.5 overflow-hidden bg-stone-200"><div className="h-full bg-amber-500 transition-all" style={{ width: `${Math.max(1, (completedCount / Math.max(programReadyCount, 1)) * 100)}%` }} /></div>
+          </div>
+        </header>
 
-      <div className="container py-8 sm:py-12">
-        <section className="rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-100 via-white to-sky-100 p-6 shadow-lg shadow-amber-950/5 sm:p-9">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-amber-900"><Target className="h-4 w-4" />Programa de memorização ativo</div>
-            <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">Rumo a mil palavras para lembrar, escrever e usar.</h1>
-            <p className="mt-4 text-base leading-7 text-slate-700 sm:text-lg">O curso ensina as palavras em textos e situações. Aqui, o aluno recupera sem olhar, escreve novamente, cria uma frase e revisa até fixar. {programReadyCount.toLocaleString("pt-BR")} termos do idioma estudado foram autorizados para esta trilha.</p>
-          </div>
-          <div className="mt-6 rounded-2xl border border-amber-100 bg-white/90 p-4 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-800">Progresso de memória</p><p className="mt-1 text-2xl font-black text-slate-950">{completedCount} <span className="text-base font-semibold text-slate-600">/ {programReadyCount} palavras únicas liberadas</span></p><p className="mt-1 text-xs text-slate-500">Meta do programa: 1.000 palavras únicas.</p>{dueReviewIds.length > 0 && <p className="mt-2 text-xs font-semibold text-cyan-800">{dueReviewIds.length} revisão{dueReviewIds.length === 1 ? "" : "ões"} pendente{dueReviewIds.length === 1 ? "" : "s"} para reforçar a memória.</p>}</div><Button type="button" onClick={dueReviewIds.length > 0 ? openDueReview : () => setPracticeWord(nextWord)} disabled={dueReviewIds.length === 0 && !nextWord} className="gap-2 bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"><Sparkles className="h-4 w-4" />{dueReviewIds.length > 0 ? "Revisar pendências" : nextWord ? "Continuar memorização" : "Trilha atual concluída"}</Button></div>
-            <div className="mt-4 h-3 overflow-hidden rounded-full bg-amber-100"><div className="h-full rounded-full bg-amber-400 transition-all" style={{ width: `${Math.max(1, (completedCount / Math.max(programReadyCount, 1)) * 100)}%` }} /></div>
-          </div>
+        <section className="border-b border-stone-200 px-6 py-6 sm:px-10">
+          <div className="flex items-center gap-2"><PenLine className="h-5 w-5 text-amber-700" /><h2 className="font-serif text-xl font-bold">Como cada palavra é treinada</h2></div>
+          <ol className="mt-4 grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2"><li><strong className="text-slate-950">1. Observe.</strong> Leia, ouça e associe ao exemplo.</li><li><strong className="text-slate-950">2. Lembre.</strong> Escreva em inglês sem olhar.</li><li><strong className="text-slate-950">3. Escreva.</strong> Repita a grafia com atenção.</li><li><strong className="text-slate-950">4. Use.</strong> Crie uma frase curta e verdadeira.</li></ol>
+          {paretoPath === "book" && paretoQuery.data?.bookContext && <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700">{paretoQuery.data.bookContext.recallPrompt}</p>}
         </section>
 
-        <section className="mt-7 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-          <aside className="rounded-3xl border border-amber-100 bg-white p-5 shadow-md shadow-amber-950/5">
-            <div className="flex items-center gap-2"><PenLine className="h-5 w-5 text-amber-700" /><h2 className="font-black">Como cada palavra é treinada</h2></div>
-            <ol className="mt-4 space-y-3 text-sm leading-6 text-slate-700"><li><strong className="text-amber-800">1. Observe:</strong> leia, ouça e associe ao exemplo.</li><li><strong className="text-amber-800">2. Lembre:</strong> escreva em inglês sem olhar.</li><li><strong className="text-amber-800">3. Escreva:</strong> repita a grafia para fixar.</li><li><strong className="text-amber-800">4. Crie:</strong> use a palavra em uma frase nova.</li></ol>
-            <p className="mt-5 rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">A cartilha apresenta o sentido e a gramática. O Pareto fixa o vocabulário por recuperação ativa e escrita.</p>
-          </aside>
-          <section className="rounded-3xl border border-amber-100 bg-white p-5 shadow-md shadow-amber-950/5 sm:p-7">
-            <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-sky-800">Sessão {page + 1} de {totalPages}</p><h2 className="mt-1 text-2xl font-black">Dez palavras para praticar agora</h2></div><Button type="button" variant="outline" onClick={() => setPracticeWord(sessionWords.find((word) => !completed.has(word.id)) ?? sessionWords[0] ?? null)} className="border-amber-300 bg-white text-amber-900 hover:bg-amber-50 hover:text-amber-950">Iniciar esta sessão</Button></div>
-            <div className="mt-5 space-y-3">
-              {sessionWords.map((word, index) => {
-                const reviewDue = dueReviewSet.has(word.id);
-                return <div key={word.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-[#fffefb] p-4 shadow-sm"><div><p className="text-xs font-bold text-slate-500">{sessionStart + index + 1} / {programReadyCount} · {word.category}</p><p className="mt-1 text-lg font-black text-slate-950">{word.enUS} <span className="text-sm font-semibold text-sky-800">· {word.ptBR}</span></p><p className="mt-1 text-sm text-slate-700">{word.example}</p><p className="mt-1 text-xs font-medium text-amber-800">Em português: {word.examplePt}</p></div><div className="flex gap-2"><Button type="button" size="sm" variant="outline" onClick={() => speak(word.enUS)} disabled={speakMutation.isPending} className="border-sky-300 bg-white text-sky-800 hover:bg-sky-50 hover:text-sky-950"><Headphones className="h-4 w-4" /></Button><Button type="button" size="sm" onClick={() => setPracticeWord(word)} className={reviewDue ? "bg-sky-300 text-slate-950 hover:bg-sky-200" : completed.has(word.id) ? "bg-emerald-300 text-slate-950 hover:bg-emerald-200" : "bg-amber-400 text-slate-950 hover:bg-amber-300"}>{reviewDue ? "Revisar" : completed.has(word.id) ? <CheckCircle2 className="h-4 w-4" /> : "Praticar"}</Button></div></div>;
-              })}
-            </div>
-            <div className="mt-6 flex items-center justify-between"><Button type="button" variant="outline" disabled={page === 0} onClick={() => setPage((current) => current - 1)}>Sessão anterior</Button><Button type="button" variant="outline" disabled={page >= totalPages - 1} onClick={() => setPage((current) => current + 1)}>Próximas 10 palavras</Button></div>
-          </section>
+        {advancedChallenge && <section className="border-b border-stone-200 px-6 py-6 sm:px-10">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Desafio de estrutura · {advancedChallenge.level}</p>
+          <h2 className="mt-2 font-serif text-xl font-bold text-slate-950">{advancedChallenge.focus}</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-700">{advancedChallenge.prompt}</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row"><input value={structureAttempt} onChange={(event) => { setStructureAttempt(event.target.value); setStructureChecked(false); }} placeholder="Escreva a frase em inglês" className="min-w-0 flex-1 border border-stone-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none ring-amber-500 focus:ring-2" /><Button type="button" onClick={() => setStructureChecked(true)} disabled={!structureAttempt.trim()} className="bg-slate-900 text-white hover:bg-slate-800">Conferir ordem</Button></div>
+          {structureChecked && <p className={`mt-3 border-l-2 pl-4 text-sm leading-6 ${structureAnswerIsCorrect ? "border-emerald-500 text-emerald-800" : "border-amber-500 text-slate-700"}`}>{structureAnswerIsCorrect ? "Correto. " : `Resposta-modelo: ${advancedChallenge.answer} `}{advancedChallenge.explanation}</p>}
+        </section>}
+
+        <section className="px-6 py-7 sm:px-10 sm:py-9">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4"><div><p className="text-xs font-black uppercase tracking-[0.12em] text-amber-800">Sessão {page + 1} de {totalPages}</p><h2 className="mt-1 font-serif text-2xl font-bold">Palavras desta sessão</h2></div><Button type="button" variant="outline" onClick={() => setPracticeWord(sessionWords.find((word) => !completed.has(word.id)) ?? sessionWords[0] ?? null)} className="border-stone-300 bg-white text-slate-800 hover:bg-stone-50">Começar esta sessão</Button></div>
+          {paretoPath === "book" && paretoQuery.data?.bookContext && <p className="mt-4 border-b border-stone-200 pb-4 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Ordem da frase:</strong> {paretoQuery.data.bookContext.orderPrompt}</p>}
+          <ol className="divide-y divide-stone-200">
+            {sessionWords.map((word, index) => {
+              const reviewDue = dueReviewSet.has(word.id);
+              return <li key={word.id} className="grid gap-4 py-5 sm:grid-cols-[3rem_1fr_auto] sm:items-center"><span className="font-serif text-xl font-bold text-amber-700">{String(sessionStart + index + 1).padStart(2, "0")}</span><div><p className="text-xs font-bold uppercase tracking-[0.1em] text-slate-500">{word.category}</p><p className="mt-1 font-serif text-xl font-bold text-slate-950">{word.enUS} <span className="text-base font-semibold text-sky-800">— {word.ptBR}</span></p><p className="mt-2 text-sm leading-6 text-slate-700">{word.example}</p><p className="mt-1 text-sm font-semibold leading-6 text-slate-600">Em português: {word.examplePt}</p></div><div className="flex gap-2"><Button type="button" size="sm" variant="ghost" onClick={() => speak(word.enUS)} disabled={speakMutation.isPending} className="text-sky-800 hover:bg-sky-50 hover:text-sky-950" aria-label={`Ouvir ${word.enUS}`}><Headphones className="h-4 w-4" /></Button><Button type="button" size="sm" onClick={() => setPracticeWord(word)} className={reviewDue ? "bg-sky-700 text-white hover:bg-sky-800" : completed.has(word.id) ? "bg-emerald-700 text-white hover:bg-emerald-800" : "bg-slate-900 text-white hover:bg-slate-800"}>{reviewDue ? "Revisar" : completed.has(word.id) ? <CheckCircle2 className="h-4 w-4" /> : "Praticar"}</Button></div></li>;
+            })}
+          </ol>
+          <div className="mt-7 flex items-center justify-between border-t border-stone-200 pt-5"><Button type="button" variant="ghost" disabled={page === 0} onClick={() => setPage((current) => current - 1)} className="text-slate-700 hover:bg-stone-50">Sessão anterior</Button><Button type="button" variant="ghost" disabled={page >= totalPages - 1} onClick={() => setPage((current) => current + 1)} className="text-slate-700 hover:bg-stone-50">Próximas 10 palavras</Button></div>
         </section>
-      </div>
+      </article>
       {practiceWord && <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/35 p-4 backdrop-blur-sm sm:items-center"><ParetoPracticeCycle embedded level="A1" term={{ word: practiceWord.enUS, translation: practiceWord.ptBR, example: practiceWord.example, exampleTranslation: practiceWord.examplePt }} onSpeak={speak} onClose={() => setPracticeWord(null)} onComplete={completeWord} onNext={openNextWord} /></div>}
     </main>
   );

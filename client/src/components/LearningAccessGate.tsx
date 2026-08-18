@@ -16,6 +16,7 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     retry: false,
   });
   const [trialState, setTrialState] = useState<"idle" | "checking" | "allowed" | "blocked" | "error">("idle");
+  const [authWaitExceeded, setAuthWaitExceeded] = useState(false);
   const trialAccess = trpc.trialAccess.authorizeLesson.useMutation();
 
   const canCheckTrial = hasLearningAccess({ isAuthenticated, acceptedProtectionTerms: acceptanceQuery.data?.accepted === true });
@@ -35,30 +36,39 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     return () => { active = false; };
   }, [canCheckTrial, isLearningRoute, location]);
 
+  useEffect(() => {
+    if (!isLearningRoute || !loading) {
+      setAuthWaitExceeded(false);
+      return;
+    }
+    const timeout = window.setTimeout(() => setAuthWaitExceeded(true), 2500);
+    return () => window.clearTimeout(timeout);
+  }, [isLearningRoute, loading]);
+
   if (!isLearningRoute) return <>{children}</>;
 
-  if (loading) {
+  if (loading && !authWaitExceeded) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-sm text-slate-300">
-        Verificando acesso protegido…
+      <main className="flex min-h-screen items-center justify-center bg-[#f8f6ef] px-6 text-center text-sm text-slate-700">
+        Preparando sua entrada segura…
       </main>
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || authWaitExceeded) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 px-5 py-10">
-        <section className="w-full max-w-lg rounded-3xl border border-white/15 bg-white/10 p-7 text-center shadow-2xl backdrop-blur-sm">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
+      <main className="flex min-h-screen items-center justify-center bg-[#f8f6ef] px-5 py-10">
+        <section className="w-full max-w-lg border border-stone-200 bg-white p-7 text-center shadow-sm">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
             <LockKeyhole className="h-7 w-7" aria-hidden="true" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">Acesso protegido</p>
-          <h1 className="mt-2 text-2xl font-bold text-white">Inscrição necessária para iniciar o curso</h1>
-          <p className="mt-3 text-sm leading-relaxed text-slate-200">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Entrada protegida</p>
+          <h1 className="mt-2 font-serif text-2xl font-bold text-slate-950">Inscrição necessária para iniciar o curso</h1>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700">
             Cartilha, Pareto, cenas, exercícios e professor exigem uma conta. A apresentação do aplicativo continua aberta; as lições são liberadas somente após inscrição e configuração do perfil protegido.
           </p>
           <Button
-            className="mt-6 w-full bg-cyan-300 font-bold text-slate-950 hover:bg-cyan-200"
+            className="mt-6 w-full bg-slate-900 font-bold text-white hover:bg-slate-800"
             onClick={() => {
               sessionStorage.setItem("ml_protected_destination", location);
               window.location.href = getLoginUrl();
@@ -66,7 +76,7 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
           >
             Criar conta ou entrar
           </Button>
-          <p className="mt-4 text-xs leading-relaxed text-slate-300">
+          <p className="mt-4 text-xs leading-relaxed text-slate-600">
             O acesso pedagógico seguirá os termos aceitos, a faixa etária e os controles de proteção aplicáveis.
           </p>
         </section>

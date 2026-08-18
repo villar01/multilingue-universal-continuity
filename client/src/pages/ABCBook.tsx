@@ -79,9 +79,109 @@ export default function ABCBook() {
         </header>
 
         <div className="space-y-9 px-6 py-8 sm:px-10 sm:py-10">
-          <section className="border-l-4 border-amber-400 pl-5">
-            <h2 className="font-serif text-2xl font-bold">Como estudar nesta consulta</h2>
-            <p className="mt-3 max-w-3xl leading-7 text-slate-700">{book.introduction}</p>
+          <section className="grid gap-6 border-l-4 border-amber-400 pl-5 sm:grid-cols-[1fr_11rem] sm:items-center">
+            <div>
+              <h2 className="font-serif text-2xl font-bold">Como estudar nesta consulta</h2>
+              <p className="mt-3 max-w-3xl leading-7 text-slate-700">{book.introduction}</p>
+            </div>
+            <figure className="mx-auto max-w-[11rem] rounded-sm border border-amber-100 bg-amber-50 p-2 shadow-sm">
+              <img src="/manus-storage/abc-cartilha-greeting-monochrome_8e5662a6.png" alt="Desenho autoral monocromático de duas crianças iniciando uma conversa em outro idioma" className="aspect-[3/4] w-full rounded-sm object-cover" loading="lazy" />
+              <figcaption className="px-1 pt-2 text-center text-[11px] font-semibold leading-4 text-slate-600">Comece com uma ideia. Pratique um passo por vez.</figcaption>
+            </figure>
+          </section>
+
+          <section className="border-y border-stone-200 py-7">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Alfabeto e sons</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Primeiro, conheça as letras</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-slate-700">{book.alphabetIntroduction}</p>
+            <ol className="mt-5 grid grid-cols-4 border-y border-l border-stone-200 sm:grid-cols-7">
+              {book.alphabetLetters.map((item) => (
+                <li key={item.letter} className="border-b border-r border-stone-200 px-2 py-3 text-center last:border-b-0">
+                  <p className="font-serif text-2xl font-bold text-slate-950">{item.letter}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-700">{item.name}</p>
+                  <p className="mt-1 text-[11px] text-slate-500">{item.guide}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="border-b border-stone-200 pb-8">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Da letra à palavra</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Observe o som dentro da palavra</h2>
+            <div className="mt-5 space-y-7">
+              {book.soundLessons.map((lesson) => (
+                <article key={lesson.title} className="border-t border-stone-200 pt-5 first:border-t-0 first:pt-0">
+                  <h3 className="font-serif text-xl font-bold text-slate-950">{lesson.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
+                  <div className="mt-4 grid divide-y divide-stone-200 border-y border-stone-200 text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                    {lesson.examples.map((example) => (
+                      <div key={example.target} className="px-3 py-3"><p className="font-semibold text-slate-950">{example.target}</p><p className="mt-1 text-slate-600">{example.pronunciation}</p><p className="mt-1 text-slate-600">{example.native}</p></div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="border-y border-stone-200 py-7">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Memória passo a passo</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Aprenda uma ideia, recupere e use</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-700">Siga a ordem sem pressa. Cada passo prepara o próximo; não é preciso abrir outra ferramenta para continuar.</p>
+            <ol className="mt-5 divide-y divide-stone-200 border-y border-stone-200">
+              {book.memorySteps.map((step, index) => (
+                <li key={step.title} className="grid gap-2 py-4 sm:grid-cols-[2.75rem_1fr] sm:gap-4">
+                  <span className="font-serif text-2xl font-bold text-amber-700">{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-slate-950">{step.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-700">{step.instruction}</p>
+                    <p className="mt-2 border-l-2 border-stone-300 pl-3 text-sm font-semibold leading-6 text-slate-600">{step.example}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="border-b border-stone-200 pb-8">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Estrutura da ideia</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">{book.sentenceStructure.title}</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-slate-700">{book.sentenceStructure.introduction}</p>
+            <div className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
+              <p><strong className="text-slate-950">Padrão de base:</strong> {book.sentenceStructure.sharedPattern}</p>
+              <p><strong className="text-slate-950">Português:</strong> {book.sentenceStructure.portuguesePattern}</p>
+              <p><strong className="text-slate-950">Inglês:</strong> {book.sentenceStructure.englishPattern}</p>
+              <p><strong className="text-slate-950">Pergunta:</strong> {book.sentenceStructure.questionPattern}</p>
+              <p><strong className="text-slate-950">Negação:</strong> {book.sentenceStructure.negativePattern}</p>
+              <p className="border-l-2 border-violet-300 pl-4"><strong className="text-slate-950">No papel:</strong> {book.sentenceStructure.handwritingInstruction}</p>
+              <p className="border-l-2 border-violet-300 pl-4"><strong className="text-slate-950">Ao digitar:</strong> {book.sentenceStructure.typingInstruction}</p>
+            </div>
+          </section>
+
+          <section className="border-b border-stone-200 pb-8">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras por contexto</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Aprenda palavras que vivem na mesma ideia</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-slate-700">Não memorize listas misturadas. Leia um contexto, compare as palavras próximas e só depois escreva e recupere no Pareto.</p>
+            <div className="mt-6 space-y-8">
+              {book.contextGroups.map((group) => (
+                <article key={group.title} className="border-t border-stone-200 pt-6 first:border-t-0 first:pt-0">
+                  <h3 className="font-serif text-xl font-bold text-slate-950">{group.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{group.purpose}</p>
+                  <ol className="mt-4 divide-y divide-stone-200 border-y border-stone-200">
+                    {group.words.map((word, index) => (
+                      <li key={word.target} className="grid gap-1 py-3 sm:grid-cols-[2rem_12rem_1fr] sm:gap-3">
+                        <span className="font-serif font-bold text-amber-700">{index + 1}</span>
+                        <p className="font-semibold text-slate-950">{word.target} <span className="font-normal text-slate-600">— {word.native}</span></p>
+                        <p className="text-sm leading-6 text-slate-700">{word.relation}</p>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Compare:</strong> {group.contrast}</p>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-slate-800">{group.modelSentence}</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {group.writingPrompt}</p>
+                  <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700">{group.paretoPrompt}</p>
+                </article>
+              ))}
+            </div>
           </section>
 
           <section>
@@ -175,11 +275,16 @@ export default function ABCBook() {
                     <p className="mt-1">{chapter.grammarExplanation}</p>
                   </div>
                   <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="inline-flex rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]">Estudar este capítulo na Base</a>
-                    <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-3 py-2 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Praticar no Pareto</a>
-                    <a href={chapterTeacherHref} className="inline-flex items-center gap-2 rounded-md border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-bold text-sky-900 transition hover:bg-sky-100 active:scale-[0.97]"><MessageCircle className="h-4 w-4" /> Falar com o Professor</a>
-                    <a href="#sumario-a1" className="inline-flex items-center rounded-md px-3 py-2 text-sm font-bold text-slate-600 underline-offset-4 transition hover:text-amber-800 hover:underline">Voltar ao sumário</a>
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
+                    <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Próximo passo: Praticar no Pareto</a>
+                    <details className="relative">
+                      <summary className="cursor-pointer list-none rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-stone-50">Opções desta unidade</summary>
+                      <div className="absolute left-0 z-10 mt-2 grid w-56 gap-1 rounded-md border border-stone-200 bg-white p-2 shadow-lg">
+                        <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="rounded px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-stone-50">Consultar na Base</a>
+                        <a href={chapterTeacherHref} className="flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold text-sky-900 hover:bg-sky-50"><MessageCircle className="h-4 w-4" /> Falar com o Professor</a>
+                        <a href="#sumario-a1" className="rounded px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">Voltar ao sumário</a>
+                      </div>
+                    </details>
                   </div>
                 </article>
                 );

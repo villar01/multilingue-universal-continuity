@@ -22,6 +22,55 @@ export type ABCBookPhrase = {
   focus: string;
 };
 
+export type ABCBookMemoryStep = {
+  title: string;
+  instruction: string;
+  example: string;
+};
+
+export type ABCBookSentenceStructure = {
+  title: string;
+  introduction: string;
+  sharedPattern: string;
+  portuguesePattern: string;
+  englishPattern: string;
+  questionPattern: string;
+  negativePattern: string;
+  handwritingInstruction: string;
+  typingInstruction: string;
+};
+
+export type ABCBookContextGroup = {
+  title: string;
+  purpose: string;
+  words: Array<{
+    target: string;
+    native: string;
+    relation: string;
+  }>;
+  contrast: string;
+  modelSentence: string;
+  writingPrompt: string;
+  paretoPrompt: string;
+};
+
+export type ABCAlphabetLetter = {
+  letter: string;
+  name: string;
+  guide: string;
+};
+
+export type ABCBookSoundLesson = {
+  title: string;
+  explanation: string;
+  examples: Array<{
+    target: string;
+    pronunciation: string;
+    native: string;
+  }>;
+  writingPrompt: string;
+};
+
 export type ABCBookDelivery = {
   available: true;
   edition: string;
@@ -29,6 +78,9 @@ export type ABCBookDelivery = {
   targetLabel: string;
   introduction: string;
   survivalIntro: string;
+  alphabetIntroduction: string;
+  alphabetLetters: ABCAlphabetLetter[];
+  soundLessons: ABCBookSoundLesson[];
   termCard: {
     term: string;
     meaning: string;
@@ -47,6 +99,9 @@ export type ABCBookDelivery = {
     example: string;
     paretoPrompt: string;
   }>;
+  memorySteps: ABCBookMemoryStep[];
+  sentenceStructure: ABCBookSentenceStructure;
+  contextGroups: ABCBookContextGroup[];
   sections: ABCBookSection[];
   chapters: ABCBookChapter[];
   phrases: ABCBookPhrase[];
@@ -77,6 +132,125 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   targetLabel: "Inglês",
   introduction: "Quando uma frase, uma palavra ou uma resposta parecer difícil, use este livro como um caderno de apoio. Comece pelo sentido, observe o padrão, recupere a palavra sem consultar e aplique-a em uma nova frase. O professor e a cena continuam disponíveis depois que você fechar o livro.",
   survivalIntro: "Leia primeiro em inglês, confirme o sentido em português e depois cubra a linha em inglês para recuperá-la de memória. Estas frases também servem como ponto de partida para falar com o professor.",
+  alphabetIntroduction: "Comece pelo nome das letras. Depois, observe que uma mesma letra pode mudar de som quando forma uma palavra. Não tente decorar todos os casos de uma vez: leia a letra, ouça o exemplo e avance passo a passo.",
+  alphabetLetters: [
+    { letter: "A", name: "ei", guide: "/eɪ/" }, { letter: "B", name: "bi", guide: "/biː/" }, { letter: "C", name: "si", guide: "/siː/" }, { letter: "D", name: "di", guide: "/diː/" }, { letter: "E", name: "i", guide: "/iː/" }, { letter: "F", name: "ef", guide: "/ef/" }, { letter: "G", name: "dji", guide: "/dʒiː/" },
+    { letter: "H", name: "eitch", guide: "/eɪtʃ/" }, { letter: "I", name: "ai", guide: "/aɪ/" }, { letter: "J", name: "djei", guide: "/dʒeɪ/" }, { letter: "K", name: "kei", guide: "/keɪ/" }, { letter: "L", name: "el", guide: "/el/" }, { letter: "M", name: "em", guide: "/em/" }, { letter: "N", name: "en", guide: "/en/" },
+    { letter: "O", name: "ou", guide: "/oʊ/" }, { letter: "P", name: "pi", guide: "/piː/" }, { letter: "Q", name: "kiu", guide: "/kjuː/" }, { letter: "R", name: "ar", guide: "/ɑːr/" }, { letter: "S", name: "es", guide: "/es/" }, { letter: "T", name: "ti", guide: "/tiː/" }, { letter: "U", name: "iu", guide: "/juː/" },
+    { letter: "V", name: "vi", guide: "/viː/" }, { letter: "W", name: "dâbliu", guide: "/ˈdʌbəljuː/" }, { letter: "X", name: "eks", guide: "/eks/" }, { letter: "Y", name: "uai", guide: "/waɪ/" }, { letter: "Z", name: "zi", guide: "/ziː/" },
+  ],
+  soundLessons: [
+    {
+      title: "A em palavra curta",
+      explanation: "Em muitas palavras curtas, a letra a tem um som aberto e breve /æ/. Observe a boca mais aberta e não prolongue a vogal.",
+      examples: [
+        { target: "cat", pronunciation: "/kæt/", native: "gato" },
+        { target: "map", pronunciation: "/mæp/", native: "mapa" },
+        { target: "family", pronunciation: "/ˈfæm.əl.i/", native: "família" },
+      ],
+      writingPrompt: "Escreva cat e map. Depois crie: My family is here.",
+    },
+    {
+      title: "A que diz o nome da letra",
+      explanation: "Em alguns padrões, a letra a pode soar /eɪ/, como no próprio nome da letra. Ouça o som longo antes de escrever.",
+      examples: [
+        { target: "name", pronunciation: "/neɪm/", native: "nome" },
+        { target: "late", pronunciation: "/leɪt/", native: "tarde" },
+        { target: "same", pronunciation: "/seɪm/", native: "mesmo" },
+      ],
+      writingPrompt: "Escreva: My name is ____. Depois compare name e same.",
+    },
+    {
+      title: "A em sílaba sem força",
+      explanation: "Em palavras maiores, algumas vogais ficam fracas. Em family, o segundo a não recebe a força principal da palavra.",
+      examples: [
+        { target: "about", pronunciation: "/əˈbaʊt/", native: "sobre" },
+        { target: "banana", pronunciation: "/bəˈnæn.ə/", native: "banana" },
+        { target: "America", pronunciation: "/əˈmer.ɪ.kə/", native: "América" },
+      ],
+      writingPrompt: "Diga as palavras devagar e marque a sílaba que recebe mais força.",
+    },
+  ],
+  memorySteps: [
+    {
+      title: "1. Veja a ideia",
+      instruction: "Leia uma frase curta e imagine a situação concreta antes de tentar decorar qualquer palavra isolada.",
+      example: "I need water. Imagine uma pessoa com sede pedindo água.",
+    },
+    {
+      title: "2. Escute o som",
+      instruction: "Observe o som principal e repita devagar. A pronúncia vem antes da velocidade.",
+      example: "need /niːd/: mantenha o som longo no meio da palavra.",
+    },
+    {
+      title: "3. Ligue som, escrita e sentido",
+      instruction: "Olhe a palavra, diga o sentido e copie apenas uma vez com atenção às letras.",
+      example: "need → precisar. Escreva: I need water.",
+    },
+    {
+      title: "4. Cubra e recupere",
+      instruction: "Esconda o modelo. Diga ou escreva a palavra a partir do sentido em português.",
+      example: "Eu preciso de água. → I need water.",
+    },
+    {
+      title: "5. Troque uma peça",
+      instruction: "Mantenha a estrutura e substitua somente uma informação. Assim a frase vira um padrão útil.",
+      example: "I need water. → I need help. → I need a ticket.",
+    },
+    {
+      title: "6. Escreva uma ideia sua",
+      instruction: "Use uma informação real. Primeiro escreva à mão ou no caderno; depois digite sem consultar o exemplo.",
+      example: "I need help with this word.",
+    },
+    {
+      title: "7. Revise com Pareto",
+      instruction: "Leve a frase ao Pareto para recuperar sem olhar hoje, amanhã e nos próximos intervalos de revisão.",
+      example: "Recupere need, help e water em uma frase nova.",
+    },
+  ],
+  sentenceStructure: {
+    title: "Da ideia à frase: português e inglês",
+    introduction: "As duas línguas usam muitas vezes uma ideia com quem faz algo, ação e complemento. O objetivo é perceber a ordem natural de cada idioma e escrever uma frase de cada vez.",
+    sharedPattern: "Ideia básica: sujeito + verbo + complemento. Exemplo: Eu preciso de água. / I need water.",
+    portuguesePattern: "Em português, o sujeito pode ficar implícito porque a forma do verbo frequentemente mostra quem age: Preciso de água. Os adjetivos normalmente vêm depois do substantivo: uma palavra útil.",
+    englishPattern: "Em inglês, o sujeito normalmente aparece: I need water. Os adjetivos costumam vir antes do substantivo: a useful word.",
+    questionPattern: "Perguntas: em português, a entonação pode manter a ordem da afirmação: Você precisa de ajuda? Em inglês, o auxiliar ou verbo vem antes do sujeito: Do you need help? / Can you help me?",
+    negativePattern: "Negação: português usa não antes do verbo: Eu não entendo. Inglês usa do not ou outra forma auxiliar no presente simples: I do not understand.",
+    handwritingInstruction: "No papel, deixe uma linha por ideia: quem? faz o quê? com quem ou com o quê? Depois compare somente a ordem das palavras.",
+    typingInstruction: "Ao digitar, escreva primeiro a frase completa sem corretor automático. Em seguida, confira maiúscula inicial, espaço entre palavras e ponto final.",
+  },
+  contextGroups: [
+    {
+      title: "Contexto 1 — Família",
+      purpose: "Apresente as pessoas da família e escolha a palavra que mostra a relação exata. Comece pelo grupo e depois nomeie a pessoa.",
+      words: [
+        { target: "family", native: "família", relation: "o grupo de pessoas ligadas por parentesco" },
+        { target: "parents", native: "pais", relation: "pai e mãe considerados juntos" },
+        { target: "mother / father", native: "mãe / pai", relation: "pessoas específicas dentro de parents" },
+        { target: "child", native: "filho, filha ou criança", relation: "pessoa jovem da família; o contexto define o sentido" },
+        { target: "relative", native: "parente", relation: "membro da família que não precisa ser pai, mãe ou irmão" },
+      ],
+      contrast: "family é o conjunto; relative é uma pessoa da família. parents reúne mother e father.",
+      modelSentence: "My family is small. My parents live in Brazil. — Minha família é pequena. Meus pais moram no Brasil.",
+      writingPrompt: "Escreva duas frases: uma sobre your family e outra sobre uma pessoa específica, usando mother, father ou relative.",
+      paretoPrompt: "No Pareto, recupere family, parents e relative sem olhar e crie uma frase diferente da frase-modelo.",
+    },
+    {
+      title: "Contexto 2 — Círculo social",
+      purpose: "Diferencie convivência, estudo, trabalho e vizinhança. As palavras não são iguais: cada uma nomeia o tipo de vínculo.",
+      words: [
+        { target: "friend", native: "amigo ou amiga", relation: "pessoa com quem existe amizade" },
+        { target: "close friend", native: "amigo próximo", relation: "friend com vínculo de maior confiança" },
+        { target: "classmate", native: "colega de classe", relation: "pessoa que estuda na mesma turma" },
+        { target: "colleague", native: "colega de trabalho", relation: "pessoa do ambiente profissional" },
+        { target: "neighbor", native: "vizinho ou vizinha", relation: "pessoa que mora perto; pode ou não ser friend" },
+      ],
+      contrast: "friend descreve amizade; classmate, colleague e neighbor descrevem o lugar ou a convivência. Uma mesma pessoa pode ter mais de um desses papéis.",
+      modelSentence: "My classmate is my friend. My neighbor is very kind. — Meu colega de classe é meu amigo. Meu vizinho é muito gentil.",
+      writingPrompt: "Escreva uma frase sobre um classmate ou colleague e outra sobre um friend ou neighbor. Compare os papéis com cuidado.",
+      paretoPrompt: "No Pareto, recupere friend, classmate e neighbor e explique em português qual é a diferença entre elas.",
+    },
+  ],
   termCard: {
     term: "need",
     meaning: "precisar; ter necessidade de",
