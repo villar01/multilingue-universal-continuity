@@ -14,6 +14,7 @@ export interface SophieCafePilotClip {
   dialogue: string;
   referenceImageUrl: string;
   videoUrl: string | null;
+  audioVideoExactPair?: boolean;
   preserveOriginalPortrait: true;
   fallback: "original_portrait";
 }

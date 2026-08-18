@@ -17,6 +17,7 @@ export interface JamesTropicalPilotClip {
   dialogue: string;
   referenceImageUrl: string;
   videoUrl: string | null;
+  audioVideoExactPair?: boolean;
   preserveOriginalPortrait: true;
   fallback: "original_portrait";
 }
@@ -31,7 +32,8 @@ export const JAMES_TROPICAL_PILOT_CLIPS: readonly JamesTropicalPilotClip[] = [
     durationSeconds: 8,
     dialogue: "Hello! My name is James. Welcome to this beautiful tropical beach!",
     referenceImageUrl: "/manus-storage/james-tropical-greeting-reference_dcda1d54.png",
-    videoUrl: "/manus-storage/james-tropical-greeting_5f8622cb.mp4",
+    videoUrl: "/manus-storage/james-tropical-introduction-exact-pair_7a9cb0a4.mp4",
+    audioVideoExactPair: true,
     preserveOriginalPortrait: true,
     fallback: "original_portrait",
   },

@@ -570,6 +570,9 @@ function TeacherAvatar({
   overrideImage,
   activeClip,
   onClipFinished,
+  onExactClipPlaying,
+  onExactClipEnded,
+  onExactClipFailed,
   hasPreparedSpeech,
   onReplaySpeech,
 }: {
@@ -584,6 +587,9 @@ function TeacherAvatar({
   overrideImage?: string;
   activeClip?: ScenePilotClip | null;
   onClipFinished?: () => void;
+  onExactClipPlaying?: () => void;
+  onExactClipEnded?: () => void;
+  onExactClipFailed?: () => void;
   hasPreparedSpeech?: boolean;
   onReplaySpeech?: () => void;
 }) {
@@ -611,11 +617,12 @@ function TeacherAvatar({
     : ["C", "E", "G"].includes(viseme);
   // O retrato permanece sem boca sintética até haver mídia docente aprovada.
   const showSyntheticMouth = false;
+  const activeClipHasExactAudioVideoPair = Boolean(activeClip?.audioVideoExactPair);
   const teacherMedia = selectTeacherMedia({
     kind: activeClip?.videoUrl ? "scripted" : "interactive",
     hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),
-    hasExactAudioVideoPair: false,
-    hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking),
+    hasExactAudioVideoPair: activeClipHasExactAudioVideoPair,
+    hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking && !activeClipHasExactAudioVideoPair),
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
@@ -702,15 +709,24 @@ function TeacherAvatar({
             key={activeClip.id}
             src={activeClip.videoUrl}
             autoPlay
-            muted
+            muted={!activeClipHasExactAudioVideoPair}
             playsInline
-            loop
+            loop={!activeClipHasExactAudioVideoPair}
             preload="auto"
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
             data-teacher-pose={teacherPoseCue?.pose.id}
             data-teacher-audio-intent={teacherPoseCue?.audioIntent}
-            onEnded={onClipFinished}
-            onError={onClipFinished}
+            onPlaying={() => {
+              if (activeClipHasExactAudioVideoPair) onExactClipPlaying?.();
+            }}
+            onEnded={() => {
+              if (activeClipHasExactAudioVideoPair) onExactClipEnded?.();
+              else onClipFinished?.();
+            }}
+            onError={() => {
+              if (activeClipHasExactAudioVideoPair) onExactClipFailed?.();
+              else onClipFinished?.();
+            }}
             style={{
               position: "absolute",
               inset: 0,
@@ -2025,15 +2041,13 @@ export default function ImmersiveScene() {
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
       if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James" && teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE) {
-        playJamesTropicalClip("james-tropical-greeting");
-        void playTeacherAudio(
-          JAMES_TROPICAL_INTRO_FALLBACK_URL,
-          "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
-          "en-US",
-          "james-tropical-introduction",
-          false,
-          true,
-        );
+        // O MP4 aprovado contém esta fala e seu áudio no mesmo ativo. Não
+        // carregamos a WAV em paralelo; ela só é chamada pelo onError do vídeo.
+        pendingJamesClipIdRef.current = null;
+        setActiveJamesClipId("james-tropical-greeting");
+        activeSpeechRequestRef.current = "james-tropical-introduction-exact-pair";
+        setActiveSpeechText(JAMES_TROPICAL_INTRO_LINE);
+        setIsPreparingNeuralAudio(true);
       } else {
         requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
       }
@@ -2980,6 +2994,33 @@ export default function ImmersiveScene() {
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}
+          onExactClipPlaying={() => {
+            setIsPreparingNeuralAudio(false);
+            setIsSpeaking(true);
+            if (activeDialogLineRef.current === JAMES_TROPICAL_INTRO_LINE) setDlgAudioClock(true);
+          }}
+          onExactClipEnded={() => {
+            if (activeDialogLineRef.current === JAMES_TROPICAL_INTRO_LINE) {
+              setDlgWordIdx(activeDialogWordCountRef.current);
+              setDlgAudioClock(false);
+            }
+            setIsSpeaking(false);
+            setActiveSpeechText("");
+            setActiveJamesClipId(null);
+            if (activeSpeechRequestRef.current === "james-tropical-introduction-exact-pair") activeSpeechRequestRef.current = null;
+          }}
+          onExactClipFailed={() => {
+            setActiveJamesClipId(null);
+            setDlgAudioClock(false);
+            void playTeacherAudio(
+              JAMES_TROPICAL_INTRO_FALLBACK_URL,
+              "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+              "en-US",
+              "james-tropical-introduction",
+              false,
+              true,
+            );
+          }}
           hasPreparedSpeech={Boolean(dialogAudioSource)}
           onReplaySpeech={() => { void replayVisibleDialogAudio(); }}
         />

@@ -12,8 +12,9 @@ describe("diálogo roteirizado e sessão da cena imersiva", () => {
     expect(startDialog).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
     expect(startDialog).toContain('dialogueScene.id === "beach" && dialogueScene.teacherName === "James"');
     expect(startDialog).toContain("teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE");
-    expect(startDialog).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
-    expect(startDialog).toContain('"james-tropical-introduction"');
+    expect(startDialog).toContain('setActiveJamesClipId("james-tropical-greeting")');
+    expect(startDialog).toContain('activeSpeechRequestRef.current = "james-tropical-introduction-exact-pair"');
+    expect(startDialog).not.toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(source).toContain("`🔊 Ouvir apresentação de ${selectedScene.teacherName}`");
     expect(source).toContain("if (dialogAudioSource) {");
     expect(source).toContain("void replayVisibleDialogAudio();");

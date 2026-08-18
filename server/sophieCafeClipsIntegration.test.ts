@@ -29,10 +29,9 @@ describe("integração dos clipes de Sophie na Cena do Café", () => {
     expect(sceneSource).toContain("src={overrideImage || scene.teacherImage}");
     expect(sceneSource).toContain("activeClip?: ScenePilotClip | null;");
     expect(sceneSource).toContain("autoPlay");
-    expect(sceneSource).toContain("muted");
+    expect(sceneSource).toContain("muted={!activeClipHasExactAudioVideoPair}");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain("onEnded={onClipFinished}");
-    expect(sceneSource).toContain("onError={onClipFinished}");
+    expect(sceneSource).toContain("else onClipFinished?.();");
     expect(sceneSource).toContain('pointerEvents: "none"');
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
     expect(sceneSource).toContain("activeClip={activeJamesClip || activeSophieClip}");
