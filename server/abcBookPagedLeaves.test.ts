@@ -23,4 +23,10 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(styles).toContain("scroll-snap-type: x mandatory");
     expect(styles).toContain("grid-auto-flow: column");
   });
+
+  it("coloca cada contexto semântico em uma folha própria", () => {
+    expect(page).toContain("book.contextGroups.length");
+    expect(page).toContain("book.contextGroups.map((group, groupIndex) => (");
+    expect(page).not.toContain("<div className=\"mt-6 space-y-8\">");
+  });
 });

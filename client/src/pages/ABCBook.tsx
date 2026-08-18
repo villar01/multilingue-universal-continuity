@@ -65,7 +65,7 @@ export default function ABCBook() {
     );
   }
 
-  const totalBookPages = 11 + book.soundLessons.length + book.sections.length;
+  const totalBookPages = 10 + book.soundLessons.length + book.contextGroups.length + book.sections.length;
   const goBookPage = (page: number) => {
     const container = bookPagesRef.current;
     if (!container) return;
@@ -182,32 +182,28 @@ export default function ABCBook() {
             </div>
           </section>
 
-          <section className="border-b border-stone-200 pb-8">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras por contexto</p>
-            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Aprenda palavras que vivem na mesma ideia</h2>
-            <p className="mt-3 max-w-3xl leading-7 text-slate-700">Não memorize listas misturadas. Leia um contexto, compare as palavras próximas e só depois escreva e recupere no Pareto.</p>
-            <div className="mt-6 space-y-8">
-              {book.contextGroups.map((group) => (
-                <article key={group.title} className="border-t border-stone-200 pt-6 first:border-t-0 first:pt-0">
-                  <h3 className="font-serif text-xl font-bold text-slate-950">{group.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">{group.purpose}</p>
-                  <ol className="mt-4 divide-y divide-stone-200 border-y border-stone-200">
-                    {group.words.map((word, index) => (
-                      <li key={word.target} className="grid gap-1 py-3 sm:grid-cols-[2rem_12rem_1fr] sm:gap-3">
-                        <span className="font-serif font-bold text-amber-700">{index + 1}</span>
-                        <p className="font-semibold text-slate-950">{word.target} <span className="font-normal text-slate-600">— {word.native}</span></p>
-                        <p className="text-sm leading-6 text-slate-700">{word.relation}</p>
-                      </li>
-                    ))}
-                  </ol>
-                  <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Compare:</strong> {group.contrast}</p>
-                  <p className="mt-3 text-sm font-semibold leading-6 text-slate-800">{group.modelSentence}</p>
-                  <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {group.writingPrompt}</p>
-                  <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700">{group.paretoPrompt}</p>
-                </article>
-              ))}
-            </div>
-          </section>
+          {book.contextGroups.map((group, groupIndex) => (
+            <section key={group.title} className="border-b border-stone-200 pb-8">
+              {groupIndex === 0 && <><p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras por contexto</p><h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Aprenda palavras que vivem na mesma ideia</h2><p className="mt-3 max-w-3xl leading-7 text-slate-700">Não memorize listas misturadas. Leia um contexto, compare as palavras próximas e só depois escreva e recupere no Pareto.</p></>}
+              <article className={groupIndex === 0 ? "mt-6" : ""}>
+                <h3 className="font-serif text-xl font-bold text-slate-950">{group.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-700">{group.purpose}</p>
+                <ol className="mt-4 divide-y divide-stone-200 border-y border-stone-200">
+                  {group.words.map((word, index) => (
+                    <li key={word.target} className="grid gap-1 py-3 sm:grid-cols-[2rem_12rem_1fr] sm:gap-3">
+                      <span className="font-serif font-bold text-amber-700">{index + 1}</span>
+                      <p className="font-semibold text-slate-950">{word.target} <span className="font-normal text-slate-600">— {word.native}</span></p>
+                      <p className="text-sm leading-6 text-slate-700">{word.relation}</p>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Compare:</strong> {group.contrast}</p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-800">{group.modelSentence}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {group.writingPrompt}</p>
+                <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700">{group.paretoPrompt}</p>
+              </article>
+            </section>
+          ))}
 
           <section>
             <div className="flex items-center gap-3 border-b border-stone-200 pb-3">
