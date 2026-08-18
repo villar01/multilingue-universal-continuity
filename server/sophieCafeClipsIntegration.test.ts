@@ -31,7 +31,7 @@ describe("integração dos clipes de Sophie na Cena do Café", () => {
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain("onEnded={onClipFinished}");
+    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
     expect(sceneSource).toContain("const showSyntheticMouth = false;");

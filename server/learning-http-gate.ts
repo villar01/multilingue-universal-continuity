@@ -2,11 +2,37 @@ import type { NextFunction, Request, Response } from "express";
 import { TRPCError } from "@trpc/server";
 
 const LEARNING_ROUTE_PREFIXES = [
+  "/base-de-estudos",
   "/lesson",
+  "/complete-lesson",
   "/pareto-1000",
   "/immersive-scene",
   "/practice",
   "/abc-book",
+  "/chat",
+  "/ai-chat",
+  "/free-talk",
+  "/roleplay",
+  "/interactive-videos",
+  "/reels",
+  "/clips",
+  "/ar-teacher",
+  "/ar-mode",
+  "/vr-conversation",
+  "/word-game",
+  "/daily-challenge",
+  "/structured-lesson",
+  "/immersive-lesson",
+  "/lessons-hub",
+  "/dialogue",
+  "/natural-learning",
+  "/natural-lesson",
+  "/master-lesson",
+  "/ia-nativa",
+  "/smart-review",
+  "/daily-memory",
+  "/my-teacher",
+  "/phrasal-verbs-exercises",
 ] as const;
 
 export function requiresLearningHttpGate(pathname: string): boolean {

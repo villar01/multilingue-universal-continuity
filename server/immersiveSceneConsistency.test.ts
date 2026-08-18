@@ -40,7 +40,7 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
     expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
     expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
-    expect(sceneSource).toContain("onEnded={onClipFinished}");
+    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).not.toContain("onAbort={onClipFinished}");
   });

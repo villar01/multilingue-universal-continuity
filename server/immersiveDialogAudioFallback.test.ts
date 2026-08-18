@@ -98,7 +98,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   });
 
   it("mantém a frase de exemplo em inglês diretamente acionável no cartão", () => {
-    expect(source).toContain("onClick={() => onSpeak(hotspot.example, langCode)}");
+    expect(source).toContain('onClick={() => onSpeak(hotspot.example, langCode, "example")}');
     expect(source).toContain("Ouvir frase em inglês");
     expect(source).not.toContain("disabled={!pronunciationPlayed}");
     expect(source).not.toContain("Ouça a palavra primeiro");

@@ -23,7 +23,9 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain("onEnded={onClipFinished}");
+    expect(sceneSource).toContain('loop={activeClip.trigger === "object_focus"}');
+    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
+    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
   });
@@ -51,5 +53,16 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('activeClip={activeJamesClip || activeSophieClip}');
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
+  });
+
+  it("reinicia o clipe do objeto quando o aluno usa o botão explícito de pronúncia do cartão", () => {
+    expect(sceneSource).toContain('onSpeak(hotspot.label, langCode, "object")');
+    expect(sceneSource).toContain('mode === "object" && activeTeacherScene.teacherName === "James"');
+    expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
+    expect(sceneSource).toContain('objectFocusClip?.dialogue ?? text');
+    expect(sceneSource).toContain('onSpeak(hotspot.example, langCode, "example")');
+    expect(sceneSource).toContain('onSpeak(hotspot.examplePt, nativeLang, "translation")');
+    expect(sceneSource).toContain("setActiveHotspot(null);");
+    expect(sceneSource).toContain("setActiveJamesClipId(null);");
   });
 });

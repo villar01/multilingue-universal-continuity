@@ -25,6 +25,11 @@ describe("portão HTTP de aprendizagem", () => {
     expect(requiresLearningHttpGate("/immersive-scene")).toBe(true);
     expect(requiresLearningHttpGate("/practice")).toBe(true);
     expect(requiresLearningHttpGate("/abc-book")).toBe(true);
+    expect(requiresLearningHttpGate("/base-de-estudos")).toBe(true);
+    expect(requiresLearningHttpGate("/ai-chat")).toBe(true);
+    expect(requiresLearningHttpGate("/free-talk")).toBe(true);
+    expect(requiresLearningHttpGate("/smart-review")).toBe(true);
+    expect(requiresLearningHttpGate("/word-game")).toBe(true);
     expect(requiresLearningHttpGate("/")).toBe(false);
     expect(requiresLearningHttpGate("/pricing")).toBe(false);
   });

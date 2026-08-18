@@ -649,9 +649,10 @@ function TeacherAvatar({
             autoPlay
             muted
             playsInline
+            loop={activeClip.trigger === "object_focus"}
             preload="auto"
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
-            onEnded={onClipFinished}
+            onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}
             onError={onClipFinished}
             style={{
               position: "absolute",
@@ -788,7 +789,7 @@ function VocabCard({
   nativeLang: string;
   nativeLangFlag: string;
   onClose: () => void;
-  onSpeak: (text: string, lang: string) => void;
+  onSpeak: (text: string, lang: string, mode: "object" | "example" | "translation") => void;
   onPractice: () => void;
 }) {
   return (
@@ -842,7 +843,7 @@ function VocabCard({
           </div>
           <button
             onClick={() => {
-              onSpeak(hotspot.label, langCode);
+              onSpeak(hotspot.label, langCode, "object");
             }}
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-xs font-semibold active:scale-95 transition-transform"
             style={{ background: hotspot.color }}
@@ -856,7 +857,7 @@ function VocabCard({
           <div className="flex items-center justify-between mb-1">
             <div className="text-gray-400 text-xs uppercase tracking-wider">Exemplo</div>
             <button
-              onClick={() => onSpeak(hotspot.example, langCode)}
+              onClick={() => onSpeak(hotspot.example, langCode, "example")}
               aria-label={`Ouvir a frase em ${langCode}`}
               className="text-xs px-2 py-0.5 rounded-full font-semibold transition hover:brightness-125 active:scale-95"
               style={{ background: hotspot.color + '33', color: hotspot.color }}
@@ -881,7 +882,7 @@ function VocabCard({
               <span style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{nativeLang.split("-")[0].toUpperCase()}</span>
             </div>
             <button
-              onClick={() => onSpeak(hotspot.examplePt, nativeLang)}
+              onClick={() => onSpeak(hotspot.examplePt, nativeLang, "translation")}
               className="text-xs px-2 py-0.5 rounded-full font-semibold text-green-400"
               style={{ background: 'rgba(34,197,94,0.15)' }}
             >🔊 Ouvir tradução</button>
@@ -2659,8 +2660,29 @@ export default function ImmersiveScene() {
               langCode={targetLang || effectiveLang(selectedScene)}
               nativeLang={nativeLang}
               nativeLangFlag={nativeLangInfo?.flag || "🇧🇷"}
-              onClose={() => setActiveHotspot(null)}
-              onSpeak={(text, language) => requestSpeechSafely(text, language, selectedScene.teacherGender, "hotspot")}
+              onClose={() => {
+                setActiveHotspot(null);
+                setActiveJamesClipId(null);
+                setActiveSophieClipId(null);
+              }}
+              onSpeak={(text, language, mode) => {
+                const activeTeacherScene = teachingScene ?? selectedScene;
+                const jamesObjectClipId = mode === "object" && activeTeacherScene.teacherName === "James"
+                  ? ({
+                    palm: "james-tropical-point-palm",
+                    wave: "james-tropical-point-wave",
+                    ocean: "james-tropical-point-ocean",
+                    sand: "james-tropical-point-sand",
+                  } as const)[activeHotspot.id]
+                  : null;
+                const objectFocusClip = jamesObjectClipId ? playJamesTropicalClip(jamesObjectClipId) : null;
+                requestSpeechSafely(
+                  objectFocusClip?.dialogue ?? text,
+                  language,
+                  activeTeacherScene.teacherGender,
+                  "hotspot",
+                );
+              }}
               onPractice={() => setPracticeHotspot(activeHotspot)}
             />
           </div>
