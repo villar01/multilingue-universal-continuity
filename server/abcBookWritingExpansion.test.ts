@@ -19,4 +19,20 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
     expect(book.sections.filter((section) => section.paretoPrompt).length).toBeGreaterThanOrEqual(10);
     expect(book.sections.every((section) => section.text.length > 80 && section.example.includes(" "))).toBe(true);
   });
+
+  it("entrega um manual contínuo de método antes dos capítulos e exercícios", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.manualLeaves).toHaveLength(12);
+    expect(book.manualLeaves.map((leaf) => leaf.title)).toEqual(expect.arrayContaining([
+      "Estude uma ideia inteira, não uma lista isolada",
+      "Agrupe palavras que vivem na mesma situação",
+      "Leia para encontrar uma ideia, depois observe como ela foi montada",
+      "Junte vocabulário, estrutura e intenção em uma pequena conversa",
+    ]));
+    expect(book.manualLeaves.every((leaf) => leaf.paragraphs.length === 2 && leaf.model.length > 20 && leaf.practice.length > 30)).toBe(true);
+  });
 });
