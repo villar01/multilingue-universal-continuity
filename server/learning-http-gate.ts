@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { TRPCError } from "@trpc/server";
+import { isTemporarilyAbuseBlocked, recordAbuseSignal } from "./_core/abuseProtection";
 
 const LEARNING_ROUTE_PREFIXES = [
   "/base-de-estudos",
@@ -54,13 +55,23 @@ export function requiresLearningHttpGate(pathname: string): boolean {
 
 type LearningAccount = { id: number };
 
+function requestNetworkAddress(request: Request): string {
+  return request.ip || request.socket?.remoteAddress || "unknown";
+}
+
 export function createLearningHttpGate(dependencies: {
   authenticate: (request: Request) => Promise<LearningAccount>;
   assertEntitlement: (userId: number) => Promise<unknown>;
 }) {
   return async (request: Request, response: Response, next: NextFunction) => {
-    if (!(["GET", "HEAD"] as const).includes(request.method as "GET" | "HEAD") || !requiresLearningHttpGate(request.path)) {
+    if (!( ["GET", "HEAD"] as const).includes(request.method as "GET" | "HEAD") || !requiresLearningHttpGate(request.path)) {
       next();
+      return;
+    }
+
+    const networkAddress = requestNetworkAddress(request);
+    if (isTemporarilyAbuseBlocked(networkAddress)) {
+      response.status(429).json({ code: "learning-access-temporarily-blocked" });
       return;
     }
 
@@ -77,7 +88,10 @@ export function createLearningHttpGate(dependencies: {
         response.status(503).json({ code: "learning-access-unavailable" });
         return;
       }
-      response.status(401).json({ code: "learning-authentication-required" });
+      const containment = recordAbuseSignal(networkAddress, "repeated-access-denied");
+      response.status(containment.temporarilyBlocked ? 429 : 401).json({
+        code: containment.temporarilyBlocked ? "learning-access-temporarily-blocked" : "learning-authentication-required",
+      });
     }
   };
 }

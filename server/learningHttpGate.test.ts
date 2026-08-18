@@ -1,5 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TRPCError } from "@trpc/server";
+import { __resetAbuseProtectionForTests, getAbuseProtectionSummary } from "./_core/abuseProtection";
 import { createLearningHttpGate, requiresLearningHttpGate } from "./learning-http-gate";
 
 function createResponse() {
@@ -19,6 +20,14 @@ function createResponse() {
 }
 
 describe("portão HTTP de aprendizagem", () => {
+  beforeEach(() => {
+    __resetAbuseProtectionForTests();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("identifica apenas as rotas curriculares no HTTP", () => {
     expect(requiresLearningHttpGate("/lesson/42")).toBe(true);
     expect(requiresLearningHttpGate("/pareto-1000")).toBe(true);
@@ -64,5 +73,28 @@ describe("portão HTTP de aprendizagem", () => {
     });
     await authorizedGate({ method: "GET", path: "/immersive-scene" } as any, createResponse() as any, authorizedNext);
     expect(authorizedNext).toHaveBeenCalledOnce();
+  });
+
+  it("contém acessos anônimos repetidos sem guardar o endereço da rede", async () => {
+    vi.useFakeTimers();
+    const gate = createLearningHttpGate({ authenticate: vi.fn().mockRejectedValue(new Error("no-session")), assertEntitlement: vi.fn() });
+    const request = { method: "GET", path: "/lesson/42", ip: "198.51.100.73", socket: {} } as any;
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = createResponse();
+      await gate(request, response as any, vi.fn());
+      expect(response.statusCode).toBe(401);
+    }
+
+    const blockedResponse = createResponse();
+    await gate(request, blockedResponse as any, vi.fn());
+    expect(blockedResponse.statusCode).toBe(429);
+    expect(blockedResponse.body).toEqual({ code: "learning-access-temporarily-blocked" });
+    expect(JSON.stringify(getAbuseProtectionSummary())).not.toContain("198.51.100.73");
+
+    vi.advanceTimersByTime(30 * 60 * 1000);
+    const expiredResponse = createResponse();
+    await gate(request, expiredResponse as any, vi.fn());
+    expect(expiredResponse.statusCode).toBe(401);
   });
 });
