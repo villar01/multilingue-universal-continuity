@@ -189,6 +189,10 @@ function NavDropdown({ label, items }: { label: string; items: { label: string; 
 }
 
 export default function Home() {
+  useEffect(() => {
+    trackAggregateLearningEvent("open_public_home");
+  }, []);
+
     const { user, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const { profile, setProfile } = useLanguage();

@@ -14,6 +14,7 @@ describe("eventos agregados de estudo", () => {
     expect(analyticsSource).toContain('"open_abc_book"');
     expect(analyticsSource).toContain('"open_pareto"');
     expect(analyticsSource).toContain('"open_immersive_scene"');
+    expect(analyticsSource).toContain('"open_public_home"');
     expect(analyticsSource).toContain('"open_teacher"');
     expect(analyticsSource).toContain("track?: (event: AggregateLearningEvent) => void");
     expect(analyticsSource).toContain("window.umami?.track?.(event)");
@@ -26,6 +27,7 @@ describe("eventos agregados de estudo", () => {
     const homeSource = readFileSync(path.join(root, "client/src/pages/Home.tsx"), "utf8");
     const teacherSource = readFileSync(path.join(root, "client/src/pages/AIChat.tsx"), "utf8");
     expect(homeSource).toContain('trackAggregateLearningEvent("begin_signup")');
+    expect(homeSource).toContain('trackAggregateLearningEvent("open_public_home")');
     expect(abcBookSource).toContain('trackAggregateLearningEvent("open_abc_book")');
     expect(paretoSource).toContain('trackAggregateLearningEvent("open_pareto")');
     expect(immersiveSource).toContain('trackAggregateLearningEvent("open_immersive_scene")');
