@@ -652,7 +652,6 @@ function TeacherAvatar({
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
             onEnded={onClipFinished}
             onError={onClipFinished}
-            onAbort={onClipFinished}
             style={{
               position: "absolute",
               inset: 0,
