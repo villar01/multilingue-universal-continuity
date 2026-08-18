@@ -11,10 +11,11 @@ describe("estratégia híbrida de mídia docente", () => {
     const decision = selectTeacherMedia({
       kind: "scripted",
       hasApprovedPreGeneratedVideo: true,
+      hasExactAudioVideoPair: true,
     });
 
     expect(decision.mode).toBe("pre_generated_video");
-    expect(decision.lipMotion).toBe("rhythmic_non_phonetic");
+    expect(decision.lipMotion).toBe("audio_matched_video");
     expect(decision.requiresExternalGpu).toBe(false);
     expect(decision.requiresAdditionalConsent).toBe(false);
   });
@@ -23,6 +24,7 @@ describe("estratégia híbrida de mídia docente", () => {
     const decision = selectTeacherMedia({
       kind: "interactive",
       hasApprovedPreGeneratedVideo: true,
+      hasExactAudioVideoPair: false,
     });
 
     expect(decision.mode).toBe("neural_audio_portrait");
@@ -53,8 +55,8 @@ describe("estratégia híbrida de mídia docente", () => {
       audioRequired: true,
       audioIntent: "retry",
       pose: { id: "correction" },
-      lipMotion: "rhythmic_non_phonetic",
-      lipMotionScope: "pre_generated_scripted_clip_only",
+      lipMotion: "none",
+      lipMotionScope: "none",
       fallback: "neutral_pose_with_existing_scene_audio",
     });
   });
@@ -65,16 +67,19 @@ describe("estratégia híbrida de mídia docente", () => {
     expect(cue.lipMotionScope).toBe("none");
   });
 
-  it("restringe a indicação de movimento rítmico a clipes de fala fixa aprovados", () => {
+  it("restringe vídeo a pares exatos de fala e áudio, inclusive em falas roteirizadas", () => {
     const scriptedTriggers = ["scene_open", "object_focus", "correct_answer", "retry_answer", "scene_close"] as const;
     for (const trigger of scriptedTriggers) {
       const cue = selectTeacherPoseAudioCue(trigger);
-      expect(cue.lipMotion).toBe("rhythmic_non_phonetic");
-      expect(cue.lipMotionScope).toBe("pre_generated_scripted_clip_only");
+      expect(cue.lipMotion).toBe("none");
+      expect(cue.lipMotionScope).toBe("none");
       expect(cue.pose.requiresLipSync).toBe(false);
     }
 
-    const freeDecision = selectTeacherMedia({ kind: "interactive", hasApprovedPreGeneratedVideo: true });
+    const genericScriptedDecision = selectTeacherMedia({ kind: "scripted", hasApprovedPreGeneratedVideo: true, hasExactAudioVideoPair: false });
+    expect(genericScriptedDecision).toMatchObject({ mode: "neural_audio_portrait", lipMotion: "none" });
+
+    const freeDecision = selectTeacherMedia({ kind: "interactive", hasApprovedPreGeneratedVideo: true, hasExactAudioVideoPair: false });
     expect(freeDecision).toMatchObject({ mode: "neural_audio_portrait", lipMotion: "none" });
   });
 });

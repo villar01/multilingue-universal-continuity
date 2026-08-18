@@ -592,6 +592,7 @@ function TeacherAvatar({
   const teacherMedia = selectTeacherMedia({
     kind: activeClip?.videoUrl ? "scripted" : "interactive",
     hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),
+    hasExactAudioVideoPair: false,
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
@@ -1951,7 +1952,6 @@ export default function ImmersiveScene() {
     stopTeacherAudio();
     setDialogAuthRequired(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
-    if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James") playJamesTropicalClip("james-tropical-greeting");
     if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     const line = activeSceneDialog[0];
     if (!line) return;

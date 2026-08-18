@@ -8,13 +8,15 @@
  */
 export type TeacherMediaMode = "pre_generated_video" | "neural_audio_portrait";
 export type TeacherMediaRequestKind = "scripted" | "interactive";
-export type TeacherLipMotionMode = "none" | "rhythmic_non_phonetic";
+export type TeacherLipMotionMode = "none" | "audio_matched_video";
 export type TeacherPoseId = "neutral" | "greeting" | "pointing" | "encouragement" | "correction" | "closing";
 export type TeacherPoseTrigger = "scene_open" | "object_focus" | "correct_answer" | "retry_answer" | "scene_close" | "free_interaction";
 
 export interface TeacherMediaRequest {
   kind: TeacherMediaRequestKind;
   hasApprovedPreGeneratedVideo: boolean;
+  /** Only true when the visible video was produced for the exact spoken audio. */
+  hasExactAudioVideoPair: boolean;
 }
 
 export interface TeacherMediaDecision {
@@ -39,7 +41,7 @@ export interface TeacherPoseAudioCue {
   audioRequired: true;
   audioIntent: "greeting" | "object_word" | "praise" | "retry" | "closing" | "free_response";
   lipMotion: TeacherLipMotionMode;
-  lipMotionScope: "pre_generated_scripted_clip_only" | "none";
+  lipMotionScope: "exact_audio_video_pair_only" | "none";
   fallback: "neutral_pose_with_existing_scene_audio";
 }
 
@@ -72,20 +74,20 @@ export function selectTeacherPoseAudioCue(trigger: TeacherPoseTrigger): TeacherP
     pose: selectTeacherPose(trigger),
     audioRequired: true,
     audioIntent: AUDIO_INTENT_BY_TRIGGER[trigger],
-    lipMotion: isScriptedClip ? "rhythmic_non_phonetic" : "none",
-    lipMotionScope: isScriptedClip ? "pre_generated_scripted_clip_only" : "none",
+    lipMotion: "none",
+    lipMotionScope: "none",
     fallback: "neutral_pose_with_existing_scene_audio",
   };
 }
 
 export function selectTeacherMedia(request: TeacherMediaRequest): TeacherMediaDecision {
-  if (request.kind === "scripted" && request.hasApprovedPreGeneratedVideo) {
+  if (request.kind === "scripted" && request.hasApprovedPreGeneratedVideo && request.hasExactAudioVideoPair) {
     return {
       mode: "pre_generated_video",
-      lipMotion: "rhythmic_non_phonetic",
+      lipMotion: "audio_matched_video",
       requiresExternalGpu: false,
       requiresAdditionalConsent: false,
-      reason: "Vídeo pedagógico previamente aprovado disponível para frase roteirizada; a pose é selecionada pela ação da cena.",
+      reason: "Vídeo produzido para a mesma frase e áudio roteirizados; a reprodução visual pode acompanhar a fala correspondente.",
     };
   }
 
@@ -94,7 +96,7 @@ export function selectTeacherMedia(request: TeacherMediaRequest): TeacherMediaDe
     lipMotion: "none",
     requiresExternalGpu: false,
     requiresAdditionalConsent: false,
-    reason: "Resposta dinâmica ou sem vídeo aprovado: usar áudio neural com pose neutra, sem sincronização labial declarada.",
+    reason: "Resposta dinâmica ou sem par exato áudio–vídeo: usar áudio com retrato estável, sem sincronização labial declarada.",
   };
 }
 
