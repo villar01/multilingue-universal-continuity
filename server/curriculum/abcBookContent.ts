@@ -15,7 +15,7 @@ export type ABCBookChapter = {
   grammarExplanation: string;
   writingPrompt: string;
   orderingExercise: ABCBookOrderingExercise;
-  paretoContext: "foundation" | "family" | "social-circle";
+  paretoContext: "foundation" | "family" | "social-circle" | "routine-time" | "home" | "transport";
 };
 
 export type ABCBookOrderingExercise = {
@@ -199,8 +199,8 @@ const A1_ORDERING_EXERCISES: ABCBookOrderingExercise[] = [
 ];
 
 const A1_PARETO_CONTEXTS: ABCBookChapter["paretoContext"][] = [
-  "foundation", "foundation", "foundation", "social-circle", "foundation",
-  "foundation", "social-circle", "foundation", "foundation", "foundation",
+  "foundation", "foundation", "foundation", "routine-time", "routine-time",
+  "home", "routine-time", "transport", "transport", "social-circle",
 ];
 
 const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit, index) => ({
@@ -339,6 +339,48 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       modelSentence: "My classmate is my friend. My neighbor is very kind. — Meu colega de classe é meu amigo. Meu vizinho é muito gentil.",
       writingPrompt: "Escreva uma frase sobre um classmate ou colleague e outra sobre um friend ou neighbor. Compare os papéis com cuidado.",
       paretoPrompt: "No Pareto, recupere friend, classmate e neighbor e explique em português qual é a diferença entre elas.",
+    },
+    {
+      title: "Contexto 3 — Rotina e tempo",
+      purpose: "Una uma ação à informação que mostra quando ela acontece. A palavra de tempo organiza a ideia e ajuda a formar hábitos e planos.",
+      words: [
+        { target: "today / tomorrow", native: "hoje / amanhã", relation: "tempo atual e plano próximo" },
+        { target: "every morning", native: "toda manhã", relation: "frequência e rotina" },
+        { target: "always / sometimes", native: "sempre / às vezes", relation: "frequência alta ou parcial" },
+        { target: "now", native: "agora", relation: "ação no momento presente" },
+      ],
+      contrast: "today nomeia o dia atual; tomorrow aponta o plano seguinte. every morning descreve rotina; now descreve o momento presente.",
+      modelSentence: "Today, I study English. I practice new words every morning. — Hoje, eu estudo inglês. Eu pratico palavras novas toda manhã.",
+      writingPrompt: "Escreva uma frase sobre hoje e outra sobre amanhã. Depois acrescente uma rotina com every morning ou sometimes.",
+      paretoPrompt: "No Pareto, use o contexto Rotina e tempo para recuperar today, tomorrow e uma expressão de frequência antes de montar a frase.",
+    },
+    {
+      title: "Contexto 4 — Casa",
+      purpose: "Nomeie os lugares e objetos de casa que ajudam a contar uma rotina real. Comece pelo lugar; depois acrescente a ação ou a qualidade.",
+      words: [
+        { target: "house / apartment", native: "casa / apartamento", relation: "moradia geral ou unidade residencial" },
+        { target: "bedroom / living room", native: "quarto / sala", relation: "espaço de descanso ou convivência" },
+        { target: "kitchen", native: "cozinha", relation: "lugar de preparar comida" },
+        { target: "door / window", native: "porta / janela", relation: "abertura de entrada ou de luz e ar" },
+      ],
+      contrast: "house fala da moradia como um todo; bedroom, living room e kitchen são partes específicas dela.",
+      modelSentence: "I cook in the kitchen and read in the living room. — Eu cozinho na cozinha e leio na sala.",
+      writingPrompt: "Descreva dois lugares da sua casa e uma ação que você faz em cada um.",
+      paretoPrompt: "No Pareto, abra o contexto Casa e ordene uma frase com I, a ação e o lugar.",
+    },
+    {
+      title: "Contexto 5 — Deslocamento",
+      purpose: "Aprenda a dizer como chega a um lugar e onde começa ou termina um trajeto. O transporte aparece junto com a estação, o aeroporto ou o destino.",
+      words: [
+        { target: "bus / train / subway", native: "ônibus / trem / metrô", relation: "meios de transporte coletivo" },
+        { target: "station", native: "estação", relation: "ponto de saída ou chegada de trem e metrô" },
+        { target: "airport", native: "aeroporto", relation: "ponto de viagem aérea" },
+        { target: "ticket", native: "bilhete ou passagem", relation: "documento de acesso ao trajeto" },
+      ],
+      contrast: "bus, train e subway são meios de transporte; station e airport são lugares; ticket permite usar o serviço.",
+      modelSentence: "I take the bus to the station. Then I go to the airport. — Eu pego o ônibus para a estação. Depois vou ao aeroporto.",
+      writingPrompt: "Escreva como você chega a um lugar conhecido e inclua um meio de transporte e um destino.",
+      paretoPrompt: "No Pareto, abra o contexto Deslocamento e recupere o transporte, o lugar e a ordem da frase.",
     },
   ],
   termCard: {
