@@ -1521,6 +1521,10 @@ export default function ImmersiveScene() {
     if (autoPlay) {
       void audio.play().catch((error) => {
         reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");
+        if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
+          setDlgAudioNotice("");
+          return;
+        }
         setDlgAudioNotice("Resposta pronta. Toque em Ouvir James para ouvir.");
       });
       return;

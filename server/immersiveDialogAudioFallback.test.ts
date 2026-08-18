@@ -77,6 +77,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('reportAudioEvent("loaded");');
     expect(source).toContain('reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");');
     expect(source).toContain('reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));');
+    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {");
     expect(source).not.toContain("phrase: phrase");
   });
 
