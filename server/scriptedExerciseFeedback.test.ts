@@ -19,4 +19,22 @@ describe("contrato de feedback roteirizado", () => {
     expect(feedback.teacherText).toContain("Good start");
     expect(feedback.studyPrompt).toContain("Quick Study");
   });
+
+  it("mantém acerto, nova tentativa, dica e reforço nos seis idiomas comerciais", () => {
+    for (const language of ["pt-BR", "en-US", "es-ES", "fr-FR", "it-IT", "de-DE"]) {
+      const correct = getScriptedExerciseFeedback("correct", language);
+      const retry = getScriptedExerciseFeedback("retry", language);
+      const partial = getScriptedExerciseFeedback("partial", language);
+
+      expect(correct.teacherText).not.toBe("");
+      expect(correct.learnerText).not.toBe("");
+      expect(correct.studyHref).toBeNull();
+      expect(retry.teacherText).not.toBe("");
+      expect(retry.studyPrompt).not.toBe("");
+      expect(retry.studyHref).toBe("/base-de-estudos?focus=pareto");
+      expect(partial.teacherText).not.toBe("");
+      expect(partial.studyPrompt).not.toBe("");
+      expect(partial.studyHref).toBe("/base-de-estudos?focus=pareto");
+    }
+  });
 });
