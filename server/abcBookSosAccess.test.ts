@@ -88,5 +88,8 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain("Diálogo curto");
     expect(bookSource).toContain("book.languageBlocks.map");
     expect(bookSource).toContain("Blocos de linguagem A1");
+    expect(bookSource).toContain("const goToChapter = (chapterId: string)");
+    expect(bookSource).toContain('scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })');
+    expect(bookSource).toContain("onClick={() => goToChapter(`capitulo-a1-${index + 1}`)}");
   });
 });

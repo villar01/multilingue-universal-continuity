@@ -127,6 +127,9 @@ export default function ABCBook() {
     if (!container) return;
     setActivePage(Math.min(totalBookPages, Math.max(1, Math.round(container.scrollLeft / container.clientWidth) + 1)));
   };
+  const goToChapter = (chapterId: string) => {
+    document.getElementById(chapterId)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  };
 
   return (
     <main className="min-h-screen bg-stone-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
@@ -386,9 +389,9 @@ export default function ABCBook() {
               <ol className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
                 {book.chapters.map((chapter, index) => (
                   <li key={chapter.title}>
-                    <a href={`#capitulo-a1-${index + 1}`} className="text-sm font-semibold text-slate-700 underline-offset-4 transition hover:text-amber-800 hover:underline">
+                    <button type="button" onClick={() => goToChapter(`capitulo-a1-${index + 1}`)} className="text-left text-sm font-semibold text-slate-700 underline-offset-4 transition hover:text-amber-800 hover:underline">
                       {index + 1}. {chapter.title}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ol>
