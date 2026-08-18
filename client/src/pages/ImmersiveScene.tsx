@@ -1441,7 +1441,7 @@ export default function ImmersiveScene() {
     if (!playLocalDialogFallback(text, language, requestKey, gender)) {
       setIsPreparingNeuralAudio(false);
       setActiveSpeechText("");
-      setDlgAudioNotice("A voz do navegador não está disponível. Entre para usar a voz neural da cena.");
+      setDlgAudioNotice("Entre na sua conta para praticar com a voz do professor nesta cena.");
     }
   }, [playLocalDialogFallback, stopTeacherAudio]);
 
@@ -1972,7 +1972,7 @@ export default function ImmersiveScene() {
         return;
       }
     } catch { /* Do not use browser speech for native guidance either. */ }
-    setDlgAudioNotice("A ajuda por voz neural não está disponível agora. Leia a explicação abaixo e tente novamente.");
+    setDlgAudioNotice("A explicação está pronta abaixo. Leia no seu ritmo e toque em Ouvir novamente quando quiser continuar.");
   }, [dialogSpeechRate, googleTtsMut, nativeLang, ttsMut]);
 
   // Scene selection is the sole boundary for a teaching session. Reset every
@@ -2255,7 +2255,7 @@ export default function ImmersiveScene() {
         if (recordingSession !== dlgRecordingSessionRef.current) return;
         setDlgIsRecording(false);
         if (!chunks.length) {
-          setDlgFeedback("Nenhum áudio foi capturado. Tente novamente e fale após iniciar a gravação.");
+          setDlgFeedback("Vamos tentar mais uma vez: comece a falar depois de tocar em Gravar.");
           return;
         }
         setDlgIsProcessingSpeech(true);
@@ -2268,12 +2268,13 @@ export default function ImmersiveScene() {
           const spokenText = transcription.text.trim();
           setDlgWrittenAnswer(spokenText);
           if (!spokenText) {
-            setDlgFeedback("Não foi possível reconhecer uma resposta. Tente falar de forma mais clara ou escreva sua resposta.");
+            setDlgFeedback("Vamos praticar de outro modo: fale um pouco mais devagar ou escreva sua resposta.");
             return;
           }
           validateDialogAnswer(spokenText);
-        } catch (error) {
-          setDlgFeedback(`Não foi possível transcrever sua resposta. ${microphoneErrorMessage(error)}`);
+        } catch {
+          console.info("[immersive-dialogue] transcription-unavailable");
+          setDlgFeedback("Sua resposta pode ser enviada por escrito enquanto você prepara uma nova tentativa de fala.");
         } finally {
           setDlgIsProcessingSpeech(false);
         }
@@ -2281,8 +2282,9 @@ export default function ImmersiveScene() {
       recorder.start();
       setDlgFeedback("Gravando sua resposta. Toque em Parar quando terminar.");
       setDlgIsRecording(true);
-    } catch (error) {
-      setDlgFeedback(microphoneErrorMessage(error));
+    } catch {
+      console.info("[immersive-dialogue] microphone-capture-unavailable");
+      setDlgFeedback("Escolha escrever sua resposta agora ou tente a gravação novamente quando estiver pronto.");
     }
   }, [dialogTranscribeMut, dlgAnswer, dlgIsProcessingSpeech, selectedScene, validateDialogAnswer]);
   const handleAddParetoToNotebook = useCallback((word: ParetoWord) => {

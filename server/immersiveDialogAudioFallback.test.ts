@@ -144,6 +144,19 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("playGuestBrowserVoice(teacherSpeech.text");
   });
 
+  it("troca avisos técnicos de voz e microfone por orientação positiva ao aluno", () => {
+    expect(source).toContain("Entre na sua conta para praticar com a voz do professor nesta cena.");
+    expect(source).toContain("A explicação está pronta abaixo. Leia no seu ritmo e toque em Ouvir novamente quando quiser continuar.");
+    expect(source).toContain("Vamos tentar mais uma vez: comece a falar depois de tocar em Gravar.");
+    expect(source).toContain("Vamos praticar de outro modo: fale um pouco mais devagar ou escreva sua resposta.");
+    expect(source).toContain("Sua resposta pode ser enviada por escrito enquanto você prepara uma nova tentativa de fala.");
+    expect(source).toContain("Escolha escrever sua resposta agora ou tente a gravação novamente quando estiver pronto.");
+    expect(source).not.toContain("A voz do navegador não está disponível.");
+    expect(source).not.toContain("A ajuda por voz neural não está disponível agora.");
+    expect(source).not.toContain("Não foi possível reconhecer uma resposta.");
+    expect(source).not.toContain("Não foi possível transcrever sua resposta.");
+  });
+
   it("mantém James audível sem escolher voz identificada como feminina quando o navegador não nomeia voz masculina", () => {
     expect(source).toContain("const maleVoicePattern");
     expect(source).toContain("const nonFemaleRegionalVoice");
