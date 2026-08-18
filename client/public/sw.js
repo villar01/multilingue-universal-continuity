@@ -1,8 +1,8 @@
 /**
- * MultiLingue Universal — Service Worker v9
+ * MultiLingue Universal — Service Worker v10
  * Cache agressivo: Shell, Estático, API, Áudio, Imagens
  */
-const CACHE_VERSION = 'v9';
+const CACHE_VERSION = 'v10';
 const SHELL_CACHE = `multilingue-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `multilingue-static-${CACHE_VERSION}`;
 const API_CACHE = `multilingue-api-${CACHE_VERSION}`;

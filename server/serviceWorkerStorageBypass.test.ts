@@ -7,7 +7,7 @@ const workerSource = readFileSync(workerPath, "utf8");
 
 describe("service worker storage media", () => {
   it("não intercepta mídias redirecionadas do armazenamento com URL assinada", () => {
-    expect(workerSource).toContain("const CACHE_VERSION = 'v9'");
+    expect(workerSource).toContain("const CACHE_VERSION = 'v10'");
     expect(workerSource).toContain("url.pathname.startsWith('/manus-storage/')");
     expect(workerSource.indexOf("url.pathname.startsWith('/manus-storage/')")).toBeLessThan(
       workerSource.indexOf("// Imagens — Cache First 30 dias"),
