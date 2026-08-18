@@ -29,9 +29,20 @@ describe("integração de clipes de James na Praia Tropical", () => {
   });
 
   it("cobre abertura, quatro objetos, acerto e nova tentativa sem criar outro controle de áudio", () => {
+    const objectClipIds = JAMES_TROPICAL_PILOT_CLIPS
+      .filter((clip) => clip.trigger === "object_focus")
+      .map((clip) => clip.id);
+
+    expect(objectClipIds).toEqual([
+      "james-tropical-point-palm",
+      "james-tropical-point-wave",
+      "james-tropical-point-ocean",
+      "james-tropical-point-sand",
+    ]);
     expect(sceneSource).toContain('setActiveJamesClipId("james-tropical-greeting")');
     expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
     expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
+    expect(sceneSource).toContain('palm: "james-tropical-point-palm"');
     expect(sceneSource).toContain('wave: "james-tropical-point-wave"');
     expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
     expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
