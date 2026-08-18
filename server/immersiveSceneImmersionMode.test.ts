@@ -16,7 +16,7 @@ describe("modo de imersão da cena", () => {
     expect(sceneSource).toContain("{immersionMode ? \"?\" : `Ouvir ajuda ${nativeLangLabel}`}");
     expect(sceneSource).toContain('aria-label="Ouvir ajuda na língua nativa"');
     expect(sceneSource).toContain("{immersionMode ? \"Target language\" : \"Estudar idioma\"}");
-    expect(sceneSource).toContain("{immersionMode ? \"💬 Start dialogue\" : \"💬 Iniciar Diálogo\"}");
+    expect(sceneSource).toContain("{immersionMode ? \"🔊 Hear introduction\" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`}");
     expect(sceneSource).toContain("{immersionMode ? \"Next →\" : \"Próxima →\"}");
     expect(sceneSource).toContain("{dialogAuthRequired && !isAuthenticated && (");
     expect(sceneSource).toContain("← Voltar");

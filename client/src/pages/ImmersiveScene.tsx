@@ -2909,7 +2909,7 @@ export default function ImmersiveScene() {
               boxShadow: "0 4px 20px rgba(99,102,241,0.4)",
             }}
           >
-            {immersionMode ? "💬 Start dialogue" : "💬 Iniciar Diálogo"}
+            {immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`}
           </button>
         )}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && sceneMaterialIsPreparing && (

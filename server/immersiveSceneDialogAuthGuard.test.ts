@@ -10,6 +10,7 @@ describe("diálogo roteirizado e sessão da cena imersiva", () => {
     const startDialog = source.slice(source.indexOf("const startDialog"), source.indexOf("useEffect(() => {", source.indexOf("const startDialog")));
     expect(startDialog).toContain("primeDialogAudioFromGesture();");
     expect(startDialog).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
+    expect(source).toContain("`🔊 Ouvir apresentação de ${selectedScene.teacherName}`");
     expect(source).toContain("if (dialogAudioSource) {");
     expect(source).toContain("void replayVisibleDialogAudio();");
     expect(source).toContain('requestSpeechSafely(immediateReply.replace(/^[^:]+:\\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);');
