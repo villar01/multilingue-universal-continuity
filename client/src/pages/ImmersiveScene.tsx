@@ -791,8 +791,6 @@ function VocabCard({
   onSpeak: (text: string, lang: string) => void;
   onPractice: () => void;
 }) {
-  const [pronunciationPlayed, setPronunciationPlayed] = useState(false);
-
   return (
     <div
       className="absolute z-50 rounded-2xl shadow-2xl overflow-hidden"
@@ -845,7 +843,6 @@ function VocabCard({
           <button
             onClick={() => {
               onSpeak(hotspot.label, langCode);
-              setPronunciationPlayed(true);
             }}
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-xs font-semibold active:scale-95 transition-transform"
             style={{ background: hotspot.color }}
@@ -859,11 +856,11 @@ function VocabCard({
           <div className="flex items-center justify-between mb-1">
             <div className="text-gray-400 text-xs uppercase tracking-wider">Exemplo</div>
             <button
-              disabled={!pronunciationPlayed}
               onClick={() => onSpeak(hotspot.example, langCode)}
-              className="text-xs px-2 py-0.5 rounded-full font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+              aria-label={`Ouvir a frase em ${langCode}`}
+              className="text-xs px-2 py-0.5 rounded-full font-semibold transition hover:brightness-125 active:scale-95"
               style={{ background: hotspot.color + '33', color: hotspot.color }}
-            >🔊 {pronunciationPlayed ? "Ouvir frase" : "Ouça a palavra primeiro"}</button>
+            >🔊 Ouvir frase em inglês</button>
           </div>
           <div className="text-white" style={{ fontSize: "clamp(11px, 1.3vw, 14px)" }}>
             {hotspot.example}
@@ -887,7 +884,7 @@ function VocabCard({
               onClick={() => onSpeak(hotspot.examplePt, nativeLang)}
               className="text-xs px-2 py-0.5 rounded-full font-semibold text-green-400"
               style={{ background: 'rgba(34,197,94,0.15)' }}
-            >🔊 Ouvir</button>
+            >🔊 Ouvir tradução</button>
           </div>
           <div className="text-gray-200" style={{ fontSize: "clamp(11px, 1.3vw, 14px)" }}>
             {hotspot.examplePt}

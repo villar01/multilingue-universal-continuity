@@ -1725,6 +1725,7 @@
 - [x] Fazer o clique explícito de pronúncia em Wave, Ocean, Palm Tree e Sand iniciar a faixa neural preparada — o gesto do aluno inicia a reprodução preparada e mantém o botão do cartão como única recuperação; TypeScript e 13 regressões de áudio e mídia aprovados
 
 - [x] Fazer a frase de exemplo do cartão Wave iniciar após a pronúncia principal já ter tocado — o botão da frase permanece indisponível até o aluno iniciar a pronúncia principal do cartão, preservando a sequência pedagógica; TypeScript e 16 regressões de áudio e fluxo aprovados
+- [x] Corrigir o botão de frase em inglês dos cartões da Praia Tropical, começando por Sand, para reproduzir a sentença neural en-US depois da pronúncia da palavra — frase diretamente acionável, TypeScript e 649 testes aprovados
 
 - [x] Posicionar o player de objeto abaixo do cartão, sem bloquear frase ou controles pedagógicos — o elemento de áudio permanece oculto fora do cartão e o cartão oferece somente controles explícitos de pronúncia e frase; TypeScript e 16 regressões de áudio e fluxo aprovados
 
