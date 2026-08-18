@@ -74,4 +74,13 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain("book.manualLeaves.length");
     expect(bookSource).not.toContain("Estude uma ideia inteira, não uma lista isolada");
   });
+
+  it("mantém cada contexto e cada estágio A1 em folhas próprias", () => {
+    expect(bookSource).toContain("book.contextGroups.map((group, groupIndex) => (");
+    expect(bookSource).toContain('<section key={group.title} className="border-b border-stone-200 pb-8">');
+    expect(bookSource).toContain("book.chapters.flatMap((chapter, index) => {");
+    expect(bookSource).toContain('key={`${chapter.title}-leitura`}');
+    expect(bookSource).toContain('key={`${chapter.title}-estrutura`}');
+    expect(bookSource).toContain('key={`${chapter.title}-producao`}');
+  });
 });
