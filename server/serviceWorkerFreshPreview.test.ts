@@ -8,7 +8,7 @@ describe("atualização segura do service worker", () => {
   it("remove cache do preview e incrementa a versão publicada", () => {
     expect(registrationSource).toContain("if (import.meta.env.DEV)");
     expect(registrationSource).toContain("await unregisterServiceWorker()");
-    expect(workerSource).toContain("const CACHE_VERSION = 'v10'");
+    expect(workerSource).toContain("const CACHE_VERSION = 'v11'");
     expect(workerSource).toContain("self.skipWaiting()");
   });
 });

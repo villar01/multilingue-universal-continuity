@@ -13,7 +13,7 @@ describe("entrega imediata de interface atualizada", () => {
   });
 
   it("publica uma nova versão de cache com ativação imediata", () => {
-    expect(workerSource).toContain("const CACHE_VERSION = 'v10'");
+    expect(workerSource).toContain("const CACHE_VERSION = 'v11'");
     expect(workerSource).toContain("self.skipWaiting()");
     expect(workerSource).toContain("self.clients.claim()");
   });
