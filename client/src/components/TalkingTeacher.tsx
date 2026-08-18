@@ -77,6 +77,10 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   const externalAudioRef = useRef<HTMLAudioElement | null>(null);
   const photoUrl = TEACHER_PHOTOS[teacher.id] || DEFAULT_PHOTO;
   const sizes = SIZE_MAP[size];
+  // A geração facial só poderá ser reativada com um par validado de áudio e
+  // vídeo para a mesma fala. Até lá, todo professor preserva seu retrato.
+  const supportsValidatedFacialSync = false;
+  const showSyntheticMouth = false;
 
   const generateVideoMutation = trpc.livePortrait.generateTeacherVideo.useMutation();
   const audioVisemeSync = useTTSVisemeSync(setAudioViseme);
@@ -102,7 +106,9 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
     audio.onplay = () => {
       setIsSpeaking(true);
       setState("speaking");
-      audioVisemeSync.syncWithAudio(audio, text || teacher.greeting, teacher.voiceLang || "en-US");
+      if (showSyntheticMouth) {
+        audioVisemeSync.syncWithAudio(audio, text || teacher.greeting, teacher.voiceLang || "en-US");
+      }
     };
     audio.onended = finish;
     audio.onerror = finish;
@@ -118,6 +124,23 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
   // Gerar vídeo D-ID
   const generateVideo = useCallback(async (speechText: string) => {
     if (!speechText.trim()) return;
+    if (!supportsValidatedFacialSync) {
+      // O comando de ouvir continua funcional, mas sem produzir vídeo ou boca
+      // sintética que não corresponda exatamente à faixa reproduzida.
+      stopEdgeTTS();
+      setVideoUrl(null);
+      setIsSpeaking(true);
+      setState("speaking");
+      speakNaturalVoice(speechText, teacher.voiceLang || "en-US", {
+        rate: 0.9,
+        onEnd: () => {
+          setLipAmplitude(0);
+          setIsSpeaking(false);
+          setState("idle");
+        },
+      });
+      return;
+    }
     setState("loading");
     try {
       const result = await generateVideoMutation.mutateAsync({
@@ -136,7 +159,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
       // Fallback: usar TTS do browser
       speakWithBrowserTTS(speechText);
     }
-  }, [teacher, photoUrl, generateVideoMutation, onVideoReady]);
+  }, [teacher, photoUrl, generateVideoMutation, onVideoReady, supportsValidatedFacialSync]);
 
   // Fallback: TTS nativo do browser
   const speakWithBrowserTTS = useCallback((speechText: string) => {
@@ -162,11 +185,11 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
 
   // Reproduzir vídeo quando URL disponível
   useEffect(() => {
-    if (videoUrl && videoRef.current) {
+    if (videoUrl && supportsValidatedFacialSync && videoRef.current) {
       videoRef.current.src = videoUrl;
       videoRef.current.play().catch(() => {});
     }
-  }, [videoUrl]);
+  }, [videoUrl, supportsValidatedFacialSync]);
 
   const handleSpeak = () => {
     if (text) {
@@ -205,7 +228,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
         }}
       >
         {/* Video D-ID (quando disponível) */}
-        {videoUrl && (
+        {videoUrl && supportsValidatedFacialSync && (
           <video
             ref={videoRef}
             className="absolute inset-0 w-full h-full object-cover"
@@ -216,7 +239,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
         )}
 
         {/* Foto estática (fallback) */}
-        {!videoUrl && (
+        {(!videoUrl || !supportsValidatedFacialSync) && (
           <img
             src={photoUrl}
             alt={teacher.name}
@@ -228,7 +251,7 @@ export const TalkingTeacher: React.FC<TalkingTeacherProps> = ({
         )}
 
         {/* Visible facial mouth driven by the live neural-audio amplitude */}
-        {(isSpeaking || state === "speaking") && !videoUrl && (
+        {showSyntheticMouth && (isSpeaking || state === "speaking") && !videoUrl && (
           <div className="absolute bottom-[28%] left-1/2 -translate-x-1/2 pointer-events-none">
             <div
               className="relative overflow-hidden border-2 border-rose-950/80 bg-rose-950 shadow-[0_1px_3px_rgba(0,0,0,0.65)] transition-[width,height,border-radius] duration-75"

@@ -3,10 +3,8 @@ import { Mic, MicOff, Volume2, Loader2, Wifi, WifiOff } from "lucide-react";
 import { Button } from "./ui/button";
 import { trpc } from "../lib/trpc";
 import EnhancedTeacherAvatar from "./EnhancedTeacherAvatar";
-import TalkingHeadAvatar from "./TalkingHeadAvatar";
 import { useOfflineSyncDB } from "@/hooks/useOfflineSyncDB";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
-import { canAttachTeacherVideo } from "@/lib/teacherVideoSession";
 import { resolveVoiceConversationTeacher, type VoiceConversationTeacherInput } from "@/lib/voiceConversationTeacher";
 import UserGuide from "@/components/UserGuide";
 import { toast } from "sonner";
@@ -50,10 +48,7 @@ export default function VoiceConversation({
   const [interimTranscript, setInterimTranscript] = useState(""); // Real-time transcript
   const [teacherEmotion, setTeacherEmotion] = useState<"neutral" | "happy" | "thinking" | "encouraging">("neutral");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [animatedVideoUrl, setAnimatedVideoUrl] = useState<string | null>(null);
-  const [cachedVideoUrl, setCachedVideoUrl] = useState<string | null>(null);
   const [cachedPortraitUrl, setCachedPortraitUrl] = useState<string | null>(null);
-  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [activeParetoTerm, setActiveParetoTerm] = useState<ParetoPracticeTerm | null>(null);
 
   // Offline sync via IndexedDB
@@ -84,7 +79,6 @@ export default function VoiceConversation({
         fallbackLanguage: languageCode,
       };
   const activeTeacher = selectedCompatibleTeacher ?? fallbackTeacher;
-  const cachedVideoId = `lesson-video-${lessonId}-${languageCode}`;
   const paretoTerms = vocabularyContext.flatMap((entry): ParetoPracticeTerm[] => {
     if (typeof entry === "string") return [];
     const word = entry.word?.trim();
@@ -100,11 +94,9 @@ export default function VoiceConversation({
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const talkingHeadRef = useRef<any>(null);
   const recognitionRef = useRef<any>(null); // Web Speech API
   const activeSpeechSessionRef = useRef(0);
   const audioSessionRef = useRef(0);
-  const latestVideoRequestRef = useRef(0);
 
   useEffect(() => {
     if (!activeTeacher.imageUrl) return;
@@ -114,14 +106,6 @@ export default function VoiceConversation({
       type: "avatar",
     });
   }, [activeTeacher.avatarId, activeTeacher.imageUrl, cacheMedia]);
-
-  useEffect(() => {
-    let active = true;
-    void getCachedMediaUrl(cachedVideoId).then((url) => {
-      if (active && url) setCachedVideoUrl(url);
-    });
-    return () => { active = false; };
-  }, [cachedVideoId, getCachedMediaUrl]);
 
   useEffect(() => {
     let active = true;
@@ -262,22 +246,9 @@ export default function VoiceConversation({
       setActiveTeacherSpeechText("");
       setActiveTeacherAudioUrl(null);
       setTeacherEmotion("neutral");
-      teacherVideoRef.current?.pause();
-      if (teacherVideoRef.current) teacherVideoRef.current.currentTime = 0;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      // Stop TalkingHead animation
-      if (talkingHeadRef.current) {
-        talkingHeadRef.current.stopSpeaking();
-      }
-    };
-
-    audioElementRef.current.onplay = () => {
-      const video = teacherVideoRef.current;
-      if (!video) return;
-      video.currentTime = 0;
-      void video.play().catch(() => undefined);
     };
 
     audioElementRef.current.onpause = () => {
@@ -478,41 +449,9 @@ export default function VoiceConversation({
       activeSpeechSessionRef.current = speechSession;
       audioSessionRef.current = speechSession;
 
-      // HYBRID AVATAR LOGIC. The video is visual-only and may finish after
-      // the neural MP3; in that case it is discarded instead of reappearing
-      // out of sync with a completed teacher response.
-      if (isOnline && activeTeacher.imageUrl) {
-        setIsGeneratingVideo(true);
-        latestVideoRequestRef.current = speechSession;
-        toast.info("🎬 Gerando avatar fotorrealista...");
-
-        void animateLivePortrait.mutateAsync({
-            audioUrl: ttsResult.audioUrl,
-            imageUrl: activeTeacher.imageUrl,
-          }).then((videoResult) => {
-            const audio = audioElementRef.current;
-            const audioStillPlaying = Boolean(audio && !audio.paused && !audio.ended);
-            if (!canAttachTeacherVideo(speechSession, activeSpeechSessionRef.current, audioStillPlaying)) {
-              return;
-            }
-
-            setAnimatedVideoUrl(videoResult.videoUrl);
-            void cacheMedia({ id: cachedVideoId, url: videoResult.videoUrl, type: "video" });
-            toast.success("✅ Avatar fotorrealista pronto!");
-          }).catch((error) => {
-            if (speechSession === activeSpeechSessionRef.current) {
-              console.error("[VoiceConversation] LivePortrait error:", error);
-              toast.error("Erro ao gerar vídeo. Usando avatar 3D.");
-            }
-          }).finally(() => {
-            if (speechSession === latestVideoRequestRef.current) {
-              setIsGeneratingVideo(false);
-            }
-          });
-      }
-      
-      // O MP3 neural abaixo é a fonte única de áudio em ambos os modos.
-      // O avatar offline continua visível, mas não inicia uma segunda reprodução.
+      // O MP3 neural abaixo é a fonte única de áudio. A conversa preserva o
+      // retrato original enquanto fala, pois respostas abertas não possuem um
+      // par audiovisual validado para justificar vídeo facial ou avatar 3D.
 
       // Play audio
       if (audioElementRef.current) {
@@ -575,76 +514,31 @@ export default function VoiceConversation({
     }
   };
 
-  const playableVideoUrl = isOnline ? animatedVideoUrl : cachedVideoUrl;
-
   return (
     <div className="space-y-6">
       {/* Connection Status */}
       <div className="flex items-center justify-between gap-2 text-sm">
         {isOnline ? (
-          <><Wifi className="w-4 h-4 text-green-500" /> <span className="text-green-600">Online - Avatar Fotorrealista</span></>
+          <><Wifi className="w-4 h-4 text-green-500" /> <span className="text-green-600">Online · voz neural e retrato do professor</span></>
         ) : (
-          <><WifiOff className="w-4 h-4 text-orange-500" /> <span className="text-orange-600">Offline - Avatar 3D</span></>
+          <><WifiOff className="w-4 h-4 text-orange-500" /> <span className="text-orange-600">Offline · retrato do professor disponível</span></>
         )}
         <UserGuide nativeLang="pt-BR" compact triggerClassName="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" />
       </div>
 
       {/* Avatar Display */}
       <div className="relative">
-        {playableVideoUrl && !isGeneratingVideo ? (
-          <video
-            ref={teacherVideoRef}
-            id="photorealistic-video"
-            src={playableVideoUrl}
-            className="w-full max-w-md mx-auto rounded-lg shadow-lg"
-            controls={false}
-            muted
-            aria-label="Vídeo visual do professor; a voz é reproduzida pelo áudio neural sincronizado"
-            onLoadedData={() => {
-              const audio = audioElementRef.current;
-              const video = teacherVideoRef.current;
-              if (audio && video && !audio.paused) {
-                video.currentTime = 0;
-                void video.play().catch(() => undefined);
-              }
-            }}
-          />
-        ) : isGeneratingVideo ? (
-          <div className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-500 mb-4" />
-            <p className="text-gray-600">Gerando avatar fotorrealista...</p>
-          </div>
-        ) : !isOnline ? (
-          cachedPortraitUrl ? (
-            <div className="relative mx-auto w-64 h-64 rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
-              <img src={cachedPortraitUrl} alt={activeTeacher.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 px-3 py-2 text-center text-sm text-white">
-                {activeTeacher.name} · disponível offline
-              </div>
-            </div>
-          ) : (
-            <TalkingHeadAvatar
-              ref={talkingHeadRef}
-              avatarId={activeTeacher.avatarId}
-              // TalkingHead uses this only for its local visual lip-sync module;
-              // the audible source remains the compatible neural MP3 above.
-              language={activeTeacher.fallbackLanguage.toLowerCase().startsWith("pt") ? "pt-BR" : "en-US"}
-              gender={activeTeacher.gender}
-            />
-          )
-        ) : (
-          <EnhancedTeacherAvatar
-            imageUrl={activeTeacher.imageUrl}
-            teacherName={activeTeacher.name}
-            gender={activeTeacher.gender}
-            isTeaching={isSpeaking}
-            currentText={activeTeacherSpeechText}
-            audioUrl={activeTeacherAudioUrl}
-            syncOnly
-            languageCode={activeTeacher.fallbackLanguage}
-            hideNameLabel
-          />
-        )}
+        <EnhancedTeacherAvatar
+          imageUrl={cachedPortraitUrl || activeTeacher.imageUrl}
+          teacherName={activeTeacher.name}
+          gender={activeTeacher.gender}
+          isTeaching={isSpeaking}
+          currentText={activeTeacherSpeechText}
+          audioUrl={activeTeacherAudioUrl}
+          syncOnly
+          languageCode={activeTeacher.fallbackLanguage}
+          hideNameLabel
+        />
       </div>
 
       {/* Conversation History */}

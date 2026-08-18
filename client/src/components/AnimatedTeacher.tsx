@@ -113,7 +113,11 @@ export function AnimatedTeacher({
 
   const resolvedImageUrl = teacherImageUrl || teacherData?.photoUrl || undefined;
   const resolvedName = teacherName !== "Professor" ? teacherName : (teacherData?.name || teacherName);
-  const allowsMouthAnimation = !/^\s*(prof\.?\s*)?ricardo\b/i.test(resolvedName);
+  // A boca e o vídeo facial permanecem desligados para todos os professores
+  // até existir um par audiovisual validado para a mesma fala. O áudio neural
+  // continua independente e o retrato original não é substituído.
+  const allowsMouthAnimation = false;
+  const supportsValidatedFacialSync = false;
 
   // Mutation para gerar vídeo animado (D-ID)
   const animateMutation = trpc.livePortrait.animate.useMutation({
@@ -299,7 +303,7 @@ export function AnimatedTeacher({
   useEffect(() => {
     if (!audioUrl || !resolvedImageUrl || !isTeaching) return;
 
-    if (allowsMouthAnimation) {
+    if (allowsMouthAnimation && supportsValidatedFacialSync) {
       animateMutation.mutate({
         imageUrl: resolvedImageUrl,
         audioUrl: audioUrl,
@@ -308,7 +312,7 @@ export function AnimatedTeacher({
 
     // Também iniciar lip-sync CSS como fallback imediato
     startLipSync(audioUrl);
-  }, [allowsMouthAnimation, audioUrl, resolvedImageUrl]);
+  }, [allowsMouthAnimation, audioUrl, resolvedImageUrl, supportsValidatedFacialSync]);
 
   // Quando propAudioUrl muda externamente
   useEffect(() => {
@@ -366,7 +370,7 @@ export function AnimatedTeacher({
       <div className={`relative ${sizes.container} rounded-full overflow-hidden border-4 ${isPlaying || lipSyncActive ? "border-green-400 shadow-lg shadow-green-200" : "border-gray-200"} transition-all duration-300`}>
         
         {/* Vídeo D-ID animado (quando disponível) */}
-        {videoUrl && (
+        {videoUrl && supportsValidatedFacialSync && (
           <video
             ref={videoRef}
             src={videoUrl}
@@ -381,7 +385,7 @@ export function AnimatedTeacher({
         )}
 
         {/* Foto estática com lip-sync CSS (fallback) */}
-        {!videoUrl && resolvedImageUrl && (
+        {(!videoUrl || !supportsValidatedFacialSync) && resolvedImageUrl && (
           <div className="relative w-full h-full">
             <img
               src={resolvedImageUrl}
@@ -424,7 +428,7 @@ export function AnimatedTeacher({
             )}
             
             {/* Overlay de visema SVG sobre a foto (lip-sync real) */}
-            {lipSyncActive && (
+            {lipSyncActive && allowsMouthAnimation && (
               <svg
                 viewBox="0 0 100 100"
                 className="absolute inset-0 w-full h-full pointer-events-none"
@@ -445,7 +449,7 @@ export function AnimatedTeacher({
         )}
 
         {/* Avatar SVG fallback quando não há foto */}
-        {!videoUrl && !resolvedImageUrl && (
+        {(!videoUrl || !supportsValidatedFacialSync) && !resolvedImageUrl && (
           <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
             <svg viewBox="0 0 100 100" className="w-4/5 h-4/5">
               {/* Cabeça */}

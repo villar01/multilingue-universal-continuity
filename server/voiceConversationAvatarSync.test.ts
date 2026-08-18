@@ -13,10 +13,10 @@ describe("avatar da conversa por voz", () => {
     expect(source).toContain("setActiveTeacherAudioUrl(null)");
   });
 
-  it("preserva retrato, gênero, locale e estado de fala do professor ativo no avatar fotorrealista", () => {
+  it("preserva retrato, gênero, locale e estado de fala do professor ativo no avatar estável", () => {
     const avatarStart = source.lastIndexOf("<EnhancedTeacherAvatar");
     const avatarSegment = source.slice(avatarStart, source.indexOf("/>", avatarStart) + 2);
-    expect(avatarSegment).toContain("imageUrl={activeTeacher.imageUrl}");
+    expect(avatarSegment).toContain("imageUrl={cachedPortraitUrl || activeTeacher.imageUrl}");
     expect(avatarSegment).toContain("teacherName={activeTeacher.name}");
     expect(avatarSegment).toContain("gender={activeTeacher.gender}");
     expect(avatarSegment).toContain("isTeaching={isSpeaking}");

@@ -44,37 +44,48 @@ export function AnimatedTeacher3D({
   isTeaching = false,
   avatar = "female",
 }: AnimatedTeacher3DProps) {
+  // Este avatar legado não possui um par audiovisual validado. Ele continua
+  // disponível como ilustração, porém imóvel enquanto o áudio é reproduzido.
+  const allowsSyntheticFacialMotion = false;
   const [currentMouth, setCurrentMouth] = useState(MOUTH_SHAPES.NEUTRAL);
   const [isBlinking, setIsBlinking] = useState(false);
   const [headTilt, setHeadTilt] = useState(0);
   const animationRef = useRef<number | null>(null);
   const phonemesQuery = trpc.advancedTTS.getPhonemes.useQuery(
     { text, languageCode: "pt-BR" },
-    { enabled: isTeaching && text.length > 0 }
+    { enabled: allowsSyntheticFacialMotion && isTeaching && text.length > 0 }
   );
 
   // Animação de piscar automática
   useEffect(() => {
+    if (!allowsSyntheticFacialMotion) {
+      setIsBlinking(false);
+      return;
+    }
     const blinkInterval = setInterval(() => {
       setIsBlinking(true);
       setTimeout(() => setIsBlinking(false), 150);
     }, 3500);
 
     return () => clearInterval(blinkInterval);
-  }, []);
+  }, [allowsSyntheticFacialMotion]);
 
   // Animação de movimento da cabeça
   useEffect(() => {
+    if (!allowsSyntheticFacialMotion) {
+      setHeadTilt(0);
+      return;
+    }
     const headInterval = setInterval(() => {
       setHeadTilt((prev) => (prev === 0 ? 1.5 : prev === 1.5 ? -1.5 : 0));
     }, 4000);
 
     return () => clearInterval(headInterval);
-  }, []);
+  }, [allowsSyntheticFacialMotion]);
 
   // Animação labial sincronizada
   useEffect(() => {
-    if (!isTeaching || !phonemesQuery.data) {
+    if (!allowsSyntheticFacialMotion || !isTeaching || !phonemesQuery.data) {
       setCurrentMouth(MOUTH_SHAPES.NEUTRAL);
       return;
     }
@@ -107,7 +118,7 @@ export function AnimatedTeacher3D({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isTeaching, phonemesQuery.data]);
+  }, [allowsSyntheticFacialMotion, isTeaching, phonemesQuery.data]);
 
   // Cores baseadas no avatar
   const skinTone = avatar === "female" ? "#f4c2a0" : "#d4a574";
@@ -121,7 +132,7 @@ export function AnimatedTeacher3D({
         height="280"
         viewBox="0 0 100 140"
         className="transition-transform duration-300"
-        style={{ transform: `rotate(${headTilt}deg)` }}
+        style={{ transform: `rotate(${allowsSyntheticFacialMotion ? headTilt : 0}deg)` }}
       >
         {/* Pescoço */}
         <rect x="42" y="85" width="16" height="20" fill={skinTone} rx="3" />
@@ -176,11 +187,11 @@ export function AnimatedTeacher3D({
             cx="40"
             cy="47"
             rx="5"
-            ry={isBlinking ? 0.5 : 5}
+            ry={allowsSyntheticFacialMotion && isBlinking ? 0.5 : 5}
             fill="white"
             className="transition-all duration-150"
           />
-          {!isBlinking && (
+          {(!allowsSyntheticFacialMotion || !isBlinking) && (
             <>
               <circle cx="40" cy="47" r="3" fill="#4a3728" />
               <circle cx="41" cy="46" r="1.5" fill="white" opacity="0.9" />
@@ -193,11 +204,11 @@ export function AnimatedTeacher3D({
             cx="60"
             cy="47"
             rx="5"
-            ry={isBlinking ? 0.5 : 5}
+            ry={allowsSyntheticFacialMotion && isBlinking ? 0.5 : 5}
             fill="white"
             className="transition-all duration-150"
           />
-          {!isBlinking && (
+          {(!allowsSyntheticFacialMotion || !isBlinking) && (
             <>
               <circle cx="60" cy="47" r="3" fill="#4a3728" />
               <circle cx="61" cy="46" r="1.5" fill="white" opacity="0.9" />
@@ -217,7 +228,7 @@ export function AnimatedTeacher3D({
 
         {/* Boca animada */}
         <path
-          d={currentMouth}
+          d={allowsSyntheticFacialMotion ? currentMouth : MOUTH_SHAPES.NEUTRAL}
           stroke={lipColor}
           strokeWidth="2"
           fill="none"
