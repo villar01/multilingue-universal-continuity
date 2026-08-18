@@ -65,8 +65,8 @@ export default function ABCBook() {
 
   return (
     <main className="min-h-screen bg-stone-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
-      <article className="mx-auto max-w-4xl overflow-hidden rounded-sm bg-white shadow-[0_18px_55px_rgba(15,23,42,0.14)]">
-        <header className="border-b border-stone-200 px-6 py-6 sm:px-10 sm:py-8">
+      <article className="abc-book-manuscript mx-auto max-w-4xl">
+        <header className="abc-book-leaf px-6 py-6 sm:px-10 sm:py-8">
           <button type="button" onClick={() => setLocation(returnTo)} className="mb-7 inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-slate-950">
             <ArrowLeft className="h-4 w-4" /> Voltar à atividade
           </button>
@@ -80,7 +80,7 @@ export default function ABCBook() {
           </div>
         </header>
 
-        <div className="space-y-9 px-6 py-8 sm:px-10 sm:py-10">
+        <div className="abc-book-pages">
           <section className="grid gap-6 border-l-4 border-amber-400 pl-5 sm:grid-cols-[1fr_11rem] sm:items-center">
             <div>
               <h2 className="font-serif text-2xl font-bold">Como estudar nesta consulta</h2>
@@ -262,7 +262,7 @@ export default function ABCBook() {
                 const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
 
                 return (
-                <article id={chapterId} key={chapter.title} className="scroll-mt-6 border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+                <article id={chapterId} key={chapter.title} className="abc-book-chapter-leaf scroll-mt-6 p-5 sm:p-6">
                   <div className="flex items-start gap-3">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span>
                     <div className="min-w-0">
@@ -327,7 +327,7 @@ export default function ABCBook() {
           <section className="grid gap-4 border-t border-stone-200 pt-7 sm:grid-cols-3"><div className="flex gap-3"><Volume2 className="h-5 w-5 shrink-0 text-sky-700" /><p className="text-sm leading-6 text-slate-700"><strong>Ouvir:</strong> repita a frase em blocos curtos.</p></div><div className="flex gap-3"><PenLine className="h-5 w-5 shrink-0 text-emerald-700" /><p className="text-sm leading-6 text-slate-700"><strong>Escrever:</strong> troque uma palavra e preserve a estrutura.</p></div><div className="flex gap-3"><CheckCircle2 className="h-5 w-5 shrink-0 text-amber-700" /><p className="text-sm leading-6 text-slate-700"><strong>Aplicar:</strong> volte ao professor e use a ideia em contexto.</p></div></section>
         </div>
 
-        <footer className="border-t border-stone-200 bg-stone-50 px-6 py-5 text-center sm:px-10"><button type="button" onClick={() => setLocation(returnTo)} className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]"><ArrowLeft className="h-4 w-4" /> Retornar à atividade</button></footer>
+        <footer className="abc-book-leaf bg-stone-50 px-6 py-5 text-center sm:px-10"><button type="button" onClick={() => setLocation(returnTo)} className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]"><ArrowLeft className="h-4 w-4" /> Retornar à atividade</button></footer>
       </article>
     </main>
   );

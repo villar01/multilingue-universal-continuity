@@ -134,6 +134,39 @@
 }
 
 @layer components {
+  .abc-book-manuscript {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .abc-book-leaf,
+  .abc-book-pages > section,
+  .abc-book-chapter-leaf {
+    border: 1px solid oklch(0.91 0.01 75);
+    background: white;
+    box-shadow: 0 14px 34px oklch(0.24 0.02 75 / 0.1);
+  }
+
+  .abc-book-pages {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .abc-book-pages > section {
+    padding: 1.5rem;
+    break-inside: avoid;
+  }
+
+  .abc-book-chapter-leaf {
+    break-inside: avoid;
+  }
+
+  @media (min-width: 640px) {
+    .abc-book-pages > section {
+      padding: 2.5rem;
+    }
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *
