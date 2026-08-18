@@ -82,6 +82,23 @@ describe("tutor conversacional da Cena Imersiva", () => {
     expect(result.targetReply).toContain("generic tropical beach lesson");
   });
 
+  it("aceita dúvida pedagógica segura sobre gramática, cultura e uso além dos objetos visíveis", async () => {
+    const expandedLessonInput = {
+      ...input,
+      studentMessage: "Why do we say is here, and how can I use this polite phrase when travelling?",
+    };
+    mocks.assessConversationText.mockResolvedValue(allowed);
+    mocks.assessConversationOutput.mockResolvedValue(allowed);
+    mocks.generateAI.mockResolvedValue({ content: "We say is because the subject is singular. Use this polite phrase when you ask for help while travelling.", provider: "ollama" });
+
+    const result = await createCaller().immersiveSceneTutor.chat(expandedLessonInput);
+    const prompt = buildImmersiveTutorPrompt(expandedLessonInput);
+    expect(prompt).toContain("vocabulary, grammar, sentence building, culture, places, pronunciation guidance");
+    expect(mocks.generateAI).toHaveBeenCalledWith(expect.objectContaining({ preferredProvider: "ollama" }));
+    expect(result).toMatchObject({ blocked: false, provider: "ollama" });
+    expect(result.targetReply).toContain("singular");
+  });
+
   it("substitui saída insegura por uma continuidade segura de estudo", async () => {
     const freeConversationInput = { ...input, studentMessage: "Can you explain a useful beach word for my lesson?" };
     mocks.assessConversationText.mockResolvedValue(allowed);
