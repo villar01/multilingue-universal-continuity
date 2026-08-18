@@ -1142,6 +1142,8 @@ export default function ImmersiveScene() {
   const [activeSpeechText, setActiveSpeechText] = useState("");
   const [isPreparingNeuralAudio, setIsPreparingNeuralAudio] = useState(false);
   const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
+  const [dialogAudioDuration, setDialogAudioDuration] = useState<number | null>(null);
+  const [dialogAudioPosition, setDialogAudioPosition] = useState(0);
   const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(loadDialogSpeechRate);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const [sceneMaterialTimedOut, setSceneMaterialTimedOut] = useState(false);
@@ -1267,6 +1269,8 @@ export default function ImmersiveScene() {
       dialogAudioObjectUrlRef.current = null;
     }
     setDialogAudioSource(null);
+    setDialogAudioDuration(null);
+    setDialogAudioPosition(0);
     if (localSpeechRef.current && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
       localSpeechRef.current = null;
@@ -1382,6 +1386,8 @@ export default function ImmersiveScene() {
     audio.playbackRate = dialogSpeechRate;
     audio.load();
     setDialogAudioSource(source);
+    setDialogAudioDuration(null);
+    setDialogAudioPosition(0);
     audioRef.current = audio;
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
@@ -1407,6 +1413,8 @@ export default function ImmersiveScene() {
       stopVisemeSync();
       setAudioViseme(null);
       setDialogAudioSource(null);
+      setDialogAudioDuration(null);
+      setDialogAudioPosition(0);
       if (audioRef.current === audio) audioRef.current = null;
       if (dialogAudioObjectUrlRef.current === source) {
         URL.revokeObjectURL(source);
@@ -1436,6 +1444,7 @@ export default function ImmersiveScene() {
         window.clearTimeout(invalidTrackTimeout);
         invalidTrackTimeout = null;
       }
+      setDialogAudioDuration(audio.duration);
       updateDialogWordsFromAudio();
       return true;
     };
@@ -1459,12 +1468,16 @@ export default function ImmersiveScene() {
         setDlgAudioNotice("Pronúncia pronta. Toque novamente no botão de áudio do cartão para ouvir.");
       });
     };
-    audio.ontimeupdate = updateDialogWordsFromAudio;
+    audio.ontimeupdate = () => {
+      setDialogAudioPosition(audio.currentTime);
+      updateDialogWordsFromAudio();
+    };
     audio.onended = () => {
       if (updatesActiveDialog()) {
         setDlgWordIdx(activeDialogWordCountRef.current);
         setDlgAudioClock(false);
       }
+      if (Number.isFinite(audio.duration) && audio.duration > 0) setDialogAudioPosition(audio.duration);
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
@@ -1500,6 +1513,7 @@ export default function ImmersiveScene() {
       audio.volume = 1;
       audio.playbackRate = dialogSpeechRate;
       audio.currentTime = 0;
+      setDialogAudioPosition(0);
       await audio.play();
       setDlgAudioNotice("");
     } catch {
@@ -2979,13 +2993,38 @@ export default function ImmersiveScene() {
                     ))}
                   </div>
                   {dialogAudioSource && (
-                    <button
-                      type="button"
-                      onClick={() => { void replayVisibleDialogAudio(); }}
-                      className="rounded-full border border-cyan-300/60 bg-cyan-400/15 px-3 py-1.5 text-xs font-bold text-cyan-50 transition hover:bg-cyan-400/25"
-                    >
-                      ▶ Ouvir James
-                    </button>
+                    <div className="flex min-w-[210px] flex-1 items-center gap-2 rounded-xl border border-cyan-300/45 bg-cyan-400/10 px-2 py-1.5" role="group" aria-label="Controle de áudio da fala de James">
+                      <button
+                        type="button"
+                        onClick={() => { void replayVisibleDialogAudio(); }}
+                        className="rounded-lg bg-cyan-300 px-2.5 py-1 text-[11px] font-black text-slate-950 transition hover:bg-cyan-200"
+                        title="Reproduzir a fala de James desde o início"
+                      >
+                        ▶ Ouvir James
+                      </button>
+                      <input
+                        type="range"
+                        min={0}
+                        max={dialogAudioDuration || 0}
+                        step={0.01}
+                        value={Math.min(dialogAudioPosition, dialogAudioDuration || 0)}
+                        disabled={!dialogAudioDuration}
+                        aria-label="Posição da fala de James"
+                        onChange={(event) => {
+                          const audio = dialogAudioElementRef.current;
+                          const nextPosition = Number(event.target.value);
+                          if (!audio || !Number.isFinite(nextPosition)) return;
+                          audio.currentTime = nextPosition;
+                          setDialogAudioPosition(nextPosition);
+                        }}
+                        className="min-w-0 flex-1 accent-cyan-300 disabled:opacity-50"
+                      />
+                      <span className="shrink-0 text-[10px] font-bold tabular-nums text-cyan-50" aria-live="polite">
+                        {dialogAudioDuration
+                          ? `${Math.floor(dialogAudioPosition / 60)}:${String(Math.floor(dialogAudioPosition % 60)).padStart(2, "0")} / ${Math.floor(dialogAudioDuration / 60)}:${String(Math.floor(dialogAudioDuration % 60)).padStart(2, "0")}`
+                          : "medindo duração…"}
+                      </span>
+                    </div>
                   )}
                 </div>
                 {dlgAudioNotice && (
