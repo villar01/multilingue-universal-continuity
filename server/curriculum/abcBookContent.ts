@@ -717,6 +717,56 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       text: "Aprenda a forma falada e a forma escrita no mesmo momento. Observe a pronúncia IPA, ouça um modelo, registre a palavra e use-a em uma frase. Quando uma letra ou som causar dúvida, soletrar, comparar e reescrever transforma a dúvida em uma pista concreta para a próxima revisão.",
       example: "How do you spell that? — Como se soletra isso? / It is spelled B-O-O-K.",
     },
+    {
+      title: "Monte a frase em blocos",
+      text: "Em inglês, comece por quem faz ou vive a ideia. Depois coloque o verbo e complete o sentido. Acrescente uma informação por vez: primeiro a ação, depois o objeto, o lugar ou o tempo.",
+      example: "I study English. / I study English at home. / I study English at home in the morning.",
+    },
+    {
+      title: "Diga quando e onde",
+      text: "Uma frase fica mais útil quando indica tempo ou lugar. No nível inicial, mantenha a ordem simples: a ideia principal vem primeiro; a informação de lugar e de tempo completa a mensagem sem escondê-la.",
+      example: "My friend works at the airport today. — Meu amigo trabalha no aeroporto hoje.",
+    },
+    {
+      title: "Faça perguntas com do e does",
+      text: "Para muitas perguntas no presente, use do ou does antes do sujeito. Depois vem a ação. Não copie a ordem da afirmação: a pergunta abre espaço para a resposta do outro.",
+      example: "Do you study English? / Does she work here?",
+    },
+    {
+      title: "Negue com do not e does not",
+      text: "Para dizer que algo não acontece no presente, use do not ou does not antes do verbo principal. Na fala, as formas curtas don’t e doesn’t aparecem com frequência; aprenda as duas formas.",
+      example: "I do not work today. / She doesn’t study in the morning.",
+    },
+    {
+      title: "Escolha a, an e the",
+      text: "Use a ou an para apresentar uma coisa não específica; use the quando a pessoa já sabe de qual coisa você fala. Pense no som inicial para escolher a ou an, e não somente na letra escrita.",
+      example: "I need a book. / I have an apple. / The book is on the table.",
+    },
+    {
+      title: "Descreva antes do nome",
+      text: "Em inglês, o adjetivo normalmente vem antes do nome. Aprenda a combinação inteira, pois ela ajuda o aluno a evitar traduzir palavra por palavra na ordem do português.",
+      example: "a small house / a good friend / an important question",
+    },
+    {
+      title: "Ligue duas ideias",
+      text: "Quando uma frase simples estiver segura, conecte duas ideias com and, but ou because. Cada conector cria uma relação diferente: soma, contraste ou motivo. Use apenas um conector por frase no início.",
+      example: "I study English because I like languages. / I am tired, but I can study.",
+    },
+    {
+      title: "Escreva um pequeno retrato",
+      text: "Escrever não é juntar palavras ao acaso. Planeje três informações: quem é a pessoa ou o lugar, o que ela faz e uma informação de tempo, lugar ou preferência. Depois revise o sujeito e o verbo de cada frase.",
+      example: "My name is Ana. I study English at home. I like my new book.",
+    },
+    {
+      title: "Transforme o modelo em ideia sua",
+      text: "Use um modelo somente como começo. Troque um elemento verdadeiro da sua vida, leia a frase, escreva sem olhar e compare. A personalização torna a frase mais fácil de recuperar depois.",
+      example: "Modelo: I need water. / Minha ideia: I need help with this lesson.",
+    },
+    {
+      title: "Releia, recupere e avance",
+      text: "No fim de cada grupo de páginas, feche o modelo por alguns segundos. Diga ou escreva o que lembra, confira o ponto que faltou e leve somente esse ponto para o Pareto. Avançar bem é recuperar, não correr.",
+      example: "Hoje: I study English in the morning. Amanhã: escreva a frase sem consultar e acrescente where ou why.",
+    },
   ],
 };
 
