@@ -64,4 +64,17 @@ describe("estratégia híbrida de mídia docente", () => {
     expect(cue.lipMotion).toBe("none");
     expect(cue.lipMotionScope).toBe("none");
   });
+
+  it("restringe a indicação de movimento rítmico a clipes de fala fixa aprovados", () => {
+    const scriptedTriggers = ["scene_open", "object_focus", "correct_answer", "retry_answer", "scene_close"] as const;
+    for (const trigger of scriptedTriggers) {
+      const cue = selectTeacherPoseAudioCue(trigger);
+      expect(cue.lipMotion).toBe("rhythmic_non_phonetic");
+      expect(cue.lipMotionScope).toBe("pre_generated_scripted_clip_only");
+      expect(cue.pose.requiresLipSync).toBe(false);
+    }
+
+    const freeDecision = selectTeacherMedia({ kind: "interactive", hasApprovedPreGeneratedVideo: true });
+    expect(freeDecision).toMatchObject({ mode: "neural_audio_portrait", lipMotion: "none" });
+  });
 });
