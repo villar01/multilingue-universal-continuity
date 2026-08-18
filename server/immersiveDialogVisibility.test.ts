@@ -20,7 +20,7 @@ describe("visibilidade do diálogo imersivo", () => {
   });
 
   it("mantém a fala visível quando a voz pública estiver indisponível", () => {
-    expect(sceneSource.match(/setDlgWords\(words\); setDlgWordIdx\(0\);/g)).toHaveLength(2);
+    expect(sceneSource.match(/setDlgWords\(words\); setDlgWordIdx\(words\.length\);/g)).toHaveLength(2);
     expect(sceneSource).toContain("if (activeDialogLineRef.current === text) setDlgAudioClock(false);");
   });
 

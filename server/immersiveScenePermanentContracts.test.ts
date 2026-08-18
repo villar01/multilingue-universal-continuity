@@ -23,7 +23,7 @@ describe("permanent Tropical Beach scene contracts", () => {
   });
 
   it("limits neural hotspot waits so an audible fallback can run promptly", () => {
-    expect(sceneSource).toContain("setDlgFeedback(\"Preparando voz natural…\")");
+    expect(sceneSource).toContain("setDlgAudioNotice(\"Preparando voz natural…\")");
     expect(sceneSource).toContain("ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender })");
     expect(sceneSource).toContain("googleTtsMut.mutateAsync({");
     expect((sceneSource.match(/6_000/g) || []).length).toBeGreaterThanOrEqual(2);

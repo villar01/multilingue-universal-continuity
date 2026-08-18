@@ -10,4 +10,20 @@ describe("resposta imediata de vocabulário na cena", () => {
     expect(source).toContain("setDlgTutorLoading(false);");
     expect(source).toContain("requestSpeechSafely(immediateReply.replace");
   });
+
+  it("mantém o aviso de voz separado da resposta escrita antes de uma pergunta enviada", () => {
+    expect(source).toContain('const [dlgAudioNotice, setDlgAudioNotice] = useState("");');
+    expect(source).toContain('setDlgAudioNotice("Voz de James pronta. Toque em Ouvir James para iniciar.");');
+    expect(source).toContain("{dlgAudioNotice && (");
+    expect(source).not.toContain('setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");');
+  });
+
+  it("não inicia fala automática ao abrir ou avançar o diálogo", () => {
+    const start = source.slice(source.indexOf("const startDialog"), source.indexOf("useEffect(() => {", source.indexOf("const startDialog")));
+    const next = source.slice(source.indexOf("const dlgNext"), source.indexOf("const askImmersiveTutor"));
+    expect(start).toContain("setDlgWords(words); setDlgWordIdx(words.length);");
+    expect(next).toContain("setDlgWords(words); setDlgWordIdx(words.length);");
+    expect(start).not.toContain("requestSpeechSafely(");
+    expect(next).not.toContain("requestSpeechSafely(");
+  });
 });

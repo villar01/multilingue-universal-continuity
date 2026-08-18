@@ -6,7 +6,7 @@ const source = readFileSync(new URL("../client/src/pages/ImmersiveScene.tsx", im
 describe("segurança assíncrona da cena imersiva", () => {
   it("centraliza disparos de fala em um invólucro que captura rejeições", () => {
     expect(source).toContain("const requestSpeechSafely = useCallback");
-    expect(source).toContain("void speak(text, language, undefined, effectiveGender, purpose).catch");
+    expect(source).toContain("void speak(text, language, undefined, effectiveGender, purpose, autoPlay).catch");
   });
 
   it("usa o invólucro em diálogos, respostas, hotspots e botões", () => {
