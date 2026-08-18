@@ -4,11 +4,12 @@ import { readFileSync } from "node:fs";
 const source = readFileSync(new URL("../client/src/pages/ImmersiveScene.tsx", import.meta.url), "utf8");
 
 describe("diálogo roteirizado e sessão da cena imersiva", () => {
-  it("abre o diálogo com texto visível, mas sem fala antes de um comando explícito", () => {
+  it("abre o diálogo com texto visível e fala apenas pelo comando explícito de início", () => {
     expect(source).toContain("setDlgOpen(true); setDlgStep(0);");
     expect(source).toContain("setDlgWords(words); setDlgWordIdx(words.length);");
     const startDialog = source.slice(source.indexOf("const startDialog"), source.indexOf("useEffect(() => {", source.indexOf("const startDialog")));
-    expect(startDialog).not.toContain("requestSpeechSafely(");
+    expect(startDialog).toContain("primeDialogAudioFromGesture();");
+    expect(startDialog).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
     expect(source).toContain('requestSpeechSafely(immediateReply.replace(/^[^:]+:\\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);');
   });
 

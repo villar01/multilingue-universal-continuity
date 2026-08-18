@@ -1890,13 +1890,16 @@ export default function ImmersiveScene() {
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(false);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
+      primeDialogAudioFromGesture();
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, stopTeacherAudio, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1926,13 +1929,16 @@ export default function ImmersiveScene() {
       activeDialogLineRef.current = line.text;
       activeDialogWordCountRef.current = words.length;
       setDlgAudioClock(false);
+      const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
+      primeDialogAudioFromGesture();
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, dlgStep, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeSceneDialog, dlgStep, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
 
   const askImmersiveTutor = useCallback(async (answer: string) => {
     const scene = teachingScene ?? selectedScene;

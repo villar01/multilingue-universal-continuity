@@ -32,6 +32,7 @@ describe("integração do feedback roteirizado", () => {
     const cycle = readClientFile("client/src/components/ParetoPracticeCycle.tsx");
     const panel = readClientFile("client/src/components/ParetoPanel.tsx");
     const scene = readClientFile("client/src/pages/ImmersiveScene.tsx");
+    const pareto = readClientFile("client/src/pages/Pareto1000.tsx");
 
     expect(cycle).toContain('import { getScriptedExerciseFeedback } from "@/lib/scriptedExerciseFeedback";');
     expect(cycle).toContain('feedbackLanguage?: string;');
@@ -41,5 +42,7 @@ describe("integração do feedback roteirizado", () => {
     expect(panel).toContain("nativeLang?: string;");
     expect(panel).toContain("feedbackLanguage={nativeLang}");
     expect(scene).toContain("nativeLang={nativeLang}");
+    expect(pareto).toContain("feedbackLanguage={nativeLanguage}");
+    expect(pareto).toContain("recordSuccessfulParetoReview");
   });
 });

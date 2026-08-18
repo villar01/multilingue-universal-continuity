@@ -293,7 +293,7 @@ export default function Pareto1000() {
           <div className="mt-7 flex items-center justify-between border-t border-stone-200 pt-5"><Button type="button" variant="ghost" disabled={page === 0} onClick={() => setPage((current) => current - 1)} className="text-slate-700 hover:bg-stone-50">Sessão anterior</Button><Button type="button" variant="ghost" disabled={page >= totalPages - 1} onClick={() => setPage((current) => current + 1)} className="text-slate-700 hover:bg-stone-50">Próximas 10 palavras</Button></div>
         </section>
       </article>
-      {practiceWord && <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/35 p-4 backdrop-blur-sm sm:items-center"><ParetoPracticeCycle embedded level="A1" term={{ word: practiceWord.enUS, translation: practiceWord.ptBR, example: practiceWord.example, exampleTranslation: practiceWord.examplePt }} onSpeak={speak} onClose={() => setPracticeWord(null)} onComplete={completeWord} onNext={openNextWord} /></div>}
+      {practiceWord && <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/35 p-4 backdrop-blur-sm sm:items-center"><ParetoPracticeCycle embedded level="A1" term={{ word: practiceWord.enUS, translation: practiceWord.ptBR, example: practiceWord.example, exampleTranslation: practiceWord.examplePt }} feedbackLanguage={nativeLanguage} onSpeak={speak} onClose={() => setPracticeWord(null)} onComplete={completeWord} onNext={openNextWord} /></div>}
     </main>
   );
 }

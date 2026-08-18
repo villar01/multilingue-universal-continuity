@@ -25,4 +25,15 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain('ref={dlgFeedbackRef}');
     expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
   });
+
+  it("aciona a fala do professor no clique explícito de iniciar e avançar o diálogo", () => {
+    const startDialogSource = sceneSource.slice(sceneSource.indexOf("const startDialog = useCallback"), sceneSource.indexOf("useEffect(() => {\n    if (isSpeaking"));
+    const nextDialogSource = sceneSource.slice(sceneSource.indexOf("const dlgNext = useCallback"), sceneSource.indexOf("const askImmersiveTutor = useCallback"));
+    const speechCall = "requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);";
+
+    expect(startDialogSource).toContain("primeDialogAudioFromGesture();");
+    expect(startDialogSource).toContain(speechCall);
+    expect(nextDialogSource).toContain("primeDialogAudioFromGesture();");
+    expect(nextDialogSource).toContain(speechCall);
+  });
 });
