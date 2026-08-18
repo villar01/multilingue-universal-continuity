@@ -20,4 +20,10 @@ describe("cobertura canônica do programa Pareto", () => {
     expect(new Set(program.map((word) => normalizedEnglish(word.enUS))).size).toBe(1000);
     expect(new Set(program.map((word) => word.id)).size).toBe(1000);
   });
+
+  it("mantém sentido e exemplo em português antes de qualquer ciclo de memorização", () => {
+    const program = getParetoProgramWords();
+    expect(program.every((word) => word.ptBR.trim().length > 0)).toBe(true);
+    expect(program.every((word) => word.example.trim().length > 0 && word.examplePt.trim().length > 0)).toBe(true);
+  });
 });
