@@ -85,4 +85,23 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
     expect(book.languageBlocks.map((block) => block.english)).toEqual(expect.arrayContaining(["Can you help me?", "I don't understand."]));
     expect(book.languageBlocks.every((block) => block.portuguese && block.figurativePronunciation && block.example && block.examplePortuguese && block.writingPrompt)).toBe(true);
   });
+
+  it("mantém a espinha dorsal integrada antes de encaminhar a revisão Pareto", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.chapters.every((chapter) => (
+      chapter.objective.trim()
+      && chapter.reading.trim()
+      && chapter.guidedDialogue.length === 2
+      && chapter.comprehensionQuestions.length >= 2
+      && chapter.grammarExplanation.trim()
+      && chapter.writingPrompt.trim()
+      && chapter.orderingExercise.followUpPrompt.trim()
+      && chapter.paretoContext
+      && chapter.paretoChapter >= 1
+    ))).toBe(true);
+  });
 });
