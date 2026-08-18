@@ -13,6 +13,8 @@ import { serveStatic, setupVite } from "./vite";
 import { ipBlockMiddleware } from "./security";
 import { securityMiddleware } from "../securityMiddleware";
 import { consumePublicErrorReportQuota, sanitizePublicErrorReport } from "./httpRouteSecurity";
+import { createLearningHttpGate } from "../learning-http-gate";
+import { getLearningContentEntitlement } from "../trial-access-router";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -53,6 +55,11 @@ async function startServer() {
   registerStorageProxy(app);
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Must run before Vite/static fallback: an anonymous request receives no learning page shell.
+  app.use(createLearningHttpGate({
+    authenticate: (request) => sdk.authenticateRequest(request),
+    assertEntitlement: (userId) => getLearningContentEntitlement(userId),
+  }));
   // Scheduled: expansão diária de vocabulário Pareto (+200 palavras/dia via IA)
   const { handleVocabExpand } = await import("../scheduled/vocab-expand");
   app.post("/api/scheduled/vocab-expand", handleVocabExpand);
