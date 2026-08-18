@@ -1,8 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { createTrialLessonKey } from "@/lib/learningAccess";
-import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, MessageCircle, PenLine, Volume2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronLeft, ChevronRight, MessageCircle, PenLine, Volume2 } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
 function getSafeReturnTo(location: string) {
@@ -18,6 +18,8 @@ export default function ABCBook() {
   const paretoHref = `/pareto-1000?returnTo=${encodeURIComponent(paretoReturnTo)}`;
   const [orderingAnswers, setOrderingAnswers] = useState<Record<number, string>>({});
   const [checkedOrdering, setCheckedOrdering] = useState<Record<number, boolean>>({});
+  const bookPagesRef = useRef<HTMLDivElement>(null);
+  const [activePage, setActivePage] = useState(1);
   const bookQuery = trpc.curriculum.abcBook.useQuery({
     lessonKey: createTrialLessonKey(location),
     nativeLanguage: profile.nativeCode,
@@ -63,6 +65,18 @@ export default function ABCBook() {
     );
   }
 
+  const totalBookPages = 12 + book.sections.length;
+  const moveBookPage = (direction: -1 | 1) => {
+    const container = bookPagesRef.current;
+    if (!container) return;
+    container.scrollBy({ left: direction * container.clientWidth, behavior: "smooth" });
+  };
+  const updateActiveBookPage = () => {
+    const container = bookPagesRef.current;
+    if (!container) return;
+    setActivePage(Math.min(totalBookPages, Math.max(1, Math.round(container.scrollLeft / container.clientWidth) + 1)));
+  };
+
   return (
     <main className="min-h-screen bg-stone-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
       <article className="abc-book-manuscript mx-auto max-w-4xl">
@@ -80,7 +94,13 @@ export default function ABCBook() {
           </div>
         </header>
 
-        <div className="abc-book-pages">
+        <nav className="abc-book-page-controls" aria-label="Navegação entre folhas">
+          <button type="button" onClick={() => moveBookPage(-1)} disabled={activePage === 1} className="inline-flex items-center gap-2"><ChevronLeft className="h-4 w-4" /> Folha anterior</button>
+          <p aria-live="polite">Folha {activePage} de {totalBookPages}</p>
+          <button type="button" onClick={() => moveBookPage(1)} disabled={activePage === totalBookPages} className="inline-flex items-center gap-2">Próxima folha <ChevronRight className="h-4 w-4" /></button>
+        </nav>
+
+        <div ref={bookPagesRef} onScroll={updateActiveBookPage} className="abc-book-pages" aria-label="Folhas do Livro ABC" tabIndex={0}>
           <section className="grid gap-6 border-l-4 border-amber-400 pl-5 sm:grid-cols-[1fr_11rem] sm:items-center">
             <div>
               <h2 className="font-serif text-2xl font-bold">Como estudar nesta consulta</h2>

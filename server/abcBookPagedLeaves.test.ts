@@ -10,11 +10,15 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(page).toContain("abc-book-leaf");
     expect(page).toContain("abc-book-pages");
     expect(page).toContain("abc-book-chapter-leaf");
+    expect(page).toContain("abc-book-page-controls");
+    expect(page).toContain("moveBookPage");
   });
 
   it("mantém folhas claras com separação, sem retirar a leitura do currículo", () => {
     expect(styles).toContain(".abc-book-pages > section");
     expect(styles).toContain("background: white");
     expect(styles).toContain("break-inside: avoid");
+    expect(styles).toContain("scroll-snap-type: x mandatory");
+    expect(styles).toContain("grid-auto-flow: column");
   });
 });
