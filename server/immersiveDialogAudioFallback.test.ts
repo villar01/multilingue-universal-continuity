@@ -19,9 +19,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("A voz neural não respondeu.");
     expect(source).not.toContain("A faixa neural não ficou disponível.");
     expect(source).not.toContain("A voz da cena não está disponível agora.");
-    expect(source).toContain("audioBase64ToDataUrl");
-    expect(source).toContain('audioBase64ToDataUrl(result.audioBase64, "audio/mpeg")');
-    expect(source).toContain('audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg")');
+    expect(source).toContain("audioBase64ToObjectUrl");
+    expect(source).toContain('audioBase64ToObjectUrl(result.audioBase64, "audio/mpeg")');
+    expect(source).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
     expect(source).toContain("dialogAudioObjectUrlRef");
     expect(source).toContain("const replayVisibleDialogAudio = useCallback");
     expect(source).toContain("▶ Ouvir James");

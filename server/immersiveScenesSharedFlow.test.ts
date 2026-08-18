@@ -21,7 +21,7 @@ describe("fluxo compartilhado das cenas imersivas", () => {
   it("prioriza a faixa Edge direta antes da alternativa remota e não vincula o fluxo comum a James ou à Praia", () => {
     const sharedSpeech = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(sharedSpeech.indexOf("if (await playEdgeNeural()) return;")).toBeLessThan(sharedSpeech.indexOf("const googleAudio"));
-    expect(sharedSpeech).toContain('audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg")');
+    expect(sharedSpeech).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
     expect(sharedSpeech).not.toContain('selectedScene?.id === "beach"');
   });
 

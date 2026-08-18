@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
-import { audioBase64ToDataUrl } from "@/lib/audioSource";
+import { audioBase64ToObjectUrl } from "@/lib/audioSource";
 import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
@@ -1551,7 +1551,7 @@ export default function ImmersiveScene() {
       12_000,
     );
     if (!result.success || !("audioBase64" in result) || !result.audioBase64.trim()) return false;
-    const source = audioBase64ToDataUrl(result.audioBase64, "audio/mpeg");
+    const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mpeg");
     await playTeacherAudio(source, text, language, requestKey, false, autoPlay);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
@@ -1580,7 +1580,7 @@ export default function ImmersiveScene() {
         6_000,
       );
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
-      const source = audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg");
+      const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg");
       await playTeacherAudio(source, text, lang, requestKey, false, autoPlay);
       return true;
     };
@@ -1634,7 +1634,7 @@ export default function ImmersiveScene() {
       setShowGreeting(true);
       setActiveSpeechText(text);
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, effectiveGender, requestKey)
+      void playPublicSceneDialogue(text, language, effectiveGender, requestKey, autoPlay)
         .then((played) => {
           if (played) return;
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
@@ -1659,7 +1659,7 @@ export default function ImmersiveScene() {
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
       setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, effectiveGender, requestKey)
+      void playPublicSceneDialogue(text, language, effectiveGender, requestKey, autoPlay)
         .then((played) => {
           if (played || playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
