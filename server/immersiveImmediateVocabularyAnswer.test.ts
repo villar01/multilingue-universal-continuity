@@ -18,14 +18,16 @@ describe("resposta imediata de vocabulário na cena", () => {
     expect(source).not.toContain('setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");');
   });
 
-  it("inicia fala somente a partir dos comandos explícitos de abrir ou avançar o diálogo", () => {
+  it("prepara a fala ao abrir ou avançar e exige Ouvir inglês para iniciar a reprodução", () => {
     const start = source.slice(source.indexOf("const startDialog"), source.indexOf("useEffect(() => {", source.indexOf("const startDialog")));
     const next = source.slice(source.indexOf("const dlgNext"), source.indexOf("const askImmersiveTutor"));
     expect(start).toContain("setDlgWords(words); setDlgWordIdx(words.length);");
     expect(next).toContain("setDlgWords(words); setDlgWordIdx(words.length);");
     expect(start).toContain("primeDialogAudioFromGesture();");
-    expect(start).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
+    expect(start).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);");
     expect(next).toContain("primeDialogAudioFromGesture();");
-    expect(next).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
+    expect(next).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);");
+    expect(source).toContain("if (dialogAudioSource) {");
+    expect(source).toContain("void replayVisibleDialogAudio();");
   });
 });

@@ -1913,7 +1913,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -1952,7 +1952,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
+      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
@@ -2996,6 +2996,10 @@ export default function ImmersiveScene() {
                   <button
                     type="button"
                     onClick={() => {
+                      if (dialogAudioSource) {
+                        void replayVisibleDialogAudio();
+                        return;
+                      }
                       const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
                       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                     }}

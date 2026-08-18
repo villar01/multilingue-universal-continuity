@@ -17,7 +17,9 @@ describe("contrato global de reprodução de voz", () => {
     expect(scene).toContain("audio.muted = false;");
     expect(scene).toContain("audio.volume = 1;");
     expect(scene).toContain("primeDialogAudioFromGesture();");
-    expect(scene).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);");
+    expect(scene).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);");
+    expect(scene).toContain("if (dialogAudioSource) {");
+    expect(scene).toContain("void replayVisibleDialogAudio();");
   });
 
   it("mantém reprodução explícita nos percursos Pareto e de pronúncia", () => {

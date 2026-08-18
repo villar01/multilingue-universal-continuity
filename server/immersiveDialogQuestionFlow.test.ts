@@ -26,14 +26,16 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
   });
 
-  it("aciona a fala do professor no clique explícito de iniciar e avançar o diálogo", () => {
+  it("prepara a fala ao iniciar ou avançar e reserva a reprodução ao botão explícito Ouvir inglês", () => {
     const startDialogSource = sceneSource.slice(sceneSource.indexOf("const startDialog = useCallback"), sceneSource.indexOf("useEffect(() => {\n    if (isSpeaking"));
     const nextDialogSource = sceneSource.slice(sceneSource.indexOf("const dlgNext = useCallback"), sceneSource.indexOf("const askImmersiveTutor = useCallback"));
-    const speechCall = "requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);";
+    const prepareSpeechCall = "requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);";
 
     expect(startDialogSource).toContain("primeDialogAudioFromGesture();");
-    expect(startDialogSource).toContain(speechCall);
+    expect(startDialogSource).toContain(prepareSpeechCall);
     expect(nextDialogSource).toContain("primeDialogAudioFromGesture();");
-    expect(nextDialogSource).toContain(speechCall);
+    expect(nextDialogSource).toContain(prepareSpeechCall);
+    expect(sceneSource).toContain("if (dialogAudioSource) {");
+    expect(sceneSource).toContain("void replayVisibleDialogAudio();");
   });
 });
