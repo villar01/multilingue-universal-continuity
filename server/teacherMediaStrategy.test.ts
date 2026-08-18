@@ -82,4 +82,18 @@ describe("estratégia híbrida de mídia docente", () => {
     const freeDecision = selectTeacherMedia({ kind: "interactive", hasApprovedPreGeneratedVideo: true, hasExactAudioVideoPair: false });
     expect(freeDecision).toMatchObject({ mode: "neural_audio_portrait", lipMotion: "none" });
   });
+
+  it("permite gravação lateral somente enquanto o mesmo áudio roteirizado está ativo", () => {
+    const decision = selectTeacherMedia({
+      kind: "scripted",
+      hasApprovedPreGeneratedVideo: true,
+      hasExactAudioVideoPair: false,
+      hasAudioTimedMotionVideo: true,
+    });
+
+    expect(decision).toMatchObject({
+      mode: "audio_timed_motion_video",
+      lipMotion: "audio_timed_nonphonetic_video",
+    });
+  });
 });

@@ -24,14 +24,14 @@ describe("integração dos clipes de Sophie na Cena do Café", () => {
     }
   });
 
-  it("sobrepõe vídeo sem remover a foto ou criar um segundo caminho de áudio", () => {
+  it("sobrepõe movimento sem remover a foto e o encerra pelo mesmo ciclo de áudio", () => {
     expect(sceneSource).toContain("type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;");
     expect(sceneSource).toContain("src={overrideImage || scene.teacherImage}");
     expect(sceneSource).toContain("activeClip?: ScenePilotClip | null;");
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}');
+    expect(sceneSource).toContain("onEnded={onClipFinished}");
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
     expect(sceneSource).toContain("const showSyntheticMouth = false;");

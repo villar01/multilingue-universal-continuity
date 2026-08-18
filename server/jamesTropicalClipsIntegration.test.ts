@@ -16,15 +16,15 @@ describe("integração de clipes de James na Praia Tropical", () => {
     ))).toBe(true);
   });
 
-  it("sobrepõe o vídeo sem retirar a foto e mantém saudação ou objeto visíveis até o aluno encerrar o contexto", () => {
+  it("sobrepõe a gravação lateral sem retirar a foto e a mantém somente durante a fala", () => {
     expect(sceneSource).toContain('src={overrideImage || scene.teacherImage}');
     expect(sceneSource).toContain("activeClip?: ScenePilotClip | null;");
     expect(sceneSource).toContain("{showPilotClip && activeClip?.videoUrl && (");
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain('loop={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open"}');
-    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}');
+    expect(sceneSource).toContain("loop");
+    expect(sceneSource).toContain("onEnded={onClipFinished}");
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
     expect(sceneSource).toContain("zIndex: 2,");
@@ -76,12 +76,15 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
   });
 
-  it("não inicia movimento de James ao abrir cena ou diálogo antes de áudio confirmado", () => {
+  it("agenda o movimento de James, mas só o inicia no evento real de reprodução e o encerra com o áudio", () => {
     const sceneEntry = sceneSource.slice(sceneSource.indexOf("useEffect(() => {\n    if (!selectedScene) return;"), sceneSource.indexOf("const startDialog"));
     const dialogStart = sceneSource.slice(sceneSource.indexOf("const startDialog"), sceneSource.indexOf("useEffect(() => {", sceneSource.indexOf("const startDialog")));
 
     expect(sceneEntry).not.toContain('setActiveJamesClipId("james-tropical-greeting")');
     expect(dialogStart).not.toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(sceneSource).toContain('audio.onplay = () => {');
+    expect(dialogStart).toContain('playJamesTropicalClip("james-tropical-greeting")');
+    expect(sceneSource).toContain('audio.onplaying = () => {');
+    expect(sceneSource).toContain("audio.onpause = () => {");
+    expect(sceneSource).toContain("setActiveJamesClipId(null);");
   });
 });

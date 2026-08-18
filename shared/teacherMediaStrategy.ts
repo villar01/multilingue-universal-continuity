@@ -6,9 +6,9 @@
  * preferência para que frases roteirizadas usem vídeo pronto somente quando
  * houver um ativo validado; respostas livres continuam no canal de áudio.
  */
-export type TeacherMediaMode = "pre_generated_video" | "neural_audio_portrait";
+export type TeacherMediaMode = "pre_generated_video" | "audio_timed_motion_video" | "neural_audio_portrait";
 export type TeacherMediaRequestKind = "scripted" | "interactive";
-export type TeacherLipMotionMode = "none" | "audio_matched_video";
+export type TeacherLipMotionMode = "none" | "audio_matched_video" | "audio_timed_nonphonetic_video";
 export type TeacherPoseId = "neutral" | "greeting" | "pointing" | "encouragement" | "correction" | "closing";
 export type TeacherPoseTrigger = "scene_open" | "object_focus" | "correct_answer" | "retry_answer" | "scene_close" | "free_interaction";
 
@@ -17,6 +17,8 @@ export interface TeacherMediaRequest {
   hasApprovedPreGeneratedVideo: boolean;
   /** Only true when the visible video was produced for the exact spoken audio. */
   hasExactAudioVideoPair: boolean;
+  /** A previously approved movement recording that is permitted only while the same audio is playing. */
+  hasAudioTimedMotionVideo?: boolean;
 }
 
 export interface TeacherMediaDecision {
@@ -88,6 +90,16 @@ export function selectTeacherMedia(request: TeacherMediaRequest): TeacherMediaDe
       requiresExternalGpu: false,
       requiresAdditionalConsent: false,
       reason: "Vídeo produzido para a mesma frase e áudio roteirizados; a reprodução visual pode acompanhar a fala correspondente.",
+    };
+  }
+
+  if (request.kind === "scripted" && request.hasApprovedPreGeneratedVideo && request.hasAudioTimedMotionVideo) {
+    return {
+      mode: "audio_timed_motion_video",
+      lipMotion: "audio_timed_nonphonetic_video",
+      requiresExternalGpu: false,
+      requiresAdditionalConsent: false,
+      reason: "Gravação lateral aprovada: ela só aparece entre o início e o fim do mesmo áudio, sem alegar sincronia fonética.",
     };
   }
 

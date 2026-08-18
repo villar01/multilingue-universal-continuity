@@ -593,10 +593,11 @@ function TeacherAvatar({
     kind: activeClip?.videoUrl ? "scripted" : "interactive",
     hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),
     hasExactAudioVideoPair: false,
+    hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking),
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
-    teacherMedia.mode === "pre_generated_video"
+    (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
       && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
@@ -681,12 +682,12 @@ function TeacherAvatar({
             autoPlay
             muted
             playsInline
-            loop={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open"}
+            loop
             preload="auto"
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
             data-teacher-pose={teacherPoseCue?.pose.id}
             data-teacher-audio-intent={teacherPoseCue?.audioIntent}
-            onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}
+            onEnded={onClipFinished}
             onError={onClipFinished}
             style={{
               position: "absolute",
@@ -1314,6 +1315,10 @@ export default function ImmersiveScene() {
     stopVisemeSync();
     setAudioViseme(null);
     setIsSpeaking(false);
+    setActiveJamesClipId(null);
+    setActiveSophieClipId(null);
+    pendingJamesClipIdRef.current = null;
+    pendingSophieClipIdRef.current = null;
     setIsPreparingNeuralAudio(false);
     setActiveSpeechText("");
     activeSpeechRequestRef.current = null;
@@ -1480,7 +1485,7 @@ export default function ImmersiveScene() {
       releaseRequest();
       setDlgAudioNotice("Toque em Ouvir inglês para continuar a prática de pronúncia.");
     };
-    audio.onplay = () => {
+    audio.onplaying = () => {
       reportAudioEvent("play");
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
@@ -1538,6 +1543,10 @@ export default function ImmersiveScene() {
       stopVisemeSync();
       setAudioViseme(null);
       setIsSpeaking(false);
+      setActiveJamesClipId(null);
+      setActiveSophieClipId(null);
+      pendingJamesClipIdRef.current = null;
+      pendingSophieClipIdRef.current = null;
       if (audioRef.current === audio) {
         audioRef.current = null;
         setActiveSpeechText("");
@@ -1545,6 +1554,16 @@ export default function ImmersiveScene() {
       releaseRequest();
       if (invalidTrackTimeout !== null) window.clearTimeout(invalidTrackTimeout);
       if (revokeOnEnd) URL.revokeObjectURL(source);
+    };
+    audio.onpause = () => {
+      if (audio.ended) return;
+      stopVisemeSync();
+      setAudioViseme(null);
+      setIsSpeaking(false);
+      setActiveJamesClipId(null);
+      setActiveSophieClipId(null);
+      pendingJamesClipIdRef.current = null;
+      pendingSophieClipIdRef.current = null;
     };
     audio.onerror = () => {
       reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));
@@ -1964,6 +1983,7 @@ export default function ImmersiveScene() {
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
       if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James" && teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE) {
+        playJamesTropicalClip("james-tropical-greeting");
         void playTeacherAudio(
           JAMES_TROPICAL_INTRO_FALLBACK_URL,
           "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
