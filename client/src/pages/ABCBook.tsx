@@ -17,6 +17,21 @@ function getContextIllustration(title: string, purpose: string) {
   return CONTEXT_ILLUSTRATIONS.find((illustration) => illustration.match.test(`${title} ${purpose}`));
 }
 
+const PROGRESSIVE_ILLUSTRATIONS = {
+  "Lugares úteis na cidade": {
+    src: "/manus-storage/abc-city-monochrome_ba326ddc.png",
+    alt: "Desenho autoral monocromático de pessoas aprendendo a se orientar na cidade",
+  },
+  "Pedir comida e bebida": {
+    src: "/manus-storage/abc-food-monochrome_34623dbe.png",
+    alt: "Desenho autoral monocromático de uma refeição simples com itens do cotidiano",
+  },
+} as const;
+
+function getProgressiveIllustration(title: string) {
+  return PROGRESSIVE_ILLUSTRATIONS[title as keyof typeof PROGRESSIVE_ILLUSTRATIONS];
+}
+
 function getSafeReturnTo(location: string) {
   const requested = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
   return requested?.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
@@ -179,12 +194,15 @@ export default function ABCBook() {
             </section>
           ))}
 
-          {book.progressiveLessons.map((lesson, lessonIndex) => (
+          {book.progressiveLessons.map((lesson, lessonIndex) => {
+            const illustration = getProgressiveIllustration(lesson.title);
+            return (
             <section key={lesson.title} className="border-b border-stone-200 pb-8">
               {lessonIndex === 0 && <><p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Palavras e contextos em expansão</p><h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Uma ideia completa por folha</h2><p className="mt-3 max-w-3xl leading-7 text-slate-700">Leia a explicação, compare poucos exemplos, escreva e só então teste a ordem da frase. O Pareto reforça esta folha depois; ele não substitui a leitura.</p></>}
               <article className={lessonIndex === 0 ? "mt-6" : ""}>
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">{lesson.section}</p>
                 <h3 className="mt-1 font-serif text-xl font-bold text-slate-950">{lesson.title}</h3>
+                {illustration && <figure className="mx-auto my-5 max-w-[13rem] rounded-sm border border-stone-200 bg-stone-50 p-2 shadow-sm sm:float-right sm:mb-4 sm:ml-6"><img src={illustration.src} alt={illustration.alt} className="aspect-[4/5] w-full rounded-sm object-cover" loading="lazy" /><figcaption className="px-1 pt-2 text-center text-[11px] font-semibold leading-4 text-slate-600">Observe o contexto antes de recuperar as palavras.</figcaption></figure>}
                 <p className="mt-3 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
                 <p className="mt-3 border-l-2 border-amber-400 pl-4 text-sm font-semibold leading-6 text-slate-800"><strong className="text-slate-950">Observe:</strong> {lesson.languageFocus}</p>
                 <ol className="mt-5 divide-y divide-stone-200 border-y border-stone-200">
@@ -205,7 +223,8 @@ export default function ABCBook() {
                 <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Pareto do Livro:</strong> {lesson.paretoPrompt}</p>
               </article>
             </section>
-          ))}
+            );
+          })}
 
           <section className="border-y border-stone-200 py-7">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Memória passo a passo</p>

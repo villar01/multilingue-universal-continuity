@@ -1772,3 +1772,4 @@
 - [x] Executar por até duas horas as correções simples pendentes de forma sequencial, validando TypeScript e testes antes de qualquer publicação — foram concluídos e publicados, uma alteração por vez, SOS/ABC, Pareto, Base, Cena, áudio, retorno contextual, controle parental e auditorias; itens sem validação permanecem pendentes
 
 - [ ] Registrar para correção posterior cada item que não passar em TypeScript, testes ou validação funcional, sem marcar como concluído
+- [x] Associar as ilustrações autorais de cidade e alimentação às respectivas folhas progressivas do Livro ABC, preservando a leitura simples e o conteúdo curricular protegido — os desenhos aparecem apenas em “Lugares úteis na cidade” e “Pedir comida e bebida”; TypeScript e a suíte completa com 664 testes aprovados

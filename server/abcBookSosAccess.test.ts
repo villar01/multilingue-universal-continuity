@@ -55,6 +55,9 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain('/manus-storage/abc-city-monochrome_ba326ddc.png');
     expect(bookSource).toContain('/manus-storage/abc-food-monochrome_34623dbe.png');
     expect(bookSource).toContain("getContextIllustration(group.title, group.purpose)");
+    expect(bookSource).toContain("getProgressiveIllustration(lesson.title)");
+    expect(bookSource).toContain('"Lugares úteis na cidade"');
+    expect(bookSource).toContain('"Pedir comida e bebida"');
     expect(bookSource).toContain("Próximo passo: Praticar no Pareto");
     expect(bookSource).toContain("Opções desta unidade");
   });
