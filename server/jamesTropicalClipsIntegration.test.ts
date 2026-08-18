@@ -70,6 +70,6 @@ describe("integração de clipes de James na Praia Tropical", () => {
   it("aciona o clipe de Ocean quando a pergunta escrita reconhece o objeto contextual", () => {
     expect(sceneSource).toContain('scene.id === "beach" && scene.teacherName === "James" && fallback?.hotspotId');
     expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
-    expect(sceneSource).toContain("if (objectClipId) playJamesTropicalClip(objectClipId);");
+    expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
   });
 });

@@ -18,4 +18,11 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).not.toContain("dlgAnswer !== null || dlgTutorLoading");
     expect(sceneSource).not.toContain("dlgIsProcessingSpeech || dlgTutorLoading");
   });
+
+  it("mantém a resposta escrita à vista e aciona um clipe de James para qualquer pergunta explícita na Praia Tropical", () => {
+    expect(sceneSource).toContain('const dlgFeedbackRef = useRef<HTMLDivElement | null>(null);');
+    expect(sceneSource).toContain('dlgFeedbackRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });');
+    expect(sceneSource).toContain('ref={dlgFeedbackRef}');
+    expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
+  });
 });

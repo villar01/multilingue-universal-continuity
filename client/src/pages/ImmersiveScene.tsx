@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
-import { audioBase64ToObjectUrl } from "@/lib/audioSource";
+import { audioBase64ToDataUrl } from "@/lib/audioSource";
 import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
@@ -1542,7 +1542,7 @@ export default function ImmersiveScene() {
       12_000,
     );
     if (!result.success || !("audioBase64" in result) || !result.audioBase64.trim()) return false;
-    const source = audioBase64ToObjectUrl(result.audioBase64, "audio/mpeg");
+    const source = audioBase64ToDataUrl(result.audioBase64, "audio/mpeg");
     await playTeacherAudio(source, text, language, requestKey);
     return true;
   }, [playTeacherAudio, sceneDialogueVoiceMut]);
@@ -1571,18 +1571,17 @@ export default function ImmersiveScene() {
         6_000,
       );
       if (!edgeAudio.success || !edgeAudio.audioBase64) return false;
-      const source = audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg");
+      const source = audioBase64ToDataUrl(edgeAudio.audioBase64, "audio/mpeg");
       await playTeacherAudio(source, text, lang, requestKey, false, autoPlay);
       return true;
     };
 
-    // Edge uses the locale-and-gender voice map and caches repetitions in the
-    // application process, so hotspot clicks are responsive and regionally correct.
-    if (purpose === "hotspot") {
-      try {
-        if (await playEdgeNeural()) return;
-      } catch { /* Try the other neural provider below. */ }
-    }
+    // A faixa Edge chega diretamente como MP3 base64 válido. Ela é a primeira
+    // opção para todas as cenas, evitando uma URL remota indisponível depois
+    // de a resposta escrita já ter sido apresentada ao aluno.
+    try {
+      if (await playEdgeNeural()) return;
+    } catch { /* Try the secondary neural provider below. */ }
     try {
       const googleAudio = await waitForSpeechResult(
         googleTtsMut.mutateAsync({
@@ -1597,9 +1596,6 @@ export default function ImmersiveScene() {
         return;
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
-    try {
-      if (await playEdgeNeural()) return;
-    } catch { /* fallback below */ }
     if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
       setDlgAudioNotice("A voz neural não respondeu. A fala está usando a voz disponível neste navegador; toque em Ouvir inglês para repetir.");
       return;
@@ -1742,6 +1738,12 @@ export default function ImmersiveScene() {
   const dlgRecordingStreamRef = useRef<MediaStream | null>(null);
   const dlgRecordingSessionRef = useRef(0);
   const dlgTutorRequestRef = useRef(0);
+  const dlgFeedbackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!dlgFeedback) return;
+    dlgFeedbackRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [dlgFeedback]);
 
   const getDlgTranslation = (line: DialogLine): string =>
     getNativeDialogueTranslation(line, nativeLang, dlgNativeTranslation);
@@ -1940,7 +1942,7 @@ export default function ImmersiveScene() {
         ocean: "james-tropical-point-ocean",
         sand: "james-tropical-point-sand",
       } as const)[fallback.hotspotId as "palm" | "wave" | "ocean" | "sand"];
-      if (objectClipId) playJamesTropicalClip(objectClipId);
+      playJamesTropicalClip(objectClipId || "james-tropical-greeting");
     }
     setDlgFeedback(immediateFeedback);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
@@ -3065,7 +3067,7 @@ export default function ImmersiveScene() {
                     </button>
                   </div>
                   {dlgFeedback && (
-                    <div className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2">
+                    <div ref={dlgFeedbackRef} className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2">
                       <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Resposta escrita do professor</p>
                       <div role="status" aria-live="polite" className="whitespace-pre-line text-sm font-medium text-amber-100">
                         {dlgFeedback}
