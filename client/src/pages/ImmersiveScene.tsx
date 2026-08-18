@@ -31,7 +31,7 @@ import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } 
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
-import { selectTeacherMedia } from "@shared/teacherMediaStrategy";
+import { selectTeacherMedia, selectTeacherPoseAudioCue } from "@shared/teacherMediaStrategy";
 import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 export type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 import { isInitialCommercialTargetLanguage } from "@shared/commercialLanguageBlocks";
@@ -579,6 +579,7 @@ function TeacherAvatar({
     kind: activeClip?.videoUrl ? "scripted" : "interactive",
     hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),
   });
+  const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
     teacherMedia.mode === "pre_generated_video"
       && activeClip?.videoUrl
@@ -658,6 +659,8 @@ function TeacherAvatar({
             loop={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open"}
             preload="auto"
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
+            data-teacher-pose={teacherPoseCue?.pose.id}
+            data-teacher-audio-intent={teacherPoseCue?.audioIntent}
             onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}
             onError={onClipFinished}
             style={{
