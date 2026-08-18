@@ -14,6 +14,16 @@ export type ABCBookChapter = {
   grammarTitle: string;
   grammarExplanation: string;
   writingPrompt: string;
+  orderingExercise: ABCBookOrderingExercise;
+  paretoContext: "foundation" | "family" | "social-circle";
+};
+
+export type ABCBookOrderingExercise = {
+  prompt: string;
+  scrambled: string[];
+  answer: string;
+  explanation: string;
+  followUpPrompt: string;
 };
 
 export type ABCBookPhrase = {
@@ -115,7 +125,85 @@ export type ABCBookUnavailableDelivery = {
   unavailableMessage: string;
 };
 
-const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit) => ({
+const A1_ORDERING_EXERCISES: ABCBookOrderingExercise[] = [
+  {
+    prompt: "Reorganize as palavras para formar uma apresentação completa.",
+    scrambled: ["name", "is", "My", "Ana"],
+    answer: "My name is Ana.",
+    explanation: "Em uma apresentação simples, o possessivo my vem antes de name; is liga a pessoa ao nome.",
+    followUpPrompt: "Troque Ana pelo seu nome e escreva a frase sem consultar o modelo.",
+  },
+  {
+    prompt: "Reorganize as palavras para expressar uma necessidade educada.",
+    scrambled: ["need", "I", "help"],
+    answer: "I need help.",
+    explanation: "A frase inglesa começa com o sujeito I, depois o verbo need e, por fim, o que é necessário.",
+    followUpPrompt: "Acrescente with this word ou at the airport para tornar a ideia mais específica.",
+  },
+  {
+    prompt: "Reorganize as palavras para perguntar por um lugar.",
+    scrambled: ["is", "Where", "hotel", "the"],
+    answer: "Where is the hotel?",
+    explanation: "Em perguntas com where e be, a palavra interrogativa vem primeiro, seguida de is, sujeito e complemento.",
+    followUpPrompt: "Troque hotel por airport e faça a pergunta novamente.",
+  },
+  {
+    prompt: "Reorganize as palavras para falar de uma rotina com outra pessoa.",
+    scrambled: ["studies", "My", "with", "English", "friend", "me", "every", "morning"],
+    answer: "My friend studies English with me every morning.",
+    explanation: "O sujeito My friend vem antes de studies; o objeto English vem antes das informações adicionais with me e every morning.",
+    followUpPrompt: "Troque every morning por in the afternoon e mantenha a ordem principal.",
+  },
+  {
+    prompt: "Reorganize as palavras para criar um plano para amanhã.",
+    scrambled: ["will", "Tomorrow", "new", "practice", "I", "words", "after", "work"],
+    answer: "Tomorrow, I will practice new words after work.",
+    explanation: "Tomorrow pode abrir a frase. Depois aparecem sujeito, will, verbo principal, objeto e informação de tempo.",
+    followUpPrompt: "Escreva um plano seu com I will e uma atividade de estudo.",
+  },
+  {
+    prompt: "Reorganize as palavras para descrever um livro útil.",
+    scrambled: ["is", "useful", "This", "a", "book", "for", "my", "English", "class"],
+    answer: "This is a useful book for my English class.",
+    explanation: "Em inglês, useful vem antes de book. A expressão for my English class explica a finalidade do livro.",
+    followUpPrompt: "Troque useful por interesting e leia a nova frase em voz alta.",
+  },
+  {
+    prompt: "Reorganize as palavras para ligar duas partes da rotina.",
+    scrambled: ["in", "I", "work", "morning", "the", "and", "study", "English", "at", "night"],
+    answer: "I work in the morning and study English at night.",
+    explanation: "O sujeito I inicia a frase e vale para os dois verbos. O conector and une as duas ações sem repetir I.",
+    followUpPrompt: "Substitua at night por in the evening e compare as duas expressões de tempo.",
+  },
+  {
+    prompt: "Reorganize as palavras para fazer um pedido educado mais longo.",
+    scrambled: ["you", "help", "Can", "me", "with", "this", "word", "please"],
+    answer: "Can you help me with this word, please?",
+    explanation: "Can abre a pergunta, you é o sujeito, help é o verbo e me with this word completa o pedido. Please suaviza a fala.",
+    followUpPrompt: "Troque this word por this sentence e use a mesma estrutura.",
+  },
+  {
+    prompt: "Reorganize as palavras para pedir repetição de forma gentil.",
+    scrambled: ["can", "Sorry", "you", "say", "that", "again", "more", "slowly", "please"],
+    answer: "Sorry, can you say that again more slowly, please?",
+    explanation: "Sorry prepara o reparo. A pergunta começa com can you; again e more slowly explicam como a ação deve acontecer.",
+    followUpPrompt: "Escreva outro pedido educado com sorry e please sem copiar a resposta-modelo.",
+  },
+  {
+    prompt: "Reorganize as palavras para ligar estudo, tempo e conversa.",
+    scrambled: ["Today", "learn", "one", "useful", "phrase", "before", "I", "talk", "to", "my", "teacher"],
+    answer: "Today, I learn one useful phrase before I talk to my teacher.",
+    explanation: "Today abre a frase. A primeira ideia é I learn one useful phrase; before introduz a segunda ação, I talk to my teacher.",
+    followUpPrompt: "Troque one useful phrase por two new words e mantenha a ligação com before.",
+  },
+];
+
+const A1_PARETO_CONTEXTS: ABCBookChapter["paretoContext"][] = [
+  "foundation", "foundation", "foundation", "social-circle", "foundation",
+  "foundation", "social-circle", "foundation", "foundation", "foundation",
+];
+
+const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit, index) => ({
   title: unit.unit,
   objective: unit.objective,
   reading: unit.reading,
@@ -123,6 +211,8 @@ const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit) => ({
   grammarTitle: unit.grammarTitle,
   grammarExplanation: unit.grammarExplanation,
   writingPrompt: unit.writingPrompt,
+  orderingExercise: A1_ORDERING_EXERCISES[index] ?? A1_ORDERING_EXERCISES[0],
+  paretoContext: A1_PARETO_CONTEXTS[index] ?? "foundation",
 }));
 
 const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {

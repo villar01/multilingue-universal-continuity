@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { createTrialLessonKey } from "@/lib/learningAccess";
 import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, MessageCircle, PenLine, Volume2 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
 
 function getSafeReturnTo(location: string) {
@@ -16,6 +16,8 @@ export default function ABCBook() {
   const returnTo = useMemo(() => getSafeReturnTo(location), [location]);
   const paretoReturnTo = `/abc-book?returnTo=${encodeURIComponent(returnTo)}`;
   const paretoHref = `/pareto-1000?returnTo=${encodeURIComponent(paretoReturnTo)}`;
+  const [orderingAnswers, setOrderingAnswers] = useState<Record<number, string>>({});
+  const [checkedOrdering, setCheckedOrdering] = useState<Record<number, boolean>>({});
   const bookQuery = trpc.curriculum.abcBook.useQuery({
     lessonKey: createTrialLessonKey(location),
     nativeLanguage: profile.nativeCode,
@@ -256,7 +258,7 @@ export default function ABCBook() {
               {book.chapters.map((chapter, index) => {
                 const chapterId = `capitulo-a1-${index + 1}`;
                 const chapterReturnTo = `${paretoReturnTo}#${chapterId}`;
-                const chapterParetoHref = `/pareto-1000?returnTo=${encodeURIComponent(chapterReturnTo)}`;
+                const chapterParetoHref = `/pareto-1000?bookContext=${encodeURIComponent(chapter.paretoContext)}&returnTo=${encodeURIComponent(chapterReturnTo)}`;
                 const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
 
                 return (
@@ -275,6 +277,28 @@ export default function ABCBook() {
                     <p className="mt-1">{chapter.grammarExplanation}</p>
                   </div>
                   <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
+                  <section className="mt-5 border-y border-stone-200 bg-stone-50 px-4 py-5 sm:px-5">
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Prática depois do texto</p>
+                    <h4 className="mt-2 font-serif text-lg font-bold text-slate-950">Forme a frase</h4>
+                    <p className="mt-2 text-sm leading-6 text-slate-700">{chapter.orderingExercise.prompt}</p>
+                    <p className="mt-3 font-semibold leading-7 text-slate-950">{chapter.orderingExercise.scrambled.join(" · ")}</p>
+                    <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                      <input
+                        value={orderingAnswers[index] ?? ""}
+                        onChange={(event) => setOrderingAnswers((current) => ({ ...current, [index]: event.target.value }))}
+                        placeholder="Digite a frase em inglês"
+                        className="min-w-0 flex-1 border border-stone-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none ring-amber-500 focus:ring-2"
+                      />
+                      <button type="button" onClick={() => setCheckedOrdering((current) => ({ ...current, [index]: true }))} className="bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.97]">Conferir ordem</button>
+                    </div>
+                    {checkedOrdering[index] && (
+                      <div className="mt-4 border-l-2 border-amber-500 pl-4 text-sm leading-6 text-slate-700">
+                        <p><strong className="text-slate-950">Resposta-modelo:</strong> {chapter.orderingExercise.answer}</p>
+                        <p className="mt-2">{chapter.orderingExercise.explanation}</p>
+                        <p className="mt-2 font-semibold text-slate-800">Agora continue: {chapter.orderingExercise.followUpPrompt}</p>
+                      </div>
+                    )}
+                  </section>
                   <div className="mt-5 flex flex-wrap items-center gap-3">
                     <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Próximo passo: Praticar no Pareto</a>
                     <details className="relative">
