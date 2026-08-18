@@ -81,6 +81,13 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("phrase: phrase");
   });
 
+  it("usa a reserva masculina depois de uma falha no botão explícito de reprodução", () => {
+    const replayFlow = source.slice(source.indexOf("const replayVisibleDialogAudio"), source.indexOf("const primeDialogAudioFromGesture"));
+    expect(replayFlow).toContain("const fallbackKey = `manual-replay:");
+    expect(replayFlow).toContain("if (activeSpeechText && playLocalDialogFallback(activeSpeechText, selectedScene?.teacherLang || \"en-US\", fallbackKey, selectedScene?.teacherGender)) {");
+    expect(replayFlow).toContain('setDlgAudioNotice("");');
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");

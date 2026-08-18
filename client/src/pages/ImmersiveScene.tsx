@@ -1547,9 +1547,14 @@ export default function ImmersiveScene() {
       await audio.play();
       setDlgAudioNotice("");
     } catch {
+      const fallbackKey = `manual-replay:${selectedScene?.teacherLang || "en-US"}:${selectedScene?.teacherGender || "female"}:${activeSpeechText}`;
+      if (activeSpeechText && playLocalDialogFallback(activeSpeechText, selectedScene?.teacherLang || "en-US", fallbackKey, selectedScene?.teacherGender)) {
+        setDlgAudioNotice("");
+        return;
+      }
       setDlgAudioNotice("Toque em Ouvir inglês para escutar a frase e continuar a prática.");
     }
-  }, [dialogAudioSource, dialogSpeechRate]);
+  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playLocalDialogFallback, selectedScene?.teacherGender, selectedScene?.teacherLang]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
