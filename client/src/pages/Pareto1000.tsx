@@ -13,7 +13,7 @@ const SESSION_SIZE = 10;
 const PROGRESS_KEY_PREFIX = "multilingue_pareto_1000_completed";
 const REVIEW_KEY_PREFIX = "multilingue_pareto_1000_reviews";
 const PARETO_PATHS = ["book", "advanced"] as const;
-const BOOK_CONTEXT_IDS = ["foundation", "family", "social-circle"] as const;
+const BOOK_CONTEXT_IDS = ["foundation", "family", "social-circle", "routine-time", "home", "transport"] as const;
 
 function progressKey(targetLanguage: string, nativeLanguage: string): string {
   return `${PROGRESS_KEY_PREFIX}:${targetLanguage.trim().toLowerCase()}:${nativeLanguage.trim().toLowerCase()}`;
@@ -63,16 +63,20 @@ export default function Pareto1000() {
   const { profile } = useLanguage();
   const targetLanguage = profile.targetCode || "en-US";
   const nativeLanguage = profile.nativeCode || "pt-BR";
+  const searchParams = useMemo(
+    () => new URLSearchParams(typeof window === "undefined" ? "" : window.location.search),
+    [location],
+  );
   const activeProgressKey = useMemo(() => progressKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
   const activeReviewKey = useMemo(() => reviewKey(targetLanguage, nativeLanguage), [targetLanguage, nativeLanguage]);
   const paretoPath = useMemo(() => {
-    const requestedPath = new URLSearchParams(location.split("?")[1] ?? "").get("path");
+    const requestedPath = searchParams.get("path");
     return PARETO_PATHS.find((path) => path === requestedPath) ?? "advanced";
-  }, [location]);
+  }, [searchParams]);
   const bookContext = useMemo(() => {
-    const requestedContext = new URLSearchParams(location.split("?")[1] ?? "").get("bookContext");
+    const requestedContext = searchParams.get("bookContext");
     return BOOK_CONTEXT_IDS.find((contextId) => contextId === requestedContext) ?? "foundation";
-  }, [location]);
+  }, [searchParams]);
   const paretoQuery = trpc.curriculum.localizedPareto.useQuery({
     lessonKey: "/pareto-1000",
     targetLanguage,
@@ -112,12 +116,12 @@ export default function Pareto1000() {
   const dueReviewIds = useMemo(() => getDueParetoReviewIds(reviewSchedule), [reviewSchedule]);
   const dueReviewSet = useMemo(() => new Set(dueReviewIds), [dueReviewIds]);
   const returnTo = useMemo(() => {
-    const requestedDestination = new URLSearchParams(location.split("?")[1] ?? "").get("returnTo");
+    const requestedDestination = searchParams.get("returnTo");
     const allowedReturnPrefixes = ["/base-de-estudos", "/abc-book", "/immersive-scene", "/lesson/", "/structured-lesson", "/dashboard"];
     return requestedDestination && allowedReturnPrefixes.some((prefix) => requestedDestination.startsWith(prefix))
       ? requestedDestination
       : "/base-de-estudos";
-  }, [location]);
+  }, [searchParams]);
 
   const selectParetoPath = useCallback((nextPath: (typeof PARETO_PATHS)[number]) => {
     const params = new URLSearchParams({ path: nextPath, returnTo });
