@@ -46,4 +46,23 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
     expect(book.chapters.every((chapter) => chapter.comprehensionQuestions.length >= 2)).toBe(true);
     expect(book.chapters.flatMap((chapter) => chapter.comprehensionQuestions).every((question) => question.prompt.trim() && question.options.length >= 3 && question.explanation.trim())).toBe(true);
   });
+
+  it("mantém a cartilha como fonte principal antes da revisão Pareto", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.chapters.every((chapter) => (
+      chapter.reading.trim().length > 80
+      && chapter.translation.trim().length > 80
+      && chapter.grammarTitle.trim()
+      && chapter.grammarExplanation.trim().length > 80
+      && chapter.comprehensionQuestions.length >= 2
+      && chapter.writingPrompt.trim().length > 30
+      && chapter.orderingExercise.prompt.trim()
+      && chapter.orderingExercise.answer.trim()
+      && chapter.paretoChapter >= 1
+    ))).toBe(true);
+  });
 });
