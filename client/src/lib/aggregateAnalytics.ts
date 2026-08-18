@@ -3,6 +3,7 @@ export const AGGREGATE_LEARNING_EVENTS = [
   "open_abc_book",
   "open_pareto",
   "open_immersive_scene",
+  "open_teacher",
 ] as const;
 
 export type AggregateLearningEvent = (typeof AGGREGATE_LEARNING_EVENTS)[number];

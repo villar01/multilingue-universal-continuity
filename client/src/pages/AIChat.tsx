@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { trpc } from "../lib/trpc";
+import { trackAggregateLearningEvent } from "../lib/aggregateAnalytics";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
@@ -22,6 +23,10 @@ export default function AIChat() {
 
   const chatMutation = trpc.ai.chat.useMutation();
   const ttsMutation = trpc.tts.generate.useMutation();
+
+  useEffect(() => {
+    trackAggregateLearningEvent("open_teacher");
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
