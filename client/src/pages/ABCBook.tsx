@@ -103,6 +103,7 @@ export default function ABCBook() {
 
   const totalBookPages =
     2 +
+    book.manualLeaves.length +
     book.soundLessons.length +
     book.progressiveLessons.length +
     2 +
@@ -160,6 +161,18 @@ export default function ABCBook() {
               <figcaption className="px-1 pt-2 text-center text-[11px] font-semibold leading-4 text-slate-600">Comece com uma ideia. Pratique um passo por vez.</figcaption>
             </figure>
           </section>
+
+          {book.manualLeaves.map((leaf) => (
+            <section key={leaf.title} className="border-b border-stone-200 pb-8">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">{leaf.eyebrow}</p>
+              <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">{leaf.title}</h2>
+              <div className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
+                {leaf.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
+              <blockquote className="mt-5 border-l-2 border-stone-300 bg-stone-50 px-4 py-3 text-sm font-semibold italic leading-6 text-slate-700">{leaf.model}</blockquote>
+              <p className="mt-4 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Pratique:</strong> {leaf.practice}</p>
+            </section>
+          ))}
 
           <section className="border-y border-stone-200 py-7">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Alfabeto e sons</p>

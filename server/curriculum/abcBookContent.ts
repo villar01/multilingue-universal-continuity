@@ -11,6 +11,14 @@ export type ABCBookSection = {
   paretoPrompt?: string;
 };
 
+export type ABCBookManualLeaf = {
+  eyebrow: string;
+  title: string;
+  paragraphs: string[];
+  model: string;
+  practice: string;
+};
+
 export type ABCBookChapter = {
   title: string;
   objective: string;
@@ -762,6 +770,7 @@ export type ABCBookDelivery = {
   nativeLabel: string;
   targetLabel: string;
   introduction: string;
+  manualLeaves: ABCBookManualLeaf[];
   survivalIntro: string;
   alphabetIntroduction: string;
   alphabetLetters: ABCAlphabetLetter[];
@@ -897,6 +906,48 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   nativeLabel: "Português",
   targetLabel: "Inglês",
   introduction: "Quando uma frase, uma palavra ou uma resposta parecer difícil, use este livro como um caderno de apoio. Comece pelo sentido, observe o padrão, recupere a palavra sem consultar e aplique-a em uma nova frase. O professor e a cena continuam disponíveis depois que você fechar o livro.",
+  manualLeaves: [
+    {
+      eyebrow: "Manual contínuo · Primeiro passo",
+      title: "Estude uma ideia inteira, não uma lista isolada",
+      paragraphs: [
+        "Uma palavra se torna utilizável quando aparece dentro de uma ideia simples. Por isso, este manual apresenta poucas palavras por vez, mostra o sentido em português e depois pede uma ação: ouvir, organizar, escrever ou responder.",
+        "Comece pela frase que você consegue entender. Só depois troque uma parte dela. Assim, o vocabulário cresce dentro de padrões que continuam úteis em conversas, cenas e lições.",
+      ],
+      model: "I need water. → I need help. → I need a ticket.",
+      practice: "Leia o modelo, cubra a última palavra e escreva uma nova necessidade sem consultar.",
+    },
+    {
+      eyebrow: "Manual contínuo · Som e sentido",
+      title: "Ouça antes de tentar imitar a escrita",
+      paragraphs: [
+        "A escrita mostra a forma da palavra, mas a voz nativa mostra o ritmo, a ligação entre sons e o que deve receber mais força. Use o botão de ouvir como referência principal; a comparação com o português serve apenas como apoio inicial.",
+        "Repita em blocos curtos. Primeiro escute a palavra, depois a frase inteira e por fim responda com uma informação sua. A meta não é decorar símbolos: é reconhecer e produzir uma fala compreensível.",
+      ],
+      model: "Please speak slowly. → Sorry, can you say that again?",
+      practice: "Ouça uma frase, repita em duas partes e transforme-a em um pedido que você realmente usaria.",
+    },
+    {
+      eyebrow: "Manual contínuo · Construção da frase",
+      title: "Escreva por blocos e acrescente uma informação por vez",
+      paragraphs: [
+        "Em inglês, uma frase inicial costuma começar por quem vive a ideia, segue para a ação e termina com o complemento. Depois que esse núcleo estiver claro, acrescente lugar, tempo, motivo ou companhia sem mudar o que já está certo.",
+        "Quando a ordem parecer confusa, volte ao bloco menor. Não tente corrigir todos os pontos de uma vez: reorganize a frase, compare com o modelo e escreva novamente de memória.",
+      ],
+      model: "I study English. → I study English at home. → I study English at home in the morning.",
+      practice: "Monte uma frase com ação, lugar e tempo. Depois retire uma informação e compare os dois sentidos.",
+    },
+    {
+      eyebrow: "Manual contínuo · Recuperação e retorno",
+      title: "Use o Pareto para lembrar; use a cena para aplicar",
+      paragraphs: [
+        "Depois de compreender uma folha, o Pareto ajuda a recuperar palavras e frases sem olhar. Ao acertar, escreva uma frase nova. Ao errar, volte ao exemplo, corrija apenas a parte necessária e tente outra vez mais tarde.",
+        "O Livro ABC é uma consulta voluntária. Você pode fechá-lo e retornar exatamente à lição ou cena em que estava para testar a mesma ideia com o Professor, com objetos ou em conversa.",
+      ],
+      model: "Pareto: water → I would like water, please. → Cena: pedir água em contexto.",
+      practice: "Escolha uma palavra desta folha, forme uma frase sem olhar e use a mesma ideia na próxima conversa.",
+    },
+  ],
   survivalIntro: "Leia primeiro em inglês, confirme o sentido em português e depois cubra a linha em inglês para recuperá-la de memória. Estas frases também servem como ponto de partida para falar com o professor.",
   alphabetIntroduction: "Comece pelo nome das letras. Depois, observe que uma mesma letra pode mudar de som quando forma uma palavra. Não tente decorar todos os casos de uma vez: leia a letra, ouça o exemplo e avance passo a passo.",
   alphabetLetters: [

@@ -1773,3 +1773,4 @@
 
 - [ ] Registrar para correção posterior cada item que não passar em TypeScript, testes ou validação funcional, sem marcar como concluído
 - [x] Associar as ilustrações autorais de cidade e alimentação às respectivas folhas progressivas do Livro ABC, preservando a leitura simples e o conteúdo curricular protegido — os desenhos aparecem apenas em “Lugares úteis na cidade” e “Pedir comida e bebida”; TypeScript e a suíte completa com 664 testes aprovados
+- [x] Adicionar a primeira abertura contínua ao manual ABC, com método, escuta, construção de frase e retorno Pareto–cena — quatro folhas são entregues apenas pelo currículo protegido antes do alfabeto; paginação confirmada em 229 folhas, TypeScript e suíte completa com 665 testes aprovados

@@ -61,4 +61,13 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain("Próximo passo: Praticar no Pareto");
     expect(bookSource).toContain("Opções desta unidade");
   });
+
+  it("entrega a abertura contínua do manual somente pelo currículo protegido", () => {
+    expect(protectedBookSource).toContain("manualLeaves: ABCBookManualLeaf[]");
+    expect(protectedBookSource).toContain("Estude uma ideia inteira, não uma lista isolada");
+    expect(protectedBookSource).toContain("Use o Pareto para lembrar; use a cena para aplicar");
+    expect(bookSource).toContain("book.manualLeaves.map");
+    expect(bookSource).toContain("book.manualLeaves.length");
+    expect(bookSource).not.toContain("Estude uma ideia inteira, não uma lista isolada");
+  });
 });
