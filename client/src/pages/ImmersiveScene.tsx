@@ -1026,6 +1026,8 @@ export default function ImmersiveScene() {
   const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
   const [activeJamesClipId, setActiveJamesClipId] = useState<JamesTropicalPilotClipId | null>(null);
   const [activeSophieClipId, setActiveSophieClipId] = useState<SophieCafePilotClipId | null>(null);
+  const pendingJamesClipIdRef = useRef<JamesTropicalPilotClipId | null>(null);
+  const pendingSophieClipIdRef = useRef<SophieCafePilotClipId | null>(null);
   const activeJamesClip = activeJamesClipId
     ? JAMES_TROPICAL_PILOT_CLIPS.find((clip) => clip.id === activeJamesClipId) || null
     : null;
@@ -1036,14 +1038,14 @@ export default function ImmersiveScene() {
     if (selectedScene?.id !== "beach" || selectedScene.teacherName !== "James") return null;
     const clip = JAMES_TROPICAL_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
     if (!clip) return null;
-    setActiveJamesClipId(clip.id);
+    pendingJamesClipIdRef.current = clip.id;
     return clip;
   }, [selectedScene?.id, selectedScene?.teacherName]);
   const playSophieCafeClip = useCallback((clipId: SophieCafePilotClipId) => {
     if (selectedScene?.id !== "cafe" || selectedScene.teacherName !== "Sophie") return null;
     const clip = SOPHIE_CAFE_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
     if (!clip) return null;
-    setActiveSophieClipId(clip.id);
+    pendingSophieClipIdRef.current = clip.id;
     return clip;
   }, [selectedScene?.id, selectedScene?.teacherName]);
   const sceneInitialized = useRef(false); // Track if scene was auto-initialized from targetLang
@@ -1471,6 +1473,14 @@ export default function ImmersiveScene() {
       reportAudioEvent("play");
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
+      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
+        setActiveJamesClipId(pendingJamesClipIdRef.current);
+        pendingJamesClipIdRef.current = null;
+      }
+      if (selectedScene?.id === "cafe" && selectedScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
+        setActiveSophieClipId(pendingSophieClipIdRef.current);
+        pendingSophieClipIdRef.current = null;
+      }
       if (updatesActiveDialog()) setDlgAudioClock(true);
     };
     const acceptPlayableTrack = () => {
@@ -1887,17 +1897,13 @@ export default function ImmersiveScene() {
     setActiveHotspot(null);
     setActiveJamesClipId(null);
     setActiveSophieClipId(null);
+    pendingJamesClipIdRef.current = null;
+    pendingSophieClipIdRef.current = null;
     setLearnedWords(new Set());
     setQuizIndex(0);
     setQuizFeedback(null);
     setGreetingText(selectedScene.greetingPt);
     setShowGreeting(true);
-    if (selectedScene.id === "beach" && selectedScene.teacherName === "James") {
-      setActiveJamesClipId("james-tropical-greeting");
-    }
-    if (selectedScene.id === "cafe" && selectedScene.teacherName === "Sophie") {
-      setActiveSophieClipId("sophie-cafe-greeting");
-    }
     if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
     greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
     return () => {

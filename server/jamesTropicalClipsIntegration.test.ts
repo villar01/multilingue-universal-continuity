@@ -41,7 +41,10 @@ describe("integração de clipes de James na Praia Tropical", () => {
       "james-tropical-point-ocean",
       "james-tropical-point-sand",
     ]);
-    expect(sceneSource).toContain('setActiveJamesClipId("james-tropical-greeting")');
+    expect(sceneSource).toContain("const pendingJamesClipIdRef = useRef<JamesTropicalPilotClipId | null>(null);");
+    expect(sceneSource).toContain("pendingJamesClipIdRef.current = clip.id;");
+    expect(sceneSource).toContain("if (selectedScene?.id === \"beach\" && selectedScene.teacherName === \"James\" && pendingJamesClipIdRef.current) {");
+    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
     expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
     expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
     expect(sceneSource).toContain('palm: "james-tropical-point-palm"');
@@ -71,5 +74,14 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain('scene.id === "beach" && scene.teacherName === "James" && fallback?.hotspotId');
     expect(sceneSource).toContain('ocean: "james-tropical-point-ocean"');
     expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
+  });
+
+  it("não inicia movimento de James ao abrir cena ou diálogo antes de áudio confirmado", () => {
+    const sceneEntry = sceneSource.slice(sceneSource.indexOf("useEffect(() => {\n    if (!selectedScene) return;"), sceneSource.indexOf("const startDialog"));
+    const dialogStart = sceneSource.slice(sceneSource.indexOf("const startDialog"), sceneSource.indexOf("useEffect(() => {", sceneSource.indexOf("const startDialog")));
+
+    expect(sceneEntry).not.toContain('setActiveJamesClipId("james-tropical-greeting")');
+    expect(dialogStart).not.toContain('setActiveJamesClipId("james-tropical-greeting")');
+    expect(sceneSource).toContain('audio.onplay = () => {');
   });
 });

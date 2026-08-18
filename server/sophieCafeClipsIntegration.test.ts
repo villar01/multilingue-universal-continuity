@@ -40,7 +40,9 @@ describe("integração dos clipes de Sophie na Cena do Café", () => {
   });
 
   it("associa somente os gatilhos do Café à saudação, croissant, acerto e nova tentativa", () => {
-    expect(sceneSource).toContain('setActiveSophieClipId("sophie-cafe-greeting")');
+    expect(sceneSource).toContain("const pendingSophieClipIdRef = useRef<SophieCafePilotClipId | null>(null);");
+    expect(sceneSource).toContain("pendingSophieClipIdRef.current = clip.id;");
+    expect(sceneSource).toContain("setActiveSophieClipId(pendingSophieClipIdRef.current);");
     expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-greeting")');
     expect(sceneSource).toContain('hotspot.id === "croissant"');
     expect(sceneSource).toContain('playSophieCafeClip("sophie-cafe-point-croissant")');
