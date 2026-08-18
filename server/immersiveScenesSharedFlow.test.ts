@@ -18,12 +18,13 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     expect((source.match(/const playTeacherAudio = useCallback/g) || [])).toHaveLength(1);
   });
 
-  it("prioriza a faixa Edge direta antes da alternativa remota e não vincula o fluxo comum a James ou à Praia", () => {
+  it("prioriza a faixa Edge direta antes da alternativa remota e isola os dois fallbacks específicos de James", () => {
     const sharedSpeech = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(sharedSpeech.indexOf("if (await playEdgeNeural()) return;")).toBeLessThan(sharedSpeech.indexOf("const googleAudio"));
     expect(sharedSpeech).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
-    expect((sharedSpeech.match(/selectedScene\?\.id === "beach"/g) || [])).toHaveLength(1);
+    expect((sharedSpeech.match(/selectedScene\?\.id === "beach"/g) || [])).toHaveLength(2);
     expect(sharedSpeech).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
+    expect(sharedSpeech).toContain("JAMES_TROPICAL_OBJECT_FALLBACKS");
   });
 
   it("renderiza o professor fora de cartões condicionais, para que permaneça presente em toda cena aberta", () => {

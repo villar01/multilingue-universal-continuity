@@ -80,6 +80,21 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(speechFlow.indexOf("JAMES_TROPICAL_INTRO_FALLBACK_URL")).toBeGreaterThan(speechFlow.indexOf("const googleAudio"));
   });
 
+  it("usa reservas masculinas curtas para os quatro objetos da Praia Tropical sem ativar vídeo de fala diferente", () => {
+    const speechFlow = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
+    expect(source).toContain("const JAMES_TROPICAL_OBJECT_FALLBACKS = {");
+    expect(source).toContain('"/manus-storage/james-palm-tree-fallback_b2eab131.wav"');
+    expect(source).toContain('"/manus-storage/james-wave-fallback_b0f10757.wav"');
+    expect(source).toContain('"/manus-storage/james-ocean-fallback_597e69cc.wav"');
+    expect(source).toContain('"/manus-storage/james-sand-fallback_fba216c0.wav"');
+    expect(speechFlow).toContain("const jamesObjectFallback");
+    expect(speechFlow).toContain("pendingJamesClipIdRef.current = null;");
+    expect(speechFlow).toContain("setActiveJamesClipId(null);");
+    expect(speechFlow).toContain("jamesObjectFallback.spokenText");
+    expect(speechFlow.indexOf("const jamesObjectFallback")).toBeGreaterThan(speechFlow.indexOf("const googleAudio"));
+    expect(speechFlow.indexOf("const jamesObjectFallback")).toBeLessThan(speechFlow.indexOf("playLocalDialogFallback(text, lang"));
+  });
+
   it("registra internamente carregamento, reprodução, rejeição e erro do player sem expor a frase", () => {
     expect(source).toContain('const reportAudioEvent = (event: "loaded" | "play" | "play-rejected" | "error", reason?: string) => {');
     expect(source).toContain('console.info("[immersive-audio]"');

@@ -44,6 +44,28 @@ type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;
 const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";
 const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-fallback_73d168f4.wav";
 
+// Estas reservas curtas pronunciam apenas o vocabulário do cartão. Como não
+// são a trilha sonora do clipe roteirizado completo, o retrato permanece
+// estável durante sua reprodução; nenhum vídeo recebe áudio de outra frase.
+const JAMES_TROPICAL_OBJECT_FALLBACKS = {
+  "Look at the palm tree. Palm tree.": {
+    audioUrl: "/manus-storage/james-palm-tree-fallback_b2eab131.wav",
+    spokenText: "Palm tree.",
+  },
+  "Look at the wave. Wave.": {
+    audioUrl: "/manus-storage/james-wave-fallback_b0f10757.wav",
+    spokenText: "Wave.",
+  },
+  "This is the ocean. Ocean.": {
+    audioUrl: "/manus-storage/james-ocean-fallback_597e69cc.wav",
+    spokenText: "Ocean.",
+  },
+  "This is sand. Sand.": {
+    audioUrl: "/manus-storage/james-sand-fallback_fba216c0.wav",
+    spokenText: "Sand.",
+  },
+} as const;
+
 function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timeoutId = setTimeout(() => reject(new Error("scene-dialogue-speech-timeout")), timeoutMs);
@@ -1703,6 +1725,26 @@ export default function ImmersiveScene() {
       );
       return;
     }
+    const jamesObjectFallback = selectedScene?.id === "beach" && selectedScene.teacherName === "James"
+      ? JAMES_TROPICAL_OBJECT_FALLBACKS[text.trim() as keyof typeof JAMES_TROPICAL_OBJECT_FALLBACKS]
+      : undefined;
+    if (jamesObjectFallback) {
+      // A faixa curta é deliberadamente diferente do diálogo inteiro do clipe.
+      // Por isso removemos o clipe pendente antes do evento onplaying e mantemos
+      // a foto original durante a pronúncia de reserva.
+      pendingJamesClipIdRef.current = null;
+      setActiveJamesClipId(null);
+      setActiveSpeechText(jamesObjectFallback.spokenText);
+      await playTeacherAudio(
+        jamesObjectFallback.audioUrl,
+        jamesObjectFallback.spokenText,
+        "en-US",
+        requestKey,
+        false,
+        autoPlay,
+      );
+      return;
+    }
     if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
       setDlgAudioNotice("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
       return;
@@ -1713,7 +1755,7 @@ export default function ImmersiveScene() {
     setIsSpeaking(false);
     setActiveSpeechText("");
     if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
-  }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, selectedScene?.teacherGender, stopTeacherAudio, ttsMut]);
+  }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, selectedScene?.teacherGender, selectedScene?.id, selectedScene?.teacherName, stopTeacherAudio, ttsMut]);
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher", autoPlay = false) => {
     if (isAuthLoading) return;
