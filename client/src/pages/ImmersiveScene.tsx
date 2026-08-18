@@ -1963,14 +1963,25 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
-      requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
+      if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James" && teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE) {
+        void playTeacherAudio(
+          JAMES_TROPICAL_INTRO_FALLBACK_URL,
+          "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+          "en-US",
+          "james-tropical-introduction",
+          false,
+          true,
+        );
+      } else {
+        requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
+      }
     } else {
       activeDialogLineRef.current = null;
       activeDialogWordCountRef.current = 0;
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
