@@ -65,11 +65,15 @@ export default function ABCBook() {
     );
   }
 
-  const totalBookPages = 12 + book.sections.length;
-  const moveBookPage = (direction: -1 | 1) => {
+  const totalBookPages = 11 + book.soundLessons.length + book.sections.length;
+  const goBookPage = (page: number) => {
     const container = bookPagesRef.current;
     if (!container) return;
-    container.scrollBy({ left: direction * container.clientWidth, behavior: "smooth" });
+    const safePage = Math.min(totalBookPages, Math.max(1, page));
+    container.scrollTo({ left: (safePage - 1) * container.clientWidth, behavior: "smooth" });
+  };
+  const moveBookPage = (direction: -1 | 1) => {
+    goBookPage(activePage + direction);
   };
   const updateActiveBookPage = () => {
     const container = bookPagesRef.current;
@@ -127,12 +131,11 @@ export default function ABCBook() {
             </ol>
           </section>
 
-          <section className="border-b border-stone-200 pb-8">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Da letra à palavra</p>
-            <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Observe o som dentro da palavra</h2>
-            <div className="mt-5 space-y-7">
-              {book.soundLessons.map((lesson) => (
-                <article key={lesson.title} className="border-t border-stone-200 pt-5 first:border-t-0 first:pt-0">
+          {book.soundLessons.map((lesson, lessonIndex) => (
+            <section key={lesson.title} className="border-b border-stone-200 pb-8">
+              {lessonIndex === 0 && <><p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Da letra à palavra</p><h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">Observe o som dentro da palavra</h2></>}
+              <div className={lessonIndex === 0 ? "mt-5" : ""}>
+                <article>
                   <h3 className="font-serif text-xl font-bold text-slate-950">{lesson.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
                   <div className="mt-4 grid divide-y divide-stone-200 border-y border-stone-200 text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -142,9 +145,9 @@ export default function ABCBook() {
                   </div>
                   <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
                 </article>
-              ))}
-            </div>
-          </section>
+              </div>
+            </section>
+          ))}
 
           <section className="border-y border-stone-200 py-7">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Memória passo a passo</p>

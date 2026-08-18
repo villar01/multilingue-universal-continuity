@@ -12,6 +12,8 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(page).toContain("abc-book-chapter-leaf");
     expect(page).toContain("abc-book-page-controls");
     expect(page).toContain("moveBookPage");
+    expect(page).toContain("goBookPage");
+    expect(page).toContain("book.soundLessons.map((lesson, lessonIndex)");
   });
 
   it("mantém folhas claras com separação, sem retirar a leitura do currículo", () => {

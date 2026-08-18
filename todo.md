@@ -1596,6 +1596,8 @@
 
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
+- [ ] Expandir as 19 folhas iniciais do Livro ABC PT-BR→inglês para uma matriz ampla de 168 folhas didáticas autorais, em blocos graduais de pronúncia, contextos, escrita e Pareto
+- [x] Ampliar o bloco inicial de pronúncia do Livro ABC com oito padrões sonoros adicionais — I curto/longo, E aberto, U central, O curto, P/B, TH, H/encontros e R/L/final; cada padrão tem exemplos, IPA, sentido e escrita guiada; 29 folhas ativas confirmadas no preview, TypeScript e 647 testes aprovados
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
 - [ ] Extrair a sequência integral do PDF reenviado e adaptá-la em texto, exercícios e ilustrações autorais aprimorados
 - [ ] Incorporar mais de mil palavras Pareto únicas aos capítulos adaptados, com sinônimos, usos e práticas vinculadas

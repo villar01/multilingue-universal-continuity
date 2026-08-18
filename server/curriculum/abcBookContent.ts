@@ -260,6 +260,86 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       ],
       writingPrompt: "Diga as palavras devagar e marque a sílaba que recebe mais força.",
     },
+    {
+      title: "I curto e I longo",
+      explanation: "Compare o i curto /ɪ/ com o som longo /iː/. O primeiro é breve; o segundo dura um pouco mais e muda a palavra que o aluno reconhece.",
+      examples: [
+        { target: "sit", pronunciation: "/sɪt/", native: "sentar" },
+        { target: "ship", pronunciation: "/ʃɪp/", native: "navio" },
+        { target: "need", pronunciation: "/niːd/", native: "precisar" },
+      ],
+      writingPrompt: "Escreva sit e need. Leia cada uma sem acelerar e perceba qual som fica mais longo.",
+    },
+    {
+      title: "E aberto",
+      explanation: "O som /ɛ/ aparece em palavras como help e friend. Abra levemente a boca e não transforme esse e em i.",
+      examples: [
+        { target: "help", pronunciation: "/hɛlp/", native: "ajuda; ajudar" },
+        { target: "friend", pronunciation: "/frɛnd/", native: "amigo ou amiga" },
+        { target: "ten", pronunciation: "/tɛn/", native: "dez" },
+      ],
+      writingPrompt: "Copie help e friend. Depois escreva: My friend can help me.",
+    },
+    {
+      title: "U central",
+      explanation: "Em palavras como understand e bus, o som /ʌ/ é curto e central. Evite transformar a vogal em u prolongado do português.",
+      examples: [
+        { target: "bus", pronunciation: "/bʌs/", native: "ônibus" },
+        { target: "cup", pronunciation: "/kʌp/", native: "xícara" },
+        { target: "understand", pronunciation: "/ˌʌn.dɚˈstænd/", native: "entender" },
+      ],
+      writingPrompt: "Diga bus e cup. Em seguida, escreva: I understand the bus schedule.",
+    },
+    {
+      title: "O em palavra curta",
+      explanation: "Em inglês americano, o som de o em hot e not costuma ser aberto e curto /ɑ/. Não acrescente uma vogal depois da consoante final.",
+      examples: [
+        { target: "hot", pronunciation: "/hɑːt/", native: "quente" },
+        { target: "not", pronunciation: "/nɑːt/", native: "não" },
+        { target: "stop", pronunciation: "/stɑːp/", native: "parar" },
+      ],
+      writingPrompt: "Escreva: It is not hot today. Circule not e compare o som da vogal.",
+    },
+    {
+      title: "P e B no início",
+      explanation: "P e b são sons próximos, mas b vem com voz e p começa com uma pequena saída de ar. Compare sem colocar vogal antes da palavra.",
+      examples: [
+        { target: "pen", pronunciation: "/pɛn/", native: "caneta" },
+        { target: "book", pronunciation: "/bʊk/", native: "livro" },
+        { target: "please", pronunciation: "/pliːz/", native: "por favor" },
+      ],
+      writingPrompt: "Leia pen, book e please. Depois escreva um pedido com please e uma palavra com b.",
+    },
+    {
+      title: "TH de thank e this",
+      explanation: "O grupo th pode ter ar sem voz /θ/ como em thank ou voz /ð/ como em this. A língua toca de leve os dentes; não troque o som por f, d ou t.",
+      examples: [
+        { target: "thank", pronunciation: "/θæŋk/", native: "agradecer" },
+        { target: "this", pronunciation: "/ðɪs/", native: "isto; esta" },
+        { target: "three", pronunciation: "/θriː/", native: "três" },
+      ],
+      writingPrompt: "Escreva: Thank you for this book. Leia first thank e depois this com atenção ao som inicial.",
+    },
+    {
+      title: "H soprado e combinações iniciais",
+      explanation: "Em hello e help, h começa com uma saída leve de ar. Em study e speak, duas consoantes aparecem juntas no início: diga o conjunto sem inserir uma vogal extra.",
+      examples: [
+        { target: "hello", pronunciation: "/həˈloʊ/", native: "olá" },
+        { target: "study", pronunciation: "/ˈstʌd.i/", native: "estudar" },
+        { target: "speak", pronunciation: "/spiːk/", native: "falar" },
+      ],
+      writingPrompt: "Copie: Hello. I study and speak English. Depois sublinhe study e speak.",
+    },
+    {
+      title: "R, L e final da palavra",
+      explanation: "Em inglês, r e l precisam ser percebidos como sons diferentes. Também finalize a palavra: em word e world, o fim faz parte da mensagem.",
+      examples: [
+        { target: "read", pronunciation: "/riːd/", native: "ler" },
+        { target: "learn", pronunciation: "/lɝːn/", native: "aprender" },
+        { target: "word", pronunciation: "/wɝːd/", native: "palavra" },
+      ],
+      writingPrompt: "Escreva: I learn one word. Leia learn e word preservando o final da palavra.",
+    },
   ],
   memorySteps: [
     {
