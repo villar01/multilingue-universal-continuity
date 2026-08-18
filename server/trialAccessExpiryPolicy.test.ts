@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { TRIAL_LESSON_LIMIT, decideTrialLessonAccess } from "./trial-access-router";
 import { getTrialExpiryDate, hasFullCurriculumAccess, isTrialExpired, TRIAL_DURATION_DAYS } from "./trial-access-policy";
 
 const projectRoot = resolve(import.meta.dirname, "..");
@@ -29,5 +30,15 @@ describe("proteção temporal da avaliação", () => {
     expect(router).toContain('status: "expired"');
     expect(curriculumRouter).toContain("const candidateWords = chapterWords ?? contextWords ?? programWords;");
     expect(curriculumRouter).toContain("entitlement.hasFullCurriculum ? candidateWords : candidateWords.slice(0, 10)");
+  });
+
+  it("bloqueia a décima primeira lição, sem cobrar de novo uma lição já autorizada", () => {
+    expect(TRIAL_LESSON_LIMIT).toBe(10);
+    expect(decideTrialLessonAccess({ isPaid: false, lessonsUsed: 9, lessonLimit: TRIAL_LESSON_LIMIT, isPreviouslyAuthorized: false }))
+      .toEqual({ allowed: true, shouldConsume: true, limitReached: true });
+    expect(decideTrialLessonAccess({ isPaid: false, lessonsUsed: 10, lessonLimit: TRIAL_LESSON_LIMIT, isPreviouslyAuthorized: false }))
+      .toEqual({ allowed: false, shouldConsume: false, limitReached: true });
+    expect(decideTrialLessonAccess({ isPaid: false, lessonsUsed: 10, lessonLimit: TRIAL_LESSON_LIMIT, isPreviouslyAuthorized: true }))
+      .toEqual({ allowed: true, shouldConsume: false, limitReached: false });
   });
 });
