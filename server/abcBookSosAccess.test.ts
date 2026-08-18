@@ -66,6 +66,8 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(protectedBookSource).toContain("manualLeaves: ABCBookManualLeaf[]");
     expect(protectedBookSource).toContain("Estude uma ideia inteira, não uma lista isolada");
     expect(protectedBookSource).toContain("Use o Pareto para lembrar; use a cena para aplicar");
+    expect(protectedBookSource).toContain("Agrupe palavras que vivem na mesma situação");
+    expect(protectedBookSource).toContain("Volte ao que aprendeu para tornar a nova frase estável");
     expect(bookSource).toContain("book.manualLeaves.map");
     expect(bookSource).toContain("book.manualLeaves.length");
     expect(bookSource).not.toContain("Estude uma ideia inteira, não uma lista isolada");

@@ -947,6 +947,46 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       model: "Pareto: water → I would like water, please. → Cena: pedir água em contexto.",
       practice: "Escolha uma palavra desta folha, forme uma frase sem olhar e use a mesma ideia na próxima conversa.",
     },
+    {
+      eyebrow: "Manual contínuo · Vocabulário em contexto",
+      title: "Agrupe palavras que vivem na mesma situação",
+      paragraphs: [
+        "Palavras de família, casa, cidade, alimentação e viagem ficam mais fáceis de recuperar quando aparecem próximas e desempenham uma função clara. Em vez de misturar uma lista longa, observe quem participa, onde a ação acontece e o que a pessoa precisa dizer.",
+        "Depois de aprender o grupo, contraste palavras parecidas. Home fala da ideia de lar; house fala da construção. Friend fala da relação; classmate fala da pessoa que estuda com você. O contraste evita traduções automáticas e torna a escolha mais precisa.",
+      ],
+      model: "At home: table, water, book. / In the city: station, bank, pharmacy.",
+      practice: "Escolha um contexto, separe cinco palavras úteis e forme uma frase que inclua pessoa, lugar ou finalidade.",
+    },
+    {
+      eyebrow: "Manual contínuo · Pergunta e resposta",
+      title: "Pergunte para abrir uma conversa e responda com uma informação útil",
+      paragraphs: [
+        "Uma pergunta bem construída cria espaço para a outra pessoa responder. Comece com uma palavra de pergunta quando precisar de uma informação específica, como who, what, where, when ou how. Use do ou does em muitas perguntas sobre hábitos e ações no presente.",
+        "A resposta não precisa repetir toda a pergunta. Diga primeiro a informação principal e acrescente somente um detalhe que ajude a pessoa: lugar, tempo, quantidade ou razão. Esse movimento de perguntar e responder é a base de uma conversa clara.",
+      ],
+      model: "Where is the station? — It is near the park. / Do you study at night? — Yes, I do.",
+      practice: "Escreva uma pergunta sobre lugar e outra sobre rotina. Responda cada uma com uma frase completa e curta.",
+    },
+    {
+      eyebrow: "Manual contínuo · Gramática aplicada",
+      title: "Use a gramática para esclarecer a ideia, não para interromper a prática",
+      paragraphs: [
+        "A gramática mostra como as partes da frase trabalham juntas. Ao estudar uma regra, encontre-a primeiro em uma frase útil. Veja quem é o sujeito, qual é a ação e o que completa o sentido. Só então compare a ordem com o português.",
+        "Pratique uma mudança por vez. Transforme afirmação em pergunta, depois em negação ou em uma frase com tempo e lugar. Pequenas transformações mostram que você entende o padrão e não apenas memorizou uma frase pronta.",
+      ],
+      model: "She works here. → Does she work here? → She does not work here.",
+      practice: "Escolha uma afirmação do livro e reescreva-a como pergunta e como negação, mantendo a mesma ideia principal.",
+    },
+    {
+      eyebrow: "Manual contínuo · Revisão cumulativa",
+      title: "Volte ao que aprendeu para tornar a nova frase estável",
+      paragraphs: [
+        "No fim de cada bloco, reveja uma palavra, uma frase e uma pergunta anterior antes de começar uma atividade nova. A revisão curta mostra quais ideias já estão disponíveis e quais ainda precisam de uma nova tentativa.",
+        "Quando encontrar dificuldade, retorne apenas ao trecho necessário. Ouça, compare, escreva e recupere de novo. Depois siga para o Pareto ou para a cena. Avançar com uma dúvida resolvida é mais útil do que acumular páginas lidas sem recuperação.",
+      ],
+      model: "Hoje: I study English at home. / Depois: Do you study English at home? / Amanhã: I do not study English at home.",
+      practice: "Escolha uma frase antiga, transforme-a de duas maneiras e marque uma palavra para revisar no próximo intervalo do Pareto.",
+    },
   ],
   survivalIntro: "Leia primeiro em inglês, confirme o sentido em português e depois cubra a linha em inglês para recuperá-la de memória. Estas frases também servem como ponto de partida para falar com o professor.",
   alphabetIntroduction: "Comece pelo nome das letras. Depois, observe que uma mesma letra pode mudar de som quando forma uma palavra. Não tente decorar todos os casos de uma vez: leia a letra, ouça o exemplo e avance passo a passo.",
