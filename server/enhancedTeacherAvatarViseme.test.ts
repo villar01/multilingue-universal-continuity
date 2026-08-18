@@ -13,8 +13,9 @@ describe('visemas do avatar aprimorado', () => {
     expect(source).toContain('mO > 0.42');
   });
 
-  it('preserva a exceção do Ricardo e não sobrepõe boca ao vídeo externo', () => {
-    expect(source).toContain('const allowsMouthAnimation = !/^\\s*(prof\\.?\\s*)?ricardo\\b/i.test(teacherName);');
+  it('mantém a boca sintética desativada e não a sobrepõe ao vídeo externo', () => {
+    expect(source).toContain('const allowsMouthAnimation = false;');
+    expect(source).toContain('const supportsValidatedFacialSync = false;');
     expect(source).toContain('activelySpeaking && allowsMouthAnimation && !showVideo');
   });
 });

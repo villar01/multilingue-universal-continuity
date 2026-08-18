@@ -143,7 +143,10 @@ export default function EnhancedTeacherAvatar({
   const teacherName = propTeacherName || teacherData?.name || "Professor";
   const specialty = (teacherData as any)?.title || "";
   const skinTone = positions.skinTone;
-  const allowsMouthAnimation = !/^\s*(prof\.?\s*)?ricardo\b/i.test(teacherName);
+  // Respostas online ainda não possuem par audiovisual validado: nenhum avatar
+  // simula boca ou vídeo facial até a sincronização real ser aprovada.
+  const allowsMouthAnimation = false;
+  const supportsValidatedFacialSync = false;
 
   // ─── Auto-blink ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -167,8 +170,8 @@ export default function EnhancedTeacherAvatar({
     const id = setInterval(() => {
       const t = Date.now();
       if (isTeaching || isSpeaking) {
-        setHeadTilt(Math.sin(t / 1800) * 3.5 + Math.sin(t / 900) * 1.2);
-        setHeadBob(Math.sin(t / 350) * 2.5 + Math.sin(t / 700) * 1.0);
+        setHeadTilt(0);
+        setHeadBob(0);
       } else {
         setHeadTilt(Math.sin(t / 5000) * 1.2);
         setHeadBob(Math.sin(t / 3500) * 0.5);
@@ -341,7 +344,7 @@ export default function EnhancedTeacherAvatar({
     } else if (currentText && currentText.trim().length > 0) {
       runPhonemeLipSync(currentText);
       // If D-ID is configured, generate real video
-      if (didStatus?.configured && imageUrl && !showVideo && !isGeneratingVideo) {
+      if (supportsValidatedFacialSync && didStatus?.configured && imageUrl && !showVideo && !isGeneratingVideo) {
         generateDIDVideo(currentText, imageUrl);
       }
     } else {

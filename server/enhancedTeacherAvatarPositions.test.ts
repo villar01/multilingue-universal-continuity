@@ -17,8 +17,8 @@ describe('posições faciais calibradas do avatar aprimorado', () => {
     expect(source).toContain('"teacher-ricardo-portuguese_"');
   });
 
-  it('mantém a posição genérica somente como fallback e conserva a exceção do Ricardo', () => {
+  it('mantém a posição genérica somente como fallback e preserva boca sintética desativada', () => {
     expect(source).toContain('const DEFAULT_POS');
-    expect(source).toContain('const allowsMouthAnimation = !/^\\s*(prof\\.?\\s*)?ricardo\\b/i.test(teacherName);');
+    expect(source).toContain('const allowsMouthAnimation = false;');
   });
 });

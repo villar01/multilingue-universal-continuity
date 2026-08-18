@@ -5,9 +5,10 @@ const avatar = readFileSync(new URL("../client/src/components/EnhancedTeacherAva
 const animatedTeacher = readFileSync(new URL("../client/src/components/AnimatedTeacher.tsx", import.meta.url), "utf8");
 
 describe("política visual por professor", () => {
-  it("mantém a exceção estática de Ricardo sem desativar o áudio neural dos demais professores", () => {
+  it("mantém todos os avatares estáveis sem desativar o áudio neural", () => {
     expect(avatar).toContain("allowsMouthAnimation");
-    expect(avatar).toContain("ricardo");
+    expect(avatar).toContain("const allowsMouthAnimation = false;");
+    expect(avatar).toContain("const supportsValidatedFacialSync = false;");
     expect(avatar).toContain("if (!allowsMouthAnimation)");
     expect(avatar).toContain("AudioCtx && allowsMouthAnimation");
     expect(avatar).toContain("audio.play()");
