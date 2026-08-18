@@ -3303,6 +3303,7 @@ export default function ImmersiveScene() {
           onClose={() => setParetoOpen(false)}
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
+          nativeLang={nativeLang}
           currentScene={selectedScene?.id}
           practiceLevel={selectedScene ? sceneCefrLevel(selectedScene) : "A1"}
           voiceGender={selectedScene?.teacherGender}

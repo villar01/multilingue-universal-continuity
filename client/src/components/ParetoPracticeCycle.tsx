@@ -6,6 +6,7 @@ import {
   type ParetoPracticeStep,
   type ParetoPracticeTerm,
 } from "@/lib/paretoPracticeCycle";
+import { getScriptedExerciseFeedback } from "@/lib/scriptedExerciseFeedback";
 import type { CEFRLevel } from "@/lib/lesson-levels";
 
 interface ParetoPracticeCycleProps {
@@ -16,6 +17,7 @@ interface ParetoPracticeCycleProps {
   onSpeak?: (text: string) => void;
   embedded?: boolean;
   level?: CEFRLevel;
+  feedbackLanguage?: string;
 }
 
 const STEP_LABEL: Record<ParetoPracticeStep, string> = {
@@ -25,7 +27,7 @@ const STEP_LABEL: Record<ParetoPracticeStep, string> = {
   create: "4. Crie",
 };
 
-export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak, embedded = false, level = "A1" }: ParetoPracticeCycleProps) {
+export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak, embedded = false, level = "A1", feedbackLanguage = "pt-BR" }: ParetoPracticeCycleProps) {
   const [step, setStep] = useState<ParetoPracticeStep>("observe");
   const [recall, setRecall] = useState("");
   const [written, setWritten] = useState("");
@@ -34,16 +36,22 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
   const [completed, setCompleted] = useState(false);
   const activeStep = useMemo(() => ["observe", "recall", "write", "create"].indexOf(step), [step]);
   const levelRequirement = useMemo(() => getParetoLevelRequirement(level), [level]);
+  const withScriptedFeedback = (message: string, correct: boolean) => {
+    const scripted = getScriptedExerciseFeedback(correct ? "correct" : "retry", feedbackLanguage);
+    return correct
+      ? `${message} ${scripted.teacherText}`
+      : `${message} ${scripted.teacherText} ${scripted.studyPrompt}`;
+  };
 
   const checkRecall = (value: string, next: ParetoPracticeStep) => {
     const result = checkParetoRecall(value, term);
-    setFeedback(result.message);
+    setFeedback(withScriptedFeedback(result.message, result.correct));
     if (result.correct) setStep(next);
   };
 
   const checkSentence = () => {
     const result = checkParetoSentence(sentence, term, levelRequirement);
-    setFeedback(result.message);
+    setFeedback(withScriptedFeedback(result.message, result.correct));
     if (result.correct) {
       setCompleted(true);
       onComplete?.();

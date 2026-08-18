@@ -53,6 +53,7 @@ interface ParetoPanelProps {
   onClose: () => void;
   targetLang: string; // e.g. "en-US", "en-GB", "fr-FR"
   targetLangName: string; // e.g. "English (US)"
+  nativeLang?: string;
   currentScene?: string; // filter by scene
   practiceLevel?: CEFRLevel;
   voiceGender?: "male" | "female";
@@ -92,6 +93,7 @@ export default function ParetoPanel({
   onClose,
   targetLang,
   targetLangName,
+  nativeLang = "pt-BR",
   currentScene,
   practiceLevel = "A1",
   voiceGender,
@@ -361,6 +363,7 @@ export default function ParetoPanel({
               onSpeak={speakPractice}
               embedded
               level={practiceLevel}
+              feedbackLanguage={nativeLang}
             />
           </div>
         )}
