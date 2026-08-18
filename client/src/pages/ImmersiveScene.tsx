@@ -1278,8 +1278,12 @@ export default function ImmersiveScene() {
     const regionalVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(languagePrefix));
     const maleVoicePattern = /(^|\s)(david|mark|guy|daniel|george|james|ryan|andrew|matthew|eric|brian|michael|christopher|male)(\s|$)/i;
     const femaleVoicePattern = /(^|\s)(zira|hazel|susan|aria|jenny|sara|samantha|female)(\s|$)/i;
+    // Alguns navegadores não identificam gênero no nome da voz. Para James,
+    // priorizamos homem nomeado e, se não existir, uma voz regional sem rótulo
+    // feminino explícito em vez de deixar a cena sem áudio.
+    const nonFemaleRegionalVoice = regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name));
     const preferredVoice = gender === "male"
-      ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name))
+      ? regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice
       : gender === "female"
         ? regionalVoices.find((voice) => femaleVoicePattern.test(voice.name))
         : regionalVoices[0];
