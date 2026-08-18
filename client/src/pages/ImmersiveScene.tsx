@@ -41,6 +41,9 @@ import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, S
 
 type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;
 
+const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";
+const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-fallback_73d168f4.wav";
+
 function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timeoutId = setTimeout(() => reject(new Error("scene-dialogue-speech-timeout")), timeoutMs);
@@ -1665,6 +1668,21 @@ export default function ImmersiveScene() {
         return;
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
+    if (
+      selectedScene?.id === "beach"
+      && selectedScene.teacherName === "James"
+      && text.trim() === JAMES_TROPICAL_INTRO_LINE
+    ) {
+      await playTeacherAudio(
+        JAMES_TROPICAL_INTRO_FALLBACK_URL,
+        "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+        "en-US",
+        requestKey,
+        false,
+        autoPlay,
+      );
+      return;
+    }
     if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
       setDlgAudioNotice("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
       return;

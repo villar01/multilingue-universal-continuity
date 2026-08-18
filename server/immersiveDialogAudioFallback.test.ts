@@ -69,6 +69,17 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(remoteAttempt).toBeGreaterThan(directAttempt);
   });
 
+  it("usa uma faixa masculina pré-gravada somente como última reserva da apresentação inicial de James", () => {
+    const speechFlow = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
+    expect(source).toContain('const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";');
+    expect(source).toContain('const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-fallback_73d168f4.wav";');
+    expect(speechFlow).toContain('selectedScene?.id === "beach"');
+    expect(speechFlow).toContain('selectedScene.teacherName === "James"');
+    expect(speechFlow).toContain("text.trim() === JAMES_TROPICAL_INTRO_LINE");
+    expect(speechFlow).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
+    expect(speechFlow.indexOf("JAMES_TROPICAL_INTRO_FALLBACK_URL")).toBeGreaterThan(speechFlow.indexOf("const googleAudio"));
+  });
+
   it("registra internamente carregamento, reprodução, rejeição e erro do player sem expor a frase", () => {
     expect(source).toContain('const reportAudioEvent = (event: "loaded" | "play" | "play-rejected" | "error", reason?: string) => {');
     expect(source).toContain('console.info("[immersive-audio]"');

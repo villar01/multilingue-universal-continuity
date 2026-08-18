@@ -22,7 +22,8 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     const sharedSpeech = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(sharedSpeech.indexOf("if (await playEdgeNeural()) return;")).toBeLessThan(sharedSpeech.indexOf("const googleAudio"));
     expect(sharedSpeech).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
-    expect(sharedSpeech).not.toContain('selectedScene?.id === "beach"');
+    expect((sharedSpeech.match(/selectedScene\?\.id === "beach"/g) || [])).toHaveLength(1);
+    expect(sharedSpeech).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
   });
 
   it("renderiza o professor fora de cartões condicionais, para que permaneça presente em toda cena aberta", () => {
