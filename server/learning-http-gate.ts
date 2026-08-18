@@ -33,6 +33,18 @@ const LEARNING_ROUTE_PREFIXES = [
   "/daily-memory",
   "/my-teacher",
   "/phrasal-verbs-exercises",
+  "/dashboard",
+  "/dashboard-real",
+  "/onboarding",
+  "/avatar-selection",
+  "/ranking",
+  "/progress",
+  "/achievements",
+  "/lesson-history",
+  "/battle",
+  "/certificates",
+  "/pronunciation-history",
+  "/parental-control",
 ] as const;
 
 export function requiresLearningHttpGate(pathname: string): boolean {
