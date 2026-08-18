@@ -65,4 +65,14 @@ describe("folhas de estrutura e escrita do Livro ABC", () => {
       && chapter.paretoChapter >= 1
     ))).toBe(true);
   });
+
+  it("associa um diálogo curto original a cada capítulo A1", () => {
+    const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
+
+    expect(book.available).toBe(true);
+    if (!book.available) return;
+
+    expect(book.chapters.every((chapter) => chapter.guidedDialogue.length === 2)).toBe(true);
+    expect(book.chapters.flatMap((chapter) => chapter.guidedDialogue).every((line) => line.speaker.trim() && line.target.trim() && line.native.trim())).toBe(true);
+  });
 });

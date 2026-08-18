@@ -390,6 +390,12 @@ export default function ABCBook() {
                 <p className="mt-5 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
                 <button type="button" onClick={() => playNativeReference(chapter.reading)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === chapter.reading ? "Falando…" : "Ouvir texto em inglês nativo"}</button>
                 <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
+                <div className="mt-5 border-y border-stone-200 bg-stone-50 px-4 py-4">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Diálogo curto</p>
+                  <div className="mt-3 space-y-3">
+                    {chapter.guidedDialogue.map((line) => <p key={`${line.speaker}-${line.target}`} className="text-sm leading-6 text-slate-700"><strong className="text-slate-950">{line.speaker}:</strong> {line.target} <button type="button" onClick={() => playNativeReference(line.target)} className="ml-1 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> Ouvir</button><span className="block text-slate-600">{line.native}</span></p>)}
+                  </div>
+                </div>
                 <div className="mt-5 border-t border-stone-200 pt-4">
                   <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Compreensão do texto</p>
                   <div className="mt-3 space-y-4">

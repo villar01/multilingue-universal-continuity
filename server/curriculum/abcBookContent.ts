@@ -24,6 +24,11 @@ export type ABCBookChapter = {
   objective: string;
   reading: string;
   translation: string;
+  guidedDialogue: Array<{
+    speaker: string;
+    target: string;
+    native: string;
+  }>;
   comprehensionQuestions: Array<{
     id: string;
     prompt: string;
@@ -896,11 +901,55 @@ const A1_PARETO_CONTEXTS: ABCBookChapter["paretoContext"][] = [
   "home", "routine-time", "transport", "transport", "social-circle",
 ];
 
+const A1_GUIDED_DIALOGUES: ABCBookChapter["guidedDialogue"][] = [
+  [
+    { speaker: "James", target: "Hello. I am James. What is your name?", native: "Olá. Eu sou James. Qual é o seu nome?" },
+    { speaker: "Student", target: "My name is Ana. Nice to meet you.", native: "Meu nome é Ana. Prazer em conhecer você." },
+  ],
+  [
+    { speaker: "Student", target: "Excuse me. Can you help me, please?", native: "Com licença. Você pode me ajudar, por favor?" },
+    { speaker: "Assistant", target: "Of course. Do you need water too?", native: "Claro. Você também precisa de água?" },
+  ],
+  [
+    { speaker: "James", target: "Where is the pool?", native: "Onde fica a piscina?" },
+    { speaker: "Receptionist", target: "It is near the beach.", native: "Ela fica perto da praia." },
+  ],
+  [
+    { speaker: "Student", target: "Who is she?", native: "Quem é ela?" },
+    { speaker: "Friend", target: "She is my friend. She studies English.", native: "Ela é minha amiga. Ela estuda inglês." },
+  ],
+  [
+    { speaker: "Student", target: "What time is the class?", native: "Que horas é a aula?" },
+    { speaker: "Teacher", target: "It starts at seven today.", native: "Ela começa às sete hoje." },
+  ],
+  [
+    { speaker: "Student", target: "Whose bag is this?", native: "De quem é esta bolsa?" },
+    { speaker: "Maria", target: "It is my bag. My phone is in the room.", native: "É minha bolsa. Meu telefone está no cômodo." },
+  ],
+  [
+    { speaker: "Teacher", target: "Do you study in the morning?", native: "Você estuda de manhã?" },
+    { speaker: "Student", target: "Yes. I practice every day because I want confidence.", native: "Sim. Eu pratico todos os dias porque quero confiança." },
+  ],
+  [
+    { speaker: "Server", target: "Would you like still or sparkling water?", native: "Você gostaria de água sem gás ou com gás?" },
+    { speaker: "Student", target: "Still water, please. Thank you.", native: "Água sem gás, por favor. Obrigado." },
+  ],
+  [
+    { speaker: "Friend", target: "Which place do you prefer?", native: "De qual lugar você prefere?" },
+    { speaker: "Student", target: "I prefer the library because it is quiet.", native: "Eu prefiro a biblioteca porque ela é silenciosa." },
+  ],
+  [
+    { speaker: "Student", target: "Can you repeat that slowly, please?", native: "Você pode repetir isso devagar, por favor?" },
+    { speaker: "Teacher", target: "Of course. First read, then write, and finally speak.", native: "Claro. Primeiro leia, depois escreva e por fim fale." },
+  ],
+];
+
 const A1_CHAPTERS: ABCBookChapter[] = STRUCTURED_A1_UNITS.map((unit, index) => ({
   title: unit.unit,
   objective: unit.objective,
   reading: unit.reading,
   translation: unit.readingTranslation,
+  guidedDialogue: A1_GUIDED_DIALOGUES[index] ?? A1_GUIDED_DIALOGUES[0],
   comprehensionQuestions: unit.questions,
   grammarTitle: unit.grammarTitle,
   grammarExplanation: unit.grammarExplanation,
