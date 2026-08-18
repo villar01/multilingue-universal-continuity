@@ -75,7 +75,16 @@ export default function ABCBook() {
     );
   }
 
-  const totalBookPages = 10 + book.soundLessons.length + book.progressiveLessons.length + book.contextGroups.length + book.sections.length;
+  const totalBookPages =
+    2 +
+    book.soundLessons.length +
+    book.progressiveLessons.length +
+    2 +
+    book.contextGroups.length +
+    4 +
+    book.chapters.length * 3 +
+    book.sections.length +
+    2;
   const goBookPage = (page: number) => {
     const container = bookPagesRef.current;
     if (!container) return;
@@ -311,68 +320,47 @@ export default function ABCBook() {
                 ))}
               </ol>
             </nav>
-            <div className="mt-5 space-y-6">
-              {book.chapters.map((chapter, index) => {
-                const chapterId = `capitulo-a1-${index + 1}`;
-                const chapterReturnTo = `${paretoReturnTo}#${chapterId}`;
-                const chapterParetoHref = `/pareto-1000?bookContext=${encodeURIComponent(chapter.paretoContext)}&returnTo=${encodeURIComponent(chapterReturnTo)}`;
-                const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
-
-                return (
-                <article id={chapterId} key={chapter.title} className="abc-book-chapter-leaf scroll-mt-6 p-5 sm:p-6">
-                  <div className="flex items-start gap-3">
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span>
-                    <div className="min-w-0">
-                      <h3 className="font-serif text-xl font-bold text-slate-950">{chapter.title}</h3>
-                      <p className="mt-2 text-sm font-semibold leading-6 text-amber-800">Objetivo: {chapter.objective}</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
-                  <button type="button" onClick={() => playNativeReference(chapter.reading)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === chapter.reading ? "Falando…" : "Ouvir texto em inglês nativo"}</button>
-                  <p className="mt-3 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
-                  <div className="mt-4 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
-                    <p className="font-bold text-slate-900">{chapter.grammarTitle}</p>
-                    <p className="mt-1">{chapter.grammarExplanation}</p>
-                  </div>
-                  <p className="mt-4 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Escrita:</strong> {chapter.writingPrompt}</p>
-                  <section className="mt-5 border-y border-stone-200 bg-stone-50 px-4 py-5 sm:px-5">
-                    <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">Prática depois do texto</p>
-                    <h4 className="mt-2 font-serif text-lg font-bold text-slate-950">Forme a frase</h4>
-                    <p className="mt-2 text-sm leading-6 text-slate-700">{chapter.orderingExercise.prompt}</p>
-                    <p className="mt-3 font-semibold leading-7 text-slate-950">{chapter.orderingExercise.scrambled.join(" · ")}</p>
-                    <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                      <input
-                        value={orderingAnswers[index] ?? ""}
-                        onChange={(event) => setOrderingAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                        placeholder="Digite a frase em inglês"
-                        className="min-w-0 flex-1 border border-stone-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none ring-amber-500 focus:ring-2"
-                      />
-                      <button type="button" onClick={() => setCheckedOrdering((current) => ({ ...current, [index]: true }))} className="bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.97]">Conferir ordem</button>
-                    </div>
-                    {checkedOrdering[index] && (
-                      <div className="mt-4 border-l-2 border-amber-500 pl-4 text-sm leading-6 text-slate-700">
-                        <p><strong className="text-slate-950">Resposta-modelo:</strong> {chapter.orderingExercise.answer}</p>
-                        <p className="mt-2">{chapter.orderingExercise.explanation}</p>
-                        <p className="mt-2 font-semibold text-slate-800">Agora continue: {chapter.orderingExercise.followUpPrompt}</p>
-                      </div>
-                    )}
-                  </section>
-                  <div className="mt-5 flex flex-wrap items-center gap-3">
-                    <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Próximo passo: Praticar no Pareto</a>
-                    <details className="relative">
-                      <summary className="cursor-pointer list-none rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-stone-50">Opções desta unidade</summary>
-                      <div className="absolute left-0 z-10 mt-2 grid w-56 gap-1 rounded-md border border-stone-200 bg-white p-2 shadow-lg">
-                        <a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="rounded px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-stone-50">Consultar na Base</a>
-                        <a href={chapterTeacherHref} className="flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold text-sky-900 hover:bg-sky-50"><MessageCircle className="h-4 w-4" /> Falar com o Professor</a>
-                        <a href="#sumario-a1" className="rounded px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">Voltar ao sumário</a>
-                      </div>
-                    </details>
-                  </div>
-                </article>
-                );
-              })}
-            </div>
           </section>
+
+          {book.chapters.flatMap((chapter, index) => {
+            const chapterId = `capitulo-a1-${index + 1}`;
+            const chapterReturnTo = `${paretoReturnTo}#${chapterId}`;
+            const chapterParetoHref = `/pareto-1000?bookContext=${encodeURIComponent(chapter.paretoContext)}&returnTo=${encodeURIComponent(chapterReturnTo)}`;
+            const chapterTeacherHref = `/free-talk?returnTo=${encodeURIComponent(chapterReturnTo)}`;
+
+            return [
+              <section id={chapterId} key={`${chapter.title}-leitura`} className="abc-book-chapter-leaf scroll-mt-6 p-5 sm:p-6">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">{index + 1}</span>
+                  <div className="min-w-0"><p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Leitura</p><h3 className="mt-1 font-serif text-xl font-bold text-slate-950">{chapter.title}</h3><p className="mt-2 text-sm font-semibold leading-6 text-amber-800">Objetivo: {chapter.objective}</p></div>
+                </div>
+                <p className="mt-5 font-serif text-lg font-semibold leading-8 text-slate-950">{chapter.reading}</p>
+                <button type="button" onClick={() => playNativeReference(chapter.reading)} className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-4 w-4" /> {playingNativeText === chapter.reading ? "Falando…" : "Ouvir texto em inglês nativo"}</button>
+                <p className="mt-4 border-l-2 border-stone-300 pl-4 text-sm leading-6 text-slate-600">{chapter.translation}</p>
+              </section>,
+              <section key={`${chapter.title}-estrutura`} className="abc-book-chapter-leaf p-5 sm:p-6">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Estrutura</p>
+                <h3 className="mt-1 font-serif text-xl font-bold text-slate-950">Entenda o padrão da leitura</h3>
+                <div className="mt-5 bg-stone-50 p-5 text-sm leading-7 text-slate-700"><p className="font-bold text-slate-900">{chapter.grammarTitle}</p><p className="mt-2">{chapter.grammarExplanation}</p></div>
+                <p className="mt-5 border-l-2 border-violet-400 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong>Prepare sua escrita:</strong> {chapter.writingPrompt}</p>
+              </section>,
+              <section key={`${chapter.title}-producao`} className="abc-book-chapter-leaf p-5 sm:p-6">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Prática depois do texto · Produção e revisão</p>
+                <h3 className="mt-1 font-serif text-xl font-bold text-slate-950">Forme a frase e continue a ideia</h3>
+                <p className="mt-4 text-sm leading-6 text-slate-700">{chapter.orderingExercise.prompt}</p>
+                <p className="mt-3 font-semibold leading-7 text-slate-950">{chapter.orderingExercise.scrambled.join(" · ")}</p>
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <input value={orderingAnswers[index] ?? ""} onChange={(event) => setOrderingAnswers((current) => ({ ...current, [index]: event.target.value }))} placeholder="Digite a frase em inglês" className="min-w-0 flex-1 border border-stone-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none ring-amber-500 focus:ring-2" />
+                  <button type="button" onClick={() => setCheckedOrdering((current) => ({ ...current, [index]: true }))} className="bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.97]">Conferir ordem</button>
+                </div>
+                {checkedOrdering[index] && <div className="mt-4 border-l-2 border-amber-500 pl-4 text-sm leading-6 text-slate-700"><p><strong className="text-slate-950">Resposta-modelo:</strong> {chapter.orderingExercise.answer}</p><p className="mt-2">{chapter.orderingExercise.explanation}</p><p className="mt-2 font-semibold text-slate-800">Agora continue: {chapter.orderingExercise.followUpPrompt}</p></div>}
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <a href={chapterParetoHref} className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Próximo passo: Praticar no Pareto</a>
+                  <details className="relative"><summary className="cursor-pointer list-none rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-stone-50">Opções desta unidade</summary><div className="absolute left-0 z-10 mt-2 grid w-56 gap-1 rounded-md border border-stone-200 bg-white p-2 shadow-lg"><a href={`/base-de-estudos?unit=${encodeURIComponent(chapter.title)}&returnTo=${encodeURIComponent(paretoReturnTo)}`} className="rounded px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-stone-50">Consultar na Base</a><a href={chapterTeacherHref} className="flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold text-sky-900 hover:bg-sky-50"><MessageCircle className="h-4 w-4" /> Falar com o Professor</a><a href="#sumario-a1" className="rounded px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">Voltar ao sumário</a></div></details>
+                </div>
+              </section>,
+            ];
+          })}
 
           {book.sections.map((section, index) => (
             <section key={section.title} className="border-b border-stone-200 pb-8 last:border-b-0">

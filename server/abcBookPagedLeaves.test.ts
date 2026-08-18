@@ -29,4 +29,12 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(page).toContain("book.contextGroups.map((group, groupIndex) => (");
     expect(page).not.toContain("<div className=\"mt-6 space-y-8\">");
   });
+
+  it("separa leitura, estrutura e produção de cada capítulo A1 em folhas próprias", () => {
+    expect(page).toContain("book.chapters.flatMap");
+    expect(page).toContain("key={`${chapter.title}-leitura`}");
+    expect(page).toContain("key={`${chapter.title}-estrutura`}");
+    expect(page).toContain("key={`${chapter.title}-producao`}");
+    expect(page).toContain("book.chapters.length * 3");
+  });
 });
