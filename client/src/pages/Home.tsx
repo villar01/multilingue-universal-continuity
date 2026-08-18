@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getLoginUrl } from "@/const";
+import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import {
   Globe,
   Mic,
@@ -250,6 +251,7 @@ export default function Home() {
     setProfile(updatedProfile);
     localStorage.setItem("ml_lang_profile", JSON.stringify(updatedProfile));
     if (!isAuthenticated) {
+      trackAggregateLearningEvent("begin_signup");
       window.location.href = getLoginUrl();
       return;
     }

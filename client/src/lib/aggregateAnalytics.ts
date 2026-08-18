@@ -1,4 +1,5 @@
 export const AGGREGATE_LEARNING_EVENTS = [
+  "begin_signup",
   "open_abc_book",
   "open_pareto",
   "open_immersive_scene",

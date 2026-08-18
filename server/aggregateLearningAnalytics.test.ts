@@ -10,6 +10,7 @@ const immersiveSource = readFileSync(path.join(root, "client/src/pages/Immersive
 
 describe("eventos agregados de estudo", () => {
   it("emite somente nomes fixos e não aceita parâmetros de perfil, cena ou conversa", () => {
+    expect(analyticsSource).toContain('"begin_signup"');
     expect(analyticsSource).toContain('"open_abc_book"');
     expect(analyticsSource).toContain('"open_pareto"');
     expect(analyticsSource).toContain('"open_immersive_scene"');
@@ -21,6 +22,8 @@ describe("eventos agregados de estudo", () => {
   });
 
   it("registra somente as aberturas autorizadas de cartilha, Pareto e Cena Imersiva", () => {
+    const homeSource = readFileSync(path.join(root, "client/src/pages/Home.tsx"), "utf8");
+    expect(homeSource).toContain('trackAggregateLearningEvent("begin_signup")');
     expect(abcBookSource).toContain('trackAggregateLearningEvent("open_abc_book")');
     expect(paretoSource).toContain('trackAggregateLearningEvent("open_pareto")');
     expect(immersiveSource).toContain('trackAggregateLearningEvent("open_immersive_scene")');
