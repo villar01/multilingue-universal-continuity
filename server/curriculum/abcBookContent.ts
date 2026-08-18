@@ -987,6 +987,46 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       model: "Hoje: I study English at home. / Depois: Do you study English at home? / Amanhã: I do not study English at home.",
       practice: "Escolha uma frase antiga, transforme-a de duas maneiras e marque uma palavra para revisar no próximo intervalo do Pareto.",
     },
+    {
+      eyebrow: "Manual contínuo · Leitura consciente",
+      title: "Leia para encontrar uma ideia, depois observe como ela foi montada",
+      paragraphs: [
+        "Uma leitura curta não exige que você entenda todas as palavras de imediato. Primeiro localize quem aparece, o que acontece e onde ou quando a ação acontece. Depois use a tradução para confirmar somente o que ainda não ficou claro.",
+        "Na segunda leitura, observe uma estrutura útil e uma palavra que você poderá reutilizar. Feche o texto por alguns segundos e conte a ideia com frases menores. Essa reconstrução mostra o que você compreendeu de verdade.",
+      ],
+      model: "My friend studies English at home every morning. → pessoa, ação, idioma, lugar, tempo.",
+      practice: "Leia uma frase do capítulo, destaque mentalmente os cinco blocos e reescreva a ideia com uma mudança pessoal.",
+    },
+    {
+      eyebrow: "Manual contínuo · Referência nativa",
+      title: "A voz nativa guia a pronúncia; a escrita ajuda a registrar",
+      paragraphs: [
+        "Use a fala nativa para perceber o ritmo da frase, a parte que recebe força e a ligação entre palavras. Evite transformar a pronúncia em uma grafia inventada em português. A referência auditiva deve conduzir a repetição desde o começo.",
+        "Quando uma palavra parecer difícil, reduza a velocidade sem alterar a ordem. Escute, repita a palavra dentro de uma frase e grave mentalmente o som junto com o sentido. A escrita vem depois como registro para a próxima recuperação.",
+      ],
+      model: "I would like water, please. → ouça a frase inteira, repita em partes e diga-a sem olhar.",
+      practice: "Clique em ouvir uma palavra e uma frase. Repita três vezes e use a palavra em uma nova frase curta.",
+    },
+    {
+      eyebrow: "Manual contínuo · Consulta útil",
+      title: "Volte ao livro quando houver uma dúvida concreta",
+      paragraphs: [
+        "O Livro ABC não substitui a lição ou a cena. Ele funciona como uma consulta para resolver uma dúvida pontual: uma palavra, uma ordem de frase, uma pergunta, uma forma de pedir ajuda ou um contexto que precisa ser revisto.",
+        "Encontre a folha relacionada, leia um único modelo, faça a prática proposta e retorne à atividade de origem. Essa ida e volta mantém a consulta breve e transforma a dúvida em aplicação real com o Professor ou na cena.",
+      ],
+      model: "Dúvida: how to ask for a place? → Livro: Where is the station? → Cena: pedir uma direção.",
+      practice: "Escolha uma dúvida real, localize a folha mais próxima e leve uma frase pronta para usar na atividade de origem.",
+    },
+    {
+      eyebrow: "Manual contínuo · Produção final",
+      title: "Junte vocabulário, estrutura e intenção em uma pequena conversa",
+      paragraphs: [
+        "Ao concluir um bloco, produza algo seu: uma apresentação, um pedido, uma pergunta, uma descrição ou uma resposta. Comece com duas frases que você controla e adicione uma terceira somente depois de conferir a ordem e o sentido.",
+        "A produção final não precisa ser longa. O mais importante é usar palavras recuperadas, uma estrutura conhecida e uma intenção clara. Depois, leve a mesma ideia para o Professor, para a cena ou para a revisão Pareto.",
+      ],
+      model: "Hello. My name is Ana. I study English at home. Can you help me with this word?",
+      practice: "Escreva uma conversa de quatro linhas com saudação, informação pessoal, pergunta e resposta. Depois releia e escolha uma linha para falar.",
+    },
   ],
   survivalIntro: "Leia primeiro em inglês, confirme o sentido em português e depois cubra a linha em inglês para recuperá-la de memória. Estas frases também servem como ponto de partida para falar com o professor.",
   alphabetIntroduction: "Comece pelo nome das letras. Depois, observe que uma mesma letra pode mudar de som quando forma uma palavra. Não tente decorar todos os casos de uma vez: leia a letra, ouça o exemplo e avance passo a passo.",

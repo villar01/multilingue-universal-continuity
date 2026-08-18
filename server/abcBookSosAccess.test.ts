@@ -68,6 +68,8 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(protectedBookSource).toContain("Use o Pareto para lembrar; use a cena para aplicar");
     expect(protectedBookSource).toContain("Agrupe palavras que vivem na mesma situação");
     expect(protectedBookSource).toContain("Volte ao que aprendeu para tornar a nova frase estável");
+    expect(protectedBookSource).toContain("Leia para encontrar uma ideia, depois observe como ela foi montada");
+    expect(protectedBookSource).toContain("Junte vocabulário, estrutura e intenção em uma pequena conversa");
     expect(bookSource).toContain("book.manualLeaves.map");
     expect(bookSource).toContain("book.manualLeaves.length");
     expect(bookSource).not.toContain("Estude uma ideia inteira, não uma lista isolada");
