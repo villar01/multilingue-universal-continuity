@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getSecureSceneSeed, getSecureSceneSeedCatalog } from "./curriculum/secureSceneSeeds";
+import { getParetoProgramWords, getParetoWordsForScene } from "./curriculum/paretoContent";
 import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
 import { readFileSync } from "node:fs";
 
@@ -28,6 +29,15 @@ describe("catálogo automático de cobertura das 29 cenas", () => {
         expect(hotspot.example.trim(), `${sceneId}:${hotspot.id} precisa ter frase`).not.toHaveLength(0);
         expect(hotspot.examplePt.trim(), `${sceneId}:${hotspot.id} precisa ter tradução da frase`).not.toHaveLength(0);
       }
+    }
+  });
+
+  it("mantém pelo menos cinco palavras Pareto com exemplo e tradução para cada cena", () => {
+    const programWords = getParetoProgramWords();
+    for (const sceneId of CANONICAL_SCENES) {
+      const sceneWords = getParetoWordsForScene(sceneId, programWords);
+      expect(sceneWords.length, `${sceneId} precisa de ao menos cinco palavras Pareto`).toBeGreaterThanOrEqual(5);
+      expect(sceneWords.every((word) => word.example.trim().length > 0 && word.examplePt.trim().length > 0), `${sceneId} precisa manter frase e tradução no Pareto`).toBe(true);
     }
   });
 

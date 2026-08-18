@@ -78,6 +78,41 @@ export const CATEGORY_LABELS: Record<ParetoCategory, { label: string; icon: stri
   general:     { label: "Geral", icon: "📝" },
 };
 
+// Algumas cenas já têm vocabulário autoral diretamente etiquetado. As demais
+// recebem uma trilha por categorias compatíveis, sem duplicar nem entregar o
+// catálogo no cliente. O resultado continua sendo selecionado no servidor.
+export const SCENE_PARETO_CATEGORY_FALLBACKS: Record<string, readonly ParetoCategory[]> = {
+  beach: ["beach", "nature", "greetings"],
+  cafe: ["food", "greetings", "social"],
+  forest: ["forest", "nature", "animals"],
+  paris: ["paris", "travel", "city"],
+  newyork: ["newyork", "city", "directions"],
+  kitchen: ["kitchen", "food", "home"],
+  restaurant: ["food", "phrases", "shopping"],
+  hotel: ["travel", "home", "phrases"],
+  supermarket: ["shopping", "food", "finance"],
+  school: ["education", "questions", "actions"],
+  mountain: ["mountains", "nature", "weather"],
+  airport: ["travel", "transport", "directions"],
+  park: ["nature", "animals", "sports"],
+  hospital: ["health", "body", "questions"],
+  museum: ["arts", "city", "travel"],
+  port: ["travel", "transport", "nature"],
+  medieval: ["arts", "city", "general"],
+  cinema: ["arts", "expressions", "food"],
+  spa: ["health", "body", "emotions"],
+  tokyo: ["tokyo", "city", "travel"],
+  desert: ["desert", "nature", "weather"],
+  farm: ["countryside", "animals", "nature"],
+  gym: ["sports", "health", "body"],
+  library: ["education", "arts", "questions"],
+  office: ["business", "work", "technology"],
+  metro: ["transport", "directions", "city"],
+  garden: ["nature", "colors", "animals"],
+  family_home: ["family", "home", "social"],
+  airport_family: ["travel", "family", "transport"],
+};
+
 const PARETO_SOURCE_VOCAB: ParetoWord[] = [
   // GREETINGS
   { id:"g001", ptBR:"Olá", enUS:"Hello", pronunciation:"həˈloʊ", category:"greetings", frequency:10, example:"Hello, how are you?", examplePt:"Olá, como vai você?", scene:"beach" },
@@ -1244,6 +1279,20 @@ function normalizeParetoEnglish(word: string): string {
 export const PARETO_VOCAB: ParetoWord[] = PARETO_SOURCE_VOCAB.filter((word, index, allWords) =>
   allWords.findIndex((candidate) => normalizeParetoEnglish(candidate.enUS) === normalizeParetoEnglish(word.enUS)) === index,
 );
+
+export function getParetoWordsForScene(scene: string, programWords: ParetoWord[] = PARETO_VOCAB): ParetoWord[] {
+  const directWords = programWords.filter((word) => word.scene === scene);
+  if (directWords.length >= 5) return directWords;
+
+  const categories = SCENE_PARETO_CATEGORY_FALLBACKS[scene];
+  if (!categories) return directWords;
+
+  const selectedIds = new Set(directWords.map((word) => word.id));
+  const categoryWords = programWords.filter((word) => (
+    categories.includes(word.category) && !selectedIds.has(word.id)
+  ));
+  return [...directWords, ...categoryWords];
+}
 
 export function getWordsByCategory(category: ParetoCategory): ParetoWord[] {
   return PARETO_VOCAB.filter(w => w.category === category);

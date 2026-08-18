@@ -4,7 +4,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { hasAuthorizedTrialLessonKey, getLearningContentEntitlement } from "./trial-access-router";
 import { STRUCTURED_A1_UNITS, STUDY_BASE_A1_ENTRIES } from "./curriculum/studyBaseContent";
 import { LANGUAGE_BLOCKS } from "./curriculum/languageBlocksContent";
-import { getParetoProgramWords, PARETO_VOCAB } from "./curriculum/paretoContent";
+import { getParetoProgramWords, getParetoWordsForScene, PARETO_VOCAB } from "./curriculum/paretoContent";
 import { getParetoBookContext, getParetoBookContextWords, PARETO_BOOK_CONTEXT_IDS } from "./curriculum/paretoBookContexts";
 import { getParetoAdvancedChallenge } from "./curriculum/paretoAdvancedChallenges";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
@@ -63,7 +63,7 @@ export const curriculumRouter = router({
     const contextWords = getParetoBookContextWords(input.bookContext, programWords);
     const candidateWords = contextWords ?? programWords;
     const authorizedWords = entitlement.hasFullCurriculum ? candidateWords : candidateWords.slice(0, 10);
-    const scopedWords = input.scene ? authorizedWords.filter((word) => word.scene === input.scene) : authorizedWords;
+    const scopedWords = input.scene ? getParetoWordsForScene(input.scene, authorizedWords) : authorizedWords;
     const start = input.page * input.pageSize;
     const pageWords = scopedWords.slice(start, start + input.pageSize);
     const localized = await localizeParetoWords({
