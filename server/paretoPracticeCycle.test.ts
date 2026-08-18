@@ -5,6 +5,7 @@ import {
   getParetoLevelRequirement,
   nextParetoStep,
 } from "../client/src/lib/paretoPracticeCycle";
+import { getDueParetoReviewIds, recordSuccessfulParetoReview } from "../client/src/lib/paretoSpacedReview";
 
 const term = { word: "water", translation: "água" };
 
@@ -33,5 +34,19 @@ describe("Pareto practice cycle", () => {
     expect(a1.minSentenceWords).toBeLessThan(b2.minSentenceWords);
     expect(checkParetoSentence("My water is clean", term, b2).correct).toBe(false);
     expect(checkParetoSentence("My water is clean because I always use a reusable bottle at school", term, b2).correct).toBe(true);
+  });
+
+  it("agenda a mesma palavra em 1, 3, 7, 14 e 30 dias e a traz de volta quando vencer", () => {
+    const startedAt = Date.UTC(2026, 7, 18, 12, 0, 0);
+    const expectedDays = [1, 3, 7, 14, 30];
+    let schedule = {};
+
+    for (const days of expectedDays) {
+      schedule = recordSuccessfulParetoReview(schedule, "pareto-001-water", startedAt);
+      expect(schedule["pareto-001-water"]?.dueAt).toBe(startedAt + days * 24 * 60 * 60 * 1000);
+    }
+
+    expect(getDueParetoReviewIds(schedule, startedAt + 29 * 24 * 60 * 60 * 1000)).toEqual([]);
+    expect(getDueParetoReviewIds(schedule, startedAt + 30 * 24 * 60 * 60 * 1000)).toEqual(["pareto-001-water"]);
   });
 });
