@@ -120,6 +120,7 @@ export const LANGUAGE_BLOCKS: LanguageBlock[] = [
     example: "To be honest, I need more practice.",
     examplePortuguese: "Para ser sincero, preciso de mais prática.",
     writingPrompt: "Escreva uma opinião cuidadosa iniciando com To be honest.",
+    safetyNote: "Use para introduzir uma opinião com respeito; não use para desqualificar a outra pessoa.",
   },
 ];
 
