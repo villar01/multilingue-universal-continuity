@@ -538,6 +538,8 @@ function TeacherAvatar({
   overrideImage,
   activeClip,
   onClipFinished,
+  hasPreparedSpeech,
+  onReplaySpeech,
 }: {
   scene: Scene;
   greeting: string;
@@ -550,6 +552,8 @@ function TeacherAvatar({
   overrideImage?: string;
   activeClip?: ScenePilotClip | null;
   onClipFinished?: () => void;
+  hasPreparedSpeech?: boolean;
+  onReplaySpeech?: () => void;
 }) {
   const { viseme } = useVisemeSequence(spokenText || greeting, Boolean(isSpeaking));
   const facePosition = IMMERSIVE_TEACHER_FACE_POSITIONS[overrideName || scene.teacherName] || { mouthY: 52, mouthWidth: 0.84 };
@@ -611,6 +615,16 @@ function TeacherAvatar({
             <div className="mt-1 text-[10px] font-semibold text-indigo-500" aria-live="polite">
               Preparando voz neural…
             </div>
+          )}
+          {hasPreparedSpeech && onReplaySpeech && !isPreparingAudio && (
+            <button
+              type="button"
+              onClick={onReplaySpeech}
+              className="mt-2 rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-extrabold text-white shadow-sm transition hover:bg-indigo-500"
+              aria-label={`Ouvir ${overrideName || scene.teacherName}`}
+            >
+              Ouvir {overrideName || scene.teacherName}
+            </button>
           )}
           {/* Arrow */}
           <div
@@ -2862,6 +2876,8 @@ export default function ImmersiveScene() {
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}
+          hasPreparedSpeech={Boolean(dialogAudioSource)}
+          onReplaySpeech={() => { void replayVisibleDialogAudio(); }}
         />
 
         {/* O elemento de áudio precisa existir também com o diálogo fechado:

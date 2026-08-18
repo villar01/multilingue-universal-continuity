@@ -88,6 +88,15 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(replayFlow).toContain('setDlgAudioNotice("");');
   });
 
+  it("oferece junto ao professor um único comando de ouvir para a faixa já preparada", () => {
+    expect(source).toContain("hasPreparedSpeech?: boolean;");
+    expect(source).toContain("onReplaySpeech?: () => void;");
+    expect(source).toContain("{hasPreparedSpeech && onReplaySpeech && !isPreparingAudio && (");
+    expect(source).toContain("onClick={onReplaySpeech}");
+    expect(source).toContain("hasPreparedSpeech={Boolean(dialogAudioSource)}");
+    expect(source).toContain("onReplaySpeech={() => { void replayVisibleDialogAudio(); }}");
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
