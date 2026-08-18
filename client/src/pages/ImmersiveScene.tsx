@@ -2676,7 +2676,7 @@ export default function ImmersiveScene() {
               }}
               onSpeak={(text, language, mode) => {
                 const activeTeacherScene = teachingScene ?? selectedScene;
-                const jamesObjectClipId = mode === "object" && activeTeacherScene.teacherName === "James"
+                const jamesObjectClipId = (mode === "object" || mode === "example") && activeTeacherScene.teacherName === "James"
                   ? ({
                     palm: "james-tropical-point-palm",
                     wave: "james-tropical-point-wave",
@@ -2686,7 +2686,7 @@ export default function ImmersiveScene() {
                   : null;
                 const objectFocusClip = jamesObjectClipId ? playJamesTropicalClip(jamesObjectClipId) : null;
                 requestSpeechSafely(
-                  objectFocusClip?.dialogue ?? text,
+                  mode === "object" ? objectFocusClip?.dialogue ?? text : text,
                   language,
                   activeTeacherScene.teacherGender,
                   "hotspot",

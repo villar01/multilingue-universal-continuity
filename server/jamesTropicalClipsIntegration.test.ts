@@ -55,12 +55,13 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
 
-  it("reinicia o clipe do objeto quando o aluno usa o botão explícito de pronúncia do cartão", () => {
+  it("reinicia o clipe do objeto e anima sua frase de exemplo sem mudar o texto falado", () => {
     expect(sceneSource).toContain('onSpeak(hotspot.label, langCode, "object")');
-    expect(sceneSource).toContain('mode === "object" && activeTeacherScene.teacherName === "James"');
+    expect(sceneSource).toContain('(mode === "object" || mode === "example") && activeTeacherScene.teacherName === "James"');
     expect(sceneSource).toContain('sand: "james-tropical-point-sand"');
     expect(sceneSource).toContain('objectFocusClip?.dialogue ?? text');
     expect(sceneSource).toContain('onSpeak(hotspot.example, langCode, "example")');
+    expect(sceneSource).toContain('mode === "object" ? objectFocusClip?.dialogue ?? text : text');
     expect(sceneSource).toContain('onSpeak(hotspot.examplePt, nativeLang, "translation")');
     expect(sceneSource).toContain("setActiveHotspot(null);");
     expect(sceneSource).toContain("setActiveJamesClipId(null);");
