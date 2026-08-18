@@ -1394,6 +1394,17 @@ export default function ImmersiveScene() {
     audio.volume = 1;
     audio.playbackRate = dialogSpeechRate;
     audio.load();
+    const reportAudioEvent = (event: "loaded" | "play" | "play-rejected" | "error", reason?: string) => {
+      console.info("[immersive-audio]", {
+        event,
+        source: source.startsWith("blob:") ? "blob" : "remote",
+        muted: audio.muted,
+        volume: audio.volume,
+        readyState: audio.readyState,
+        duration: Number.isFinite(audio.duration) ? audio.duration : null,
+        reason: reason ?? null,
+      });
+    };
     setDialogAudioSource(source);
     setDialogAudioDuration(null);
     setDialogAudioPosition(0);
@@ -1443,6 +1454,7 @@ export default function ImmersiveScene() {
       setDlgAudioNotice("Toque em Ouvir inglês para continuar a prática de pronúncia.");
     };
     audio.onplay = () => {
+      reportAudioEvent("play");
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
       if (updatesActiveDialog()) setDlgAudioClock(true);
@@ -1454,6 +1466,7 @@ export default function ImmersiveScene() {
         invalidTrackTimeout = null;
       }
       setDialogAudioDuration(audio.duration);
+      reportAudioEvent("loaded");
       updateDialogWordsFromAudio();
       return true;
     };
@@ -1498,12 +1511,16 @@ export default function ImmersiveScene() {
       if (invalidTrackTimeout !== null) window.clearTimeout(invalidTrackTimeout);
       if (revokeOnEnd) URL.revokeObjectURL(source);
     };
-    audio.onerror = useFallbackForInvalidTrack;
+    audio.onerror = () => {
+      reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));
+      useFallbackForInvalidTrack();
+    };
     // A fala só inicia após gesto explícito: envio de escrita ou botão Ouvir.
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     if (autoPlay) {
-      void audio.play().catch(() => {
+      void audio.play().catch((error) => {
+        reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");
         setDlgAudioNotice("Resposta pronta. Toque em Ouvir James para ouvir.");
       });
       return;

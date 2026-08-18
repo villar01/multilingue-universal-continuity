@@ -69,6 +69,17 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(remoteAttempt).toBeGreaterThan(directAttempt);
   });
 
+  it("registra internamente carregamento, reprodução, rejeição e erro do player sem expor a frase", () => {
+    expect(source).toContain('const reportAudioEvent = (event: "loaded" | "play" | "play-rejected" | "error", reason?: string) => {');
+    expect(source).toContain('console.info("[immersive-audio]"');
+    expect(source).toContain('source: source.startsWith("blob:") ? "blob" : "remote"');
+    expect(source).toContain('reportAudioEvent("play");');
+    expect(source).toContain('reportAudioEvent("loaded");');
+    expect(source).toContain('reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");');
+    expect(source).toContain('reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));');
+    expect(source).not.toContain("phrase: phrase");
+  });
+
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
     expect(source).toContain('animation: "none"');
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
