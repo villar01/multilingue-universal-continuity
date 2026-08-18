@@ -13,6 +13,7 @@ export async function registerServiceWorker() {
       const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/',
       });
+      await registration.update();
       console.log('✅ Service Worker registrado:', registration);
 
       // Novos bundles não ficam aguardando uma nova abertura manual. O
