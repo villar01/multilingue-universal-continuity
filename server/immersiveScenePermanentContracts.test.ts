@@ -58,6 +58,14 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain('placeholder="Ex.: What is pool?"');
   });
 
+  it("exibe uma resposta imediatamente e tenta a voz somente após o envio escrito", () => {
+    expect(sceneSource).toContain("const immediateFeedback =");
+    expect(sceneSource).toContain("setDlgFeedback(immediateFeedback);");
+    expect(sceneSource).toContain('requestSpeechSafely(immediateReply.replace(/^[^:]+:\\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);');
+    expect(sceneSource).toContain('role="status" aria-live="polite"');
+    expect(sceneSource).toContain("if (fallback?.immediate) {");
+  });
+
   it("keeps James on a named male browser voice instead of substituting another gender", () => {
     expect(sceneSource).toContain("const maleVoicePattern");
     expect(sceneSource).toContain("if (gender && !preferredVoice) return false;");
