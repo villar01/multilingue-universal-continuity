@@ -1,6 +1,7 @@
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import { Button } from "@/components/ui/button";
 import type { ParetoWord } from "@/lib/curriculum-types";
+import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import { completedProgramCount } from "@/lib/paretoProgress";
 import { getDueParetoReviewIds, getParetoProgramIndex, recordSuccessfulParetoReview, type ParetoReviewSchedule } from "@/lib/paretoSpacedReview";
 import { trpc } from "@/lib/trpc";
@@ -92,6 +93,9 @@ export default function Pareto1000() {
     page,
     pageSize: SESSION_SIZE,
   });
+  useEffect(() => {
+    trackAggregateLearningEvent("open_pareto");
+  }, []);
   const words = useMemo<ParetoWord[]>(() => (paretoQuery.data?.items ?? []).map((word) => ({
     id: word.id,
     enUS: word.targetWord,

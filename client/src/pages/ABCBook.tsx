@@ -2,8 +2,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { speakEdgeTTS } from "@/lib/edgeTTSClient";
 import { createTrialLessonKey } from "@/lib/learningAccess";
+import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronLeft, ChevronRight, MessageCircle, PenLine, Volume2 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
 const CONTEXT_ILLUSTRATIONS = [
@@ -54,6 +55,10 @@ export default function ABCBook() {
     nativeLanguage: profile.nativeCode,
     targetLanguage: profile.targetCode,
   });
+
+  useEffect(() => {
+    trackAggregateLearningEvent("open_abc_book");
+  }, []);
 
   if (bookQuery.isLoading) {
     return <main className="grid min-h-screen place-items-center bg-stone-100 px-6 text-center text-sm font-semibold text-slate-600">Preparando a consulta protegida do Livro ABC…</main>;

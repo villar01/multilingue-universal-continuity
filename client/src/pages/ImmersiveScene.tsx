@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { audioBase64ToObjectUrl } from "@/lib/audioSource";
+import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import VoiceSelector from "../components/VoiceSelector";
 import { useLocation } from "wouter";
 import { FlyingSOSBook } from "@/components/FlyingSOSBook";
@@ -980,6 +981,9 @@ export default function ImmersiveScene() {
   };
 
   const [selectedScene, setSelectedScene] = useState<Scene | null>(() => getInitialScene());
+  useEffect(() => {
+    trackAggregateLearningEvent("open_immersive_scene");
+  }, []);
   const sceneStudyReturnPath = useMemo(() => {
     if (typeof window === "undefined") return "/immersive-scene";
     const params = new URLSearchParams(window.location.search);
