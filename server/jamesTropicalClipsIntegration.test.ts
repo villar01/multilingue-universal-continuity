@@ -16,16 +16,15 @@ describe("integração de clipes de James na Praia Tropical", () => {
     ))).toBe(true);
   });
 
-  it("sobrepõe o vídeo sem retirar a foto e retorna a ela quando a mídia termina ou falha", () => {
+  it("sobrepõe o vídeo sem retirar a foto e mantém saudação ou objeto visíveis até o aluno encerrar o contexto", () => {
     expect(sceneSource).toContain('src={overrideImage || scene.teacherImage}');
     expect(sceneSource).toContain("activeClip?: ScenePilotClip | null;");
     expect(sceneSource).toContain("{showPilotClip && activeClip?.videoUrl && (");
     expect(sceneSource).toContain("autoPlay");
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("playsInline");
-    expect(sceneSource).toContain('loop={activeClip.trigger === "object_focus"}');
-    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
-    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}');
+    expect(sceneSource).toContain('loop={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open"}');
+    expect(sceneSource).toContain('onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}');
     expect(sceneSource).toContain("onError={onClipFinished}");
     expect(sceneSource).toContain('pointerEvents: "none"');
     expect(sceneSource).toContain("zIndex: 2,");

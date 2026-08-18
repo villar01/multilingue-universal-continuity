@@ -649,10 +649,10 @@ function TeacherAvatar({
             autoPlay
             muted
             playsInline
-            loop={activeClip.trigger === "object_focus"}
+            loop={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open"}
             preload="auto"
             aria-label={`Clipe pedagógico de ${activeClip.teacherName}: ${activeClip.dialogue}`}
-            onEnded={activeClip.trigger === "object_focus" ? undefined : onClipFinished}
+            onEnded={activeClip.trigger === "object_focus" || activeClip.trigger === "scene_open" ? undefined : onClipFinished}
             onError={onClipFinished}
             style={{
               position: "absolute",
