@@ -4,6 +4,7 @@ export interface ParetoPracticeTerm {
   word: string;
   translation: string;
   example?: string;
+  exampleTranslation?: string;
 }
 
 export interface ParetoPracticeCheck {

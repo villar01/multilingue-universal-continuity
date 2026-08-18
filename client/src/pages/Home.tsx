@@ -354,7 +354,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <Cpu className="h-5 w-5 flex-shrink-0" />
-              <p className="text-sm font-medium"><strong>IA Local:</strong> Configuração opcional de provedores locais para tarefas de texto.</p>
+              <p className="text-sm font-medium"><strong>IA Local:</strong> Configuração opcional de provedores locais em ambientes compatíveis, para tarefas de texto.</p>
             </div>
             <Link href="/ia-nativa"><button className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-all whitespace-nowrap">Abrir configuração →</button></Link>
           </div>

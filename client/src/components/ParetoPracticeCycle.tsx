@@ -68,8 +68,14 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
 
       {step === "observe" && (
         <div className="space-y-3">
-          <p className="text-sm text-slate-200">Leia, ouça e associe a palavra ao objeto antes de tentar lembrar sem olhar.</p>
-          {term.example && <p className="rounded-xl bg-white/5 p-3 text-base font-semibold">{term.example}</p>}
+          <p className="text-sm text-slate-200">Primeiro compreenda o sentido em português. Depois leia, ouça e associe a palavra ao uso antes de tentar lembrar sem olhar.</p>
+          {term.example && (
+            <div className="rounded-xl border border-cyan-300/20 bg-white/5 p-3">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-200">Uso em inglês</p>
+              <p className="mt-1 text-base font-semibold">{term.example}</p>
+              <p className="mt-2 text-sm font-medium text-amber-100"><span className="font-bold">Em português:</span> {term.exampleTranslation ?? `Sentido da palavra: ${term.translation}.`}</p>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => onSpeak?.(term.word)} className="rounded-xl bg-cyan-500 px-3 py-2 text-sm font-bold text-slate-950">Ouvir voz natural</button>
             <button type="button" onClick={() => setStep("recall")} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Agora lembrar</button>

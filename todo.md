@@ -1588,6 +1588,10 @@
 
 - [x] Adicionar fichas protegidas de aprendizagem e tempo presente A1 ao Livro ABC PT-BR→inglês — fichas de learn e today conectam prática atual e objetivos de estudo às unidades A1, com IPA, padrões, exemplos e prática Pareto; TypeScript, 7 regressões e verificação visual aprovados
 
+- [x] Exibir sentido em português e uso contextual na etapa de observação Pareto antes da memorização — o ciclo mostra uso em inglês e tradução portuguesa antes da recuperação ativa; TypeScript, regressão dedicada e suíte completa com 634 testes aprovados
+
+- [x] Adicionar fichas protegidas de identidade e origem A1 ao Livro ABC PT-BR→inglês — fichas de name e from conectam identidade e origem às unidades A1; TypeScript e suíte completa com 634 testes aprovados
+
 - [x] Impedir que o Livro ABC PT-BR→inglês seja apresentado como conteúdo de outra dupla de idiomas enquanto a edição específica estiver em preparação — a entrega protegida libera o conteúdo atual apenas para português→inglês e oferece continuidade pela Base, Pareto e cenas aos demais pares, sem reutilizar a edição inglesa; TypeScript e 22 regressões do Livro e Base aprovadas
 - [ ] Redigir o manual ABC completo em texto contínuo, com capítulos, explicações, pronúncia, vocabulário, gramática e exercícios autorais
 - [ ] Construir o ABC de Idiomas como estrutura universal para os 144 idiomas, com conteúdo, escrita, pronúncia, gramática e variações próprias por idioma
