@@ -9,6 +9,11 @@ const auditSource = readFileSync("docs/six-language-materials-audit-2026-08-16.m
 const INITIAL_LANGUAGE_VOICES = ["pt-BR", "en-US", "es-ES", "fr-FR", "it-IT", "de-DE"] as const;
 
 describe("consistência permanente das cenas e idiomas iniciais", () => {
+  it("usa recarregamento seguro em desenvolvimento quando o catálogo canônico é atualizado", () => {
+    expect(sceneSource).toContain("// @refresh reset");
+    expect(sceneSource).toContain("recarregar a página preserva a integridade do catálogo");
+  });
+
   it("mantém a contagem declarada de 29 cenas sincronizada com a documentação", () => {
     const sceneCount = (sceneSource.match(/^    id:"/gm) || []).length;
     expect(sceneCount).toBe(29);
