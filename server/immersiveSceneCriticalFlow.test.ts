@@ -36,6 +36,11 @@ describe("contrato crítico da cena imersiva", () => {
     expect(sceneSource).toContain("isOpen={paretoOpen}");
   });
 
+  it("preserva o seletor avançado de voz fora da faixa estreita da cena", () => {
+    expect(sceneSource).toContain('<div className="hidden sm:block">');
+    expect(sceneSource).toContain("<VoiceSelector");
+  });
+
   it("exige ação explícita para a voz de James", () => {
     expect(sceneSource).toContain("▶ Ouvir James");
     expect(sceneSource).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");

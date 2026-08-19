@@ -1,7 +1,4 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-// @refresh reset
-// Esta página combina a interface React e o catálogo canônico das 29 cenas.
-// Em desenvolvimento, recarregar a página preserva a integridade do catálogo.
 import { trpc } from "@/lib/trpc";
 import { audioBase64ToObjectUrl } from "@/lib/audioSource";
 import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
@@ -2846,11 +2843,13 @@ export default function ImmersiveScene() {
             )}
             <ImmersionModeToggle compact />
             {!immersionMode && <>
-              <VoiceSelector
-                langCode={targetLang || effectiveLang(selectedScene)}
-                langName={currentLangInfo.name || selectedScene.name}
-                compact
-              />
+              <div className="hidden sm:block">
+                <VoiceSelector
+                  langCode={targetLang || effectiveLang(selectedScene)}
+                  langName={currentLangInfo.name || selectedScene.name}
+                  compact
+                />
+              </div>
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
               <button
                 onClick={() => setParetoOpen(true)}
