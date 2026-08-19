@@ -1909,6 +1909,7 @@ export default function ImmersiveScene() {
   })();
   // ── Dialog Panel (scrolling text + exercises) ──
   const [dlgOpen, setDlgOpen] = useState(false);
+  const [dlgExpanded, setDlgExpanded] = useState(false);
   const [dlgStep, setDlgStep] = useState(0);
   const [dlgWords, setDlgWords] = useState<string[]>([]);
   const [dlgWordIdx, setDlgWordIdx] = useState(0);
@@ -2857,7 +2858,7 @@ export default function ImmersiveScene() {
                 compact
               />
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
-              <FlyingSOSBook className="relative z-0" />
+              <FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />
               <button
                 onClick={() => setParetoOpen(true)}
                 className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
@@ -3176,11 +3177,10 @@ export default function ImmersiveScene() {
         )}
         {(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog[dlgStep] && (
           <div
-            className="immersive-dialog absolute left-0 right-0 z-[70]"
+            className="immersive-dialog absolute left-3 z-[70]"
             style={{
-              bottom: "clamp(112px, 16vh, 150px)",
-              padding: "0 clamp(8px,2vw,24px)",
-              paddingRight: "clamp(130px,20vw,240px)",
+              bottom: dlgExpanded ? "clamp(112px, 16vh, 150px)" : "18px",
+              width: dlgExpanded ? "min(72vw, 860px)" : "min(92vw, 390px)",
             }}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
@@ -3192,21 +3192,15 @@ export default function ImmersiveScene() {
                 backdropFilter: "blur(12px)",
                 borderRadius: "16px",
                 border: "1px solid rgba(255,255,255,0.12)",
-                padding: "16px 20px",
-                maxHeight: "min(43vh, 340px)",
-                overflowY: "auto",
+                padding: dlgExpanded ? "14px 16px" : "8px 10px",
+                maxHeight: dlgExpanded ? "min(43vh, 340px)" : "none",
+                overflowY: dlgExpanded ? "auto" : "hidden",
               }}
             >
-              <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 pb-2">
+              <div className={`flex items-center justify-between gap-2 ${dlgExpanded ? "mb-3 border-b border-white/10 pb-2" : ""}`}>
                 {!immersionMode && <span className="text-xs font-black uppercase tracking-[0.16em] text-indigo-200">Diálogo da cena</span>}
-                <button
-                  type="button"
-                  onClick={() => setLocation("/base-de-estudos?returnTo=%2Fimmersive-scene")}
-                  className="ml-auto rounded-full border border-amber-300/45 bg-amber-300/10 px-3 py-1 text-xs font-extrabold text-amber-100 hover:bg-amber-300/20"
-                  title="Abrir Consulta Rápida e Total sem perder esta cena"
-                >
-                  {immersionMode ? "Consulta" : "Consulta Rápida e Total"}
-                </button>
+                <span className="min-w-0 flex-1 truncate text-xs font-semibold text-white/80">{activeSceneDialog[dlgStep].text}</span>
+                <button type="button" onClick={() => setDlgExpanded((expanded) => !expanded)} aria-expanded={dlgExpanded} className="shrink-0 rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-extrabold text-cyan-100 hover:bg-cyan-400/20">{dlgExpanded ? "Recolher" : "Abrir"}</button>
                 <button
                   type="button"
                   onClick={() => {
@@ -3221,6 +3215,7 @@ export default function ImmersiveScene() {
                   Fechar
                 </button>
               </div>
+              {dlgExpanded && <div className="mt-3">
               {/* Speaker label */}
               <div className="flex items-center gap-2 mb-2">
                 <span style={{ fontSize: "11px", fontWeight: 700, color: activeSceneDialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -3536,6 +3531,7 @@ export default function ImmersiveScene() {
                   {immersionMode ? "Next →" : "Continuar →"}
                 </button>
               )}
+              </div>}
             </div>
           </div>
         )}

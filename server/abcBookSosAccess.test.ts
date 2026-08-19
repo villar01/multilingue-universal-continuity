@@ -36,9 +36,9 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
 
   it("mantém o acesso voluntário ao SOS na Cena Imersiva e na Lição", () => {
     expect(sceneSource).toContain('import { FlyingSOSBook } from "@/components/FlyingSOSBook"');
-    expect(sceneSource).toContain('<FlyingSOSBook className="relative z-0" />');
+    expect(sceneSource).toContain('<FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />');
     expect(lessonSource).toContain('import { FlyingSOSBook } from "@/components/FlyingSOSBook"');
-    expect(lessonSource).toContain('<FlyingSOSBook className="fixed bottom-6 left-4 z-[80]" />');
+    expect(lessonSource).toContain('<FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />');
   });
 
   it("permite sair do livro e retornar à origem, inclusive depois do Pareto", () => {
@@ -88,8 +88,8 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
     expect(bookSource).toContain("Diálogo curto");
     expect(bookSource).toContain("book.languageBlocks.map");
     expect(bookSource).toContain("Blocos de linguagem A1");
-    expect(bookSource).toContain("const goToChapter = (chapterId: string)");
-    expect(bookSource).toContain('scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })');
-    expect(bookSource).toContain("onClick={() => goToChapter(`capitulo-a1-${index + 1}`)}");
+    expect(bookSource).toContain("const goToChapter = (chapterIndex: number)");
+    expect(bookSource).toContain("goBookPage(firstChapterPage + chapterIndex * 3);");
+    expect(bookSource).toContain("onClick={() => goToChapter(index)}");
   });
 });

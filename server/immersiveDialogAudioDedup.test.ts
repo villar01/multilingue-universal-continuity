@@ -19,6 +19,7 @@ describe("deduplicação de áudio do diálogo imersivo", () => {
 
   it("preserva o painel de diálogo enquanto deduplica apenas a fala", () => {
     expect(sceneSource).toContain("setDlgOpen(true); setDlgStep(0);");
-    expect(sceneSource).toContain("className=\"immersive-dialog absolute left-0 right-0 z-[70]\"");
+    expect(sceneSource).toContain("className=\"immersive-dialog absolute left-3 z-[70]\"");
+    expect(sceneSource).toContain("const [dlgExpanded, setDlgExpanded] = useState(false);");
   });
 });

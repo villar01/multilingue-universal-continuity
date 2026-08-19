@@ -80,7 +80,9 @@ describe("permanent Tropical Beach scene contracts", () => {
   });
 
   it("keeps the dialogue panel compact enough to preserve the scene", () => {
-    expect(sceneSource).toContain('maxHeight: "min(43vh, 340px)"');
+    expect(sceneSource).toContain('maxHeight: dlgExpanded ? "min(43vh, 340px)" : "none"');
+    expect(sceneSource).toContain('width: dlgExpanded ? "min(72vw, 860px)" : "min(92vw, 390px)"');
+    expect(sceneSource).toContain('aria-expanded={dlgExpanded}');
     expect(sceneSource).not.toContain("!immersionMode && dlgFeedback && (");
   });
 });

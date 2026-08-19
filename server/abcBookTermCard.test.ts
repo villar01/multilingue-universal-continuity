@@ -76,8 +76,8 @@ describe("ficha de termo do Livro ABC", () => {
     expect(bookPage).toContain("/base-de-estudos?unit=");
     expect(bookPage).toContain('aria-label="Sumário dos capítulos A1"');
     expect(bookPage).toContain('id="sumario-a1"');
-    expect(bookPage).toContain('onClick={() => goToChapter(`capitulo-a1-${index + 1}`)}');
-    expect(bookPage).toContain('scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })');
+    expect(bookPage).toContain('onClick={() => goToChapter(index)}');
+    expect(bookPage).toContain('goBookPage(firstChapterPage + chapterIndex * 3);');
     expect(bookPage).toContain('const chapterId = `capitulo-a1-${index + 1}`');
     expect(bookPage).toContain("id={chapterId}");
     expect(bookPage).toContain('href="#sumario-a1"');

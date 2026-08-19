@@ -13,8 +13,10 @@ const noticeSource = readFileSync(
 
 describe("visibilidade do diálogo imersivo", () => {
   it("mantém o painel acima da barra inferior e com identificação explícita", () => {
-    expect(sceneSource).toContain('className="immersive-dialog absolute left-0 right-0 z-[70]"');
-    expect(sceneSource).toContain('bottom: "clamp(112px, 16vh, 150px)"');
+    expect(sceneSource).toContain('className="immersive-dialog absolute left-3 z-[70]"');
+    expect(sceneSource).toContain('bottom: dlgExpanded ? "clamp(112px, 16vh, 150px)" : "18px"');
+    expect(sceneSource).toContain('width: dlgExpanded ? "min(72vw, 860px)" : "min(92vw, 390px)"');
+    expect(sceneSource).toContain('{dlgExpanded && <div className="mt-3">');
     expect(sceneSource).toContain('aria-label="Diálogo da cena"');
     expect(sceneSource).toContain('className="absolute left-0 right-0 z-40 flex items-center justify-between px-4 py-3"');
   });

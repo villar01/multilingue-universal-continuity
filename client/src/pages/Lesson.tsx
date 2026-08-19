@@ -1609,7 +1609,7 @@ export default function Lesson() {
           position="bottom-right"
         />
       )}
-      <FlyingSOSBook className="fixed bottom-6 left-4 z-[80]" />
+      <FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />
     </ContentProtection>
   );
 }

@@ -4,7 +4,7 @@ import { speakEdgeTTS } from "@/lib/edgeTTSClient";
 import { createTrialLessonKey } from "@/lib/learningAccess";
 import { trackAggregateLearningEvent } from "@/lib/aggregateAnalytics";
 import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronLeft, ChevronRight, MessageCircle, PenLine, Volume2 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
 const CONTEXT_ILLUSTRATIONS = [
@@ -49,6 +49,7 @@ export default function ABCBook() {
   const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
   const bookPagesRef = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(1);
+  const [pageDirection, setPageDirection] = useState<"forward" | "backward">("forward");
   const [playingNativeText, setPlayingNativeText] = useState<string | null>(null);
   const bookQuery = trpc.curriculum.abcBook.useQuery({
     lessonKey: createTrialLessonKey(location),
@@ -108,7 +109,7 @@ export default function ABCBook() {
   }
 
   const totalBookPages =
-    2 +
+    3 +
     book.manualLeaves.length +
     book.soundLessons.length +
     book.progressiveLessons.length +
@@ -118,27 +119,39 @@ export default function ABCBook() {
     book.chapters.length * 3 +
     book.sections.length +
     2;
+  const firstChapterPage =
+    2 +
+    book.manualLeaves.length +
+    1 +
+    book.soundLessons.length +
+    book.progressiveLessons.length +
+    2 +
+    book.contextGroups.length +
+    5;
+  const bookIndex = [
+    { label: "Como estudar", page: 2 },
+    { label: "Alfabeto e sons", page: 3 + book.manualLeaves.length },
+    { label: "Palavras e contextos", page: 5 + book.manualLeaves.length + book.soundLessons.length + book.progressiveLessons.length },
+    { label: "Frases de sobrevivência", page: firstChapterPage - 4 },
+    { label: "Capítulos A1", page: firstChapterPage },
+    { label: "Exercício Pareto", page: totalBookPages - 1 },
+  ];
   const goBookPage = (page: number) => {
-    const container = bookPagesRef.current;
-    if (!container) return;
     const safePage = Math.min(totalBookPages, Math.max(1, page));
-    container.scrollTo({ left: (safePage - 1) * container.clientWidth, behavior: "smooth" });
+    setPageDirection(safePage >= activePage ? "forward" : "backward");
+    setActivePage(safePage);
+    window.requestAnimationFrame(() => bookPagesRef.current?.focus());
   };
   const moveBookPage = (direction: -1 | 1) => {
     goBookPage(activePage + direction);
   };
-  const updateActiveBookPage = () => {
-    const container = bookPagesRef.current;
-    if (!container) return;
-    setActivePage(Math.min(totalBookPages, Math.max(1, Math.round(container.scrollLeft / container.clientWidth) + 1)));
-  };
-  const goToChapter = (chapterId: string) => {
-    document.getElementById(chapterId)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  const goToChapter = (chapterIndex: number) => {
+    goBookPage(firstChapterPage + chapterIndex * 3);
   };
 
   return (
     <main className="min-h-screen bg-stone-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
-      <article className="abc-book-manuscript mx-auto max-w-4xl">
+      <article className="abc-book-manuscript mx-auto max-w-3xl">
         <header className="abc-book-leaf px-6 py-6 sm:px-10 sm:py-8">
           <button type="button" onClick={() => setLocation(returnTo)} className="mb-7 inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-slate-950">
             <ArrowLeft className="h-4 w-4" /> Voltar à atividade
@@ -153,13 +166,40 @@ export default function ABCBook() {
           </div>
         </header>
 
-        <nav className="abc-book-page-controls" aria-label="Navegação entre folhas">
-          <button type="button" onClick={() => moveBookPage(-1)} disabled={activePage === 1} className="inline-flex items-center gap-2"><ChevronLeft className="h-4 w-4" /> Folha anterior</button>
-          <p aria-live="polite">Folha {activePage} de {totalBookPages}</p>
-          <button type="button" onClick={() => moveBookPage(1)} disabled={activePage === totalBookPages} className="inline-flex items-center gap-2">Próxima folha <ChevronRight className="h-4 w-4" /></button>
-        </nav>
-
-        <div ref={bookPagesRef} onScroll={updateActiveBookPage} className="abc-book-pages" aria-label="Folhas do Livro ABC" tabIndex={0}>
+        <div
+          ref={bookPagesRef}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") { event.preventDefault(); moveBookPage(-1); }
+            if (event.key === "ArrowRight") { event.preventDefault(); moveBookPage(1); }
+          }}
+          className="abc-book-pages"
+          aria-label="Folhas do Livro ABC"
+          tabIndex={0}
+        >
+          <div
+            className="abc-book-page-track"
+            data-direction={pageDirection}
+            style={{
+              "--abc-book-page-count": totalBookPages,
+              width: `${totalBookPages * 100}%`,
+              transform: `translateX(-${(activePage - 1) * (100 / totalBookPages)}%)`,
+            } as CSSProperties}
+          >
+          <section className="abc-book-index abc-book-index-leaf" aria-label="Índice do Livro ABC">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Índice</p>
+            <h2 className="mt-2 font-serif text-3xl font-bold text-slate-950">Caminho de estudo</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Abra qualquer folha diretamente. O conteúdo permanece organizado como um livro de consulta simples.</p>
+            <div className="abc-book-index-links mt-7">
+              {bookIndex.map((entry) => <button type="button" key={entry.label} onClick={() => goBookPage(entry.page)}>{entry.label} <span>folha {entry.page}</span></button>)}
+              {book.chapters.map((chapter, index) => <button type="button" key={chapter.title} onClick={() => goToChapter(index)}>Capítulo {index + 1}: {chapter.title} <span>folha {firstChapterPage + index * 3}</span></button>)}
+            </div>
+            <label className="mt-7 block text-sm font-bold text-slate-700">
+              Ir diretamente à folha
+              <select value={activePage} onChange={(event) => goBookPage(Number(event.target.value))} aria-label="Ir diretamente a uma folha" className="ml-3">
+                {Array.from({ length: totalBookPages }, (_, index) => index + 1).map((page) => <option key={page} value={page}>Folha {page}</option>)}
+              </select>
+            </label>
+          </section>
           <section className="grid gap-6 border-l-4 border-amber-400 pl-5 sm:grid-cols-[1fr_11rem] sm:items-center">
             <div>
               <h2 className="font-serif text-2xl font-bold">Como estudar nesta consulta</h2>
@@ -394,7 +434,7 @@ export default function ABCBook() {
               <ol className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
                 {book.chapters.map((chapter, index) => (
                   <li key={chapter.title}>
-                    <button type="button" onClick={() => goToChapter(`capitulo-a1-${index + 1}`)} className="text-left text-sm font-semibold text-slate-700 underline-offset-4 transition hover:text-amber-800 hover:underline">
+                    <button type="button" onClick={() => goToChapter(index)} className="text-left text-sm font-semibold text-slate-700 underline-offset-4 transition hover:text-amber-800 hover:underline">
                       {index + 1}. {chapter.title}
                     </button>
                   </li>
@@ -469,7 +509,14 @@ export default function ABCBook() {
           <section className="rounded-sm border border-slate-200 bg-slate-50 p-5 sm:p-6"><div className="flex items-start gap-3"><BrainCircuit className="mt-0.5 h-6 w-6 shrink-0 text-violet-700" /><div><h2 className="font-serif text-xl font-bold">Exercício Pareto para esta dupla</h2><p className="mt-2 leading-7 text-slate-700">Escolha uma palavra, ouça, escreva uma frase útil e responda sem olhar. Ao sair da prática, você volta para este livro; depois, retorna à sua cena ou lição.</p><a href={paretoHref} className="mt-5 inline-flex items-center gap-2 rounded-md bg-violet-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-800 active:scale-[0.97]"><BrainCircuit className="h-4 w-4" /> Abrir prática Pareto</a></div></div></section>
 
           <section className="grid gap-4 border-t border-stone-200 pt-7 sm:grid-cols-3"><div className="flex gap-3"><Volume2 className="h-5 w-5 shrink-0 text-sky-700" /><p className="text-sm leading-6 text-slate-700"><strong>Ouvir:</strong> repita a frase em blocos curtos.</p></div><div className="flex gap-3"><PenLine className="h-5 w-5 shrink-0 text-emerald-700" /><p className="text-sm leading-6 text-slate-700"><strong>Escrever:</strong> troque uma palavra e preserve a estrutura.</p></div><div className="flex gap-3"><CheckCircle2 className="h-5 w-5 shrink-0 text-amber-700" /><p className="text-sm leading-6 text-slate-700"><strong>Aplicar:</strong> volte ao professor e use a ideia em contexto.</p></div></section>
+          </div>
         </div>
+
+        <nav className="abc-book-page-controls" aria-label="Navegação entre folhas">
+          <button type="button" onClick={() => moveBookPage(-1)} disabled={activePage === 1} className="inline-flex items-center gap-2"><ChevronLeft className="h-4 w-4" /> Folha anterior</button>
+          <p aria-live="polite">Folha {activePage} de {totalBookPages}</p>
+          <button type="button" onClick={() => moveBookPage(1)} disabled={activePage === totalBookPages} className="inline-flex items-center gap-2">Próxima folha <ChevronRight className="h-4 w-4" /></button>
+        </nav>
 
         <footer className="abc-book-leaf bg-stone-50 px-6 py-5 text-center sm:px-10"><button type="button" onClick={() => setLocation(returnTo)} className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-slate-100 active:scale-[0.97]"><ArrowLeft className="h-4 w-4" /> Retornar à atividade</button></footer>
       </article>

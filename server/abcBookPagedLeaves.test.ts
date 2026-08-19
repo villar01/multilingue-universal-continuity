@@ -11,17 +11,24 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(page).toContain("abc-book-pages");
     expect(page).toContain("abc-book-chapter-leaf");
     expect(page).toContain("abc-book-page-controls");
+    expect(page).toContain("abc-book-index");
+    expect(page).toContain("abc-book-page-track");
     expect(page).toContain("moveBookPage");
     expect(page).toContain("goBookPage");
+    expect(page).toContain("setActivePage(safePage);");
+    expect(page).toContain("firstChapterPage");
+    expect(page).toContain("Ir diretamente à folha");
+    expect(page).toContain('event.key === "ArrowRight"');
     expect(page).toContain("book.soundLessons.map((lesson, lessonIndex)");
   });
 
   it("mantém folhas claras com separação, sem retirar a leitura do currículo", () => {
-    expect(styles).toContain(".abc-book-pages > section");
+    expect(styles).toContain(".abc-book-page-track > section");
     expect(styles).toContain("background: white");
     expect(styles).toContain("break-inside: avoid");
-    expect(styles).toContain("scroll-snap-type: x mandatory");
-    expect(styles).toContain("grid-auto-flow: column");
+    expect(styles).toContain(".abc-book-page-track");
+    expect(styles).toContain("flex: 0 0 calc(100% / var(--abc-book-page-count))");
+    expect(styles).toContain("perspective: 1400px");
   });
 
   it("coloca cada contexto semântico em uma folha própria", () => {
