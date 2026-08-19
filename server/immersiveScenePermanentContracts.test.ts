@@ -80,13 +80,6 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("if (preferredVoice) utterance.voice = preferredVoice;");
   });
 
-  it("keeps James moving during confirmed speech while the lateral clip is still loading", () => {
-    expect(sceneSource).toContain("const [pilotClipPlaybackConfirmed, setPilotClipPlaybackConfirmed] = useState(false);");
-    expect(sceneSource).toContain("!showPilotClip || !pilotClipPlaybackConfirmed");
-    expect(sceneSource).toContain("setPilotClipPlaybackConfirmed(true);");
-    expect(sceneSource).toContain('aria-label="James em movimento corporal durante a fala confirmada"');
-  });
-
   it("keeps the dialogue panel compact enough to preserve the scene", () => {
     expect(sceneSource).toContain('maxHeight: dlgExpanded ? "min(43vh, 340px)" : "none"');
     expect(sceneSource).toContain('width: dlgExpanded ? "min(72vw, 860px)" : "min(92vw, 390px)"');

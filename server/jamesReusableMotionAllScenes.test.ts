@@ -4,14 +4,15 @@ import { resolve } from "node:path";
 
 const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
 
-describe("James reusable motion across immersive scenes", () => {
-  it("keeps one neutral, silent visual asset gated by confirmed speaking", () => {
-    expect(sceneSource).toContain('JAMES_NEUTRAL_MOTION_URL = "/manus-storage/james-neutral-reusable-motion-portrait-alpha_315ce2e1.webm"');
-    expect(sceneSource).toMatch(/showNeutralJamesMotion\s+&&\s+isSpeaking\s+&&\s+\(!showPilotClip \|\| !pilotClipPlaybackConfirmed\)/);
-    expect(sceneSource).toContain("muted");
-    expect(sceneSource).toContain("overrideName=\"James\"");
-    expect(sceneSource).toContain("overrideImage={JAMES_CANONICAL_PORTRAIT_URL}");
-    expect(sceneSource).toContain("showNeutralJamesMotion");
+describe("James motion promotion in immersive scenes", () => {
+  it("uses only the approved lateral clip after the audio player confirms playback", () => {
+    expect(sceneSource).toContain("audio.onplaying = () => {");
+    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(sceneSource).toContain("showPilotClip && activeClip?.videoUrl");
+    expect(sceneSource).not.toContain("JAMES_NEUTRAL_MOTION_URL");
+    expect(sceneSource).not.toContain("showNeutralJamesMotion");
+    expect(sceneSource).toContain('overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}');
+    expect(sceneSource).toContain('overrideImage={selectedScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}');
   });
 
   it("preserves the no-synthetic-mouth contract while visual motion is active", () => {

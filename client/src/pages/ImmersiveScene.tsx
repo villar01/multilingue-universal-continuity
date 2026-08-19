@@ -46,7 +46,6 @@ type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;
 const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";
 const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-exact-fallback_2d892849.wav";
 const JAMES_CANONICAL_PORTRAIT_URL = "/manus-storage/prof_james_b9f2fff7.png";
-const JAMES_NEUTRAL_MOTION_URL = "/manus-storage/james-neutral-reusable-motion-portrait-alpha_315ce2e1.webm";
 
 // Estas reservas curtas pronunciam apenas o vocabulário do cartão. Como não
 // são a trilha sonora do clipe roteirizado completo, o retrato permanece
@@ -210,7 +209,6 @@ function TeacherAvatar({
   overrideName,
   overrideImage,
   activeClip,
-  showNeutralJamesMotion,
   onClipFinished,
   onExactClipPlaying,
   onExactClipEnded,
@@ -228,8 +226,6 @@ function TeacherAvatar({
   overrideName?: string;
   overrideImage?: string;
   activeClip?: ScenePilotClip | null;
-  /** Movimento corporal neutro de James, sem voz ou boca sintética. */
-  showNeutralJamesMotion?: boolean;
   onClipFinished?: () => void;
   onExactClipPlaying?: () => void;
   onExactClipEnded?: () => void;
@@ -269,20 +265,11 @@ function TeacherAvatar({
     hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking && !activeClipHasExactAudioVideoPair),
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
-  const [pilotClipPlaybackConfirmed, setPilotClipPlaybackConfirmed] = useState(false);
-  useEffect(() => {
-    setPilotClipPlaybackConfirmed(false);
-  }, [activeClip?.id, isSpeaking]);
   const showPilotClip = Boolean(
     (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
       && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
-  );
-  const showReusableJamesMotion = Boolean(
-    showNeutralJamesMotion
-      && isSpeaking
-      && (!showPilotClip || !pilotClipPlaybackConfirmed),
   );
   const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;
   const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());
@@ -372,7 +359,6 @@ function TeacherAvatar({
             data-teacher-pose={teacherPoseCue?.pose.id}
             data-teacher-audio-intent={teacherPoseCue?.audioIntent}
             onPlaying={() => {
-              setPilotClipPlaybackConfirmed(true);
               if (activeClipHasExactAudioVideoPair) onExactClipPlaying?.();
             }}
             onEnded={() => {
@@ -392,32 +378,6 @@ function TeacherAvatar({
               borderRadius: "12px",
               pointerEvents: "none",
               zIndex: 2,
-            }}
-          />
-        )}
-        {showReusableJamesMotion && (
-          <video
-            key="james-neutral-reusable-motion"
-            src={JAMES_NEUTRAL_MOTION_URL}
-            autoPlay
-            muted
-            playsInline
-            loop
-            preload="auto"
-            aria-label="James em movimento corporal durante a fala confirmada"
-            onError={(event) => {
-              // O retrato canônico abaixo permanece como fallback imediato.
-              (event.currentTarget as HTMLVideoElement).style.display = "none";
-            }}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              borderRadius: "12px",
-              pointerEvents: "none",
-              zIndex: 3,
             }}
           />
         )}
@@ -2724,9 +2684,8 @@ export default function ImmersiveScene() {
           spokenText={activeSpeechText || greetingText}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
-          overrideName="James"
-          overrideImage={JAMES_CANONICAL_PORTRAIT_URL}
-          showNeutralJamesMotion
+          overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
+          overrideImage={selectedScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}
           onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}
           onExactClipPlaying={() => {
             setIsPreparingNeuralAudio(false);
