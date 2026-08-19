@@ -10,7 +10,7 @@
 import { getDb } from "../db";
 import { generateAI } from "../aiProvider";
 import { notifyOwner } from "../_core/notification";
-import { createScheduledMaintenanceAssessment } from "../../shared/continuousMaintenanceContract";
+import { assessBackupForMaintenance, createScheduledMaintenanceAssessment, type ScheduledMaintenanceAssessment } from "../../shared/continuousMaintenanceContract";
 
 interface TelemetryRow {
   event_type: string;
@@ -29,6 +29,42 @@ function extractInsertId(result: unknown): number {
   return typeof insertId === "number" ? insertId : 0;
 }
 
+function extractFirstRow(result: unknown): Record<string, unknown> | null {
+  const rows = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+  return Array.isArray(rows) && rows[0] && typeof rows[0] === "object"
+    ? rows[0] as Record<string, unknown>
+    : null;
+}
+
+function toTimestampMs(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+async function recordBlockedMaintenanceRun(
+  pool: { execute: (query: string, values?: unknown[]) => Promise<unknown> },
+  maintenanceAssessment: ScheduledMaintenanceAssessment,
+  summary: string,
+  detectedIssues: number,
+): Promise<void> {
+  await pool.execute(`
+    INSERT INTO maintenance_runs
+      (source, decision, summary, detected_issues, verifications)
+    VALUES (?, ?, ?, ?, ?)
+  `, [
+    "ai_self_improve",
+    maintenanceAssessment.decision.state,
+    summary,
+    detectedIssues,
+    JSON.stringify(maintenanceAssessment.verifications),
+  ]);
+}
+
 export async function runAISelfImprove(): Promise<{ success: boolean; message: string; insightId?: number }> {
   const db = await getDb();
   const today = new Date().toISOString().split("T")[0];
@@ -37,9 +73,36 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
   // Ambos são aceitos; o resultado é normalizado antes de ser consumido.
   const client = db.$client as any;
   const pool = typeof client.promise === "function" ? client.promise() : client;
-  const maintenanceAssessment = createScheduledMaintenanceAssessment();
 
   try {
+    const backupResult = await pool.execute(`
+      SELECT status, checksum, completed_at
+      FROM backup_snapshots
+      ORDER BY completed_at DESC
+      LIMIT 1
+    `);
+    const backupRow = extractFirstRow(backupResult);
+    const backupVerification = assessBackupForMaintenance(backupRow ? {
+      status: String(backupRow.status || ""),
+      checksum: typeof backupRow.checksum === "string" ? backupRow.checksum : null,
+      completedAtMs: toTimestampMs(backupRow.completed_at),
+    } : null);
+    const maintenanceAssessment = createScheduledMaintenanceAssessment(backupVerification);
+
+    if (backupVerification.status !== "passed") {
+      await recordBlockedMaintenanceRun(
+        pool,
+        maintenanceAssessment,
+        "Manutenção bloqueada: não há backup recente e verificável.",
+        1,
+      );
+      await notifyOwner({
+        title: "Manutenção preventiva bloqueada",
+        content: "A manutenção não foi iniciada porque o backup recente e verificável não está disponível. Nenhuma alteração foi aplicada ao aplicativo.",
+      });
+      return { success: false, message: "Backup verificado indisponível; manutenção bloqueada." };
+    }
+
     // 1. Coletar telemetria das últimas 24h
     const telemetryResult = await pool.execute(`
       SELECT 
@@ -55,6 +118,12 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
     const telemetryRows = extractTelemetryRows(telemetryResult);
 
     if (!telemetryRows || telemetryRows.length === 0) {
+      await recordBlockedMaintenanceRun(
+        pool,
+        maintenanceAssessment,
+        "Diagnóstico agendado concluído sem telemetria nas últimas 24 horas.",
+        0,
+      );
       return { success: true, message: "Sem telemetria para analisar nas últimas 24h." };
     }
 
@@ -104,17 +173,12 @@ IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permiss�
 
     // O diagnóstico é sempre uma proposta bloqueada: ele não executa TypeScript,
     // regressões ou publicação e nunca altera produção por conta própria.
-    await pool.execute(`
-      INSERT INTO maintenance_runs
-        (source, decision, summary, detected_issues, verifications)
-      VALUES (?, ?, ?, ?, ?)
-    `, [
-      "ai_self_improve",
-      maintenanceAssessment.decision.state,
+    await recordBlockedMaintenanceRun(
+      pool,
+      maintenanceAssessment,
       String(diagnosis.topIssue || "Diagnóstico agendado concluído para revisão."),
       totalErrors + Number(diagnosis.securityAlerts?.length || 0),
-      JSON.stringify(maintenanceAssessment.verifications),
-    ]);
+    );
 
     // 4. Salvar insight no banco
     const insertResult = await pool.execute(`
