@@ -1,62 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-export interface NotebookEntry {
-  id: string;
-  word: string;         // Palavra no idioma alvo
-  translation: string;  // Tradução no idioma nativo
-  pronunciation: string;
-  example: string;
-  examplePt: string;
-  langCode: string;
-  scene?: string;
-  addedAt: number;      // UTC timestamp
-  reviewed: number;     // Quantas vezes revisou
-  starred: boolean;     // Favorito
-  note?: string;        // Anotação pessoal do aluno
-}
+import { type NotebookEntry, loadNotebook, saveNotebook } from "@/lib/notebookStorage";
 
 interface NotebookProps {
   isOpen: boolean;
   onClose: () => void;
   onSpeak: (text: string, lang: string) => void;
   nativeLang?: string;
-}
-
-// ─── Persistent storage helpers ───────────────────────────────────────────────
-const STORAGE_KEY = "ml_notebook_entries";
-
-export function loadNotebook(): NotebookEntry[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveNotebook(entries: NotebookEntry[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-}
-
-export function addToNotebook(entry: Omit<NotebookEntry, "id" | "addedAt" | "reviewed" | "starred">): NotebookEntry {
-  const entries = loadNotebook();
-  const existing = entries.find(e => e.word === entry.word && e.langCode === entry.langCode);
-  if (existing) {
-    existing.reviewed += 1;
-    saveNotebook(entries);
-    return existing;
-  }
-  const newEntry: NotebookEntry = {
-    ...entry,
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    addedAt: Date.now(),
-    reviewed: 0,
-    starred: false,
-  };
-  entries.unshift(newEntry);
-  saveNotebook(entries);
-  return newEntry;
 }
 
 // ─── Flag helper ──────────────────────────────────────────────────────────────
