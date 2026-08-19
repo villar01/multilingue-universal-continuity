@@ -291,7 +291,7 @@
     padding: 0.3rem 0.45rem;
   }
 
-  .sos-floating-book {
+  .sos-floating-book[data-compact="false"] {
     min-width: 8.5rem;
   }
 

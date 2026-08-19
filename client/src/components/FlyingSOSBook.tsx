@@ -15,7 +15,8 @@ export function FlyingSOSBook({
     <button
       type="button"
       onClick={() => setLocation(getABCBookHref(location))}
-      className={`${className} sos-floating-book group flex items-center ${compact ? "gap-0 p-2" : "gap-2 px-3 py-2"} rounded-md border border-amber-200/80 bg-white text-slate-900 shadow-xl transition duration-200 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.97]`}
+      data-compact={compact ? "true" : "false"}
+      className={`${className} sos-floating-book group flex items-center ${compact ? "h-11 w-11 justify-center gap-0 p-0" : "gap-2 px-3 py-2"} rounded-md border border-amber-200/80 bg-white text-slate-900 shadow-xl transition duration-200 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.97]`}
       aria-label="Socorro: abrir o Livro ABC de Idiomas e retornar a esta atividade"
       title="SOS — abrir o Livro ABC de Idiomas"
     >

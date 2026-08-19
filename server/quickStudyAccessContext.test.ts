@@ -46,6 +46,8 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(appSource).toContain('path="/abc-book"');
     expect(sceneSource).toContain("FlyingSOSBook");
     expect(lessonSource).toContain("FlyingSOSBook");
+    expect(sceneSource).toContain('<FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />');
+    expect(lessonSource).toContain('<FlyingSOSBook compact className="fixed bottom-4 left-4 z-[80]" />');
     expect(bookSource).toContain("getSafeReturnTo");
     expect(bookSource).toContain("pareto-1000?returnTo=");
     expect(appSource).toContain("QuickStudyAccess");

@@ -14,6 +14,14 @@ describe("catálogo de movimento docente por cena", () => {
     }
   });
 
+  it("mantém um professor canônico e um fallback de retrato em toda cena", () => {
+    for (const entry of SCENE_TEACHER_MOTION_CATALOG) {
+      expect(entry.teacherName.trim().length).toBeGreaterThan(0);
+      expect(["approved", "planned", "portrait_only"]).toContain(entry.status);
+      expect(entry.visibleOnlyDuringConfirmedAudio).toBe(true);
+    }
+  });
+
   it("preserva os professores canônicos e separa a Praia aprovada da Floresta planejada", () => {
     expect(getSceneTeacherMotionCatalogEntry("beach")).toMatchObject({ teacherName: "James", status: "approved" });
     expect(getSceneTeacherMotionCatalogEntry("forest")).toMatchObject({ teacherName: "James", status: "planned" });

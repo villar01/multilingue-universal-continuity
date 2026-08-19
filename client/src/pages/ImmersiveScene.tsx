@@ -2492,7 +2492,7 @@ export default function ImmersiveScene() {
           </div>
         </div>
 
-        {!immersionMode && <FlyingSOSBook className="fixed left-4 top-1/2 z-[90] -translate-y-1/2" />}
+        {!immersionMode && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
 
         {/* AR Hotspots */}
         {activeSceneHotspots.map((hotspot) => {

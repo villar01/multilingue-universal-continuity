@@ -38,9 +38,9 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
 
   it("mantém o acesso voluntário ao SOS na Cena Imersiva e na Lição", () => {
     expect(sceneSource).toContain('import { FlyingSOSBook } from "@/components/FlyingSOSBook"');
-    expect(sceneSource).toContain('<FlyingSOSBook className="fixed left-4 top-1/2 z-[90] -translate-y-1/2" />');
+    expect(sceneSource).toContain('<FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />');
     expect(lessonSource).toContain('import { FlyingSOSBook } from "@/components/FlyingSOSBook"');
-    expect(lessonSource).toContain('<FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />');
+    expect(lessonSource).toContain('<FlyingSOSBook compact className="fixed bottom-4 left-4 z-[80]" />');
   });
 
   it("permite sair do livro e retornar à origem, inclusive depois do Pareto", () => {
