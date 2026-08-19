@@ -88,6 +88,13 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain("setActiveJamesClipId(null);");
   });
 
+  it("mantém a mesma regra para a reserva local: clipe só inicia em utterance.onstart e termina com a voz", () => {
+    expect(sceneSource).toContain("utterance.onstart = () => {");
+    expect(sceneSource).toContain('selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current');
+    expect(sceneSource).toContain("const finish = () => {");
+    expect(sceneSource).toContain("pendingJamesClipIdRef.current = null;");
+  });
+
   it("mantém a rota lateral previamente validada como backup ativo da apresentação", () => {
     const greeting = JAMES_TROPICAL_PILOT_CLIPS.find((clip) => clip.id === "james-tropical-greeting");
     const dialogStart = sceneSource.slice(sceneSource.indexOf("const startDialog"), sceneSource.indexOf("useEffect(() => {", sceneSource.indexOf("const startDialog")));

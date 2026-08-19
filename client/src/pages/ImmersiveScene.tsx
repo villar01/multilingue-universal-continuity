@@ -1408,6 +1408,10 @@ export default function ImmersiveScene() {
         setAudioViseme(null);
         setIsSpeaking(false);
         setIsPreparingNeuralAudio(false);
+        setActiveJamesClipId(null);
+        setActiveSophieClipId(null);
+        pendingJamesClipIdRef.current = null;
+        pendingSophieClipIdRef.current = null;
         if (localSpeechRef.current === utterance) {
           localSpeechRef.current = null;
           setActiveSpeechText("");
@@ -1417,6 +1421,17 @@ export default function ImmersiveScene() {
       utterance.onstart = () => {
         setIsPreparingNeuralAudio(false);
         setIsSpeaking(true);
+        // A reserva local também tem um evento real de início de áudio. Assim,
+        // o movimento lateral já aprovado só aparece quando a fala de fato
+        // começou — nunca no clique, na preparação ou no silêncio.
+        if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
+          setActiveJamesClipId(pendingJamesClipIdRef.current);
+          pendingJamesClipIdRef.current = null;
+        }
+        if (selectedScene?.id === "cafe" && selectedScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
+          setActiveSophieClipId(pendingSophieClipIdRef.current);
+          pendingSophieClipIdRef.current = null;
+        }
         if (activeDialogLineRef.current === text) setDlgAudioClock(false);
       };
       utterance.onend = finish;
@@ -1430,7 +1445,7 @@ export default function ImmersiveScene() {
       return true;
     };
     return startWithAvailableVoices(2);
-  }, [dialogSpeechRate, stopVisemeSync]);
+  }, [dialogSpeechRate, selectedScene?.id, selectedScene?.teacherName, stopVisemeSync]);
 
   const playGuestBrowserVoice = useCallback((text: string, language: string, gender?: 'male' | 'female') => {
     const requestKey = `browser-dialog:${language}:${gender || "female"}:${text}`;
