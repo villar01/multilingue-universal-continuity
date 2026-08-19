@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { __resetSecurityStateForTests, securityMiddleware } from "./securityMiddleware";
 import { __resetAbuseProtectionForTests } from "./_core/abuseProtection";
 
@@ -88,6 +88,49 @@ describe("securityMiddleware", () => {
     securityMiddleware(request as any, response as any, () => undefined);
     expect(response.statusCode).toBe(429);
     expect(response.body).toEqual({ error: "Servidor sobrecarregado. Tente novamente." });
+  });
+
+  it("não deixa o excesso de uma origem bloquear a navegação legítima de outra", () => {
+    const abusiveIp = "198.51.100.32";
+    const legitimateIp = "198.51.100.33";
+    for (let count = 0; count < 1000; count += 1) {
+      securityMiddleware(createRequest(abusiveIp, {}, "/assets/scene_beach.jpg") as any, createResponse() as any, () => undefined);
+    }
+
+    const abusiveResponse = createResponse();
+    securityMiddleware(createRequest(abusiveIp, {}, "/assets/scene_beach.jpg") as any, abusiveResponse as any, () => undefined);
+    expect(abusiveResponse.statusCode).toBe(429);
+
+    const legitimateResponse = createResponse();
+    let continued = false;
+    securityMiddleware(createRequest(legitimateIp, {}, "/immersive-scene?scene=beach") as any, legitimateResponse as any, () => { continued = true; });
+    expect(continued).toBe(true);
+    expect(legitimateResponse.statusCode).toBe(200);
+
+    const apiResponse = createResponse();
+    let apiContinued = false;
+    securityMiddleware(createRequest(legitimateIp, {}, "/api/trpc/lessons.list?batch=1") as any, apiResponse as any, () => { apiContinued = true; });
+    expect(apiContinued).toBe(true);
+    expect(apiResponse.statusCode).toBe(200);
+  });
+
+  it("recupera uma origem depois que a janela de limitação expira", () => {
+    const now = vi.spyOn(Date, "now").mockReturnValue(1_000);
+    const ip = "198.51.100.34";
+    for (let count = 0; count < 1000; count += 1) {
+      securityMiddleware(createRequest(ip, {}, "/assets/scene_beach.jpg") as any, createResponse() as any, () => undefined);
+    }
+
+    const blockedResponse = createResponse();
+    securityMiddleware(createRequest(ip, {}, "/assets/scene_beach.jpg") as any, blockedResponse as any, () => undefined);
+    expect(blockedResponse.statusCode).toBe(429);
+
+    now.mockReturnValue(61_001);
+    const recoveredResponse = createResponse();
+    let continued = false;
+    securityMiddleware(createRequest(ip, {}, "/immersive-scene?scene=beach") as any, recoveredResponse as any, () => { continued = true; });
+    expect(continued).toBe(true);
+    expect(recoveredResponse.statusCode).toBe(200);
   });
 
   it("mantém proteção mais estrita para rotas de autenticação", () => {

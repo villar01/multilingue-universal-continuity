@@ -9,7 +9,7 @@ const API_RATE_LIMIT_MAX = 300;
 const AUTH_RATE_LIMIT_MAX = 30;
 
 // ── DDoS Protection ───────────────────────────────────────────
-const globalRequestCounts = { count: 0, resetTime: Date.now() + RATE_LIMIT_WINDOW };
+const globalRequestCounts = new Map<string, { count: number; resetTime: number }>();
 const GLOBAL_RATE_LIMIT = 1000;
 
 // ── SQL Injection Patterns ────────────────────────────────────
@@ -125,12 +125,13 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   });
 
   // DDoS Protection
-  if (now > globalRequestCounts.resetTime) {
-    globalRequestCounts.count = 0;
-    globalRequestCounts.resetTime = now + RATE_LIMIT_WINDOW;
+  const globalData = globalRequestCounts.get(clientIp);
+  if (!globalData || now > globalData.resetTime) {
+    globalRequestCounts.set(clientIp, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+  } else {
+    globalData.count++;
   }
-  globalRequestCounts.count++;
-  if (globalRequestCounts.count > GLOBAL_RATE_LIMIT) {
+  if ((globalRequestCounts.get(clientIp)?.count ?? 0) > GLOBAL_RATE_LIMIT) {
     res.status(429).json({ error: 'Servidor sobrecarregado. Tente novamente.' });
     return;
   }
@@ -216,11 +217,13 @@ setInterval(() => {
   for (const [ip, data] of requestCounts.entries()) {
     if (now > data.resetTime) requestCounts.delete(ip);
   }
+  for (const [ip, data] of globalRequestCounts.entries()) {
+    if (now > data.resetTime) globalRequestCounts.delete(ip);
+  }
 }, 5 * 60 * 1000);
 
 /** Somente para isolamento determinístico dos testes de segurança. */
 export function __resetSecurityStateForTests(): void {
   requestCounts.clear();
-  globalRequestCounts.count = 0;
-  globalRequestCounts.resetTime = Date.now() + RATE_LIMIT_WINDOW;
+  globalRequestCounts.clear();
 }

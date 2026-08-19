@@ -11,6 +11,7 @@ import { TourButton } from "./components/TourSpotlight";
 import { DownloadManager } from "./components/DownloadManager";
 import UpdatesNotificationBanner from "./components/UpdatesNotificationBanner";
 import { registerServiceWorker } from "./lib/registerSW";
+import { ImmersiveSceneRecoveryBoundary } from "./components/ImmersiveSceneRecoveryBoundary";
 
 // Lazy load non-critical routes for faster initial load
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -55,6 +56,11 @@ const Certificates = lazy(() => import("./pages/Certificates"));
 const PronunciationHistory = lazy(() => import("./pages/PronunciationHistory"));
 const StructuredLesson = lazy(() => import("./pages/StructuredLesson"));
 const ImmersiveScene = lazy(() => import("./pages/ImmersiveScene"));
+const ResilientImmersiveScene = () => (
+  <ImmersiveSceneRecoveryBoundary>
+    <ImmersiveScene />
+  </ImmersiveSceneRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -143,7 +149,7 @@ function Router() {
         <Route path="/certificates" component={Certificates} />
         <Route path="/pronunciation-history" component={PronunciationHistory} />
         <Route path="/structured-lesson" component={StructuredLesson} />
-        <Route path="/immersive-scene" component={ImmersiveScene} />
+        <Route path="/immersive-scene" component={ResilientImmersiveScene} />
         <Route path="/ai-monitor" component={AIMonitor} />
         <Route path="/terms" component={TermsOfUse} />
         <Route path="/language-detect" component={LanguageDetect} />
