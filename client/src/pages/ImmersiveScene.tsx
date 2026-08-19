@@ -2849,7 +2849,6 @@ export default function ImmersiveScene() {
                 compact
               />
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
-              <FlyingSOSBook className="fixed left-4 top-1/2 z-[80] -translate-y-1/2" />
               <button
                 onClick={() => setParetoOpen(true)}
                 className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
@@ -2881,6 +2880,8 @@ export default function ImmersiveScene() {
             </>}
           </div>
         </div>
+
+        {!immersionMode && <FlyingSOSBook className="fixed left-4 top-1/2 z-[90] -translate-y-1/2" />}
 
         {/* AR Hotspots */}
         {activeSceneHotspots.map((hotspot) => {
