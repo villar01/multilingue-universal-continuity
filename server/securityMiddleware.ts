@@ -11,6 +11,7 @@ const AUTH_RATE_LIMIT_MAX = 30;
 // ── DDoS Protection ───────────────────────────────────────────
 const globalRequestCounts = new Map<string, { count: number; resetTime: number }>();
 const GLOBAL_RATE_LIMIT = 1000;
+const MAX_TRACKED_ORIGINS = 10_000;
 
 // ── SQL Injection Patterns ────────────────────────────────────
 const SQL_INJECTION_PATTERNS = [
@@ -67,6 +68,15 @@ function detectXss(input: string): boolean {
 
 function isSuspiciousUserAgent(ua: string): boolean {
   return SUSPICIOUS_UA_PATTERNS.some(pattern => pattern.test(ua));
+}
+
+function removeExpiredBuckets(
+  buckets: Map<string, { count: number; resetTime: number }>,
+  now: number
+): void {
+  for (const [key, data] of buckets.entries()) {
+    if (now > data.resetTime) buckets.delete(key);
+  }
 }
 
 function getRateLimitBucket(req: Request): { key: string; max: number } | null {
@@ -127,6 +137,12 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   // DDoS Protection
   const globalData = globalRequestCounts.get(clientIp);
   if (!globalData || now > globalData.resetTime) {
+    if (globalData && now > globalData.resetTime) globalRequestCounts.delete(clientIp);
+    if (globalRequestCounts.size >= MAX_TRACKED_ORIGINS) removeExpiredBuckets(globalRequestCounts, now);
+    if (!globalData && globalRequestCounts.size >= MAX_TRACKED_ORIGINS) {
+      res.status(429).json({ error: 'Servidor temporariamente ocupado. Tente novamente.' });
+      return;
+    }
     globalRequestCounts.set(clientIp, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
   } else {
     globalData.count++;
@@ -143,6 +159,12 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
     const rateKey = `${clientIp}:${bucket.key}`;
     const ipData = requestCounts.get(rateKey);
     if (!ipData || now > ipData.resetTime) {
+      if (ipData && now > ipData.resetTime) requestCounts.delete(rateKey);
+      if (requestCounts.size >= MAX_TRACKED_ORIGINS) removeExpiredBuckets(requestCounts, now);
+      if (!ipData && requestCounts.size >= MAX_TRACKED_ORIGINS) {
+        res.status(429).json({ error: 'Servidor temporariamente ocupado. Tente novamente.' });
+        return;
+      }
       requestCounts.set(rateKey, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
     } else {
       ipData.count++;
@@ -214,12 +236,8 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
 // ── Clean up expired entries ──────────────────────────────────
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, data] of requestCounts.entries()) {
-    if (now > data.resetTime) requestCounts.delete(ip);
-  }
-  for (const [ip, data] of globalRequestCounts.entries()) {
-    if (now > data.resetTime) globalRequestCounts.delete(ip);
-  }
+  removeExpiredBuckets(requestCounts, now);
+  removeExpiredBuckets(globalRequestCounts, now);
 }, 5 * 60 * 1000);
 
 /** Somente para isolamento determinístico dos testes de segurança. */

@@ -133,6 +133,54 @@ describe("securityMiddleware", () => {
     expect(recoveredResponse.statusCode).toBe(200);
   });
 
+  it("protege a memória sob muitas origens e mantém uma origem já atendida", () => {
+    const existingIp = "203.0.0.0";
+    for (let count = 0; count < 10_000; count += 1) {
+      const ip = `203.0.${Math.floor(count / 256)}.${count % 256}`;
+      securityMiddleware(createRequest(ip, {}, "/assets/scene_beach.jpg") as any, createResponse() as any, () => undefined);
+    }
+
+    const newOriginResponse = createResponse();
+    securityMiddleware(createRequest("204.0.0.1", {}, "/assets/scene_beach.jpg") as any, newOriginResponse as any, () => undefined);
+    expect(newOriginResponse.statusCode).toBe(429);
+    expect(newOriginResponse.body).toEqual({ error: "Servidor temporariamente ocupado. Tente novamente." });
+
+    const existingOriginResponse = createResponse();
+    let continued = false;
+    securityMiddleware(createRequest(existingIp, {}, "/immersive-scene?scene=beach") as any, existingOriginResponse as any, () => { continued = true; });
+    expect(continued).toBe(true);
+    expect(existingOriginResponse.statusCode).toBe(200);
+  });
+
+  it("libera buckets expirados no teto para novas origens e API legítima", () => {
+    const now = vi.spyOn(Date, "now").mockReturnValue(1_000);
+    for (let count = 0; count < 10_000; count += 1) {
+      const ip = `205.0.${Math.floor(count / 256)}.${count % 256}`;
+      securityMiddleware(createRequest(ip, {}, "/api/trpc/lessons.list?batch=1") as any, createResponse() as any, () => undefined);
+    }
+
+    now.mockReturnValue(61_001);
+    const freshApiResponse = createResponse();
+    let continued = false;
+    securityMiddleware(createRequest("206.0.0.1", {}, "/api/trpc/lessons.list?batch=1") as any, freshApiResponse as any, () => { continued = true; });
+    expect(continued).toBe(true);
+    expect(freshApiResponse.statusCode).toBe(200);
+  });
+
+  it("mantém a API de uma origem já atendida quando o mapa de buckets está no teto", () => {
+    const existingIp = "207.0.0.0";
+    for (let count = 0; count < 10_000; count += 1) {
+      const ip = `207.0.${Math.floor(count / 256)}.${count % 256}`;
+      securityMiddleware(createRequest(ip, {}, "/api/trpc/lessons.list?batch=1") as any, createResponse() as any, () => undefined);
+    }
+
+    const response = createResponse();
+    let continued = false;
+    securityMiddleware(createRequest(existingIp, {}, "/api/trpc/lessons.list?batch=1") as any, response as any, () => { continued = true; });
+    expect(continued).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
+
   it("mantém proteção mais estrita para rotas de autenticação", () => {
     const request = createRequest("198.51.100.28", {}, "/api/oauth/callback");
     for (let count = 0; count < 30; count += 1) securityMiddleware(request as any, createResponse() as any, () => undefined);
