@@ -18,6 +18,9 @@ describe("folhas sequenciais do Livro ABC", () => {
     expect(page).toContain("setActivePage(safePage);");
     expect(page).toContain("firstChapterPage");
     expect(page).toContain("Ir diretamente à folha");
+    expect(page).toContain("onClick={() => goBookPage(entry.page)}");
+    expect(page).toContain("onClick={() => goToChapter(index)}");
+    expect(page).toContain("goBookPage(firstChapterPage + chapterIndex * 3);");
     expect(page).toContain('event.key === "ArrowRight"');
     expect(page).toContain("book.soundLessons.map((lesson, lessonIndex)");
   });

@@ -1517,6 +1517,7 @@
 - [ ] Reposicionar o Livro SOS como livro flutuante visível dentro de cada cena, separado dos links de cabeçalho; reduzir a concentração de Caderno, Pareto, Quiz, idiomas e SOS na barra superior sem perder acesso ao Livro ABC
 - [ ] Corrigir o Livro SOS/ABC quando a navegação aparenta ficar travada na primeira folha: manter avançar, voltar, indicador de página e retorno exato à cena de origem acessíveis após abrir o livro
 - [ ] Acrescentar índice permanente ao Livro SOS/ABC, com capítulos e números de folhas clicáveis para acesso direto a todas as 168+ páginas sem perder avançar, voltar ou retorno à cena
+- [ ] Fazer cada item clicável do índice interno abrir diretamente a folha inicial da seção correspondente, incluindo Alfabeto, Contextos, Frases, Pareto e cada capítulo A1
 - [ ] Separar espacialmente os comandos do Livro SOS: índice em faixa própria, folha atual central, anterior e próxima em lados opostos e seletor de folha em linha independente, sem concentrar funções lado a lado
 - [ ] Ajustar o formato visual do Livro SOS ao formato do PDF de referência: folhas brancas simples, leitura vertical por página, margens editoriais, texto escuro, numeração de folha, índice em folha própria e controles discretos nas bordas inferiores
 - [ ] Manter uma estrutura comum de 168+ folhas por dupla, mas adaptar gramática, escrita, sons, exemplos e exercícios aos pormenores de cada par de idiomas, sem copiar regras de Português–Inglês para outras línguas
