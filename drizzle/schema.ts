@@ -1061,6 +1061,26 @@ export const aiInsights = mysqlTable("ai_insights", {
 export type AiInsight = typeof aiInsights.$inferSelect;
 export type InsertAiInsight = typeof aiInsights.$inferInsert;
 
+// Execuções supervisionáveis da manutenção contínua. O registro não autoriza
+// alterações autônomas: ele conserva evidências, falhas e a decisão explícita
+// de bloquear ou permitir a análise posterior de uma mudança.
+export const maintenanceRuns = mysqlTable("maintenance_runs", {
+  id: int("id").primaryKey().autoincrement(),
+  source: varchar("source", { length: 100 }).notNull(),
+  decision: mysqlEnum("decision", ["eligible", "blocked", "failed"]).notNull(),
+  summary: text("summary").notNull(),
+  detectedIssues: int("detected_issues").notNull().default(0),
+  verifications: json("verifications").$type<Array<{
+    kind: string;
+    status: "passed" | "failed" | "not_run";
+    evidence: string;
+  }>>().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type MaintenanceRun = typeof maintenanceRuns.$inferSelect;
+export type InsertMaintenanceRun = typeof maintenanceRuns.$inferInsert;
+
 // Histórico de melhorias implementadas
 export const systemImprovements = mysqlTable("system_improvements", {
   id: int("id").primaryKey().autoincrement(),

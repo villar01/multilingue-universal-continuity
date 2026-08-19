@@ -25,6 +25,8 @@ describe("backup durável", () => {
     expect(callbackSource).toContain("backup_schedule_config");
     expect(callbackSource).toContain("skipped: \"orphan\"");
     expect(callbackSource).toContain("runScheduledBackup");
+    expect(callbackSource).not.toContain("restoreFromBackup");
+    expect(callbackSource).not.toContain("DELETE FROM");
   });
 
   it("exige uma confirmação vinculada ao backup antes da restauração", () => {

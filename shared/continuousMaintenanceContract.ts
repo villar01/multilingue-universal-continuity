@@ -13,6 +13,11 @@ export interface MaintenancePublicationDecision {
   reasons: string[];
 }
 
+export interface ScheduledMaintenanceAssessment {
+  verifications: readonly MaintenanceVerification[];
+  decision: MaintenancePublicationDecision;
+}
+
 /**
  * Contrato mínimo de continuidade. Uma alteração não pode ser considerada apta
  * para publicação sem evidência atual de TypeScript e da suíte de regressão.
@@ -41,5 +46,30 @@ export function decideMaintenancePublication(
     canPublish: reasons.length === 0,
     state: reasons.length === 0 ? "eligible" : "blocked",
     reasons,
+  };
+}
+
+/**
+ * A tarefa agendada observa telemetria, mas não executa compilação, testes nem
+ * publicação. Portanto, ela sempre registra uma proposta bloqueada para revisão
+ * até que uma alteração candidata possua evidência de validação fora do job.
+ */
+export function createScheduledMaintenanceAssessment(): ScheduledMaintenanceAssessment {
+  const verifications: readonly MaintenanceVerification[] = [
+    {
+      kind: "typescript",
+      status: "not_run",
+      evidence: "O diagnóstico agendado não executa compilação nem publica alterações.",
+    },
+    {
+      kind: "unit_tests",
+      status: "not_run",
+      evidence: "O diagnóstico agendado não executa a suíte de regressão.",
+    },
+  ];
+
+  return {
+    verifications,
+    decision: decideMaintenancePublication(verifications),
   };
 }

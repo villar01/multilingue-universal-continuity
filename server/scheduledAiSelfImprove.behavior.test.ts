@@ -49,21 +49,24 @@ describe("execução diagnóstica agendada", () => {
   it("conclui quando o conector retorna linhas e cabeçalho sem tupla", async () => {
     setupClient("direct", [
       [{ event_type: "error", context: "lesson-view", count: 2 }],
+      { insertId: 71 },
       { insertId: 41 },
     ]);
 
     await expect(runAISelfImprove()).resolves.toMatchObject({ success: true, insightId: 41 });
-    expect(state.execute).toHaveBeenCalledTimes(2);
+    expect(state.execute).toHaveBeenCalledTimes(3);
+    expect(state.execute.mock.calls[1]?.[0]).toContain("INSERT INTO maintenance_runs");
     expect(state.notifyOwner).not.toHaveBeenCalled();
   });
 
   it("mantém compatibilidade com o retorno MySQL em tupla", async () => {
     setupClient("tuple", [
       [[{ event_type: "error", context: "lesson-view", count: 2 }], []],
+      [{ insertId: 72 }, []],
       [{ insertId: 42 }, []],
     ]);
 
     await expect(runAISelfImprove()).resolves.toMatchObject({ success: true, insightId: 42 });
-    expect(state.execute).toHaveBeenCalledTimes(2);
+    expect(state.execute).toHaveBeenCalledTimes(3);
   });
 });

@@ -18,6 +18,9 @@ describe("rotina automática de diagnóstico", () => {
 
   it("mantém a rotina em modo de diagnóstico sem aplicar alterações autônomas", () => {
     expect(source).toContain("allowRemoteFallback: false");
+    expect(source).toContain("createScheduledMaintenanceAssessment");
+    expect(source).toContain("INSERT INTO maintenance_runs");
+    expect(source).toContain("maintenanceAssessment.decision.state");
     expect(source).not.toContain("UPDATE users");
     expect(source).not.toContain("DELETE FROM");
   });

@@ -10,6 +10,7 @@
 import { getDb } from "../db";
 import { generateAI } from "../aiProvider";
 import { notifyOwner } from "../_core/notification";
+import { createScheduledMaintenanceAssessment } from "../../shared/continuousMaintenanceContract";
 
 interface TelemetryRow {
   event_type: string;
@@ -36,6 +37,7 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
   // Ambos são aceitos; o resultado é normalizado antes de ser consumido.
   const client = db.$client as any;
   const pool = typeof client.promise === "function" ? client.promise() : client;
+  const maintenanceAssessment = createScheduledMaintenanceAssessment();
 
   try {
     // 1. Coletar telemetria das últimas 24h
@@ -99,6 +101,20 @@ IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permiss�
     if (!content) throw new Error("LLM não retornou conteúdo");
 
     const diagnosis = typeof content === "string" ? JSON.parse(content) : content;
+
+    // O diagnóstico é sempre uma proposta bloqueada: ele não executa TypeScript,
+    // regressões ou publicação e nunca altera produção por conta própria.
+    await pool.execute(`
+      INSERT INTO maintenance_runs
+        (source, decision, summary, detected_issues, verifications)
+      VALUES (?, ?, ?, ?, ?)
+    `, [
+      "ai_self_improve",
+      maintenanceAssessment.decision.state,
+      String(diagnosis.topIssue || "Diagnóstico agendado concluído para revisão."),
+      totalErrors + Number(diagnosis.securityAlerts?.length || 0),
+      JSON.stringify(maintenanceAssessment.verifications),
+    ]);
 
     // 4. Salvar insight no banco
     const insertResult = await pool.execute(`

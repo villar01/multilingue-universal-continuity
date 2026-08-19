@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideMaintenancePublication } from "../shared/continuousMaintenanceContract";
+import { createScheduledMaintenanceAssessment, decideMaintenancePublication } from "../shared/continuousMaintenanceContract";
 
 describe("continuous maintenance publication contract", () => {
   it("allows publication only when TypeScript and regression evidence both pass", () => {
@@ -35,5 +35,18 @@ describe("continuous maintenance publication contract", () => {
     expect(decision.reasons).toContain(
       "Verificação obrigatória reprovada: typescript. Evidência: TS2322 em ImmersiveScene.tsx",
     );
+  });
+
+  it("keeps scheduled diagnostics blocked until a candidate change has real validation evidence", () => {
+    const assessment = createScheduledMaintenanceAssessment();
+
+    expect(assessment.decision).toMatchObject({
+      canPublish: false,
+      state: "blocked",
+    });
+    expect(assessment.verifications).toEqual([
+      expect.objectContaining({ kind: "typescript", status: "not_run" }),
+      expect.objectContaining({ kind: "unit_tests", status: "not_run" }),
+    ]);
   });
 });
