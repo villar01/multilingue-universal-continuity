@@ -14,6 +14,7 @@ import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { getHotspotLabel } from "../lib/hotspot-translations";
+import { getImmersionTargetLanguageLabel } from "@/lib/immersionTargetLanguageLabel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -811,6 +812,7 @@ export default function ImmersiveScene() {
   const currentLangInfo = targetLang
     ? (LANG_LABELS[targetLang] || { flag: "🌐", name: targetLang })
     : { flag: "🌐", name: "Idioma" };
+  const immersionTargetLanguageLabel = getImmersionTargetLanguageLabel(targetLang, currentLangInfo.name);
   const targetLanguageBlockIsPlanned = Boolean(targetLang) && !isInitialCommercialTargetLanguage(targetLang);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -2387,7 +2389,7 @@ export default function ImmersiveScene() {
                 onClick={() => setShowLangPicker(v => !v)}
                 className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
                 style={{ background: "rgba(99,102,241,0.35)", backdropFilter: "blur(8px)", border: "1px solid rgba(99,102,241,0.6)" }}
-                title="Mudar idioma a estudar"
+                title={immersionMode ? immersionTargetLanguageLabel : "Mudar idioma a estudar"}
               >
                 {currentLangInfo.flag} {currentLangInfo.name}
               </button>
