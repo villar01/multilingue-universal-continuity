@@ -28,6 +28,17 @@ function createCaller() {
 }
 
 describe("ai.freeChat safety", () => {
+  it("recusa visitante antes de avaliar ou gerar uma conversa livre", async () => {
+    vi.clearAllMocks();
+    const anonymousCaller = appRouter.createCaller({ user: null } as any);
+
+    await expect(anonymousCaller.ai.freeChat({ messages: [{ role: "user", content: "Hello" }] }))
+      .rejects.toMatchObject({ code: "UNAUTHORIZED" });
+
+    expect(mocks.assessConversationText).not.toHaveBeenCalled();
+    expect(mocks.invokeLLM).not.toHaveBeenCalled();
+  });
+
   it("blocks unfit free-chat content before it reaches the model", async () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
     const result = await createCaller().ai.freeChat({ messages: [{ role: "user", content: "unsafe" }] });
