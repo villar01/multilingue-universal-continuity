@@ -310,6 +310,10 @@ export default function ABCBook() {
             <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Estrutura da ideia</p>
             <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">{book.sentenceStructure.title}</h2>
             <p className="mt-3 max-w-3xl leading-7 text-slate-700">{book.sentenceStructure.introduction}</p>
+            <figure className="mx-auto my-6 max-w-[15rem] rounded-sm border border-stone-200 bg-stone-50 p-2 shadow-sm sm:float-right sm:mb-4 sm:ml-6">
+              <img src="/manus-storage/abc-sentence-ordering-monochrome_30865495.png" alt="Estudante organizando cartões de uma frase em ordem" className="aspect-[4/5] w-full rounded-sm object-cover" loading="lazy" />
+              <figcaption className="px-1 pt-2 text-center text-[11px] font-semibold leading-4 text-slate-600">Organize a ideia antes de escrever a frase.</figcaption>
+            </figure>
             <div className="mt-5 space-y-4 text-sm leading-7 text-slate-700">
               <p><strong className="text-slate-950">Padrão de base:</strong> {book.sentenceStructure.sharedPattern}</p>
               <p><strong className="text-slate-950">Português:</strong> {book.sentenceStructure.portuguesePattern}</p>
