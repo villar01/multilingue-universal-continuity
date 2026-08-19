@@ -8,6 +8,7 @@ const bookSource = readFileSync(path.join(root, "client/src/pages/ABCBook.tsx"),
 const protectedBookSource = readFileSync(path.join(root, "server/curriculum/abcBookContent.ts"), "utf8");
 const curriculumRouterSource = readFileSync(path.join(root, "server/curriculum-router.ts"), "utf8");
 const sosSource = readFileSync(path.join(root, "client/src/components/FlyingSOSBook.tsx"), "utf8");
+const abcBookAccessSource = readFileSync(path.join(root, "client/src/lib/abcBookAccess.ts"), "utf8");
 const sceneSource = readFileSync(path.join(root, "client/src/pages/ImmersiveScene.tsx"), "utf8");
 const lessonSource = readFileSync(path.join(root, "client/src/pages/Lesson.tsx"), "utf8");
 
@@ -29,9 +30,10 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
   });
 
   it("cria um destino SOS interno que preserva a atividade de origem", () => {
-    expect(sosSource).toContain('return `/abc-book?returnTo=${encodeURIComponent(safeOrigin(location))}`');
+    expect(sosSource).toContain('import { getABCBookHref } from "@/lib/abcBookAccess"');
     expect(sosSource).toContain('aria-label="Socorro: abrir o Livro ABC de Idiomas e retornar a esta atividade"');
-    expect(sosSource).toContain('!location.startsWith("//")');
+    expect(abcBookAccessSource).toContain('return `/abc-book?returnTo=${encodeURIComponent(safeOrigin(location))}`');
+    expect(abcBookAccessSource).toContain('!location.startsWith("//")');
   });
 
   it("mantém o acesso voluntário ao SOS na Cena Imersiva e na Lição", () => {

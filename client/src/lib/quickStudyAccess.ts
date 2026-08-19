@@ -1,4 +1,4 @@
-import { getABCBookHref } from "@/components/FlyingSOSBook";
+import { getABCBookHref } from "@/lib/abcBookAccess";
 
 const EXCLUDED_PATHS = ["/", "/abc-book", "/immersive-scene", "/lesson", "/onboarding"];
 

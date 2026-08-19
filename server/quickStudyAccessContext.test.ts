@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { getABCBookHref } from "../client/src/components/FlyingSOSBook";
+import { getABCBookHref } from "../client/src/lib/abcBookAccess";
 import { getQuickStudyHref } from "../client/src/lib/quickStudyAccess";
 import { getPedagogicalShortcutHrefs, shouldShowPedagogicalQuickAccess } from "../client/src/lib/pedagogicalQuickAccess";
 

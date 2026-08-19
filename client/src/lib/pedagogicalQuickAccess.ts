@@ -1,4 +1,4 @@
-import { getABCBookHref } from "../components/FlyingSOSBook";
+import { getABCBookHref } from "./abcBookAccess";
 
 function safeOrigin(location: string) {
   return location.startsWith("/") && !location.startsWith("//") ? location : "/dashboard";

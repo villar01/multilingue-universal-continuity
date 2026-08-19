@@ -1,13 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { useLocation } from "wouter";
-
-function safeOrigin(location: string) {
-  return location.startsWith("/") && !location.startsWith("//") ? location : "/dashboard";
-}
-
-export function getABCBookHref(location: string) {
-  return `/abc-book?returnTo=${encodeURIComponent(safeOrigin(location))}`;
-}
+import { getABCBookHref } from "@/lib/abcBookAccess";
 
 export function FlyingSOSBook({ className = "fixed bottom-6 left-4 z-[80]" }: { className?: string }) {
   const [location, setLocation] = useLocation();
