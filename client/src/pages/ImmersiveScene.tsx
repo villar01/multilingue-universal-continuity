@@ -1903,6 +1903,7 @@ export default function ImmersiveScene() {
   const [dlgAnswer, setDlgAnswer] = useState<number | null>(null);
   const [dlgWrittenAnswer, setDlgWrittenAnswer] = useState("");
   const [dlgFeedback, setDlgFeedback] = useState("");
+  const [dlgTutorSpokenText, setDlgTutorSpokenText] = useState("");
   const [dlgAudioNotice, setDlgAudioNotice] = useState("");
   const [dlgTutorHistory, setDlgTutorHistory] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [dlgTutorLoading, setDlgTutorLoading] = useState(false);
@@ -2005,6 +2006,7 @@ export default function ImmersiveScene() {
     setDlgAnswer(null);
     setDlgWrittenAnswer("");
     setDlgFeedback("");
+    setDlgTutorSpokenText("");
     setDlgAudioNotice("");
     setDlgTutorHistory([]);
     setDlgTutorLoading(false);
@@ -2043,7 +2045,7 @@ export default function ImmersiveScene() {
     setPracticeHotspot(null);
     stopTeacherAudio();
     setDialogAuthRequired(false);
-    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
+    setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgTutorSpokenText(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
     if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     const line = activeSceneDialog[0];
     if (!line) return;
@@ -2100,7 +2102,7 @@ export default function ImmersiveScene() {
       setDlgOpen(false);
       return;
     }
-    setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgIsRecording(false); setDlgIsProcessingSpeech(false); setDlgTutorLoading(false);
+    setDlgStep(next); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgTutorSpokenText(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgIsRecording(false); setDlgIsProcessingSpeech(false); setDlgTutorLoading(false);
     const line = activeSceneDialog[next];
     if (shouldStartSceneTeacherAudio(line)) {
       const words = line.text.split(' ');
@@ -2132,6 +2134,7 @@ export default function ImmersiveScene() {
       ? fallback.text.replace(/^[^:]+:\s*/, "")
       : `${scene.teacherName}: I heard you. I will help you practise this lesson step by step.`;
     const immediateFeedback = `${scene.teacherName}: ${immediateReply.replace(/^[^:]+:\s*/, "")}${fallback?.immediate && fallback.nativeText ? `\n${nativeLangLabel}: ${fallback.nativeText}` : ""}`;
+    const immediateSpokenText = immediateReply.replace(/^[^:]+:\s*/, "");
     if (scene.id === "beach" && scene.teacherName === "James") {
       const objectClipId = fallback?.hotspotId
         ? ({
@@ -2147,6 +2150,7 @@ export default function ImmersiveScene() {
       playJamesTropicalClip(objectClipId || "james-tropical-greeting");
     }
     setDlgFeedback(immediateFeedback);
+    setDlgTutorSpokenText(immediateSpokenText);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
     requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);
     if (fallback?.immediate) {
@@ -2176,6 +2180,7 @@ export default function ImmersiveScene() {
       const targetReply = result.targetReply.trim() || fallback?.text.replace(/^[^:]+:\s*/, "") || "I can help you practise this lesson. What would you like to learn?";
       const feedbackPrefix = `${scene.teacherName}: ${targetReply}`;
       setDlgFeedback(feedbackPrefix);
+      setDlgTutorSpokenText(targetReply);
       setDlgTutorHistory((history) => [...history, { role: "assistant" as const, content: targetReply }].slice(-8));
       const relatedHotspot = fallback?.hotspotId
         ? scene.hotspots.find((hotspot) => hotspot.id === fallback.hotspotId) || null
@@ -2193,6 +2198,7 @@ export default function ImmersiveScene() {
       if (requestId !== dlgTutorRequestRef.current) return;
       const targetReply = fallback?.text.replace(/^[^:]+:\s*/, "") || "I can help you practise vocabulary, grammar, and new sentences from this lesson.";
       setDlgFeedback(`${scene.teacherName}: ${targetReply}`);
+      setDlgTutorSpokenText(targetReply);
       requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
     } finally {
       window.clearTimeout(loadingTimeout);
@@ -2258,6 +2264,41 @@ export default function ImmersiveScene() {
     setDlgWrittenAnswer("");
     void askImmersiveTutor(question);
   }, [askImmersiveTutor, dlgWrittenAnswer]);
+
+  const replayTeacherSpeechFromGesture = useCallback(() => {
+    const scene = teachingScene ?? selectedScene;
+    if (!scene) return;
+    const lineText = activeSceneDialog[dlgStep]?.text || "";
+    const phrase = (dlgTutorSpokenText || activeSpeechText || lineText).trim();
+    if (!phrase) return;
+
+    // A faixa já preparada é preferida. O mesmo player liga o clipe somente
+    // em onplaying, portanto não há movimento antes de áudio confirmado.
+    if (dialogAudioSource && activeSpeechText.trim() === phrase) {
+      void replayVisibleDialogAudio();
+      return;
+    }
+
+    primeDialogAudioFromGesture();
+    stopTeacherAudio();
+    const requestKey = `manual-teacher:${scene.teacherLang}:${scene.teacherGender}:${phrase}`;
+    activeSpeechRequestRef.current = requestKey;
+    setActiveSpeechText(phrase);
+    setIsPreparingNeuralAudio(true);
+    if (scene.id === "beach" && scene.teacherName === "James") {
+      playJamesTropicalClip("james-tropical-greeting");
+    }
+    // A reserva local nasce dentro do clique. Seu utterance.onstart é o único
+    // ponto que pode tornar o clipe lateral visível.
+    if (playLocalDialogFallback(phrase, scene.teacherLang, requestKey, scene.teacherGender)) {
+      setDlgAudioNotice("");
+      return;
+    }
+    requestSpeechSafely(phrase, scene.teacherLang, scene.teacherGender, "teacher", true);
+    if (scene.id === "beach" && scene.teacherName === "James") {
+      playJamesTropicalClip("james-tropical-greeting");
+    }
+  }, [activeSceneDialog, activeSpeechText, dialogAudioSource, dlgStep, dlgTutorSpokenText, playJamesTropicalClip, playLocalDialogFallback, primeDialogAudioFromGesture, replayVisibleDialogAudio, requestSpeechSafely, selectedScene, stopTeacherAudio, teachingScene]);
 
   const stopDialogRecording = useCallback(() => {
     if (dlgRecorderRef.current?.state === "recording") {
@@ -3316,6 +3357,13 @@ export default function ImmersiveScene() {
                       <div role="status" aria-live="polite" className="whitespace-pre-line text-sm font-medium text-amber-100">
                         {dlgFeedback}
                       </div>
+                      <button
+                        type="button"
+                        onClick={replayTeacherSpeechFromGesture}
+                        className="mt-3 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-indigo-500"
+                      >
+                        🔊 Ouvir resposta de James
+                      </button>
                       <div className="mt-3 border-t border-amber-300/20 pt-3">
                         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Aprofundar esta dúvida no curso ABC</p>
                         <div className="mt-2 flex flex-wrap gap-2">

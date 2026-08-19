@@ -33,6 +33,15 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain('if (event.key === "Enter") submitTeacherQuestion();');
   });
 
+  it("oferece controle explícito que fala exatamente a resposta mostrada e agenda James somente no gesto do aluno", () => {
+    expect(sceneSource).toContain('const [dlgTutorSpokenText, setDlgTutorSpokenText] = useState("");');
+    expect(sceneSource).toContain("const replayTeacherSpeechFromGesture = useCallback(() => {");
+    expect(sceneSource).toContain('onClick={replayTeacherSpeechFromGesture}');
+    expect(sceneSource).toContain("🔊 Ouvir resposta de James");
+    expect(sceneSource).toContain('const phrase = (dlgTutorSpokenText || activeSpeechText || lineText).trim();');
+    expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-greeting");');
+  });
+
   it("inicia a apresentação audível ao abrir ou avançar o diálogo e mantém o botão explícito de repetição", () => {
     const startDialogSource = sceneSource.slice(sceneSource.indexOf("const startDialog = useCallback"), sceneSource.indexOf("useEffect(() => {\n    if (isSpeaking"));
     const nextDialogSource = sceneSource.slice(sceneSource.indexOf("const dlgNext = useCallback"), sceneSource.indexOf("const askImmersiveTutor = useCallback"));
