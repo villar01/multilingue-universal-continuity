@@ -39,6 +39,7 @@ describe("Socorro SOS com retorno contextual", () => {
     const sceneSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/ImmersiveScene.tsx"), "utf8");
     const lessonSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/Lesson.tsx"), "utf8");
     const bookSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/ABCBook.tsx"), "utf8");
+    const quickAccessSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/components/QuickStudyAccess.tsx"), "utf8");
 
     expect(appSource).toContain('path="/abc-book"');
     expect(sceneSource).toContain("FlyingSOSBook");
@@ -46,6 +47,8 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(bookSource).toContain("getSafeReturnTo");
     expect(bookSource).toContain("pareto-1000?returnTo=");
     expect(appSource).toContain("QuickStudyAccess");
+    expect(quickAccessSource).toContain('location.startsWith("/pareto-1000")');
+    expect(quickAccessSource).toContain("<FlyingSOSBook compact={useCompactSosBook} className={sosBookClassName} />");
 
     const freeTalkSource = fs.readFileSync(path.resolve(import.meta.dirname, "../client/src/pages/FreeTalk.tsx"), "utf8");
     expect(freeTalkSource).toContain('!destination.startsWith("//")');

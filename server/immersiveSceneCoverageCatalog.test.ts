@@ -55,6 +55,6 @@ describe("catálogo automático de cobertura das 29 cenas", () => {
     const quickAccessSource = readFileSync("client/src/components/QuickStudyAccess.tsx", "utf8");
     expect(appSource).toContain("<QuickStudyAccess />");
     expect(quickAccessSource).toContain("<PedagogicalQuickAccess />");
-    expect(quickAccessSource).toContain("<FlyingSOSBook />");
+    expect(quickAccessSource).toContain("<FlyingSOSBook compact={useCompactSosBook} className={sosBookClassName} />");
   });
 });
