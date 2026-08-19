@@ -23,6 +23,18 @@ function createCaller() {
 }
 
 describe("vrConversation.freeChat safety", () => {
+  it("recusa visitante antes de avaliar ou gerar conversa em realidade virtual", async () => {
+    vi.clearAllMocks();
+    const anonymousCaller = appRouter.createCaller({ user: null } as any);
+
+    await expect(anonymousCaller.vrConversation.freeChat({
+      targetLanguage: "en-US", nativeLanguage: "pt-BR", level: "A1", history: [], userMessage: "Hello",
+    })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+
+    expect(mocks.assessConversationText).not.toHaveBeenCalled();
+    expect(mocks.invokeLLM).not.toHaveBeenCalled();
+  });
+
   it("does not send unsafe free-talk input to the language model", async () => {
     mocks.assessConversationText.mockResolvedValue(blocked);
 
