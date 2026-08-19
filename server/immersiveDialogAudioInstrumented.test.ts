@@ -17,7 +17,8 @@ describe("controle instrumental do áudio imersivo", () => {
 
   it("mantém a barra nativa oculta e evita sobreposição sobre a frase ou os exercícios", () => {
     expect(sceneSource).toContain("controls={false}");
-    expect(sceneSource).toContain('className="hidden"');
+    expect(sceneSource).toContain('className="sr-only"');
+    expect(sceneSource).not.toContain('className="hidden"');
     expect(sceneSource).not.toContain('top-[160px] z-[75] h-9');
     expect(sceneSource).not.toContain('bottom-[112px] left-1/2 z-[75]');
   });

@@ -1658,6 +1658,13 @@ export default function ImmersiveScene() {
       audio.currentTime = 0;
       setDialogAudioPosition(0);
       await audio.play();
+      // Alguns navegadores resolvem play() sem emitir onplaying no elemento
+      // visualmente oculto. A promessa resolvida também confirma reprodução;
+      // só então promovemos o clipe lateral pendente.
+      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
+        setActiveJamesClipId(pendingJamesClipIdRef.current);
+        pendingJamesClipIdRef.current = null;
+      }
       setDlgAudioNotice("");
     } catch {
       const fallbackKey = `manual-replay:${selectedScene?.teacherLang || "en-US"}:${selectedScene?.teacherGender || "female"}:${activeSpeechText}`;
@@ -3114,7 +3121,7 @@ export default function ImmersiveScene() {
           src={dialogAudioSource || undefined}
           controls={false}
           preload="auto"
-          className="hidden"
+          className="sr-only"
           aria-label="Áudio da fala em inglês"
         />
 

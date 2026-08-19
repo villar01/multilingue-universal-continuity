@@ -188,7 +188,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(audioIndex).toBeGreaterThan(teacherIndex);
     expect(audioIndex).toBeLessThan(dialogPanelIndex);
     expect(source).toContain("controls={false}");
-    expect(source).toContain('className="hidden"');
+    expect(source).toContain('className="sr-only"');
+    expect(source).not.toContain('className="hidden"');
     expect(source).toContain("os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural");
   });
 

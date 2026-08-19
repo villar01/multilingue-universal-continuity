@@ -111,6 +111,8 @@ describe("integração de clipes de James na Praia Tropical", () => {
     const replayFlow = sceneSource.slice(sceneSource.indexOf("const replayVisibleDialogAudio"), sceneSource.indexOf("const primeDialogAudioFromGesture"));
     expect(replayFlow).toContain('playJamesTropicalClip("james-tropical-greeting");');
     expect(replayFlow).toContain("setActiveJamesClipId(null);");
+    expect(replayFlow).toContain("await audio.play();");
+    expect(replayFlow).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
     expect(sceneSource).toContain("const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;");
     expect(sceneSource).toContain("const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());");
     expect(sceneSource).toContain("<div>{visibleGreeting}</div>");
