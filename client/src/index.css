@@ -223,6 +223,26 @@
     cursor: not-allowed;
   }
 
+  @media (max-width: 420px) {
+    .abc-book-page-controls {
+      gap: 0.25rem;
+      padding: 0.55rem 0.45rem;
+    }
+
+    .abc-book-page-controls button {
+      padding: 0.45rem 0.3rem;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .abc-book-page-controls p {
+      flex: 1;
+      font-size: 0.8rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+  }
+
   .abc-book-index {
     display: block;
     border: 1px solid oklch(0.91 0.01 75);
