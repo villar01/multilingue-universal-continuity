@@ -2404,7 +2404,7 @@ export default function ImmersiveScene() {
                   }}
                   onClick={e => e.stopPropagation()}
                 >
-                  <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, padding: "4px 8px 8px", textTransform: "uppercase", letterSpacing: 1 }}>{immersionMode ? "Target language" : "Estudar idioma"}</div>
+                  <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, padding: "4px 8px 8px", textTransform: "uppercase", letterSpacing: 1 }}>{immersionMode ? immersionTargetLanguageLabel : "Estudar idioma"}</div>
                   {Object.entries(LANG_LABELS).map(([code, info]) => (
                     <button
                       key={code}

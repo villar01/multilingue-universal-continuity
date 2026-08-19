@@ -30,5 +30,6 @@ describe("acessibilidade do modo imersão", () => {
 
     expect(sceneSource).toContain("const immersionTargetLanguageLabel = getImmersionTargetLanguageLabel(targetLang, currentLangInfo.name);");
     expect(sceneSource).toContain('title={immersionMode ? immersionTargetLanguageLabel : "Mudar idioma a estudar"}');
+    expect(sceneSource).toContain('{immersionMode ? immersionTargetLanguageLabel : "Estudar idioma"}');
   });
 });
