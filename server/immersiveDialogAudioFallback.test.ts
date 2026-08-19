@@ -72,7 +72,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   it("usa uma faixa masculina pré-gravada somente como última reserva da apresentação inicial de James", () => {
     const speechFlow = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(source).toContain('const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";');
-    expect(source).toContain('const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-fallback_73d168f4.wav";');
+    expect(source).toContain('const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-exact-fallback_2d892849.wav";');
     expect(speechFlow).toContain('selectedScene?.id === "beach"');
     expect(speechFlow).toContain('selectedScene.teacherName === "James"');
     expect(speechFlow).toContain("text.trim() === JAMES_TROPICAL_INTRO_LINE");

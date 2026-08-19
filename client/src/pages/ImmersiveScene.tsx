@@ -42,7 +42,7 @@ import { Apple, BookOpen, Car, Cloud, Coffee, Dog, Home, Landmark, Mic, Plane, S
 type ScenePilotClip = JamesTropicalPilotClip | SophieCafePilotClip;
 
 const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";
-const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-fallback_73d168f4.wav";
+const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-exact-fallback_2d892849.wav";
 
 // Estas reservas curtas pronunciam apenas o vocabulário do cartão. Como não
 // são a trilha sonora do clipe roteirizado completo, o retrato permanece
@@ -1748,7 +1748,7 @@ export default function ImmersiveScene() {
     ) {
       await playTeacherAudio(
         JAMES_TROPICAL_INTRO_FALLBACK_URL,
-        "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+        JAMES_TROPICAL_INTRO_LINE,
         "en-US",
         requestKey,
         false,
@@ -2065,7 +2065,7 @@ export default function ImmersiveScene() {
         playJamesTropicalClip("james-tropical-greeting");
         void playTeacherAudio(
           JAMES_TROPICAL_INTRO_FALLBACK_URL,
-          "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+          JAMES_TROPICAL_INTRO_LINE,
           "en-US",
           "james-tropical-introduction",
           false,
@@ -3090,7 +3090,7 @@ export default function ImmersiveScene() {
             setDlgAudioClock(false);
             void playTeacherAudio(
               JAMES_TROPICAL_INTRO_FALLBACK_URL,
-              "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+              JAMES_TROPICAL_INTRO_LINE,
               "en-US",
               "james-tropical-introduction",
               false,
