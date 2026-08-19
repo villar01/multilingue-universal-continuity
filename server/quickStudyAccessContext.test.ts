@@ -22,14 +22,16 @@ describe("Socorro SOS com retorno contextual", () => {
     expect(getQuickStudyHref("/lesson/390001")).toBeNull();
   });
 
-  it("agrupa atalhos de entender, memorizar, praticar e aplicar com retorno contextual", () => {
+  it("preserva destinos contextuais sem exibir o painel externo em cenas e lições", () => {
     const hrefs = getPedagogicalShortcutHrefs("/lesson/390001?unit=2");
     expect(hrefs.understand).toBe("/abc-book?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.memorize).toBe("/pareto-1000?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.practice).toBe("/base-de-estudos?returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.apply).toBe("/immersive-scene?scene=beach&returnTo=%2Flesson%2F390001%3Funit%3D2");
     expect(hrefs.teacher).toBe("/free-talk?returnTo=%2Flesson%2F390001%3Funit%3D2");
-    expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=beach")).toBe(true);
+    expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=beach")).toBe(false);
+    expect(shouldShowPedagogicalQuickAccess("/lesson/390001?unit=2")).toBe(false);
+    expect(shouldShowPedagogicalQuickAccess("/dashboard")).toBe(true);
     expect(shouldShowPedagogicalQuickAccess("/abc-book")).toBe(false);
     expect(shouldShowPedagogicalQuickAccess("/pareto-1000?returnTo=%2Fabc-book")).toBe(false);
   });

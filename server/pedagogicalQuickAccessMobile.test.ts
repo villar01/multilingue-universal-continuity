@@ -11,8 +11,10 @@ describe("pedagogical quick access mobile placement", () => {
     expect(PEDAGOGICAL_QUICK_ACCESS_CLASS).toContain("sm:right-4");
   });
 
-  it("remains available on an immersive scene and hidden on the book itself", () => {
-    expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=forest")).toBe(true);
+  it("preserves the Livro SOS as the single pedagogical entry on scenes and lessons", () => {
+    expect(shouldShowPedagogicalQuickAccess("/immersive-scene?scene=forest")).toBe(false);
+    expect(shouldShowPedagogicalQuickAccess("/lesson/390001")).toBe(false);
+    expect(shouldShowPedagogicalQuickAccess("/dashboard")).toBe(true);
     expect(shouldShowPedagogicalQuickAccess("/abc-book")).toBe(false);
   });
 });
