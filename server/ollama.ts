@@ -10,6 +10,12 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 const FAST_MODEL = "qwen2.5:1.5b";
 const FULL_MODEL = "qwen2.5:3b";
 
+export interface OllamaHealth {
+  serviceAvailable: boolean;
+  diagnosticModelAvailable: boolean;
+  models: string[];
+}
+
 export interface OllamaMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -37,30 +43,45 @@ export interface OllamaResponse {
   eval_count?: number;
 }
 
+export function evaluateOllamaHealth(models: readonly string[]): OllamaHealth {
+  const normalizedModels = [...models];
+  return {
+    serviceAvailable: true,
+    diagnosticModelAvailable: normalizedModels.includes(FULL_MODEL),
+    models: normalizedModels,
+  };
+}
+
 /**
- * Check if Ollama service is available (verificação rápida 1s)
+ * Confirma o serviço e o modelo Qwen exigido pelo diagnóstico local. Um endpoint
+ * respondendo sem o modelo correto não pode ser apresentado como capacidade ativa.
  */
-export async function isOllamaAvailable(): Promise<boolean> {
+export async function getOllamaHealth(): Promise<OllamaHealth> {
   try {
     const response = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, {
-        timeout: 1000, // 1 segundo - verificação rápida
+      timeout: 1000,
     });
-    return response.status === 200;
+    if (response.status !== 200) {
+      return { serviceAvailable: false, diagnosticModelAvailable: false, models: [] };
+    }
+    const models = response.data.models?.map((model: { name?: unknown }) => model.name)
+      .filter((name: unknown): name is string => typeof name === "string") || [];
+    return evaluateOllamaHealth(models);
   } catch {
-    return false;
+    return { serviceAvailable: false, diagnosticModelAvailable: false, models: [] };
   }
+}
+
+/** Check if Ollama is ready for the configured Qwen diagnostic workload. */
+export async function isOllamaAvailable(): Promise<boolean> {
+  return (await getOllamaHealth()).diagnosticModelAvailable;
 }
 
 /**
  * List available models in Ollama
  */
 export async function listOllamaModels(): Promise<string[]> {
-  try {
-    const response = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 2000 });
-    return response.data.models?.map((m: any) => m.name) || [];
-  } catch {
-    return [];
-  }
+  return (await getOllamaHealth()).models;
 }
 
 /**
