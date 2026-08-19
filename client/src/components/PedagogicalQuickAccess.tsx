@@ -23,6 +23,8 @@ export function shouldShowPedagogicalQuickAccess(location: string) {
   return !["/", "/abc-book", "/pareto-1000", "/onboarding"].includes(path) && !path.startsWith("/admin") && !path.startsWith("/checkout");
 }
 
+export const PEDAGOGICAL_QUICK_ACCESS_CLASS = "pedagogical-quick-access fixed bottom-1 left-3 z-[80] w-44 rounded-2xl border border-cyan-200/50 bg-slate-950/95 text-white shadow-2xl backdrop-blur sm:bottom-5 sm:left-auto sm:right-4 sm:w-48";
+
 export function PedagogicalQuickAccess() {
   const [location] = useLocation();
   if (!shouldShowPedagogicalQuickAccess(location)) return null;
@@ -37,7 +39,7 @@ export function PedagogicalQuickAccess() {
   ];
 
   return (
-    <details className="fixed bottom-5 right-4 z-[80] w-48 rounded-2xl border border-cyan-200/50 bg-slate-950/95 text-white shadow-2xl backdrop-blur">
+    <details className={PEDAGOGICAL_QUICK_ACCESS_CLASS}>
       <summary className="cursor-pointer list-none px-4 py-3 text-sm font-black text-cyan-100 marker:content-none">Atalhos de estudo</summary>
       <div className="grid gap-1 border-t border-white/10 p-2" aria-label="Atalhos pedagógicos agrupados">
         {shortcuts.map(({ href, label, detail, icon: Icon }) => (
