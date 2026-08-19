@@ -1657,6 +1657,8 @@ export default function ImmersiveScene() {
     setPracticeHotspot(null);
     stopTeacherAudio();
     setDialogAuthRequired(false);
+    // Toda nova abertura recomeça compacta para não encobrir professor, hotspots ou controles.
+    setDlgExpanded(false);
     setDlgOpen(true); setDlgStep(0); setDlgAnswer(null); setDlgWrittenAnswer(""); setDlgFeedback(""); setDlgTutorSpokenText(""); setDlgAudioNotice(""); setDlgSuggestedHotspot(null); setDlgTutorHistory([]); setDlgTutorLoading(false);
     if (dialogueScene.id === "cafe" && dialogueScene.teacherName === "Sophie") playSophieCafeClip("sophie-cafe-greeting");
     const line = activeSceneDialog[0];

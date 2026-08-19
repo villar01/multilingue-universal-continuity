@@ -1565,6 +1565,38 @@
 - [ ] Conduzir o backup oficial afetado uma etapa por vez: confirmar exportação da conta, verificar arquivo, confirmar exportação das tarefas e verificar os pacotes antes da restauração futura
 - [ ] Evitar controle remoto travado na orientação do backup oficial; encerrar sem alterações e fornecer fluxo direto no navegador do usuário quando a interface não estiver confiável
 - [ ] Diferenciar cópias internas de pacote oficial exportado: só considerar o backup oficial concluído após salvar tarefas e dados da conta em destino controlado pelo proprietário
+- [ ] Orientar que Manus Downloader serve apenas para copiar arquivos grandes ao dispositivo local; restauração permanece operação futura e separada na página oficial
+- [x] Criar guia visual com telas numeradas, setas e avisos de não clicar em restauração, para executar backup local sem alternância confusa entre navegador e aplicativo — guia de uma folha entregue com as quatro ações Exportar, Baixar, aguardar aplicativo e Verificar, além do alerta explícito para não importar ou restaurar
+- [ ] Criar página HTML interativa do guia de backup com passos anterior/próximo, indicadores visuais e bloqueio informativo de importação/restauração
+- [ ] Substituir a proposta de HTML interativo por uma única folha visual estática com quatro ações diretas: Exportar, Baixar, aguardar o aplicativo e Verificar
+- [ ] Montar a folha de orientação com capturas reais do backup concluído, sem desenhos substitutos, usando uma ação curta por tela
+- [ ] Escrever comandos diretos ao lado de cada página real do guia, informando exatamente onde clicar e o que não clicar
+- [x] Baixar o pacote oficial de tarefas no notebook pelo Manus Downloader e confirmar os cinco arquivos completos antes de considerar a cópia garantida — pacote `tasks-data-renato-villar-08-12_09-24-30.manustask` de 6,56 GB aparece como baixado no notebook e todos os pacotes passaram pela verificação de dados; nenhuma restauração foi iniciada
+- [ ] Repetir em 22 de agosto a exportação mais recente de tarefas e da conta, salvar os pacotes locais e verificar a integridade, preservando a cópia anterior sem restaurar nada
+- [ ] Guardar a cópia atualizada em pasta própria, como `BACKUP MANUS DIA 22 0826`, sem substituir ou modificar a pasta `BACKUP MANUS DIA 19 0826`
+- [ ] Não importar ou enviar os pacotes em 22 de agosto; restaurar somente após a reabertura oficial, usando a página de restauração e apenas se necessário
+- [ ] Criar lembrete explícito para a abertura da recuperação oficial em 25 de agosto às 8:00 SGT, sem presumir notificações automáticas
+- [ ] Confirmar antes da recuperação os requisitos verificáveis: pacote de tarefas íntegro, dados da conta exportados, cópia atualizada preservada e página oficial de recuperação habilitada
+- [ ] Exportar e verificar o pacote oficial separado de dados da conta antes de considerar a recuperação integral do aplicativo possível
+- [ ] Gerar agora a única cópia atual da conta e deixar para 22 de agosto apenas novas cópias de conta e tarefas, sem restauração
+- [ ] Executar agora a exportação da conta, baixar o `.manusaccount` no notebook e confirmar a integridade antes de encerrar a proteção atual
+- [ ] Entrar pelo Google no navegador normal e exportar o `.manusaccount` sem usar controle remoto instável
+- [ ] Usar somente o primeiro botão `Export` da página oficial, em `Export account data`; não repetir o segundo botão de tarefas já concluído
+- [ ] Limitar a próxima tentativa a exportar somente `Export account data`, ignorando tarefas e qualquer opção de restauração
+- [ ] Localizar a seção `Export account data` acima da área de tarefas antes de clicar no primeiro botão de exportação
+- [ ] Não tentar exportar a conta enquanto a página autenticada exibir apenas `Export task data`; preservar as cópias existentes e aguardar disponibilidade oficial
+- [ ] Concluir os dados da conta por etapas seguras: autenticar, exportar, baixar, verificar e guardar sem restaurar
+- [ ] Guardar o arquivo `.manusaccount` em pasta separada dos cinco arquivos `.manustask`, sem importar, restaurar ou alterar nenhum pacote
+- [ ] Exportar um novo `.manusaccount` em 22 de agosto e manter a versão atual e a versão mais recente juntas, em pastas datadas distintas
+- [ ] Manter duas versões completas: 19 de agosto e 22 de agosto, cada uma com dados da conta e todos os arquivos de tarefas correspondentes
+- [ ] Usar para a conta somente orientação por tela atual: uma imagem, uma seta, um clique e uma confirmação antes da próxima etapa
+- [ ] Após concluir a cópia atual da conta, manter como pendência única a exportação final mais recente em 22 de agosto
+- [ ] Criar uma segunda cópia física dos cinco arquivos oficiais em outro dispositivo ou armazenamento pessoal, sem alterar os arquivos originais
+- [x] Confirmar a localização do pacote oficial no Explorador de Arquivos, em Downloads, pelo nome `.manustask` e tamanho aproximado de 6,56 GB — os cinco arquivos foram encontrados juntos na pasta `BACKUP MANUS DIA 19 0826`, incluindo partes de aproximadamente 4,63 GB e 1,99 GB; o conjunto havia passado pela verificação no Manus Data Restoration e não foi restaurado
+- [ ] Limitar a orientação de 22 de agosto às quatro ações já comprovadas — Exportar, Baixar, aguardar o aplicativo e Verificar — sem novos formatos ou caminhos paralelos
+- [ ] Em 22 de agosto, executar somente o fluxo já comprovado de tarefas, sem login remoto, conta, importação ou restauração
+- [ ] Retomar o aplicativo por uma correção de baixo risco por vez, com TypeScript, regressões e preservação explícita dos recursos já confirmados
+- [x] Selecionar agora uma única pendência simples do aplicativo e validar a alteração isoladamente antes de qualquer nova publicação — painel de diálogo retornando compacto a cada abertura, regressão dedicada, TypeScript sem erros e 787 testes aprovados em 19/08
 - [x] Criar repositório GitHub independente e privado para preservar versões externas verificáveis, sem substituir os checkpoints e backups atuais — `villar01/multilingue-universal-continuity` criado como privado, cópia inicial enviada e sincronizada com o checkpoint `42563fc9` em `main`; checkpoints e snapshots criptografados permanecem como camadas complementares
 - [x] Remover a reserva de movimento neutro de James rejeitada pelo usuário e alinhar código e regressões ao ciclo aprovado de clipe lateral somente após áudio confirmado — reserva removida de `ImmersiveScene`; clipe lateral continua promovido somente em `audio.onplaying`; TypeScript sem erros e 287 arquivos/780 testes aprovados
 - [x] Eliminar a fonte de atualização a quente de TourSpotlight movendo tipos e catálogo de passos para módulo sem componente, sem alterar o guia contextual do aluno — tipos e passos movidos para `client/src/lib/tourSteps.ts`; o componente mantém apenas exportações React; TypeScript e suíte completa com 771 testes aprovados
@@ -1586,7 +1618,7 @@
 - [ ] Converter fielmente cada edição do livro: preservar ordem e função de cada folha da referência, traduzir o conteúdo para o par ativo e alterar somente o que a gramática daquela dupla exige, sem acrescentar método diferente nem reduzir assuntos
 - [ ] Preservar todos os exercícios da referência na conversão por dupla: manter ordem, função e progressão de reconhecimento, associação, completar, ordenar, formar, escrever, responder e revisar, adaptando apenas língua, vocabulário e gramática da dupla ativa
 - [x] Criar uma matriz capítulo-folha-exercício da referência para guiar a conversão fiel por dupla de idiomas antes de substituir qualquer conteúdo do Livro SOS — matriz verificável criada em `docs/pdf-reference-conversion-matrix.md`, com regras de adaptação em `docs/language-pair-conversion-rules.md`
-- [ ] Reduzir o painel de diálogo das cenas: manter fala e comandos essenciais em formato compacto e recolhível, sem cobrir hotspots, Livro SOS, professor, controles de cena ou navegação
+- [x] Reduzir o painel de diálogo das cenas: manter fala e comandos essenciais em formato compacto e recolhível, sem cobrir hotspots, Livro SOS, professor, controles de cena ou navegação — validado em 19/08: cada nova abertura retorna recolhida; TypeScript sem erros, 787 testes aprovados e captura da Praia Tropical confirmou professor, hotspots, Livro SOS e controles visíveis
 - [x] Corrigir sobreposições na Cena Imersiva móvel: atalhos de estudo foram movidos para a base esquerda em tela estreita, fora da área do avatar docente à direita; hotspots, Livro SOS e navegação foram preservados. TypeScript e suíte completa com 768 testes aprovados
 - [ ] Usar o Livro SOS voador como ponto de entrada único nas cenas e lições; ao abrir, mostrar folhas brancas simples com índice e navegação discreta no próprio livro, sem console, barra técnica ou grupo de comandos externos
 - [x] Remover somente o SOS da barra superior das cenas; Caderno, Pareto, Quiz, idioma e demais controles permanecem nas posições atuais, enquanto o Livro SOS voador fica separado dentro da cena — captura visual confirmou o livro isolado à esquerda na Praia Tropical e na Lição; TypeScript e 763 testes aprovados
