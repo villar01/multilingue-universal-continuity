@@ -229,6 +229,12 @@ export default function ParentalControlPanel() {
                     <Input id="child-pin-confirm" type="password" inputMode="numeric" maxLength={4} value={confirmChildPin} onChange={(e) => { setConfirmChildPin(e.target.value.replace(/\D/g, '')); setNewChildPinError(''); }} placeholder="Repita o PIN" />
                   </div>
                 </div>
+                <section aria-labelledby="parental-consent-summary" className="rounded-lg border border-sky-400/30 bg-sky-950/30 p-3 text-sm text-sky-50">
+                  <h3 id="parental-consent-summary" className="font-bold text-sky-100">Antes de autorizar</h3>
+                  <p className="mt-1 leading-relaxed">A autorização cria um perfil infantil com limites de tempo, filtros, alertas e acompanhamento pelo responsável.</p>
+                  <p className="mt-2 leading-relaxed">Nesta etapa são usados somente nome ou apelido, faixa etária, ícone e o PIN escolhido pelo responsável. Não são solicitados foto, documento ou e-mail.</p>
+                  <p className="mt-2 leading-relaxed">O responsável pode revisar configurações, ajustar limites e revogar a autorização pelo painel quando necessário.</p>
+                </section>
                 <div className="flex items-start gap-3 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3">
                   <Switch id="child-parental-consent" checked={newChildConsent} onCheckedChange={setNewChildConsent} className="mt-0.5" />
                   <Label htmlFor="child-parental-consent" className="cursor-pointer text-sm leading-relaxed text-emerald-50">
