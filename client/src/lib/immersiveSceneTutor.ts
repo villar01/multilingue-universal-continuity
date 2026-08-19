@@ -54,6 +54,14 @@ export function getSceneTutorReply(question: string, hotspots: SceneTutorHotspot
     };
   }
 
+  if (/\bbeach\b/.test(normalizedQuestion) && /\b(big|wide|large|vast)\b/.test(normalizedQuestion)) {
+    return {
+      text: "James: Yes. This beach looks wide. We can see a long stretch of white sand and blue water. Practise: ‘The beach is wide.’",
+      nativeText: "Sim. Esta praia parece ampla. Vemos uma longa extensão de areia branca e água azul. Pratique: ‘The beach is wide.’",
+      immediate: true,
+    };
+  }
+
   const isLocationQuestion = /\bwhere\s+(is|are)\b/.test(normalizedQuestion);
   if (isLocationQuestion && /\bhouse\b|\bhome\b/.test(normalizedQuestion)) {
     const visibleObjects = hotspots.slice(0, 4).map((hotspot) => hotspot.label).join(", ");

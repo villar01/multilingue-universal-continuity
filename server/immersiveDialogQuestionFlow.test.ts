@@ -26,6 +26,13 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain('playJamesTropicalClip(objectClipId || "james-tropical-greeting");');
   });
 
+  it("encaminha Perguntar diretamente ao tutor, sem confundir uma dúvida livre com a resposta do exercício", () => {
+    expect(sceneSource).toContain("const submitTeacherQuestion = useCallback(() => {");
+    expect(sceneSource).toContain("void askImmersiveTutor(question);");
+    expect(sceneSource).toContain('onClick={submitTeacherQuestion}');
+    expect(sceneSource).toContain('if (event.key === "Enter") submitTeacherQuestion();');
+  });
+
   it("inicia a apresentação audível ao abrir ou avançar o diálogo e mantém o botão explícito de repetição", () => {
     const startDialogSource = sceneSource.slice(sceneSource.indexOf("const startDialog = useCallback"), sceneSource.indexOf("useEffect(() => {\n    if (isSpeaking"));
     const nextDialogSource = sceneSource.slice(sceneSource.indexOf("const dlgNext = useCallback"), sceneSource.indexOf("const askImmersiveTutor = useCallback"));

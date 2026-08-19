@@ -2117,13 +2117,18 @@ export default function ImmersiveScene() {
       ? fallback.text.replace(/^[^:]+:\s*/, "")
       : `${scene.teacherName}: I heard you. I will help you practise this lesson step by step.`;
     const immediateFeedback = `${scene.teacherName}: ${immediateReply.replace(/^[^:]+:\s*/, "")}${fallback?.immediate && fallback.nativeText ? `\n${nativeLangLabel}: ${fallback.nativeText}` : ""}`;
-    if (scene.id === "beach" && scene.teacherName === "James" && fallback?.hotspotId) {
-      const objectClipId = ({
-        palm: "james-tropical-point-palm",
-        wave: "james-tropical-point-wave",
-        ocean: "james-tropical-point-ocean",
-        sand: "james-tropical-point-sand",
-      } as const)[fallback.hotspotId as "palm" | "wave" | "ocean" | "sand"];
+    if (scene.id === "beach" && scene.teacherName === "James") {
+      const objectClipId = fallback?.hotspotId
+        ? ({
+            palm: "james-tropical-point-palm",
+            wave: "james-tropical-point-wave",
+            ocean: "james-tropical-point-ocean",
+            sand: "james-tropical-point-sand",
+          } as const)[fallback.hotspotId as "palm" | "wave" | "ocean" | "sand"]
+        : null;
+      // Para perguntas livres, o gesto lateral existente é apenas temporal:
+      // fica pendente até o player único confirmar onplaying e nunca simula
+      // sincronia labial com uma frase diferente.
       playJamesTropicalClip(objectClipId || "james-tropical-greeting");
     }
     setDlgFeedback(immediateFeedback);
@@ -2231,6 +2236,13 @@ export default function ImmersiveScene() {
     setDlgWrittenAnswer("");
     validateDialogAnswer(question);
   }, [dlgWrittenAnswer, validateDialogAnswer]);
+
+  const submitTeacherQuestion = useCallback(() => {
+    const question = dlgWrittenAnswer.trim();
+    if (!question) return;
+    setDlgWrittenAnswer("");
+    void askImmersiveTutor(question);
+  }, [askImmersiveTutor, dlgWrittenAnswer]);
 
   const stopDialogRecording = useCallback(() => {
     if (dlgRecorderRef.current?.state === "recording") {
@@ -3270,14 +3282,14 @@ export default function ImmersiveScene() {
                     <input
                       value={dlgWrittenAnswer}
                       onChange={(event) => setDlgWrittenAnswer(event.target.value)}
-                      onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
+                      onKeyDown={(event) => { if (event.key === "Enter") submitTeacherQuestion(); }}
                       placeholder="Ex.: What is pool?"
                       className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                       autoComplete="off"
                     />
                     <button
                       type="button"
-                      onClick={submitWrittenDialogAnswer}
+                      onClick={submitTeacherQuestion}
                       className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950 disabled:opacity-50"
                     >
                       {dlgTutorLoading ? "Respondendo…" : "Perguntar"}
