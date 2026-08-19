@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const sceneCatalogSource = readFileSync("client/src/lib/immersiveScenesCatalog.ts", "utf8");
 const teacherSource = readFileSync("client/src/data/teachers57.ts", "utf8");
 const contractSource = readFileSync("docs/immersive-language-pair-contract-2026-08-16.md", "utf8");
 const auditSource = readFileSync("docs/six-language-materials-audit-2026-08-16.md", "utf8");
@@ -10,21 +11,21 @@ const INITIAL_LANGUAGE_VOICES = ["pt-BR", "en-US", "es-ES", "fr-FR", "it-IT", "d
 
 describe("consistência permanente das cenas e idiomas iniciais", () => {
   it("mantém a contagem declarada de 29 cenas sincronizada com a documentação", () => {
-    const sceneCount = (sceneSource.match(/^    id:"/gm) || []).length;
+    const sceneCount = (sceneCatalogSource.match(/^    id:"/gm) || []).length;
     expect(sceneCount).toBe(29);
-    expect(sceneSource).toContain("Scene Data (29 scenes with CDN images)");
+    expect(sceneCatalogSource).toContain("export const IMMERSIVE_SCENES: Scene[] = [");
     expect(contractSource).toContain("29 estruturas de cenário");
     expect(auditSource).toContain("29 cenários");
   });
 
   it("mantém professor, retrato e voz em todas as cenas declaradas", () => {
-    const teacherAssignments = sceneSource.match(/teacherImage:"[^\"]+",\n?\s*teacherName:"[^\"]+", teacherLang:"[^\"]+", langCode:"[^\"]+"/g) || [];
+    const teacherAssignments = sceneCatalogSource.match(/teacherImage:"[^\"]+",\n?\s*teacherName:"[^\"]+", teacherLang:"[^\"]+", langCode:"[^\"]+"/g) || [];
     expect(teacherAssignments).toHaveLength(29);
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
 
   it("aplica a rejeição de faixa vazia pelo fluxo compartilhado das 29 cenas com reserva masculina para James", () => {
-    const sceneIds = sceneSource.match(/^    id:"[^"]+"/gm) || [];
+    const sceneIds = sceneCatalogSource.match(/^    id:"[^"]+"/gm) || [];
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const useFallbackForInvalidTrack");
     expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");

@@ -4,15 +4,16 @@ import path from "node:path";
 import { resolveVoice } from "./edge-tts";
 
 const sceneSource = fs.readFileSync(path.resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
+const sceneCatalogSource = fs.readFileSync(path.resolve(process.cwd(), "client/src/lib/immersiveScenesCatalog.ts"), "utf8");
 const edgeSource = fs.readFileSync(path.resolve(process.cwd(), "server/edge-tts.ts"), "utf8");
-const sceneData = sceneSource.split("export const IMMERSIVE_SCENES")[1]?.split("function TeacherAvatar")[0] ?? "";
+const sceneData = sceneCatalogSource.split("export const IMMERSIVE_SCENES")[1] ?? "";
 
 describe("contrato regional de voz das cenas imersivas", () => {
   it("preserva Praia Tropical e James en-US masculino como referência de voz natural", () => {
-    expect(sceneSource).toContain('sceneId: "beach"');
-    expect(sceneSource).toContain('teacherName: "James"');
-    expect(sceneSource).toContain('language: "en-US"');
-    expect(sceneSource).toContain('gender: "male" as const');
+    expect(sceneCatalogSource).toContain('sceneId: "beach"');
+    expect(sceneCatalogSource).toContain('teacherName: "James"');
+    expect(sceneCatalogSource).toContain('language: "en-US"');
+    expect(sceneCatalogSource).toContain('gender: "male" as const');
   });
 
   it("força James à rota masculina em fala neural, pública e de recuperação", () => {

@@ -9,7 +9,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { createAudioRecorder, requestMicrophoneStream } from '@/lib/microphoneAccess';
-import { IMMERSIVE_SCENES, type Scene, type Hotspot } from '@/pages/ImmersiveScene';
+import { IMMERSIVE_SCENES } from '@/lib/immersiveScenesCatalog';
+import type { Scene, Hotspot } from '@shared/immersiveSceneTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getScriptedExerciseFeedback } from '@/lib/scriptedExerciseFeedback';
 

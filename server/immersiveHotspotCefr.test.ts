@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
+import { IMMERSIVE_SCENES } from "../client/src/lib/immersiveScenesCatalog";
 import { PARETO_VOCAB } from "./curriculum/paretoContent";
 
 function normalize(value: string) {

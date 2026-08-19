@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const sceneCatalogSource = readFileSync("client/src/lib/immersiveScenesCatalog.ts", "utf8");
 const teacherResolverSource = readFileSync("client/src/lib/sceneTeacherResolver.ts", "utf8");
 
 describe("permanent Tropical Beach scene contracts", () => {
@@ -31,7 +32,7 @@ describe("permanent Tropical Beach scene contracts", () => {
   });
 
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
-    expect(sceneSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
+    expect(sceneCatalogSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
     expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');
     expect(teacherResolverSource).toContain('return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };');
   });

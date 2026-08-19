@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getSecureSceneSeed, getSecureSceneSeedCatalog } from "./curriculum/secureSceneSeeds";
 import { getParetoProgramWords, getParetoWordsForScene } from "./curriculum/paretoContent";
-import { IMMERSIVE_SCENES } from "../client/src/pages/ImmersiveScene";
+import { IMMERSIVE_SCENES } from "../client/src/lib/immersiveScenesCatalog";
 import { readFileSync } from "node:fs";
 
 const CANONICAL_SCENES = [
