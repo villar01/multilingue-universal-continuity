@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getQuickStudyHref } from "../client/src/components/QuickStudyAccess";
+import { getQuickStudyHref } from "../client/src/lib/quickStudyAccess";
 
 describe("Livro ABC de Socorro global", () => {
   it("preserva a página de estudo e seus parâmetros como destino de retorno", () => {
