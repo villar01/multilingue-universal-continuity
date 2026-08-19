@@ -124,7 +124,7 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
         </div>
       )}
 
-      {feedback && <p className="mt-3 rounded-xl bg-white/10 p-2 text-sm text-amber-100">{feedback}</p>}
+      {feedback && <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-2 text-sm font-medium text-amber-950">{feedback}</p>}
     </section>
   );
 }

@@ -210,6 +210,7 @@
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
 - [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
 - [ ] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível
+- [x] Corrigir a legibilidade do feedback do ciclo Pareto, mantendo instruções, etapas, ações e conteúdo pedagógico inalterados — retorno agora usa fundo âmbar claro, borda de contraste e texto escuro; etapas, ações, conteúdo e voz foram preservados. TypeScript sem erros, 792 testes aprovados e tela Pareto validada visualmente em 19/08
 - [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
 - [x] Auditar e preservar todas as listas de verificação, testes e pendências antes de qualquer limpeza ou reclassificação — inventário de 2026-08-14 confirma 1.307 linhas no controle mestre, 857 itens concluídos, 136 pendentes, 168 regressões e checkpoints recentes preservados; falhas funcionais foram reabertas sem apagar histórico
 - [ ] Unificar apresentação guiada, objetos, vocabulário, diálogo, prática Pareto, perguntas, repetição e revisão em um roteiro contínuo por cena e CEFR
