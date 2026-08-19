@@ -2041,13 +2041,19 @@ export default function ImmersiveScene() {
       const teacherSpeech = getImmersiveDialogTeacherSpeech(line.text, dialogueScene);
       primeDialogAudioFromGesture();
       if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James" && teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE) {
-        // O MP4 aprovado contém esta fala e seu áudio no mesmo ativo. Não
-        // carregamos a WAV em paralelo; ela só é chamada pelo onError do vídeo.
-        pendingJamesClipIdRef.current = null;
-        setActiveJamesClipId("james-tropical-greeting");
-        activeSpeechRequestRef.current = "james-tropical-introduction-exact-pair";
-        setActiveSpeechText(JAMES_TROPICAL_INTRO_LINE);
-        setIsPreparingNeuralAudio(true);
+        // Restaura a rota que já funcionava: a fala masculina é o relógio
+        // real e libera a gravação lateral apenas em audio.onplaying.
+        // O MP4 experimental não pode substituir esta rota sem validação
+        // humana positiva na cena publicada.
+        playJamesTropicalClip("james-tropical-greeting");
+        void playTeacherAudio(
+          JAMES_TROPICAL_INTRO_FALLBACK_URL,
+          "Hello, I’m James. Welcome to the tropical beach. Click the objects to learn.",
+          "en-US",
+          "james-tropical-introduction",
+          false,
+          true,
+        );
       } else {
         requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose, true);
       }

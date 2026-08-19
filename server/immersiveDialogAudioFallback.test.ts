@@ -80,13 +80,13 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(speechFlow.indexOf("JAMES_TROPICAL_INTRO_FALLBACK_URL")).toBeGreaterThan(speechFlow.indexOf("const googleAudio"));
   });
 
-  it("usa o áudio interno do MP4 da apresentação sem carregar a faixa WAV em paralelo", () => {
+  it("restaura a fala masculina e o clipe lateral já validados para a apresentação de James", () => {
     const dialogStart = source.slice(source.indexOf("const startDialog"), source.indexOf("useEffect(() => {", source.indexOf("const startDialog")));
-    expect(source).toContain('muted={!activeClipHasExactAudioVideoPair}');
-    expect(source).toContain('loop={!activeClipHasExactAudioVideoPair}');
-    expect(dialogStart).toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(dialogStart).not.toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
-    expect(source).toContain("onExactClipFailed={() => {");
+    expect(dialogStart).toContain('playJamesTropicalClip("james-tropical-greeting")');
+    expect(dialogStart).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
+    expect(dialogStart).toContain('"james-tropical-introduction"');
+    expect(source).toContain("audio.onplaying = () => {");
+    expect(source).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
   });
 
   it("usa reservas masculinas curtas para os quatro objetos da Praia Tropical sem ativar vídeo de fala diferente", () => {

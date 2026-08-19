@@ -81,19 +81,22 @@ describe("integração de clipes de James na Praia Tropical", () => {
     const dialogStart = sceneSource.slice(sceneSource.indexOf("const startDialog"), sceneSource.indexOf("useEffect(() => {", sceneSource.indexOf("const startDialog")));
 
     expect(sceneEntry).not.toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(dialogStart).toContain('setActiveJamesClipId("james-tropical-greeting")');
-    expect(dialogStart).not.toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
+    expect(dialogStart).toContain('playJamesTropicalClip("james-tropical-greeting")');
+    expect(dialogStart).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(sceneSource).toContain('audio.onplaying = () => {');
     expect(sceneSource).toContain("audio.onpause = () => {");
     expect(sceneSource).toContain("setActiveJamesClipId(null);");
   });
 
-  it("usa o MP4 da apresentação como par exato e deixa a faixa WAV apenas para falha", () => {
+  it("mantém a rota lateral previamente validada como backup ativo da apresentação", () => {
     const greeting = JAMES_TROPICAL_PILOT_CLIPS.find((clip) => clip.id === "james-tropical-greeting");
-    expect(greeting?.videoUrl).toBe("/manus-storage/james-tropical-introduction-exact-pair_7a9cb0a4.mp4");
-    expect(greeting?.audioVideoExactPair).toBe(true);
-    expect(sceneSource).toContain("const activeClipHasExactAudioVideoPair = Boolean(activeClip?.audioVideoExactPair);");
-    expect(sceneSource).toContain("onExactClipFailed={() => {");
-    expect(sceneSource).toContain("void playTeacherAudio(");
+    const dialogStart = sceneSource.slice(sceneSource.indexOf("const startDialog"), sceneSource.indexOf("useEffect(() => {", sceneSource.indexOf("const startDialog")));
+    expect(greeting?.videoUrl).toBe("/manus-storage/james-tropical-greeting_5f8622cb.mp4");
+    expect(greeting?.audioVideoExactPair).not.toBe(true);
+    expect(dialogStart).toContain('playJamesTropicalClip("james-tropical-greeting");');
+    expect(dialogStart).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
+    expect(dialogStart).toContain('"james-tropical-introduction"');
+    expect(sceneSource).toContain("audio.onplaying = () => {");
+    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
   });
 });

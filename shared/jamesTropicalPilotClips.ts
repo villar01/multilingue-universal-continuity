@@ -32,8 +32,10 @@ export const JAMES_TROPICAL_PILOT_CLIPS: readonly JamesTropicalPilotClip[] = [
     durationSeconds: 8,
     dialogue: "Hello! My name is James. Welcome to this beautiful tropical beach!",
     referenceImageUrl: "/manus-storage/james-tropical-greeting-reference_dcda1d54.png",
-    videoUrl: "/manus-storage/james-tropical-introduction-exact-pair_7a9cb0a4.mp4",
-    audioVideoExactPair: true,
+    // Rota publicada de backup: movimento lateral já validado com a faixa
+    // masculina do player único. O MP4 experimental de par exato fica fora
+    // da rota ativa até receber confirmação humana positiva.
+    videoUrl: "/manus-storage/james-tropical-greeting_5f8622cb.mp4",
     preserveOriginalPortrait: true,
     fallback: "original_portrait",
   },
