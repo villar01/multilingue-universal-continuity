@@ -1,4 +1,3 @@
-import { Book } from "lucide-react";
 import { useLocation } from "wouter";
 import { getABCBookHref } from "@/lib/abcBookAccess";
 
@@ -20,10 +19,12 @@ export function FlyingSOSBook({
       aria-label="Socorro: abrir o Livro ABC de Idiomas e retornar a esta atividade"
       title="SOS — abrir o Livro ABC de Idiomas"
     >
-      <span className="relative grid h-9 w-8 place-items-center rounded-sm border border-amber-500 bg-gradient-to-br from-amber-200 via-amber-300 to-amber-500 text-amber-950 shadow-sm ring-1 ring-amber-100/80">
-        <span className="absolute inset-y-1 left-1 w-px rounded-full bg-amber-700/60" aria-hidden="true" />
-        <Book className="relative h-5 w-5 stroke-[2.4]" aria-hidden="true" />
-        <span className="absolute -right-2 -top-2 rounded-full bg-rose-600 px-1.5 py-0.5 text-[9px] font-black leading-none text-white">SOS</span>
+      <span className="relative h-9 w-8 overflow-visible rounded-[3px] border border-amber-700 bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shadow-sm ring-1 ring-amber-100/80" aria-hidden="true">
+        <span className="absolute inset-y-0 left-0 w-1.5 rounded-l-[2px] border-r border-amber-900/70 bg-gradient-to-b from-amber-800 to-amber-950" />
+        <span className="absolute inset-y-1 right-0 w-1.5 rounded-r-[1px] border-l border-amber-100 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 shadow-[inset_-1px_0_0_rgba(120,53,15,0.28)]" />
+        <span className="absolute inset-x-2 top-2.5 rounded-sm border border-amber-900/50 bg-amber-100 px-0.5 py-[1px] text-center text-[7px] font-black leading-none tracking-tight text-amber-950">SOS</span>
+        <span className="absolute bottom-1.5 left-2 right-2 h-px bg-amber-900/50" />
+        <span className="absolute -right-2 -top-2 rounded-full border border-white/80 bg-rose-600 px-1.5 py-0.5 text-[9px] font-black leading-none text-white shadow-sm">?</span>
       </span>
       <span className={compact ? "sr-only" : "text-left leading-tight"}>
         <span className="block text-xs font-black">Livro SOS</span>
