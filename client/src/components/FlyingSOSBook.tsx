@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+import { Book } from "lucide-react";
 import { useLocation } from "wouter";
 import { getABCBookHref } from "@/lib/abcBookAccess";
 
@@ -20,8 +20,9 @@ export function FlyingSOSBook({
       aria-label="Socorro: abrir o Livro ABC de Idiomas e retornar a esta atividade"
       title="SOS — abrir o Livro ABC de Idiomas"
     >
-      <span className="relative grid h-9 w-8 place-items-center rounded-sm border border-amber-300 bg-amber-100 text-amber-700 shadow-sm">
-        <BookOpen className="h-5 w-5" aria-hidden="true" />
+      <span className="relative grid h-9 w-8 place-items-center rounded-sm border border-amber-500 bg-gradient-to-br from-amber-200 via-amber-300 to-amber-500 text-amber-950 shadow-sm ring-1 ring-amber-100/80">
+        <span className="absolute inset-y-1 left-1 w-px rounded-full bg-amber-700/60" aria-hidden="true" />
+        <Book className="relative h-5 w-5 stroke-[2.4]" aria-hidden="true" />
         <span className="absolute -right-2 -top-2 rounded-full bg-rose-600 px-1.5 py-0.5 text-[9px] font-black leading-none text-white">SOS</span>
       </span>
       <span className={compact ? "sr-only" : "text-left leading-tight"}>

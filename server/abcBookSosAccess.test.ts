@@ -31,6 +31,8 @@ describe("Livro ABC e Socorro SOS voluntário", () => {
 
   it("cria um destino SOS interno que preserva a atividade de origem", () => {
     expect(sosSource).toContain('import { getABCBookHref } from "@/lib/abcBookAccess"');
+    expect(sosSource).toContain('import { Book } from "lucide-react"');
+    expect(sosSource).toContain('data-compact={compact ? "true" : "false"}');
     expect(sosSource).toContain('aria-label="Socorro: abrir o Livro ABC de Idiomas e retornar a esta atividade"');
     expect(abcBookAccessSource).toContain('return `/abc-book?returnTo=${encodeURIComponent(safeOrigin(location))}`');
     expect(abcBookAccessSource).toContain('!location.startsWith("//")');
