@@ -1,6 +1,22 @@
 import axios from "axios";
 
 const LMSTUDIO_BASE_URL = process.env.LMSTUDIO_BASE_URL || "http://localhost:1234";
+let lmStudioUnavailableWasLogged = false;
+
+function reportLMStudioUnavailable(error: unknown) {
+  if (lmStudioUnavailableWasLogged) return;
+
+  lmStudioUnavailableWasLogged = true;
+  console.warn(
+    "[LM Studio] Service not available; continuing with the configured fallback:",
+    error instanceof Error ? error.message : error
+  );
+}
+
+/** Test-only reset for the availability warning state. */
+export function __resetLMStudioAvailabilityWarningForTests() {
+  lmStudioUnavailableWasLogged = false;
+}
 
 export interface LMStudioMessage {
   role: "system" | "user" | "assistant";
@@ -42,9 +58,10 @@ export async function isLMStudioAvailable(): Promise<boolean> {
     const response = await axios.get(`${LMSTUDIO_BASE_URL}/v1/models`, {
         timeout: 5000, // 5 seconds - tempo razoável para verificar disponibilidade
     });
+    lmStudioUnavailableWasLogged = false;
     return response.status === 200;
   } catch (error) {
-    console.warn("[LM Studio] Service not available:", error instanceof Error ? error.message : error);
+    reportLMStudioUnavailable(error);
     return false;
   }
 }
