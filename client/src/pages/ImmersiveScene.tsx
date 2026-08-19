@@ -773,48 +773,6 @@ function TeacherAvatar({
             }}
           />
         )}
-        {/* Eye blink overlay — natural blinking every 3-5 seconds */}
-        <div
-          style={{
-            position: "absolute",
-            top: "18%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "30%",
-            height: "3%",
-            background: "rgba(0,0,0,0)",
-            borderRadius: "50%",
-            animation: "eye-blink 4s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        {/* Subtle eyebrow and cheek micro-expressions retain the portrait's natural appearance. */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute", top: "14%", left: "39%", width: "9%", height: "1.6%",
-            borderTop: "2px solid rgba(55,35,28,0.28)", borderRadius: "50%",
-            animation: isSpeaking ? "brow-focus 1.8s ease-in-out infinite" : "brow-focus 5s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute", top: "14%", right: "39%", width: "9%", height: "1.6%",
-            borderTop: "2px solid rgba(55,35,28,0.28)", borderRadius: "50%",
-            animation: isSpeaking ? "brow-focus 1.8s ease-in-out infinite reverse" : "brow-focus 5s ease-in-out infinite reverse",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute", top: "32%", left: "34%", width: "32%", height: "13%",
-            borderRadius: "50%", background: isSpeaking ? "radial-gradient(ellipse, rgba(255,154,154,.12), transparent 68%)" : "transparent",
-            animation: "cheek-warmth 2.4s ease-in-out infinite", pointerEvents: "none",
-          }}
-        />
         {/* A boca fica neutra no retrato até existir mídia facial aprovada. */}
         {showSyntheticMouth && isSpeaking && (
           <div

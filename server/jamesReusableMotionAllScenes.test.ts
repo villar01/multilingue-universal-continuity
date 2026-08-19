@@ -16,6 +16,9 @@ describe("James reusable motion across immersive scenes", () => {
 
   it("preserves the no-synthetic-mouth contract while visual motion is active", () => {
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
+    expect(sceneSource).not.toContain('animation: "eye-blink');
+    expect(sceneSource).not.toContain('animation: isSpeaking ? "brow-focus');
+    expect(sceneSource).not.toContain('animation: "cheek-warmth');
     expect(sceneSource).toContain("onended = () => {");
     expect(sceneSource).toContain("setIsSpeaking(false);");
     expect(sceneSource).toContain("audio.onpause = () => {");
