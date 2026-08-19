@@ -29,6 +29,21 @@ describe("backup durável", () => {
     expect(callbackSource).not.toContain("DELETE FROM");
   });
 
+  it("mantém a criação de cópia isolada de qualquer operação de restauração ou escrita destrutiva", () => {
+    const backupSource = fs.readFileSync(path.join(projectRoot, "server", "backupRestore.ts"), "utf8");
+    const createBackupSource = backupSource.slice(
+      backupSource.indexOf("export async function createBackup"),
+      backupSource.indexOf("export async function listBackups")
+    );
+
+    expect(createBackupSource).toContain("SELECT * FROM");
+    expect(createBackupSource).toContain("storagePut");
+    expect(createBackupSource).not.toContain("restoreFromBackup");
+    expect(createBackupSource).not.toContain("DELETE FROM");
+    expect(createBackupSource).not.toContain("START TRANSACTION");
+    expect(createBackupSource).not.toContain("status = 'restoring'");
+  });
+
   it("exige uma confirmação vinculada ao backup antes da restauração", () => {
     const backupSource = fs.readFileSync(path.join(projectRoot, "server", "backupRestore.ts"), "utf8");
     expect(backupSource).toContain("RESTORE ${backupId}");
