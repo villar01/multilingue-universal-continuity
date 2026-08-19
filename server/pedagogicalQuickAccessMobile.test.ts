@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   PEDAGOGICAL_QUICK_ACCESS_CLASS,
   shouldShowPedagogicalQuickAccess,
-} from "../client/src/components/PedagogicalQuickAccess";
+} from "../client/src/lib/pedagogicalQuickAccess";
 
 describe("pedagogical quick access mobile placement", () => {
   it("moves the closed shortcut away from the teacher's right-bottom area on narrow screens", () => {

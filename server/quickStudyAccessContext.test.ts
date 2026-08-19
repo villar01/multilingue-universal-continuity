@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getABCBookHref } from "../client/src/components/FlyingSOSBook";
 import { getQuickStudyHref } from "../client/src/lib/quickStudyAccess";
-import { getPedagogicalShortcutHrefs, shouldShowPedagogicalQuickAccess } from "../client/src/components/PedagogicalQuickAccess";
+import { getPedagogicalShortcutHrefs, shouldShowPedagogicalQuickAccess } from "../client/src/lib/pedagogicalQuickAccess";
 
 describe("Socorro SOS com retorno contextual", () => {
   it("preserva unidade e item curricular ao abrir o Livro ABC", () => {
