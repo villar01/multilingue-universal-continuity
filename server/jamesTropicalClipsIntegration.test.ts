@@ -106,4 +106,13 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(sceneSource).toContain("audio.onplaying = () => {");
     expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
   });
+
+  it("rearma o clipe lateral e mostra a mesma frase acima do retrato ao repetir a fala confirmada", () => {
+    const replayFlow = sceneSource.slice(sceneSource.indexOf("const replayVisibleDialogAudio"), sceneSource.indexOf("const primeDialogAudioFromGesture"));
+    expect(replayFlow).toContain('playJamesTropicalClip("james-tropical-greeting");');
+    expect(replayFlow).toContain("setActiveJamesClipId(null);");
+    expect(sceneSource).toContain("const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;");
+    expect(sceneSource).toContain("const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());");
+    expect(sceneSource).toContain("<div>{visibleGreeting}</div>");
+  });
 });

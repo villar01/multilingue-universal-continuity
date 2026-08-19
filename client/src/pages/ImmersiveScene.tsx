@@ -631,13 +631,15 @@ function TeacherAvatar({
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
   );
+  const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;
+  const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());
   return (
     <div
       className="immersive-teacher absolute bottom-0 right-4 flex flex-col items-center z-30"
       style={{ width: "clamp(120px, 18vw, 220px)" }}
     >
       {/* Speech bubble */}
-      {showGreeting && (
+      {showTeacherBubble && (
         <div
           className="relative mb-2 rounded-2xl px-3 py-2 text-sm font-medium shadow-2xl max-w-xs"
           style={{
@@ -651,7 +653,7 @@ function TeacherAvatar({
           <div className="font-bold text-indigo-600 mb-1" style={{ fontSize: "clamp(10px, 1vw, 12px)" }}>
             {overrideName || scene.teacherName}
           </div>
-          <div>{greeting}</div>
+          <div>{visibleGreeting}</div>
           {isPreparingAudio && (
             <div className="mt-1 text-[10px] font-semibold text-indigo-500" aria-live="polite">
               Preparando voz neural…
@@ -1646,6 +1648,10 @@ export default function ImmersiveScene() {
       return;
     }
     try {
+      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James") {
+        setActiveJamesClipId(null);
+        playJamesTropicalClip("james-tropical-greeting");
+      }
       audio.muted = false;
       audio.volume = 1;
       audio.playbackRate = dialogSpeechRate;
@@ -1661,7 +1667,7 @@ export default function ImmersiveScene() {
       }
       setDlgAudioNotice("Toque em Ouvir inglês para escutar a frase e continuar a prática.");
     }
-  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playLocalDialogFallback, selectedScene?.teacherGender, selectedScene?.teacherLang]);
+  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, selectedScene?.id, selectedScene?.teacherGender, selectedScene?.teacherLang, selectedScene?.teacherName]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
