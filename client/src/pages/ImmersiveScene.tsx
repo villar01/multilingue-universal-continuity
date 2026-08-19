@@ -269,13 +269,21 @@ function TeacherAvatar({
     hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking && !activeClipHasExactAudioVideoPair),
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
+  const [pilotClipPlaybackConfirmed, setPilotClipPlaybackConfirmed] = useState(false);
+  useEffect(() => {
+    setPilotClipPlaybackConfirmed(false);
+  }, [activeClip?.id, isSpeaking]);
   const showPilotClip = Boolean(
     (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
       && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
   );
-  const showReusableJamesMotion = Boolean(showNeutralJamesMotion && isSpeaking && !showPilotClip);
+  const showReusableJamesMotion = Boolean(
+    showNeutralJamesMotion
+      && isSpeaking
+      && (!showPilotClip || !pilotClipPlaybackConfirmed),
+  );
   const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;
   const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());
   return (
@@ -364,6 +372,7 @@ function TeacherAvatar({
             data-teacher-pose={teacherPoseCue?.pose.id}
             data-teacher-audio-intent={teacherPoseCue?.audioIntent}
             onPlaying={() => {
+              setPilotClipPlaybackConfirmed(true);
               if (activeClipHasExactAudioVideoPair) onExactClipPlaying?.();
             }}
             onEnded={() => {

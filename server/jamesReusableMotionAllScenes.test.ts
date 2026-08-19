@@ -7,7 +7,7 @@ const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/Immers
 describe("James reusable motion across immersive scenes", () => {
   it("keeps one neutral, silent visual asset gated by confirmed speaking", () => {
     expect(sceneSource).toContain('JAMES_NEUTRAL_MOTION_URL = "/manus-storage/james-neutral-reusable-motion-portrait-alpha_315ce2e1.webm"');
-    expect(sceneSource).toContain("showNeutralJamesMotion && isSpeaking && !showPilotClip");
+    expect(sceneSource).toMatch(/showNeutralJamesMotion\s+&&\s+isSpeaking\s+&&\s+\(!showPilotClip \|\| !pilotClipPlaybackConfirmed\)/);
     expect(sceneSource).toContain("muted");
     expect(sceneSource).toContain("overrideName=\"James\"");
     expect(sceneSource).toContain("overrideImage={JAMES_CANONICAL_PORTRAIT_URL}");
