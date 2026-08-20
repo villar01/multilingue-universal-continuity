@@ -144,3 +144,15 @@ Também ficou visível que o livro usa muitos relógios e exemplos prontos como 
 As páginas seguintes indicam ainda a transição para **datas e quantidades maiores**, o que obriga a reconstrução a manter uma progressão contínua: número isolado, composição de número, leitura do relógio, referência a dia e mês e uso funcional em compromissos. Assim, o segundo bloco do Livro SOS deverá ser tratado como **tempo e contagem em uso real**, e não como listas separadas.
 
 Conclusão visual do segundo bloco: a sequência do original está confirmada e é pedagogicamente útil. A reconstrução manterá a ordem visual e os tipos de exercício, mas substituirá a mediação sonora em espanhol, detalhará melhor a lógica do relógio e transformará cada subtópico em prática com recuperação Pareto separada.
+
+## Próximo bloco confirmado visualmente — demonstrativos, possessivos e perguntas básicas
+
+As páginas seguintes do original mostram com clareza o próximo ciclo didático após tempo e contagem. A sequência é: **adjetivos demonstrativos** (`this`, `that`, `these`, `those`) com imagens apontadas; depois **possessivos adjetivos** (`my`, `your`, `his`, `her`, `its`, `our`, `their`); em seguida **pronomes possessivos** (`mine`, `yours`, `his`, `hers`, `ours`, `theirs`); logo após aparecem **palavras interrogativas** (`what`, `who`, `whom`, `whose`, `which`) e, por fim, exercícios ilustrados que pedem identificação de posse e referência.
+
+O valor metodológico desse bloco é forte e será preservado: o livro apresenta contraste visual entre objeto e dono, depois troca a estrutura para perguntas e respostas curtas. Isso ajuda o aluno a passar de nomeação para relação e, depois, para diálogo. A reconstrução deve manter essa progressão.
+
+Os problemas encontrados também ficaram evidentes. A coluna de “pronunciación” continua mediada por hispanização forte, com formas como `Zdis`, `Zdat`, `Mái`, `Yur`, `Jis`, `Jers`, `Juát` e `Juích`. Além disso, a página de possessivos mistura valores de `your` singular e plural em espanhol, o que exige reescrita mais clara para português brasileiro. O bloco de `whose` e das respostas com `mine/yours/hers` também precisa de melhor distinção entre **adjetivo possessivo** e **pronome possessivo**, algo que o original apenas sugere.
+
+As páginas ilustradas confirmam ainda que os exercícios-base são úteis: “This is my bicycle”, “That is my father’s armchair”, “Whose coffee is that?” e itens em branco para completar. Esses exercícios não devem ser removidos; devem ser reconstruídos com português natural, áudio nativo, explicação explícita da diferença entre posse com `'s`, com adjetivo possessivo e com pronome possessivo, além de Pareto separado por folha.
+
+Conclusão documental: o próximo bloco reconstruído deve seguir a ordem **demonstrativos → possessivos adjetivos → possessivos pronominais → perguntas de posse → prática ilustrada**. A melhoria principal será pedagógica e fonética: explicar melhor a função de cada forma e abandonar a transliteração hispanizada como eixo do ensino.
