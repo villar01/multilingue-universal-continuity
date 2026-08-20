@@ -103,6 +103,7 @@
 - [x] Estender a recuperação local à Aula Imersiva crítica, preservando professor e voz sem tocar na fronteira global — `/immersive-lesson` agora usa `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
 
 - [x] Estender a recuperação local à prática de clipes e ao reprodutor crítico, preservando saídas seguras e sem tocar na fronteira global — `/practice/clips` e `/practice/clips/:id` agora usam `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
+- [x] Isolar vídeos interativos e roleplay em recuperação local genérica, com uma tentativa automática, nova tentativa manual e retorno seguro ao painel — `ActivityRecoveryBoundary` protege `/interactive-videos` e `/roleplay`; TypeScript sem erros e 2 regressões dedicadas aprovadas
 - [ ] Adicionar teste de integração real da rota `/lesson/:id` em erro, comprovando fallback local, saídas seguras e ausência de acionamento da fronteira global — o teste atual cobre a fronteira isolada, mas ainda não monta a rota real
 - [ ] Definir e testar metas de detecção, isolamento e retorno seguro para falhas críticas, sem prometer prazo que não possa ser monitorado em produção
 - [x] Manter rotas de aprendizagem legítimas disponíveis sob excesso de requisições, isolando e limitando somente o tráfego abusivo com recuperação verificável — a regressão confirma que o IP abusivo recebe 429, enquanto outro IP continua abrindo a Cena; TypeScript sem erros e 801 testes aprovados
@@ -172,6 +173,7 @@
 ## 🎬 NOVOS RECURSOS DO BACKUP
 - [x] ReelsPage - Clipes educacionais estilo TikTok/Instagram com falantes nativos
 - [x] RoleplayPage - Simulações de situações reais (entrevistas, restaurantes, aeroporto)
+- [x] Corrigir capas quebradas dos cartões de vídeos interativos, removendo dependência de miniaturas externas e exibindo capas locais acessíveis — três cartões usam gradientes e ícones nativos; TypeScript, regressão dedicada e validação visual aprovados
 - [x] Discussions Router - Fóruns de discussão entre alunos
 - [x] Clips Router - Gerenciamento de vídeos curtos educacionais
 - [x] Schema Extended - Tabelas para educationalClips, avatarVideos, lipSyncData, teacherProfiles

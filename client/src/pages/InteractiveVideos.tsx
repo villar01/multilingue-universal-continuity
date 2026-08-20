@@ -10,7 +10,7 @@ const demoVideos = [
     id: 1,
     title: "At the Coffee Shop",
     description: "Learn how to order coffee and have a conversation at a café",
-    thumbnail: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
+    cover: { emoji: "☕", className: "from-amber-500 via-orange-500 to-rose-500" },
     videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder
     level: "Beginner",
     duration: "3:45",
@@ -50,7 +50,7 @@ const demoVideos = [
     id: 2,
     title: "Job Interview",
     description: "Practice common job interview questions and answers",
-    thumbnail: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
+    cover: { emoji: "💼", className: "from-sky-600 via-blue-600 to-indigo-700" },
     videoUrl: "https://www.w3schools.com/html/movie.mp4", // Placeholder
     level: "Intermediate",
     duration: "5:20",
@@ -76,7 +76,7 @@ const demoVideos = [
     id: 3,
     title: "At the Doctor's Office",
     description: "Learn medical vocabulary and how to describe symptoms",
-    thumbnail: "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=400",
+    cover: { emoji: "🩺", className: "from-emerald-500 via-teal-500 to-cyan-600" },
     videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder
     level: "Beginner",
     duration: "4:15",
@@ -161,11 +161,13 @@ export default function InteractiveVideos() {
               onClick={() => setSelectedVideo(video)}
             >
               <div className="relative">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-48 object-cover"
-                />
+                <div
+                  role="img"
+                  aria-label={`Cena de aprendizagem: ${video.title}`}
+                  className={`flex h-48 items-center justify-center bg-gradient-to-br ${video.cover.className} text-7xl shadow-inner`}
+                >
+                  <span aria-hidden="true" className="drop-shadow-md">{video.cover.emoji}</span>
+                </div>
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                   <Button size="lg" className="rounded-full">
                     <Play className="w-6 h-6 mr-2" />

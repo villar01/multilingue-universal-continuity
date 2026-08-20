@@ -13,6 +13,7 @@ import UpdatesNotificationBanner from "./components/UpdatesNotificationBanner";
 import { registerServiceWorker } from "./lib/registerSW";
 import { ImmersiveSceneRecoveryBoundary } from "./components/ImmersiveSceneRecoveryBoundary";
 import { LessonRecoveryBoundary } from "./components/LessonRecoveryBoundary";
+import { ActivityRecoveryBoundary } from "./components/ActivityRecoveryBoundary";
 
 // Lazy load non-critical routes for faster initial load
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -92,6 +93,16 @@ const ResilientImmersiveLesson = () => (
     <ImmersiveLesson />
   </LessonRecoveryBoundary>
 );
+const ResilientInteractiveVideos = () => (
+  <ActivityRecoveryBoundary activityLabel="os vídeos interativos">
+    <InteractiveVideos />
+  </ActivityRecoveryBoundary>
+);
+const ResilientRoleplay = () => (
+  <ActivityRecoveryBoundary activityLabel="o roleplay">
+    <RoleplayPage />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -157,9 +168,9 @@ function Router() {
       <Route path={"/pricing-comparison"} component={PricingComparison} />
       <Route path={"/prelaunch"} component={PreLaunch} />
       <Route path={"/phrasal-verbs-exercises"} component={PhrasalVerbsExercises} />
-      <Route path="/interactive-videos" component={InteractiveVideos} />
+      <Route path="/interactive-videos" component={ResilientInteractiveVideos} />
         <Route path="/reels" component={ReelsPage} />
-        <Route path="/roleplay" component={RoleplayPage} />
+        <Route path="/roleplay" component={ResilientRoleplay} />
         <Route path="/clips" component={Clips} />
         <Route path="/ar-teacher" component={ARTeacher} />
         <Route path="/pricing-assistencial" component={PricingAssistencial} />
