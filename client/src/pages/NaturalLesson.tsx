@@ -6,6 +6,7 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import { useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { createLessonGenerationGuard } from "@/lib/lessonGenerationGuard";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, Brain } from "lucide-react";
 
@@ -27,12 +28,20 @@ export default function NaturalLesson() {
   const [lessonContent, setLessonContent] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const generateMutation = trpc.ai.generateLessonContent.useMutation();
 
   useEffect(() => {
     setIsLoading(true);
     setError(null);
+    setLessonContent(null);
+
+    const guard = createLessonGenerationGuard({ onTimeout: () => {
+      setError("A preparação está demorando mais que o esperado. Você pode tentar novamente ou continuar por outra aula.");
+      setIsLoading(false);
+    }});
+
     generateMutation.mutateAsync({
       lessonTitle: title,
       lessonDescription: "",
@@ -40,14 +49,20 @@ export default function NaturalLesson() {
       nativeLanguage: "pt",
       level: level,
     }).then((data: unknown) => {
-      setLessonContent(data);
-      setIsLoading(false);
+      guard.finish(() => {
+        setLessonContent(data);
+        setIsLoading(false);
+      });
     }).catch((err: unknown) => {
-      console.error("NaturalLesson generate error:", err);
-      setError("Erro ao gerar aula. Tente novamente.");
-      setIsLoading(false);
+      guard.finish(() => {
+        console.error("NaturalLesson generate error:", err);
+        setError("Esta aula ainda não pôde ser preparada. Você pode tentar novamente ou continuar por outra aula.");
+        setIsLoading(false);
+      });
     });
-  }, [title, lang, level]);
+
+    return guard.cancel;
+  }, [title, lang, level, retryKey]);
 
   const handleComplete = (score: number, xp: number) => {
     toast.success(`🏆 Lição concluída! +${xp} XP`, { duration: 3000 });
@@ -79,12 +94,20 @@ export default function NaturalLesson() {
         <div className="text-center">
           <div className="text-5xl mb-4">😕</div>
           <p className="text-white font-bold mb-2">{error || "Aula não disponível"}</p>
-          <button
-            onClick={() => navigate("/natural-learning")}
-            className="mt-4 px-6 py-2 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors"
-          >
-            Voltar
-          </button>
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => setRetryKey((current) => current + 1)}
+              className="px-6 py-2 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors"
+            >
+              Tentar novamente
+            </button>
+            <button
+              onClick={() => navigate("/natural-learning")}
+              className="px-6 py-2 rounded-xl border border-white/30 text-white font-semibold hover:bg-white/10 transition-colors"
+            >
+              Outras aulas
+            </button>
+          </div>
         </div>
       </div>
     );
