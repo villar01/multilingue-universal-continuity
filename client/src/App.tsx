@@ -103,6 +103,11 @@ const ResilientRoleplay = () => (
     <RoleplayPage />
   </ActivityRecoveryBoundary>
 );
+const ResilientARMode = () => (
+  <ActivityRecoveryBoundary activityLabel="o modo de realidade aumentada">
+    <ARMode />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -177,8 +182,8 @@ function Router() {
         <Route path="/sales-dashboard" component={SalesDashboard} />
         <Route path="/crm" component={CRMLeads} />
         <Route path="/crm-leads" component={CRMLeads} />
-        <Route path="/ar-mode" component={ARMode} />
-        <Route path="/ar-ultimate" component={ARMode} />
+        <Route path="/ar-mode" component={ResilientARMode} />
+        <Route path="/ar-ultimate" component={ResilientARMode} />
         <Route path="/vr-conversation" component={VRConversation} />
         <Route path="/free-talk" component={FreeTalk} />
         <Route path="/word-game" component={WordGame} />
