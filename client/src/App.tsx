@@ -263,6 +263,11 @@ const ResilientIANativa = () => (
     <IANativa />
   </ActivityRecoveryBoundary>
 );
+const ResilientLanguageDetect = () => (
+  <ActivityRecoveryBoundary activityLabel="a detecção de idioma">
+    <LanguageDetect />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -355,7 +360,7 @@ function Router() {
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
         <Route path="/ai-monitor" component={AIMonitor} />
         <Route path="/terms" component={TermsOfUse} />
-        <Route path="/language-detect" component={LanguageDetect} />
+        <Route path="/language-detect" component={ResilientLanguageDetect} />
         <Route path="/admin/updates" component={AdminUpdates} />
         <Route path="/admin/control-center" component={AdminControlCenter} />
         <Route path="/language-select" component={ResilientLanguageSelect} />
