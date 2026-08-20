@@ -208,6 +208,11 @@ const ResilientMyTeacher = () => (
     <MyTeacher />
   </ActivityRecoveryBoundary>
 );
+const ResilientStudentProgress = () => (
+  <ActivityRecoveryBoundary activityLabel="o progresso de aprendizagem">
+    <StudentProgress />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -289,7 +294,7 @@ function Router() {
         <Route path="/word-game" component={ResilientWordGame} />
         <Route path="/ranking" component={Ranking} />
         <Route path="/daily-challenge" component={DailyChallenge} />
-        <Route path="/progress" component={StudentProgress} />
+        <Route path="/progress" component={ResilientStudentProgress} />
         <Route path="/subscription-plans" component={SubscriptionPlans} />
         <Route path="/achievements" component={Achievements} />
         <Route path="/lesson-history" component={LessonHistory} />
