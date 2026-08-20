@@ -192,3 +192,11 @@ As páginas seguintes do original não avançam para outro vocabulário domésti
 O bloco de preposições básicas apresenta a sequência **at, in, on, to, around, from, under, behind, within, over, far**, seguida por explicações em espanhol sobre distinção de uso e uma folha de frases-modelo com tradução. A última página visualizada combina exemplos práticos de preposição com um exercício ilustrado de completar frases.
 
 Na reconstrução, a metodologia deve permanecer a mesma: **regra → tabela de exemplos → contraste de uso → frases completas → exercício aplicado**. Contudo, três correções são obrigatórias: **eliminar a fonetização hispanizada como orientação principal**, **explicar as regras de plural e preposição em pt-BR claro, inclusive exceções e limites**, e **usar áudio nativo e prática Pareto separada** para cada folha. O próximo bloco a implementar deve seguir a ordem **plural regular e irregular → preposições básicas → frases contextualizadas → exercício de preenchimento**.
+
+## Bloco seguinte confirmado visualmente — auxiliares, perguntas e respostas curtas
+
+As páginas seguintes do original avançam para um bloco de **verbos auxiliares e formulação de perguntas**, seguido por **respostas curtas** e prática aplicada. O percurso visual mostra perguntas com **do / does / did** e o uso de auxiliares como apoio estrutural, antes de exemplos de resposta curta afirmativa e negativa.
+
+O bloco também introduz contraste entre **pergunta completa**, **resposta curta** e **frase desenvolvida**, com exemplos contextualizados. A organização ainda segue o padrão do livro: apresentação da regra, lista de frases-modelo, contraste entre formas e exercício final de aplicação.
+
+Na reconstrução, a sequência deve ser preservada como **auxiliar → pergunta → resposta curta → prática contextual**, mas com correções obrigatórias: **explicação em pt-BR sobre função do auxiliar**, **diferença clara entre verbo principal e verbo de apoio**, **pronúncia guiada por áudio nativo em vez de fonetização espanhola**, e **Pareto separado por folha** sem remover o exercício-base.
