@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { type NotebookEntry, loadNotebook, saveNotebook } from "@/lib/notebookStorage";
+import { speakEdgeTTS, stopEdgeTTS } from "@/lib/edgeTTSClient";
 
 interface NotebookProps {
   isOpen: boolean;
   onClose: () => void;
-  onSpeak: (text: string, lang: string) => void;
   nativeLang?: string;
 }
 
@@ -27,7 +27,7 @@ function langFlag(code: string): string {
 }
 
 // ─── Notebook Component ───────────────────────────────────────────────────────
-export default function Notebook({ isOpen, onClose, onSpeak, nativeLang = "pt-BR" }: NotebookProps) {
+export default function Notebook({ isOpen, onClose, nativeLang = "pt-BR" }: NotebookProps) {
   const [entries, setEntries] = useState<NotebookEntry[]>([]);
   const [search, setSearch] = useState("");
   const [filterLang, setFilterLang] = useState("all");
@@ -38,6 +38,7 @@ export default function Notebook({ isOpen, onClose, onSpeak, nativeLang = "pt-BR
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizRevealed, setQuizRevealed] = useState(false);
   const [quizScore, setQuizScore] = useState({ correct: 0, wrong: 0 });
+  const [speakingEntryId, setSpeakingEntryId] = useState<string | null>(null);
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   // Load on open
@@ -74,6 +75,15 @@ export default function Notebook({ isOpen, onClose, onSpeak, nativeLang = "pt-BR
     setEntries(updated);
     saveNotebook(updated);
   };
+
+  const speakEntry = useCallback((entry: Pick<NotebookEntry, "id" | "word" | "langCode">) => {
+    stopEdgeTTS();
+    setSpeakingEntryId(entry.id);
+    void speakEdgeTTS(entry.word, entry.langCode, {
+      gender: "female",
+      onEnd: () => setSpeakingEntryId((activeId) => activeId === entry.id ? null : activeId),
+    });
+  }, []);
 
   // Filtered entries
   const langs = [...new Set(entries.map(e => e.langCode))];
@@ -175,7 +185,7 @@ export default function Notebook({ isOpen, onClose, onSpeak, nativeLang = "pt-BR
               <div className="text-gray-400 font-mono text-sm mb-4">/{currentQuiz.pronunciation}/</div>
               {!quizRevealed ? (
                 <button
-                  onClick={() => { setQuizRevealed(true); onSpeak(currentQuiz.word, currentQuiz.langCode); }}
+                  onClick={() => { setQuizRevealed(true); speakEntry(currentQuiz); }}
                   className="w-full py-3 rounded-xl text-white font-bold"
                   style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
                 >
@@ -331,11 +341,11 @@ export default function Notebook({ isOpen, onClose, onSpeak, nativeLang = "pt-BR
                       {/* Actions */}
                       <div className="flex flex-col gap-1 flex-shrink-0">
                         <button
-                          onClick={() => onSpeak(entry.word, entry.langCode)}
+                          onClick={() => speakEntry(entry)}
                           className="w-8 h-8 flex items-center justify-center rounded-full text-sm"
                           style={{ background: "rgba(99,102,241,0.2)", border: "1px solid rgba(99,102,241,0.3)" }}
-                          title="Ouvir"
-                        >🔊</button>
+                          title={speakingEntryId === entry.id ? "Reproduzindo" : "Ouvir"}
+                        >{speakingEntryId === entry.id ? "⏹" : "🔊"}</button>
                         <button
                           onClick={() => toggleStar(entry.id)}
                           className="w-8 h-8 flex items-center justify-center rounded-full text-sm"

@@ -215,6 +215,8 @@
 - [ ] Restaurar diálogo, fala neural e movimentos labiais da cena imersiva após a regressão reportada com 28 erros
 
 - [x] Restaurar a fala ao pressionar o botão de áudio em cada registro do Caderno de Anotações, com idioma da palavra preservado, retorno seguro caso a voz não esteja disponível e regressão de clique — o clique explícito agora solicita reprodução imediata da faixa preparada; Cena e acesso ao Caderno verificados visualmente, TypeScript e 837 testes aprovados
+
+- [ ] Corrigir a falha persistente de reprodução real no Caderno de Anotações: substituir a rota da Cena que ainda não produziu som por uma rota local de fala própria do clique, validar no dispositivo e manter a voz do sistema fora do fluxo
 - [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
 - [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
 - [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados
