@@ -2057,3 +2057,5 @@
 - [ ] Catalogar e corrigir, página por página, erros do original do Livro SOS em tradução, gramática, instrução, exemplo, exercício, resposta e fonética; preservar a sequência metodológica, mas registrar cada correção como melhoria verificável
 
 - [x] Reconstruir o bloco piloto “Alfabeto e sons” do Livro SOS Português–Inglês: manter a progressão letra–som–palavra–escrita do original, substituir a fonetização espanhola por ponte pt-BR e áudio nativo, e acrescentar recuperação Pareto separada em cada folha — 26 letras, 11 folhas de som, ponte pt-BR e Pareto por folha validados; Livro carregado visualmente, TypeScript e 813 testes aprovados
+
+- [x] Reconstruir o bloco de numeração e horas do Livro SOS Português–Inglês: preservar a ordem números–horas do original, corrigir explicações e pronúncia para pt-BR, e adicionar recuperação Pareto separada sem substituir os exercícios-base — seis folhas recriadas em sequência, com números, composição, uso real, horas e calendário; Livro abriu visualmente, TypeScript e 814 testes aprovados

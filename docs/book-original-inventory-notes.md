@@ -122,3 +122,25 @@ As páginas de **V** e **W** confirmam outro limite do original: várias letras 
 As páginas de **Y** e **Z** fecham o capítulo com a mesma lógica: categorias simplificadas e transliteração aproximada, seguidas da transição para **numeração**. Isso confirma que o primeiro grande ciclo do livro é realmente: **alfabeto → padrões sonoros por letra → passagem imediata para números**. Essa ordem será preservada no Livro SOS reconstruído.
 
 Conclusão visual do bloco piloto: o original oferece uma espinha pedagógica aproveitável, mas sua camada de pronúncia é dependente do espanhol e excessivamente generalizante. A reconstrução do par Português–Inglês manterá a progressão letra–som–palavra–escrita e corrigirá a mediação fonética, as regras absolutas e os exemplos que hoje induzem pronúncia inadequada para o aluno brasileiro.
+
+## Conferência visual direta — numeração e horas (páginas 29 a 33 do livro)
+
+A conferência visual do bloco seguinte confirmou a sequência metodológica do original: primeiro aparece uma **tabela cumulativa de números**, depois uma **demonstração de composição** (como 2,546), em seguida um **caça-palavras de revisão**, e só então começa o bloco **“¿Qué hora es?”** com vocabulário-base, fórmula de pergunta e tabelas de horas exatas e aproximadas.
+
+As páginas de numeração confirmam um problema que já havia aparecido no capítulo de sons: a coluna de “pronunciación” é inteiramente mediada por escrita hispanizada, com formas como `Uán`, `Zdrí`, `Fáiv`, `Tu zdaúsand` e `Fáiv joendred fórti six`. A nova edição não repetirá essa camada como ensino principal. A ordem número → composição → revisão será mantida, mas a pronúncia passará a ser ensinada por ponte pt-BR e áudio nativo.
+
+Também ficou visualmente confirmado que o original mistura corretamente números isolados, dezenas, centenas e milhares, mas simplifica demais o processo de formação de números grandes, tratando-o como quase igual ao espanhol. Isso será corrigido com explicação graduada sobre composição em inglês e exemplos de uso real em preço, telefone, horário e quantidade.
+
+No bloco de horas, a estrutura é útil e será preservada: vocabulário essencial (`time`, `hour`, `minute`, `o’clock`, `after`, `to`, `and a half`, `a quarter`), pergunta-modelo (`What time is it?`) e tabelas de exemplos com relógio. O ponto a corrigir é a mediação fonética e a explicação excessivamente resumida dos padrões de fala do relógio. A nova edição explicará diferença entre hora cheia, minutos passados, minutos para a próxima hora, meia hora e quarto de hora com frases-modelo naturais.
+
+Essas páginas confirmam que o segundo bloco reconstruído deve ser **números → composição → revisão → horas**, preservando a sequência do original e substituindo apenas as simplificações e a ponte fonética inadequada.
+
+### Continuação da conferência visual — horas, calendários e quantidades iniciais
+
+A leitura visual das páginas seguintes confirmou que o bloco de horas não termina na fórmula `What time is it?`. O original prolonga a sequência para tabelas de horas com relógio, uso de `quarter past`, `half past`, `quarter to`, além da passagem para **dias, meses e expressões de calendário**. Isso mostra que o segundo bloco não é apenas numeração; ele já forma um núcleo funcional de tempo e agenda.
+
+Também ficou visível que o livro usa muitos relógios e exemplos prontos como apoio. Essa escolha metodológica será preservada, porque ajuda o aluno a relacionar número, tempo e fala. O que não será preservado é a pronúncia hispanizada e a simplificação de que basta decorar equivalências fixas. A nova edição precisará explicar, em português brasileiro, quando o inglês usa hora cheia, minutos passados, minutos faltando, meia hora e quarto de hora, sempre com áudio e escrita natural.
+
+As páginas seguintes indicam ainda a transição para **datas e quantidades maiores**, o que obriga a reconstrução a manter uma progressão contínua: número isolado, composição de número, leitura do relógio, referência a dia e mês e uso funcional em compromissos. Assim, o segundo bloco do Livro SOS deverá ser tratado como **tempo e contagem em uso real**, e não como listas separadas.
+
+Conclusão visual do segundo bloco: a sequência do original está confirmada e é pedagogicamente útil. A reconstrução manterá a ordem visual e os tipos de exercício, mas substituirá a mediação sonora em espanhol, detalhará melhor a lógica do relógio e transformará cada subtópico em prática com recuperação Pareto separada.

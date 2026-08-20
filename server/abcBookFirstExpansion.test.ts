@@ -14,7 +14,8 @@ describe("primeiro bloco ampliado do Livro ABC", () => {
       "As pessoas da família",
       "Perguntar sobre hábitos",
       "Pronomes: quem aparece na frase",
-      "Números de um a dez",
+      "Números de um a dez: contar e reconhecer",
+      "Hora cheia e meia hora",
       "Uma mensagem curta e clara",
       "Da palavra ao pequeno texto",
     ]));
