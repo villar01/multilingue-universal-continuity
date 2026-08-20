@@ -238,6 +238,20 @@
 
 - [ ] Preservar o plano futuro do vendedor assistido e funil comercial em especificação versionada, checklist rastreável e checkpoint, para incorporação posterior sem reabrir escopo, ativar campanhas ou perder controles de aprovação
 
+- [ ] Priorizar recursos internos gratuitos e estáveis no lançamento; preservar marcos de reinvestimento posterior em GPU, mídia docente e animações reais somente após monetização comprovada e sem substituir proteções atuais
+
+- [ ] Manter ciclo de melhoria eficiente: selecionar uma correção segura de maior impacto, implementar com regressão, validar e publicar por marcos sem alterar recursos estáveis
+
+- [ ] Manter desempenho responsivo: evitar processos duplicados, controlar memória, carregar recursos de forma eficiente e validar cada melhoria contra regressão de lentidão antes de publicar
+
+- [ ] Consolidar manifesto permanente de pendências e controles para o proprietário e revisão externa do GitHub: continuidade, segurança, desempenho, áudio, professores, plano comercial futuro e aprovação obrigatória
+
+- [ ] Projetar backups redundantes e recuperação testada, incluindo exportação verificável para o notebook do proprietário sem substituir cópias existentes nem criar rotina de restauração automática
+
+- [ ] Definir kit de recuperação utilizável em crise total: código/configuração, dados exportáveis, checkpoint conhecido, verificação de integridade e instrução curta de restabelecimento para o proprietário
+
+- [ ] Concluir o aplicativo com avanço acelerado e controlado: priorizar correções de maior impacto, aplicar uma por vez com regressão, validar e publicar marcos sem perder controles de segurança, desempenho ou continuidade
+
 - [x] Aplicar política de melhor opção técnica: implementar diretamente melhorias seguras e exigir aprovação explícita somente para gasto, publicação externa, preço, cobrança, contrato ou dado sensível — regra verificável em código, TypeScript e 844 testes aprovados
 
 - [ ] Restringir o CRM comercial e as métricas de conversão ao proprietário, impedindo que contas comuns leiam ou alterem contatos, propostas e atividades de vendas

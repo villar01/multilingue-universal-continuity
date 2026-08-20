@@ -2,8 +2,16 @@
  * CRM Router — Gestão de Leads, Deals, Atividades e Métricas de Vendas
  */
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { router, protectedProcedure as baseProtectedProcedure } from "./_core/trpc";
 import { getDb } from "./db";
+
+const protectedProcedure = baseProtectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== "admin") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "O painel comercial é privado do proprietário." });
+  }
+  return next();
+});
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
