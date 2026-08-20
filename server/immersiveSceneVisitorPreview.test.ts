@@ -27,4 +27,11 @@ describe("prévia segura da Cena Imersiva para visitantes", () => {
     expect(catalog).not.toContain("teacherGreeting:");
     expect(catalog).not.toContain("greetingPt:");
   });
+
+  it("não usa o catálogo público como fallback de diálogo ou hotspots", () => {
+    expect(source).toContain("const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog ?? [];");
+    expect(source).toContain("const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots ?? [];");
+    expect(source).not.toContain("canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots");
+    expect(source).not.toContain("canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog");
+  });
 });
