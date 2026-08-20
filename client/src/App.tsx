@@ -87,6 +87,11 @@ const ResilientVideoPlayer = () => (
     <VideoPlayer />
   </LessonRecoveryBoundary>
 );
+const ResilientImmersiveLesson = () => (
+  <LessonRecoveryBoundary>
+    <ImmersiveLesson />
+  </LessonRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -185,7 +190,7 @@ function Router() {
         <Route path="/language-select" component={LanguageSelect} />
         <Route path="/daily-memory" component={DailyMemoryPage} />
         <Route path="/my-teacher" component={MyTeacher} />
-        <Route path="/immersive-lesson" component={ImmersiveLesson} />
+        <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
         <Route path="/lessons-hub" component={LessonsHub} />
         <Route path="/demo" component={Demo} />
         <Route path="/dialogue" component={ImmersiveDialogue} />
