@@ -1052,19 +1052,6 @@ export default function ImmersiveScene() {
     return startWithAvailableVoices(2);
   }, [dialogSpeechRate, selectedScene?.id, selectedScene?.teacherName, stopVisemeSync]);
 
-  const playGuestBrowserVoice = useCallback((text: string, language: string, gender?: 'male' | 'female') => {
-    const requestKey = `browser-dialog:${language}:${gender || "female"}:${text}`;
-    stopTeacherAudio();
-    activeSpeechRequestRef.current = requestKey;
-    setActiveSpeechText(text);
-    setIsPreparingNeuralAudio(true);
-    if (!playLocalDialogFallback(text, language, requestKey, gender)) {
-      setIsPreparingNeuralAudio(false);
-      setActiveSpeechText("");
-      setDlgAudioNotice("Entre na sua conta para praticar com a voz do professor nesta cena.");
-    }
-  }, [playLocalDialogFallback, stopTeacherAudio]);
-
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
   const playTeacherAudio = useCallback(async (source: string, phrase: string, _language: string, requestKey: string, revokeOnEnd = false, autoPlay = false) => {
@@ -1422,29 +1409,15 @@ export default function ImmersiveScene() {
       : gender || selectedScene?.teacherGender || "female";
     if (!isAuthenticated) {
       setDialogAuthRequired(true);
-      const requestKey = `local-dialog:${language}:${effectiveGender}:${text}`;
       stopTeacherAudio();
-      activeSpeechRequestRef.current = requestKey;
-      setGreetingText(`Toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutar a fala do professor.`);
+      activeSpeechRequestRef.current = null;
+      setGreetingText("Ative o acesso protegido para ouvir a fala do professor nesta cena.");
       setShowGreeting(true);
-      setActiveSpeechText(text);
-      setIsPreparingNeuralAudio(true);
-      void playPublicSceneDialogue(text, language, effectiveGender, requestKey, autoPlay)
-        .then((played) => {
-          if (played) return;
-          if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-          if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
-          setIsPreparingNeuralAudio(false);
-          setActiveSpeechText("");
-          setDlgFeedback(`Leia a frase e toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutá-la.`);
-        })
-        .catch(() => {
-          if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-          if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
-          setIsPreparingNeuralAudio(false);
-          setActiveSpeechText("");
-          setDlgFeedback(`Leia a frase e toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutá-la.`);
-        });
+      setIsPreparingNeuralAudio(false);
+      setIsSpeaking(false);
+      setActiveSpeechText("");
+      if (activeDialogLineRef.current === text) setDlgAudioClock(false);
+      setDlgFeedback("Ative o acesso para praticar a fala com o professor nesta cena.");
       return;
     }
     primeVisemeAudio();
@@ -2750,7 +2723,16 @@ export default function ImmersiveScene() {
         {/* ── Dialog Panel: scrolling text + exercises ── */}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (
           <button
-            onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isAuthenticated) {
+                setDialogAuthRequired(true);
+                setGreetingText("Ative o acesso protegido para iniciar o diálogo desta cena.");
+                setShowGreeting(true);
+                return;
+              }
+              startDialog(selectedScene);
+            }}
             className="immersive-start-dialog absolute z-[80] flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
               top: "108px", left: "50%", transform: "translateX(-50%)",
@@ -2759,7 +2741,9 @@ export default function ImmersiveScene() {
               boxShadow: "0 4px 20px rgba(99,102,241,0.4)",
             }}
           >
-            {immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`}
+            {isAuthenticated
+              ? immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`
+              : "Ativar acesso para iniciar"}
           </button>
         )}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && sceneMaterialIsPreparing && (
@@ -2867,6 +2851,10 @@ export default function ImmersiveScene() {
                   <button
                     type="button"
                     onClick={() => {
+                      if (!isAuthenticated) {
+                        setDialogAuthRequired(true);
+                        return;
+                      }
                       if (dialogAudioSource) {
                         void replayVisibleDialogAudio();
                         return;
@@ -2881,7 +2869,9 @@ export default function ImmersiveScene() {
                       ? `Preparando ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}…`
                       : isSpeaking
                         ? `Reiniciar ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`
-                        : `Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
+                        : isAuthenticated
+                          ? `Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`
+                          : "Ativar acesso para ouvir"}
                   </button>
                   {dialogAudioNeedsGesture && dialogAudioSource && (
                     <button
@@ -2891,19 +2881,6 @@ export default function ImmersiveScene() {
                       title="Iniciar a fala em um toque explícito"
                     >
                       Tocar agora
-                    </button>
-                  )}
-                  {!isAuthenticated && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
-                        playGuestBrowserVoice(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender);
-                      }}
-                      className="rounded-full border border-emerald-300/45 bg-emerald-400/10 px-3 py-1.5 text-xs font-extrabold text-emerald-100 transition hover:bg-emerald-400/20"
-                      title="Usar a voz disponível neste navegador"
-                    >
-                      {immersionMode ? "Browser voice" : "Usar voz do navegador"}
                     </button>
                   )}
                   <div className="flex items-center gap-1 rounded-full border border-white/15 bg-slate-950/60 p-1" role="group" aria-label="Velocidade da fala do professor e da ajuda nativa">

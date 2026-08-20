@@ -15,7 +15,10 @@ describe("contrato crítico da cena imersiva", () => {
 
   it("fecha cartão e áudio de objeto antes de abrir o diálogo pelo gesto principal", () => {
     expect(sceneSource).toContain("const startDialog = useCallback((scene: Scene) => {");
-    expect(sceneSource).toContain("onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}");
+    expect(sceneSource).toContain("if (!isAuthenticated) {");
+    expect(sceneSource).toContain("setDialogAuthRequired(true);");
+    expect(sceneSource).toContain("Ative o acesso protegido para iniciar o diálogo desta cena.");
+    expect(sceneSource).toContain("startDialog(selectedScene);");
     expect(startDialogBlock).toContain("setActiveHotspot(null);");
     expect(startDialogBlock).toContain("setPracticeHotspot(null);");
     expect(startDialogBlock).toContain("stopTeacherAudio();");
