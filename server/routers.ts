@@ -43,6 +43,7 @@ import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { immersiveSceneTutorRouter } from './immersive-scene-tutor-router';
 import { customerSupportRouter } from './customer-support-router';
+import { permitsEnglishLessonFallback } from './lessonFallbackLanguage';
 import { filterLessonsForEntitlement, getAuthorizedTrialLessonIds, getLearningContentEntitlement, trialAccessRouter } from './trial-access-router';
 import { curriculumRouter } from './curriculum-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
@@ -927,6 +928,12 @@ Rules:
           return { ...content, phase, cefr: phaseConfig.cefr, phaseLabel: phaseConfig.label };
         } catch (err) {
           console.error('generateLessonContent error:', err);
+          if (!permitsEnglishLessonFallback(input.languageCode)) {
+            throw new TRPCError({
+              code: "SERVICE_UNAVAILABLE",
+              message: "A preparação desta aula precisa de uma nova tentativa no idioma selecionado.",
+            });
+          }
           // Return minimal fallback
           return {
             title: input.lessonTitle,
