@@ -193,6 +193,11 @@ const ResilientClips = () => (
     <Clips />
   </ActivityRecoveryBoundary>
 );
+const ResilientAiChat = () => (
+  <ActivityRecoveryBoundary activityLabel="o chat pedagógico">
+    <AiChat />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -251,8 +256,8 @@ function Router() {
       <Route path={"/admin/moderation"} component={AdminModeration} />
       <Route path={"/admin/siga"} component={AdminSIGA} />
       <Route path={"/upgrade"} component={Upgrade} />
-      <Route path={"/chat"} component={AiChat} />
-      <Route path={"/ai-chat"} component={AiChat} />
+      <Route path={"/chat"} component={ResilientAiChat} />
+      <Route path={"/ai-chat"} component={ResilientAiChat} />
       <Route path={"/finance"} component={Finance} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/pricing-comparison"} component={PricingComparison} />
