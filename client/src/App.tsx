@@ -278,6 +278,11 @@ const ResilientBackupGuide = () => (
     <BackupGuide />
   </ActivityRecoveryBoundary>
 );
+const ResilientDemo = () => (
+  <ActivityRecoveryBoundary activityLabel="a demonstração guiada">
+    <Demo />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -378,7 +383,7 @@ function Router() {
         <Route path="/my-teacher" component={ResilientMyTeacher} />
         <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
         <Route path="/lessons-hub" component={ResilientLessonsHub} />
-        <Route path="/demo" component={Demo} />
+        <Route path="/demo" component={ResilientDemo} />
         <Route path="/dialogue" component={ResilientImmersiveDialogue} />
         <Route path="/natural-learning" component={ResilientNaturalLearning} />
         <Route path="/natural-lesson" component={ResilientNaturalLesson} />
