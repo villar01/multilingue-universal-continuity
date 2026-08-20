@@ -77,6 +77,16 @@ const ResilientCompleteLesson = () => (
     <CompleteLesson />
   </LessonRecoveryBoundary>
 );
+const ResilientPracticeClips = () => (
+  <LessonRecoveryBoundary>
+    <PracticeClips />
+  </LessonRecoveryBoundary>
+);
+const ResilientVideoPlayer = () => (
+  <LessonRecoveryBoundary>
+    <VideoPlayer />
+  </LessonRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -125,8 +135,8 @@ function Router() {
         <Route path="/dashboard-real" component={DashboardReal} />
       <Route path={"/lesson/:id"} component={ResilientLesson} />
        <Route path="/complete-lesson/:id" component={ResilientCompleteLesson} />
-      <Route path="/practice/clips" component={PracticeClips} />
-      <Route path="/practice/clips/:id" component={VideoPlayer} />
+      <Route path="/practice/clips" component={ResilientPracticeClips} />
+      <Route path="/practice/clips/:id" component={ResilientVideoPlayer} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/avatar-selection"} component={AvatarSelection} />
       <Route path={"/admin"} component={Admin} />

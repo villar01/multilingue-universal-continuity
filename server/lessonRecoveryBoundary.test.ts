@@ -22,6 +22,10 @@ describe("recuperação local da lição", () => {
     expect(appSource).toContain('<Route path="/structured-lesson" component={ResilientStructuredLesson} />');
     expect(appSource).toContain("const ResilientCompleteLesson = () => (");
     expect(appSource).toContain('<Route path="/complete-lesson/:id" component={ResilientCompleteLesson} />');
+    expect(appSource).toContain("const ResilientPracticeClips = () => (");
+    expect(appSource).toContain('<Route path="/practice/clips" component={ResilientPracticeClips} />');
+    expect(appSource).toContain("const ResilientVideoPlayer = () => (");
+    expect(appSource).toContain('<Route path="/practice/clips/:id" component={ResilientVideoPlayer} />');
     expect(boundarySource).toContain("Lição temporariamente indisponível");
     expect(boundarySource).toContain('window.location.assign("/lessons-hub")');
     expect(boundarySource).toContain('window.location.assign("/dashboard")');

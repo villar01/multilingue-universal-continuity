@@ -99,6 +99,8 @@
 - [x] Estender a recuperação local à Lição Estruturada crítica, preservando saídas seguras e sem tocar na fronteira global — `/structured-lesson` agora usa `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
 
 - [x] Estender a recuperação local à Lição Completa crítica, preservando saídas seguras e sem tocar na fronteira global — `/complete-lesson/:id` agora usa `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
+
+- [x] Estender a recuperação local à prática de clipes e ao reprodutor crítico, preservando saídas seguras e sem tocar na fronteira global — `/practice/clips` e `/practice/clips/:id` agora usam `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
 - [ ] Adicionar teste de integração real da rota `/lesson/:id` em erro, comprovando fallback local, saídas seguras e ausência de acionamento da fronteira global — o teste atual cobre a fronteira isolada, mas ainda não monta a rota real
 - [ ] Definir e testar metas de detecção, isolamento e retorno seguro para falhas críticas, sem prometer prazo que não possa ser monitorado em produção
 - [x] Manter rotas de aprendizagem legítimas disponíveis sob excesso de requisições, isolando e limitando somente o tráfego abusivo com recuperação verificável — a regressão confirma que o IP abusivo recebe 429, enquanto outro IP continua abrindo a Cena; TypeScript sem erros e 801 testes aprovados
