@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import LanguageSelector from "@/components/LanguageSelector";
-import { LANGUAGES_57, type Language } from "@/lib/languages";
+import { ACTIVE_LANGUAGE_COUNT, LANGUAGES_57, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 type GameMode = "flashcard" | "match" | "typing" | "hangman" | "quiz" | "wordsearch";
@@ -126,11 +126,11 @@ export default function WordGame() {
         <div className="text-center mb-8">
           <div className="text-6xl mb-3">🧠</div>
           <h1 className="text-3xl font-bold text-white mb-2">Jogos de Palavras</h1>
-          <p className="text-slate-400 text-sm">6 modos · SRS científico · 69 idiomas · 12 categorias</p>
+          <p className="text-slate-400 text-sm">6 modos · SRS científico · {ACTIVE_LANGUAGE_COUNT} idiomas ativos agora · 12 categorias</p>
         </div>
 
         <div className="bg-slate-800/50 rounded-2xl p-5 mb-4 border border-slate-700">
-          <h3 className="text-white font-bold mb-3">🌍 Idioma (57 disponíveis)</h3>
+          <h3 className="text-white font-bold mb-3">🌍 Idioma ({ACTIVE_LANGUAGE_COUNT} ativos agora · {TOTAL_LANGUAGES} no catálogo)</h3>
           <LanguageSelector value={lang} onChange={setLang} />
         </div>
 

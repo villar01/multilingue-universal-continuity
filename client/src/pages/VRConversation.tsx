@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import LanguageSelector from "@/components/LanguageSelector";
-import { LANGUAGES_57, type Language } from "@/lib/languages";
+import { ACTIVE_LANGUAGE_COUNT, LANGUAGES_57, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
 import { speakText as speakNaturalVoice } from "@/hooks/useNaturalVoice";
 
 const SCENARIOS = [
@@ -159,7 +159,7 @@ export default function VRConversation() {
         <div className="mb-6">
           <p className="text-slate-400 text-sm mb-2">Selecione o idioma que deseja praticar:</p>
           <LanguageSelector value={lang} onChange={setLang} />
-          <p className="text-slate-500 text-xs mt-2 text-center">69 idiomas disponíveis</p>
+          <p className="text-slate-500 text-xs mt-2 text-center">{ACTIVE_LANGUAGE_COUNT} idiomas ativos agora · {TOTAL_LANGUAGES} no catálogo</p>
         </div>
         {vrSupported && (
           <div className="bg-purple-900/30 border border-purple-700 rounded-xl p-4 mb-4 flex items-center gap-3">

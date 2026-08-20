@@ -59,5 +59,9 @@ describe("recuperação local de atividades", () => {
     expect(app).toContain("const ResilientARMode");
     expect(app).toContain('<Route path="/ar-mode" component={ResilientARMode} />');
     expect(app).toContain('<Route path="/ar-ultimate" component={ResilientARMode} />');
+    expect(app).toContain("const ResilientVRConversation");
+    expect(app).toContain('<Route path="/vr-conversation" component={ResilientVRConversation} />');
+    expect(app).toContain("const ResilientWordGame");
+    expect(app).toContain('<Route path="/word-game" component={ResilientWordGame} />');
   });
 });
