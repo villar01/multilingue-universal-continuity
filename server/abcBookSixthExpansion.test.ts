@@ -6,7 +6,7 @@ describe("bloco de consolidação do primeiro volume ABC", () => {
     const book = getABCBookDelivery({ nativeLanguage: "pt-BR", targetLanguage: "en-US" });
     if (!book.available) throw new Error("A edição PT-BR → inglês precisa estar disponível");
 
-    expect(book.progressiveLessons.length).toBe(168);
+    expect(book.progressiveLessons.length).toBe(172);
     expect(book.progressiveLessons.map((item) => item.title)).toEqual(expect.arrayContaining([
       "Da frase curta ao parágrafo",
       "Compreender uma história curta",

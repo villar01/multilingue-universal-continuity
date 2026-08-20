@@ -176,3 +176,11 @@ O percurso didático real deste trecho é, portanto, **profissões isoladas → 
 Os problemas a corrigir continuam evidentes. A lista de profissões ainda usa transliterações hispanizadas e formas antigas ou marcadas por gênero, como `policeman`, `fireman`, `actress`, além de aproximações de pronúncia pouco úteis para pt-BR. O quadro de frases usa estruturas úteis, mas precisa de mediação melhor para artigo, profissão e concordância em português brasileiro. Já o bloco da casa introduz muito vocabulário concreto, porém ainda depende de coluna de "pronunciación" simplificada demais.
 
 Na reconstrução, o bloco deve manter os mesmos temas e a mesma progressão, mas com três melhorias obrigatórias: **pronúncia guiada para pt-BR com áudio nativo**, **termos profissionais atualizados quando necessário** e **prática Pareto separada por folha**, sem substituir a sopa de letras, o quadro de frases ou as listas-base. O próximo trecho a implementar deve seguir a ordem **profissões → frases com profissão → casa → quarto e banheiro**.
+
+## Bloco seguinte confirmado visualmente — cozinha, alimentos e mesa
+
+As páginas seguintes do original avançam da casa para o uso concreto dos cômodos, com foco especial na **cozinha** e no que aparece nela. O material passa a reunir nomes de utensílios, alimentos e itens do ambiente doméstico, seguidos por exercícios simples de reconhecimento e combinação em frases curtas. A progressão observada indica um deslocamento do espaço da casa em geral para um vocabulário mais funcional do cotidiano.
+
+O percurso didático deste trecho deve ser tratado como **cômodos específicos → objetos da cozinha → alimentos/bebidas → frases de localização e uso**. A metodologia continua útil porque parte de elementos visíveis e concretos, mas a mediação original ainda depende de transliterações hispanizadas e explicações reduzidas demais para orientar um falante de pt-BR.
+
+Na reconstrução, será mantida a ordem temática do original, mas com correções obrigatórias: **ponte de pronúncia pt-BR**, **áudio nativo como referência principal**, **vocabulário atualizado e agrupado por função** e **Pareto separado por folha**, sem retirar listas, ilustrações ou exercícios-base. O próximo bloco a implementar deve seguir a sequência **cozinha → utensílios/objetos → alimentos e bebidas → frases práticas de uso e localização**.
