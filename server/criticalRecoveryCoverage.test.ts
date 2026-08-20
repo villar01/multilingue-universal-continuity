@@ -17,6 +17,7 @@ const lessonRouteBindings = [
   '<Route path="/abc-book" component={ResilientABCBook} />',
   '<Route path="/base-de-estudos" component={ResilientStudyBase} />',
   '<Route path="/master-lesson" component={ResilientMasterLesson} />',
+  '<Route path="/natural-lesson" component={ResilientNaturalLesson} />',
 ];
 
 const activityRouteBindings = [
