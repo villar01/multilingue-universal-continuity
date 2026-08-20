@@ -218,6 +218,11 @@ const ResilientDailyChallenge = () => (
     <DailyChallenge />
   </ActivityRecoveryBoundary>
 );
+const ResilientDashboardReal = () => (
+  <ActivityRecoveryBoundary activityLabel="o painel de aprendizagem">
+    <DashboardReal />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -262,8 +267,8 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
         <Route path="/onboarding" component={Onboarding} />
-        <Route path="/dashboard" component={DashboardReal} />
-        <Route path="/dashboard-real" component={DashboardReal} />
+        <Route path="/dashboard" component={ResilientDashboardReal} />
+        <Route path="/dashboard-real" component={ResilientDashboardReal} />
       <Route path={"/lesson/:id"} component={ResilientLesson} />
        <Route path="/complete-lesson/:id" component={ResilientCompleteLesson} />
       <Route path="/practice/clips" component={ResilientPracticeClips} />

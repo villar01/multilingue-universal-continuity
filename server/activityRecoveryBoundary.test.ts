@@ -50,7 +50,7 @@ describe("recuperação local de atividades", () => {
     vi.unstubAllGlobals();
   });
 
-  it("protege chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
+  it("protege painel, chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
     const app = read("client/src/App.tsx");
     expect(app).toContain("const ResilientInteractiveVideos");
     expect(app).toContain('<Route path="/interactive-videos" component={ResilientInteractiveVideos} />');
@@ -63,6 +63,9 @@ describe("recuperação local de atividades", () => {
     expect(app).toContain('<Route path="/progress" component={ResilientStudentProgress} />');
     expect(app).toContain("const ResilientDailyChallenge");
     expect(app).toContain('<Route path="/daily-challenge" component={ResilientDailyChallenge} />');
+    expect(app).toContain("const ResilientDashboardReal");
+    expect(app).toContain('<Route path="/dashboard" component={ResilientDashboardReal} />');
+    expect(app).toContain('<Route path="/dashboard-real" component={ResilientDashboardReal} />');
     expect(app).toContain("const ResilientReels");
     expect(app).toContain('<Route path="/reels" component={ResilientReels} />');
     expect(app).toContain("const ResilientClips");
