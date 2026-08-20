@@ -7,9 +7,11 @@ describe("Laboratórios de leitura e ordenação do Livro ABC", () => {
     expect(book.available).toBe(true);
     if (!book.available) return;
 
-    expect(book.progressiveLessons).toHaveLength(194);
-    expect(book.progressiveLessons.slice(-15).map((lesson) => lesson.title)).toContain("Ler uma rotina completa");
-    expect(book.progressiveLessons.slice(-15).map((lesson) => lesson.title)).toContain("Revisar a ordem de uma frase longa");
-    expect(book.progressiveLessons.slice(-15).every((lesson) => lesson.scrambled.length >= 6 && Boolean(lesson.answer) && Boolean(lesson.paretoPrompt))).toBe(true);
+    expect(book.progressiveLessons).toHaveLength(202);
+    const labs = book.progressiveLessons.filter((lesson) => lesson.section === "Laboratório de leitura e escrita");
+    expect(labs).toHaveLength(15);
+    expect(labs.map((lesson) => lesson.title)).toContain("Ler uma rotina completa");
+    expect(labs.map((lesson) => lesson.title)).toContain("Revisar a ordem de uma frase longa");
+    expect(labs.every((lesson) => lesson.scrambled.length >= 6 && Boolean(lesson.answer) && Boolean(lesson.paretoPrompt))).toBe(true);
   });
 });
