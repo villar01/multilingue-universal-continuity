@@ -535,7 +535,7 @@ function VocabCard({
               aria-label={`Ouvir a frase em ${langCode}`}
               className="text-xs px-2 py-0.5 rounded-full font-semibold transition hover:brightness-125 active:scale-95"
               style={{ background: hotspot.color + '33', color: hotspot.color }}
-            >🔊 Ouvir frase em inglês</button>
+            >🔊 Ouvir frase em {getSpokenLanguageLabel(langCode)}</button>
           </div>
           <div className="text-white" style={{ fontSize: "clamp(11px, 1.3vw, 14px)" }}>
             {hotspot.example}
@@ -612,6 +612,10 @@ const LANG_LABELS: Record<string, { flag: string; name: string }> = {
   "sv-SE": { flag: "🇸🇪", name: "Svenska" },
   "id-ID": { flag: "🇮🇩", name: "Bahasa Indonesia" },
 };
+
+function getSpokenLanguageLabel(languageCode: string) {
+  return LANG_LABELS[languageCode]?.name || languageCode.split("-")[0]?.toUpperCase() || "idioma selecionado";
+}
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function ImmersiveScene() {
@@ -978,7 +982,7 @@ export default function ImmersiveScene() {
         setIsPreparingNeuralAudio(false);
         setIsSpeaking(false);
         setActiveSpeechText("");
-        setDlgAudioNotice("A voz inglesa ainda está preparando neste navegador. Toque em Ouvir inglês novamente.");
+        setDlgAudioNotice(`A voz em ${getSpokenLanguageLabel(language)} ainda está preparando neste navegador. Toque em Ouvir novamente.`);
         if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
         return false;
       }
@@ -1038,7 +1042,7 @@ export default function ImmersiveScene() {
       utterance.onend = finish;
       utterance.onerror = () => {
         finish();
-        setDlgAudioNotice("Não foi possível iniciar o áudio neste navegador. Leia a fala em inglês e tente novamente.");
+        setDlgAudioNotice(`Não foi possível iniciar o áudio neste navegador. Leia a fala em ${getSpokenLanguageLabel(language)} e tente novamente.`);
       };
       localSpeechRef.current = utterance;
       synth.cancel();
@@ -1131,14 +1135,14 @@ export default function ImmersiveScene() {
       // nomes explicitamente femininos e prioriza uma voz regional masculina.
       // Assim uma faixa neural inválida não deixa a pergunta do aluno silenciosa.
       if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
-        setDlgAudioNotice("Sua frase está pronta para repetir. Toque em Ouvir inglês para continuar.");
+        setDlgAudioNotice(`Sua frase está pronta para repetir. Toque em Ouvir ${getSpokenLanguageLabel(_language)} para continuar.`);
         return;
       }
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(false);
       setActiveSpeechText("");
       releaseRequest();
-      setDlgAudioNotice("Toque em Ouvir inglês para continuar a prática de pronúncia.");
+      setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(_language)} para continuar a prática de pronúncia.`);
     };
     audio.onplaying = () => {
       reportAudioEvent("play");
@@ -1282,9 +1286,9 @@ export default function ImmersiveScene() {
         setDlgAudioNotice("");
         return;
       }
-      setDlgAudioNotice("Toque em Ouvir inglês para escutar a frase e continuar a prática.");
+      setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.`);
     }
-  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, selectedScene?.id, selectedScene?.teacherGender, selectedScene?.teacherLang, selectedScene?.teacherName]);
+  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, selectedScene?.id, selectedScene?.teacherGender, selectedScene?.teacherLang, selectedScene?.teacherName, targetLang]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
@@ -1297,7 +1301,7 @@ export default function ImmersiveScene() {
       // the first scripted line instead of relying on a later autoplay attempt.
       void context.resume();
     } catch {
-      // The visible Ouvir inglês control remains available as an explicit retry.
+      // O controle visível para ouvir permanece disponível como nova tentativa explícita.
     }
   }, []);
 
@@ -1400,11 +1404,11 @@ export default function ImmersiveScene() {
       return;
     }
     if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
-      setDlgAudioNotice("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
+      setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(lang)} para repetir a frase e continuar praticando.`);
       return;
     }
     if (activeDialogLineRef.current === text) setDlgAudioClock(false);
-    setGreetingText("Toque em Ouvir inglês para escutar a pronúncia e continuar a prática.");
+    setGreetingText(`Toque em Ouvir ${getSpokenLanguageLabel(lang)} para escutar a pronúncia e continuar a prática.`);
     setIsPreparingNeuralAudio(false);
     setIsSpeaking(false);
     setActiveSpeechText("");
@@ -1421,7 +1425,7 @@ export default function ImmersiveScene() {
       const requestKey = `local-dialog:${language}:${effectiveGender}:${text}`;
       stopTeacherAudio();
       activeSpeechRequestRef.current = requestKey;
-      setGreetingText("Toque em Ouvir inglês quando quiser escutar a fala do professor.");
+      setGreetingText(`Toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutar a fala do professor.`);
       setShowGreeting(true);
       setActiveSpeechText(text);
       setIsPreparingNeuralAudio(true);
@@ -1432,14 +1436,14 @@ export default function ImmersiveScene() {
           if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
-          setDlgFeedback("Leia a frase e toque em Ouvir inglês quando quiser escutá-la.");
+          setDlgFeedback(`Leia a frase e toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutá-la.`);
         })
         .catch(() => {
           if (activeDialogLineRef.current === text) setDlgAudioClock(false);
           if (playLocalDialogFallback(text, language, requestKey, effectiveGender)) return;
           setIsPreparingNeuralAudio(false);
           setActiveSpeechText("");
-          setDlgFeedback("Leia a frase e toque em Ouvir inglês quando quiser escutá-la.");
+          setDlgFeedback(`Leia a frase e toque em Ouvir ${getSpokenLanguageLabel(language)} quando quiser escutá-la.`);
         });
       return;
     }
@@ -2740,7 +2744,7 @@ export default function ImmersiveScene() {
           controls={false}
           preload="auto"
           className="sr-only"
-          aria-label="Áudio da fala em inglês"
+          aria-label={`Áudio da fala em ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
@@ -2871,9 +2875,13 @@ export default function ImmersiveScene() {
                       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                     }}
                     className="rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
-                    title="Repetir a fala do professor em inglês"
+                    title={`Repetir a fala do professor em ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
                   >
-                    {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
+                    {isPreparingNeuralAudio
+                      ? `Preparando ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}…`
+                      : isSpeaking
+                        ? `Reiniciar ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`
+                        : `Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
                   </button>
                   {dialogAudioNeedsGesture && dialogAudioSource && (
                     <button

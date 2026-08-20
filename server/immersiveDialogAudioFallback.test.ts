@@ -6,7 +6,7 @@ const scenePath = path.resolve(process.cwd(), "client/src/pages/ImmersiveScene.t
 const source = fs.readFileSync(scenePath, "utf8");
 
 describe("áudio e estado visual do diálogo imersivo", () => {
-  it("oferece repetição explícita em inglês e fallback local quando a voz neural não responde", () => {
+  it("oferece repetição explícita no idioma selecionado e fallback local quando a voz neural não responde", () => {
     expect(source).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
     expect(source).toContain("const playPublicSceneDialogue = useCallback");
     expect(source).toContain("function waitForSpeechResult<T>(task: Promise<T>, timeoutMs: number)");
@@ -14,8 +14,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("scene-dialogue-speech-timeout");
     expect(source).toContain("const playLocalDialogFallback = useCallback");
     expect(source).toContain("synth.speak(utterance);");
-    expect(source).toContain("Toque em Ouvir inglês para repetir a frase e continuar praticando.");
-    expect(source).toContain('"Ouvir inglês"');
+    expect(source).toContain("Toque em Ouvir ${getSpokenLanguageLabel(lang)} para repetir a frase e continuar praticando.");
+    expect(source).toContain("Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}");
     expect(source).not.toContain("A voz neural não respondeu.");
     expect(source).not.toContain("A faixa neural não ficou disponível.");
     expect(source).not.toContain("A voz da cena não está disponível agora.");
@@ -53,7 +53,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
     expect(neuralPreparation).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
-    expect(neuralPreparation).toContain("Sua frase está pronta para repetir. Toque em Ouvir inglês para continuar.");
+    expect(neuralPreparation).toContain("Sua frase está pronta para repetir. Toque em Ouvir ${getSpokenLanguageLabel(_language)} para continuar.");
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
 
@@ -172,7 +172,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("if (!voices.length)");
     expect(source).toContain("startWithAvailableVoices(retriesRemaining - 1)");
     expect(source).toContain("return startWithAvailableVoices(2);");
-    expect(source).toContain("A voz inglesa ainda está preparando neste navegador");
+    expect(source).toContain("A voz em ${getSpokenLanguageLabel(language)} ainda está preparando neste navegador");
   });
 
   it("mantém a reserva masculina de James disponível tanto para pergunta quanto para pronúncia", () => {
@@ -199,9 +199,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("Pronúncia pronta. Toque novamente no botão de áudio do cartão para ouvir.");
   });
 
-  it("mantém a frase de exemplo em inglês diretamente acionável no cartão", () => {
+  it("mantém a frase de exemplo no idioma selecionado diretamente acionável no cartão", () => {
     expect(source).toContain('onClick={() => onSpeak(hotspot.example, langCode, "example")}');
-    expect(source).toContain("Ouvir frase em inglês");
+    expect(source).toContain("Ouvir frase em {getSpokenLanguageLabel(langCode)}");
     expect(source).not.toContain("disabled={!pronunciationPlayed}");
     expect(source).not.toContain("Ouça a palavra primeiro");
   });
