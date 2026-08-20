@@ -14,6 +14,12 @@
 
 O serviço que aparece como Manus no GitHub **existe e está instalado**, mas não há workflow de IA, tarefa agendada ou execução automática identificável nos repositórios selecionados. Portanto, ele não deve ser apresentado como uma IA ativa corrigindo o aplicativo. A instalação atual é uma integração de repositório; para executar automação no GitHub seria necessário existir um workflow específico e permissões de Actions compatíveis, ambos ausentes na auditoria.
 
+A documentação oficial descreve a integração GitHub como sincronização bidirecional de código e gestão de repositórios, *issues*, *pull requests* e projetos. Ela não descreve uma IA que revise ou corrija o aplicativo automaticamente dentro do GitHub sem que uma tarefa Manus seja solicitada. A integração está correta como continuidade do código, mas não substitui uma revisão independente nem cria um serviço autônomo de qualidade.
+
 ## Regra para ativação futura
 
 Nenhum workflow será criado ou ativado antes de verificar: finalidade concreta, permissões mínimas, ausência de cobrança não autorizada, execução de teste e registro de resultado. O aplicativo Manus no GitHub permanece instalado, porém não é considerado uma IA de revisão ativa.
+
+## Fonte oficial
+
+[GitHub Integration — Manus Documentation](https://manus.im/docs/website-builder/github-integration)
