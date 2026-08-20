@@ -85,6 +85,12 @@ describe("contrato de cobertura de recuperação crítica", () => {
     expect(lessonBoundarySource).toContain('window.location.assign("/lessons-hub")');
   });
 
+  it("não grava nem transmite dados do aluno enquanto contém uma falha local", () => {
+    for (const source of [lessonBoundarySource, activityBoundarySource]) {
+      expect(source).not.toMatch(/\btrpc\.|\.mutate\(|\bfetch\(|localStorage\.setItem|sessionStorage\.setItem|indexedDB\./);
+    }
+  });
+
   it("impede o build de avançar sem executar o contrato de recuperação", () => {
     expect(packageSource).toContain('"prebuild": "pnpm verify:immersive-scene-release"');
     expect(packageSource).toContain('"verify:immersive-scene-release": "pnpm check && pnpm test"');
