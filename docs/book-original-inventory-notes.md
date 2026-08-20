@@ -184,3 +184,11 @@ As páginas seguintes do original avançam da casa para o uso concreto dos cômo
 O percurso didático deste trecho deve ser tratado como **cômodos específicos → objetos da cozinha → alimentos/bebidas → frases de localização e uso**. A metodologia continua útil porque parte de elementos visíveis e concretos, mas a mediação original ainda depende de transliterações hispanizadas e explicações reduzidas demais para orientar um falante de pt-BR.
 
 Na reconstrução, será mantida a ordem temática do original, mas com correções obrigatórias: **ponte de pronúncia pt-BR**, **áudio nativo como referência principal**, **vocabulário atualizado e agrupado por função** e **Pareto separado por folha**, sem retirar listas, ilustrações ou exercícios-base. O próximo bloco a implementar deve seguir a sequência **cozinha → utensílios/objetos → alimentos e bebidas → frases práticas de uso e localização**.
+
+## Bloco seguinte confirmado visualmente — plural e preposições básicas
+
+As páginas seguintes do original não avançam para outro vocabulário doméstico; elas abrem o **Capítulo V: Singular y Plural** e, logo depois, o **Capítulo VI: Preposiciones Básicas**. O trecho de plural apresenta primeiro regras para palavras terminadas em **ch, sh, x**, depois a troca de **y → ies**, em seguida a troca de **f/fe → ves**, e finalmente um conjunto de plurais irregulares e plurais regulares por simples acréscimo de **s**.
+
+O bloco de preposições básicas apresenta a sequência **at, in, on, to, around, from, under, behind, within, over, far**, seguida por explicações em espanhol sobre distinção de uso e uma folha de frases-modelo com tradução. A última página visualizada combina exemplos práticos de preposição com um exercício ilustrado de completar frases.
+
+Na reconstrução, a metodologia deve permanecer a mesma: **regra → tabela de exemplos → contraste de uso → frases completas → exercício aplicado**. Contudo, três correções são obrigatórias: **eliminar a fonetização hispanizada como orientação principal**, **explicar as regras de plural e preposição em pt-BR claro, inclusive exceções e limites**, e **usar áudio nativo e prática Pareto separada** para cada folha. O próximo bloco a implementar deve seguir a ordem **plural regular e irregular → preposições básicas → frases contextualizadas → exercício de preenchimento**.
