@@ -28,7 +28,7 @@ async function assertMessageLimit(userId: number) {
 export const customerSupportRouter = router({
   create: protectedProcedure.input(z.object({
     subject: z.string().trim().min(3).max(180),
-    category: z.enum(["help", "bug", "feedback", "idea", "security"]),
+    category: z.enum(["help", "bug", "feedback", "idea", "security", "sales"]),
     content: contentSchema,
   })).mutation(async ({ ctx, input }) => {
     await assertMessageLimit(ctx.user.id);

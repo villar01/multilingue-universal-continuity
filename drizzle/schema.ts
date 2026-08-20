@@ -2468,7 +2468,7 @@ export const customerSupportThreads = mysqlTable("customer_support_threads", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   subject: varchar("subject", { length: 180 }).notNull(),
-  category: mysqlEnum("category", ["help", "bug", "feedback", "idea", "security"]).notNull(),
+  category: mysqlEnum("category", ["help", "bug", "feedback", "idea", "security", "sales"]).notNull(),
   status: mysqlEnum("status", ["open", "in_review", "replied", "closed"]).default("open").notNull(),
   priority: mysqlEnum("priority", ["normal", "high"]).default("normal").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

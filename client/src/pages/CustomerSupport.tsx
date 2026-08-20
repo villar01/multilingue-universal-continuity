@@ -11,7 +11,7 @@ import { MessageSquare, Plus, Send, ShieldCheck, ArrowLeft, CheckCircle2 } from 
 import { toast } from "sonner";
 
 const categories = [
-  ["help", "Ajuda"], ["bug", "Problema"], ["feedback", "Opinião"], ["idea", "Ideia"], ["security", "Segurança"],
+  ["help", "Ajuda"], ["bug", "Problema"], ["feedback", "Opinião"], ["idea", "Ideia"], ["security", "Segurança"], ["sales", "Tenho interesse"],
 ] as const;
 
 type Category = (typeof categories)[number][0];

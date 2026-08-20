@@ -236,6 +236,8 @@
 
 - [ ] Aplicar somente recursos internos gratuitos do vendedor assistido: registro privado de interesse, classificação de intenção, rascunhos de campanha e opinião, sem vendedores humanos e sem integração que publique anúncios ou gere gasto externo
 
+- [x] Adicionar interesse comercial consentido ao suporte privado: categoria “Tenho interesse” registrada apenas para conta autenticada e revisão do proprietário, sem oferta automática, preço, anúncio ou cobrança — migração aplicada, TypeScript e 860 testes aprovados
+
 - [ ] Preservar o plano futuro do vendedor assistido e funil comercial em especificação versionada, checklist rastreável e checkpoint, para incorporação posterior sem reabrir escopo, ativar campanhas ou perder controles de aprovação
 
 - [ ] Priorizar recursos internos gratuitos e estáveis no lançamento; preservar marcos de reinvestimento posterior em GPU, mídia docente e animações reais somente após monetização comprovada e sem substituir proteções atuais

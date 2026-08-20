@@ -1,0 +1,1 @@
+ALTER TABLE `customer_support_threads` MODIFY COLUMN `category` enum('help','bug','feedback','idea','security','sales') NOT NULL;
