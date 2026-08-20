@@ -33,10 +33,11 @@ describe("contrato crítico da cena imersiva", () => {
     expect(sceneSource).toContain('.immersive-start-dialog { top: 108px !important; bottom: auto !important; }');
   });
 
-  it("mantém Pareto como painel independente e acionável", () => {
+  it("mantém Pareto como painel independente e acionável somente com material autorizado", () => {
     expect(sceneSource).toContain("const [paretoOpen, setParetoOpen] = useState(false);");
     expect(sceneSource).toContain("onClick={() => setParetoOpen(true)}");
-    expect(sceneSource).toContain("isOpen={paretoOpen}");
+    expect(sceneSource).toContain("isOpen={hasAuthorizedSceneMaterial && paretoOpen}");
+    expect(sceneSource).toContain("if (!hasAuthorizedSceneMaterial) setParetoOpen(false);");
   });
 
   it("preserva o seletor avançado de voz fora da faixa estreita da cena", () => {

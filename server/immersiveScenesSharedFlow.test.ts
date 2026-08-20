@@ -33,9 +33,10 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     expect(source.indexOf("<TeacherAvatar")).toBeLessThan(source.indexOf("{/* ── Dialog Panel:"));
   });
 
-  it("orienta a ativação de acesso aos objetos sem manter fala curricular no catálogo público", () => {
-    expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene): string");
+  it("orienta a ativação pendente e a prática autorizada sem manter fala curricular no catálogo público", () => {
+    expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene, hasAuthorizedMaterial: boolean): string");
     expect(source).toContain("Ative o acesso para praticar com os objetos de ${scene.name}.");
-    expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene));");
+    expect(source).toContain("Explore os objetos de ${scene.name} e pratique com o professor.");
+    expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene, hasAuthorizedSceneMaterial));");
   });
 });

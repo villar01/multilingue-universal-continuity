@@ -6,18 +6,24 @@ const source = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveSc
 
 describe("prévia segura da Cena Imersiva para visitantes", () => {
   it("preserva somente a prévia visual e oculta os elementos pedagógicos até a sessão protegida", () => {
-    expect(source).toContain("{isAuthenticated && activeSceneHotspots.map((hotspot) => {");
-    expect(source).toContain("{isAuthenticated && activeHotspot && (");
-    expect(source).toContain("{isAuthenticated && practiceHotspot && (");
-    expect(source).toContain("{isAuthenticated && quizOpen && quizQuestion && (");
-    expect(source).toContain("greeting={isAuthenticated ? greetingText : \"\"}");
-    expect(source).toContain("showGreeting={isAuthenticated && showGreeting}");
-    expect(source).toContain("spokenText={isAuthenticated ? activeSpeechText || greetingText : \"\"}");
+    expect(source).toContain("const hasAuthorizedSceneMaterial = Boolean(");
+    expect(source).toContain("isAuthenticated && activeSceneDialog.length > 0 && !sceneMaterialNeedsAccess");
+    expect(source).toContain("{hasAuthorizedSceneMaterial && activeSceneHotspots.map((hotspot) => {");
+    expect(source).toContain("{hasAuthorizedSceneMaterial && activeHotspot && (");
+    expect(source).toContain("{hasAuthorizedSceneMaterial && practiceHotspot && (");
+    expect(source).toContain("{hasAuthorizedSceneMaterial && quizOpen && quizQuestion && (");
+    expect(source).toContain("greeting={hasAuthorizedSceneMaterial ? greetingText : \"\"}");
+    expect(source).toContain("showGreeting={hasAuthorizedSceneMaterial && showGreeting}");
+    expect(source).toContain("spokenText={hasAuthorizedSceneMaterial ? activeSpeechText || greetingText : \"\"}");
+    expect(source).toContain("{hasAuthorizedSceneMaterial && (\n                <button");
+    expect(source).toContain("isOpen={hasAuthorizedSceneMaterial && paretoOpen}");
+    expect(source).toContain("if (!hasAuthorizedSceneMaterial) setParetoOpen(false);");
   });
 
   it("oferece ativação de acesso clara sem expor diálogo ou vocabulário", () => {
     expect(source).toContain("Prévia visual disponível.");
     expect(source).toContain("Ative o acesso para liberar objetos, vocabulário, diálogo e prática com o professor.");
+    expect(source).toContain("? `Explore os objetos de ${scene.name} e pratique com o professor.`");
     expect(source).toContain('>Ativar acesso</button>');
     expect(source).toContain("window.location.href = getLoginUrl();");
   });

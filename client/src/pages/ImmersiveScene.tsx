@@ -140,8 +140,10 @@ function getSceneLocationDisclosure(scene: Scene): string {
     || `This is a generic educational illustration called ${scene.nameEn}; it is not assigned to a real country or city.`;
 }
 
-function getSceneObjectGuidancePt(scene: Scene): string {
-  return `Ative o acesso para praticar com os objetos de ${scene.name}.`;
+function getSceneObjectGuidancePt(scene: Scene, hasAuthorizedMaterial: boolean): string {
+  return hasAuthorizedMaterial
+    ? `Explore os objetos de ${scene.name} e pratique com o professor.`
+    : `Ative o acesso para praticar com os objetos de ${scene.name}.`;
 }
 
 type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
@@ -890,6 +892,9 @@ export default function ImmersiveScene() {
   const sceneMaterialRequiresLogin = Boolean(selectedSceneRequiresProtectedMaterial && !isAuthenticated);
   const sceneMaterialNeedsAccess = sceneMaterialRequiresLogin || sceneMaterialAccessFailed;
   const sceneMaterialActionLabel = isAuthenticated ? "Atualizar cena" : "Ativar acesso";
+  const hasAuthorizedSceneMaterial = Boolean(
+    isAuthenticated && activeSceneDialog.length > 0 && !sceneMaterialNeedsAccess,
+  );
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
@@ -1469,6 +1474,9 @@ export default function ImmersiveScene() {
   const [notebookCount, setNotebookCount] = useState(() => loadNotebook().length);
   // Pareto Panel state
   const [paretoOpen, setParetoOpen] = useState(false);
+  useEffect(() => {
+    if (!hasAuthorizedSceneMaterial) setParetoOpen(false);
+  }, [hasAuthorizedSceneMaterial]);
   const quizHotspots = activeSceneHotspots;
   const quizQuestion = quizHotspots.length ? quizHotspots[quizIndex % quizHotspots.length] : null;
   const quizOptions = quizQuestion
@@ -1627,7 +1635,7 @@ export default function ImmersiveScene() {
     setLearnedWords(new Set());
     setQuizIndex(0);
     setQuizFeedback(null);
-    setGreetingText(getSceneObjectGuidancePt(selectedScene));
+    setGreetingText(getSceneObjectGuidancePt(selectedScene, hasAuthorizedSceneMaterial));
     setShowGreeting(true);
     if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
     greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
@@ -1640,7 +1648,7 @@ export default function ImmersiveScene() {
       dlgRecordingStreamRef.current?.getTracks().forEach((track) => track.stop());
       dlgRecordingStreamRef.current = null;
     };
-  }, [selectedScene?.id, stopTeacherAudio]);
+  }, [hasAuthorizedSceneMaterial, selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
     const dialogueScene = activeTeachingScene ?? scene;
@@ -2453,14 +2461,16 @@ export default function ImmersiveScene() {
                 />
               </div>
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
-              <button
-                onClick={() => setParetoOpen(true)}
-                className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
-                style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
-                title="Vocabulário Pareto 1000+"
-              >
-                📚 Pareto
-              </button>
+              {hasAuthorizedSceneMaterial && (
+                <button
+                  onClick={() => setParetoOpen(true)}
+                  className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
+                  style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
+                  title="Vocabulário Pareto 1000+"
+                >
+                  📚 Pareto
+                </button>
+              )}
               <div
                 className="flex items-center gap-1 text-yellow-400 font-bold px-3 py-1.5 rounded-full"
                 style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
@@ -2488,7 +2498,7 @@ export default function ImmersiveScene() {
         {!immersionMode && isAuthenticated && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
 
         {/* AR Hotspots */}
-        {isAuthenticated && activeSceneHotspots.map((hotspot) => {
+        {hasAuthorizedSceneMaterial && activeSceneHotspots.map((hotspot) => {
           const learned = learnedWords.has(hotspot.id);
           return (
             <div
@@ -2554,7 +2564,7 @@ export default function ImmersiveScene() {
         })}
 
         {/* Vocabulary Card */}
-        {isAuthenticated && activeHotspot && (
+        {hasAuthorizedSceneMaterial && activeHotspot && (
           <div
             style={{ animation: "vocab-slide-in 0.25s ease-out" }}
             onClick={(e) => e.stopPropagation()}
@@ -2592,7 +2602,7 @@ export default function ImmersiveScene() {
           </div>
         )}
 
-        {isAuthenticated && practiceHotspot && (
+        {hasAuthorizedSceneMaterial && practiceHotspot && (
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
@@ -2601,7 +2611,7 @@ export default function ImmersiveScene() {
           />
         )}
 
-        {isAuthenticated && quizOpen && quizQuestion && (
+        {hasAuthorizedSceneMaterial && quizOpen && quizQuestion && (
           <div
             className="absolute left-1/2 top-1/2 z-40 w-[min(92vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border p-5 shadow-2xl"
             style={{ background: "rgba(15,23,42,.95)", borderColor: "rgba(129,140,248,.65)", backdropFilter: "blur(18px)" }}
@@ -2672,11 +2682,11 @@ export default function ImmersiveScene() {
         {/* Teacher */}
         <TeacherAvatar
           scene={teachingScene ?? selectedScene!}
-          greeting={isAuthenticated ? greetingText : ""}
-          showGreeting={isAuthenticated && showGreeting}
-          isSpeaking={isAuthenticated && isSpeaking}
-          isPreparingAudio={isAuthenticated && isPreparingNeuralAudio}
-          spokenText={isAuthenticated ? activeSpeechText || greetingText : ""}
+          greeting={hasAuthorizedSceneMaterial ? greetingText : ""}
+          showGreeting={hasAuthorizedSceneMaterial && showGreeting}
+          isSpeaking={hasAuthorizedSceneMaterial && isSpeaking}
+          isPreparingAudio={hasAuthorizedSceneMaterial && isPreparingNeuralAudio}
+          spokenText={hasAuthorizedSceneMaterial ? activeSpeechText || greetingText : ""}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
@@ -3214,7 +3224,7 @@ export default function ImmersiveScene() {
         />
         {/* Pareto Vocabulary Panel */}
         <ParetoPanel
-          isOpen={paretoOpen}
+          isOpen={hasAuthorizedSceneMaterial && paretoOpen}
           onClose={() => setParetoOpen(false)}
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
