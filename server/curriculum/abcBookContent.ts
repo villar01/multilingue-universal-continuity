@@ -8,6 +8,7 @@ import { NINTH_BLOCK_AUXILIARIES_AND_TENSES } from "./abcBookNinthBlock";
 import { TENTH_BLOCK_NEGATIONS_AND_SELF } from "./abcBookTenthBlock";
 import { ELEVENTH_BLOCK_ADVERBS_AND_TRAVEL } from "./abcBookEleventhBlock";
 import { TWELFTH_BLOCK_PREPOSITIONS_PHRASALS_CONJUNCTIONS } from "./abcBookTwelfthBlock";
+import { THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS } from "./abcBookThirteenthBlock";
 import { getLanguageBlocks } from "./languageBlocksContent";
 
 export type ABCBookSection = {
@@ -2243,6 +2244,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     ...TENTH_BLOCK_NEGATIONS_AND_SELF,
     ...ELEVENTH_BLOCK_ADVERBS_AND_TRAVEL,
     ...TWELFTH_BLOCK_PREPOSITIONS_PHRASALS_CONJUNCTIONS,
+    ...THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS,
   ],
   memorySteps: [
     {
