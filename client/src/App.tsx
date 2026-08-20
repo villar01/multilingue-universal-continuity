@@ -253,6 +253,11 @@ const ResilientPronunciationHistory = () => (
     <PronunciationHistory />
   </ActivityRecoveryBoundary>
 );
+const ResilientOnboarding = () => (
+  <ActivityRecoveryBoundary activityLabel="a configuração inicial">
+    <Onboarding />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -296,7 +301,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-        <Route path="/onboarding" component={Onboarding} />
+        <Route path="/onboarding" component={ResilientOnboarding} />
         <Route path="/dashboard" component={ResilientDashboardReal} />
         <Route path="/dashboard-real" component={ResilientDashboardReal} />
       <Route path={"/lesson/:id"} component={ResilientLesson} />
