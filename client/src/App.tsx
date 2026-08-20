@@ -283,6 +283,11 @@ const ResilientDemo = () => (
     <Demo />
   </ActivityRecoveryBoundary>
 );
+const ResilientCustomerSupport = () => (
+  <ActivityRecoveryBoundary activityLabel="o suporte privado">
+    <CustomerSupport />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -395,7 +400,7 @@ function Router() {
         <Route path="/abc-book" component={ResilientABCBook} />
         <Route path="/pareto-1000" component={ResilientPareto1000} />
         <Route path="/guia-backup" component={ResilientBackupGuide} />
-        <Route path="/suporte" component={CustomerSupport} />
+        <Route path="/suporte" component={ResilientCustomerSupport} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
