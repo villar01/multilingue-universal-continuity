@@ -118,6 +118,11 @@ const ResilientPhrasalVerbsExercises = () => (
     <PhrasalVerbsExercises />
   </LessonRecoveryBoundary>
 );
+const ResilientLessonsHub = () => (
+  <LessonRecoveryBoundary>
+    <LessonsHub />
+  </LessonRecoveryBoundary>
+);
 const ResilientInteractiveVideos = () => (
   <ActivityRecoveryBoundary activityLabel="os vídeos interativos">
     <InteractiveVideos />
@@ -302,7 +307,7 @@ function Router() {
         <Route path="/daily-memory" component={ResilientDailyMemory} />
         <Route path="/my-teacher" component={ResilientMyTeacher} />
         <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
-        <Route path="/lessons-hub" component={LessonsHub} />
+        <Route path="/lessons-hub" component={ResilientLessonsHub} />
         <Route path="/demo" component={Demo} />
         <Route path="/dialogue" component={ResilientImmersiveDialogue} />
         <Route path="/natural-learning" component={ResilientNaturalLearning} />
