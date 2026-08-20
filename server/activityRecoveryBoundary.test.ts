@@ -50,7 +50,7 @@ describe("recuperação local de atividades", () => {
     vi.unstubAllGlobals();
   });
 
-  it("protege vídeos, Reels, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
+  it("protege vídeos, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
     const app = read("client/src/App.tsx");
     expect(app).toContain("const ResilientInteractiveVideos");
     expect(app).toContain('<Route path="/interactive-videos" component={ResilientInteractiveVideos} />');
@@ -79,5 +79,7 @@ describe("recuperação local de atividades", () => {
     expect(app).toContain('<Route path="/pareto-1000" component={ResilientPareto1000} />');
     expect(app).toContain("const ResilientImmersiveDialogue");
     expect(app).toContain('<Route path="/dialogue" component={ResilientImmersiveDialogue} />');
+    expect(app).toContain("const ResilientNaturalLearning");
+    expect(app).toContain('<Route path="/natural-learning" component={ResilientNaturalLearning} />');
   });
 });

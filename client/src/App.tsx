@@ -178,6 +178,11 @@ const ResilientImmersiveDialogue = () => (
     <ImmersiveDialogue />
   </ActivityRecoveryBoundary>
 );
+const ResilientNaturalLearning = () => (
+  <ActivityRecoveryBoundary activityLabel="o aprendizado natural">
+    <NaturalLearning />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -280,7 +285,7 @@ function Router() {
         <Route path="/lessons-hub" component={LessonsHub} />
         <Route path="/demo" component={Demo} />
         <Route path="/dialogue" component={ResilientImmersiveDialogue} />
-        <Route path="/natural-learning" component={NaturalLearning} />
+        <Route path="/natural-learning" component={ResilientNaturalLearning} />
         <Route path="/natural-lesson" component={ResilientNaturalLesson} />
         <Route path="/master-lesson" component={ResilientMasterLesson} />
         <Route path="/ia-nativa" component={IANativa} />
