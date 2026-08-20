@@ -2440,7 +2440,7 @@ export default function ImmersiveScene() {
               </label>
             )}
             <ImmersionModeToggle compact />
-            {!immersionMode && <>
+            {!immersionMode && isAuthenticated && <>
               <div className="hidden sm:block">
                 <VoiceSelector
                   langCode={targetLang || effectiveLang(selectedScene)}
@@ -2481,10 +2481,10 @@ export default function ImmersiveScene() {
           </div>
         </div>
 
-        {!immersionMode && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
+        {!immersionMode && isAuthenticated && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
 
         {/* AR Hotspots */}
-        {activeSceneHotspots.map((hotspot) => {
+        {isAuthenticated && activeSceneHotspots.map((hotspot) => {
           const learned = learnedWords.has(hotspot.id);
           return (
             <div
@@ -2550,7 +2550,7 @@ export default function ImmersiveScene() {
         })}
 
         {/* Vocabulary Card */}
-        {activeHotspot && (
+        {isAuthenticated && activeHotspot && (
           <div
             style={{ animation: "vocab-slide-in 0.25s ease-out" }}
             onClick={(e) => e.stopPropagation()}
@@ -2588,7 +2588,7 @@ export default function ImmersiveScene() {
           </div>
         )}
 
-        {practiceHotspot && (
+        {isAuthenticated && practiceHotspot && (
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
@@ -2597,7 +2597,7 @@ export default function ImmersiveScene() {
           />
         )}
 
-        {quizOpen && quizQuestion && (
+        {isAuthenticated && quizOpen && quizQuestion && (
           <div
             className="absolute left-1/2 top-1/2 z-40 w-[min(92vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border p-5 shadow-2xl"
             style={{ background: "rgba(15,23,42,.95)", borderColor: "rgba(129,140,248,.65)", backdropFilter: "blur(18px)" }}
@@ -2668,11 +2668,11 @@ export default function ImmersiveScene() {
         {/* Teacher */}
         <TeacherAvatar
           scene={teachingScene ?? selectedScene!}
-          greeting={greetingText}
-          showGreeting={showGreeting}
-          isSpeaking={isSpeaking}
-          isPreparingAudio={isPreparingNeuralAudio}
-          spokenText={activeSpeechText || greetingText}
+          greeting={isAuthenticated ? greetingText : ""}
+          showGreeting={isAuthenticated && showGreeting}
+          isSpeaking={isAuthenticated && isSpeaking}
+          isPreparingAudio={isAuthenticated && isPreparingNeuralAudio}
+          spokenText={isAuthenticated ? activeSpeechText || greetingText : ""}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
@@ -3164,7 +3164,7 @@ export default function ImmersiveScene() {
         >
           <div />
           <div className="flex gap-2">
-            {activeSceneHotspots.map((h) => (
+            {isAuthenticated && activeSceneHotspots.map((h) => (
               <div
                 key={h.id}
                 style={{
@@ -3191,6 +3191,17 @@ export default function ImmersiveScene() {
             {immersionMode ? "Next →" : "Próxima →"}
           </button>
         </div>
+        {!isAuthenticated && !dialogAuthRequired && (
+          <div
+            className="absolute left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2 rounded-2xl border p-4 text-center shadow-2xl"
+            style={{ bottom: "112px", background: "rgba(15,23,42,.94)", borderColor: "rgba(129,140,248,.72)", backdropFilter: "blur(14px)" }}
+            role="status"
+          >
+            <p className="text-sm font-semibold text-white">Prévia visual disponível.</p>
+            <p className="mt-1 text-xs text-slate-300">Ative o acesso para liberar objetos, vocabulário, diálogo e prática com o professor.</p>
+            <button type="button" onClick={() => { window.location.href = getLoginUrl(); }} className="mt-3 rounded-full bg-indigo-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-400">Ativar acesso</button>
+          </div>
+        )}
         {/* Notebook Modal */}
         <Notebook
           isOpen={notebookOpen}
