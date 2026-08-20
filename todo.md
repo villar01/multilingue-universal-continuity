@@ -238,7 +238,7 @@
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
 - [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
 - [x] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível — prática exibe quatro etapas numeradas, instrução contextual, ação indicada por etapa, validação e conclusão com próxima palavra; contratos de ciclo/painel e tela Pareto validados em 19/08
-- [ ] Reorganizar a prática inicial de inglês para ensinar vocabulário dentro da receita sujeito → verbo → complemento, com função visível de cada palavra e produção progressiva de frase
+- [x] Reorganizar a prática inicial de inglês para ensinar vocabulário dentro da receita sujeito → verbo → complemento, com função visível de cada palavra e produção progressiva de frase — a estrutura pt-BR→inglês, perguntas e progressão I study English → lugar → tempo já estavam no currículo; regressão dedicada agora preserva esse contrato, TypeScript e 836 testes aprovados
 - [ ] Modelar cada prática de frase pela ordem gramatical do idioma estudado, comparando com a ordem do português sem copiar sua posição
 - [x] Corrigir a legibilidade do feedback do ciclo Pareto, mantendo instruções, etapas, ações e conteúdo pedagógico inalterados — retorno agora usa fundo âmbar claro, borda de contraste e texto escuro; etapas, ações, conteúdo e voz foram preservados. TypeScript sem erros, 792 testes aprovados e tela Pareto validada visualmente em 19/08
 - [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
