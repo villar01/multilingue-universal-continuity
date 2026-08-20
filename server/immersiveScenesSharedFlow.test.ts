@@ -10,9 +10,9 @@ const scenesCatalog = catalogSource.slice(scenesStart);
 describe("fluxo compartilhado das cenas imersivas", () => {
   it("mantém o catálogo de 29 cenas em uma única tela com uma única cadeia de pergunta, resposta e voz", () => {
     expect(scenesStart).toBeGreaterThan(-1);
-    expect((scenesCatalog.match(/\bid:\s*"/g) || [])).toHaveLength(29);
-    expect((scenesCatalog.match(/\bteacherName:\s*"/g) || [])).toHaveLength(29);
-    expect((scenesCatalog.match(/\bteacherImage:\s*"/g) || [])).toHaveLength(29);
+    expect((scenesCatalog.match(/^\s*id:\s*"/gm) || [])).toHaveLength(29);
+    expect((scenesCatalog.match(/^\s*teacherName:\s*"/gm) || [])).toHaveLength(29);
+    expect((scenesCatalog.match(/^\s*teacherImage:\s*"/gm) || [])).toHaveLength(29);
     expect((source.match(/const askImmersiveTutor = useCallback/g) || [])).toHaveLength(1);
     expect((source.match(/const requestSpeechSafely = useCallback/g) || [])).toHaveLength(1);
     expect((source.match(/const playTeacherAudio = useCallback/g) || [])).toHaveLength(1);
@@ -33,10 +33,10 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     expect(source.indexOf("<TeacherAvatar")).toBeLessThan(source.indexOf("{/* ── Dialog Panel:"));
   });
 
-  it("orienta a ativação pendente e a prática autorizada sem manter fala curricular no catálogo público", () => {
-    expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene, hasAuthorizedMaterial: boolean): string");
-    expect(source).toContain("Ative o acesso para praticar com os objetos de ${scene.name}.");
-    expect(source).toContain("Explore os objetos de ${scene.name} e pratique com o professor.");
-    expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene, hasAuthorizedSceneMaterial));");
+  it("orienta o uso dos objetos em toda apresentação, mesmo quando a saudação original é breve", () => {
+    expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene): string");
+    expect(source).toContain("/objetos?/i.test(greeting)");
+    expect(source).toContain("Clique nos objetos para aprender.");
+    expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene));");
   });
 });

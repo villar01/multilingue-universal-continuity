@@ -15,10 +15,7 @@ describe("contrato crítico da cena imersiva", () => {
 
   it("fecha cartão e áudio de objeto antes de abrir o diálogo pelo gesto principal", () => {
     expect(sceneSource).toContain("const startDialog = useCallback((scene: Scene) => {");
-    expect(sceneSource).toContain("if (!isAuthenticated) {");
-    expect(sceneSource).toContain("setDialogAuthRequired(true);");
-    expect(sceneSource).toContain("Ative o acesso protegido para iniciar o diálogo desta cena.");
-    expect(sceneSource).toContain("startDialog(selectedScene);");
+    expect(sceneSource).toContain("onClick={(e) => { e.stopPropagation(); startDialog(selectedScene); }}");
     expect(startDialogBlock).toContain("setActiveHotspot(null);");
     expect(startDialogBlock).toContain("setPracticeHotspot(null);");
     expect(startDialogBlock).toContain("stopTeacherAudio();");
@@ -33,11 +30,10 @@ describe("contrato crítico da cena imersiva", () => {
     expect(sceneSource).toContain('.immersive-start-dialog { top: 108px !important; bottom: auto !important; }');
   });
 
-  it("mantém Pareto como painel independente e acionável somente com material autorizado", () => {
+  it("mantém Pareto como painel independente e acionável", () => {
     expect(sceneSource).toContain("const [paretoOpen, setParetoOpen] = useState(false);");
     expect(sceneSource).toContain("onClick={() => setParetoOpen(true)}");
-    expect(sceneSource).toContain("isOpen={hasAuthorizedSceneMaterial && paretoOpen}");
-    expect(sceneSource).toContain("if (!hasAuthorizedSceneMaterial) setParetoOpen(false);");
+    expect(sceneSource).toContain("isOpen={paretoOpen}");
   });
 
   it("preserva o seletor avançado de voz fora da faixa estreita da cena", () => {

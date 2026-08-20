@@ -30,9 +30,8 @@ export interface Scene {
   langCode: string;
   flag: string;
   teacherGender?: "male" | "female";
-  /** Conteúdo pedagógico autenticado; nunca integra o catálogo de prévias do navegador. */
-  teacherGreeting?: string;
-  greetingPt?: string;
+  teacherGreeting: string;
+  greetingPt: string;
   difficulty: "beginner" | "intermediate" | "advanced";
   premium: boolean;
   hotspots: Hotspot[];

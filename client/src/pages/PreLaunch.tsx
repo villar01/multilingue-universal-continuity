@@ -5,7 +5,6 @@ import { Card } from "../components/ui/card";
 import { trpc } from "../lib/trpc";
 import { toast } from "sonner";
 import { Check, Sparkles, Globe, Brain, Video } from "lucide-react";
-import { ACTIVE_LANGUAGE_COUNT, COMING_SOON_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "../lib/languages";
 
 export default function PreLaunch() {
   const [email, setEmail] = useState("");
@@ -48,7 +47,7 @@ export default function PreLaunch() {
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
             A primeira plataforma do mundo com <strong>conversação ilimitada por IA</strong>, 
-            análise de pronúncia em tempo real e <strong>vídeos interativos</strong> em {ACTIVE_LANGUAGE_COUNT} idiomas disponíveis agora.
+            análise de pronúncia em tempo real e <strong>vídeos interativos</strong> em 54 idiomas.
           </p>
 
           {/* Form */}
@@ -87,8 +86,8 @@ export default function PreLaunch() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
             <Globe className="w-12 h-12 mb-4 text-blue-400" />
-            <h3 className="text-xl font-bold mb-2">{TOTAL_LANGUAGES} idiomas no catálogo</h3>
-            <p className="text-gray-300">{ACTIVE_LANGUAGE_COUNT} disponíveis agora e {COMING_SOON_LANGUAGE_COUNT} em preparação</p>
+            <h3 className="text-xl font-bold mb-2">54 Idiomas</h3>
+            <p className="text-gray-300">69 idiomas — mais do que qualquer outro app do mundo</p>
           </Card>
 
           <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
