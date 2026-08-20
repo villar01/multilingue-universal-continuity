@@ -79,6 +79,16 @@ export const customerSupportRouter = router({
     return db.select().from(customerSupportThreads).orderBy(desc(customerSupportThreads.updatedAt)).limit(100);
   }),
 
+  adminGet: adminProcedure.input(z.object({ threadId: z.number().int().positive() })).query(async ({ input }) => {
+    const db = await requireDb();
+    const [thread] = await db.select().from(customerSupportThreads).where(eq(customerSupportThreads.id, input.threadId)).limit(1);
+    if (!thread) throw new TRPCError({ code: "NOT_FOUND", message: "Conversa privada não encontrada." });
+    const messages = await db.select().from(customerSupportMessages)
+      .where(eq(customerSupportMessages.threadId, thread.id))
+      .orderBy(customerSupportMessages.createdAt);
+    return { thread, messages };
+  }),
+
   adminReply: adminProcedure.input(z.object({ threadId: z.number().int().positive(), content: contentSchema, close: z.boolean().default(false) }))
     .mutation(async ({ ctx, input }) => {
       const db = await requireDb();

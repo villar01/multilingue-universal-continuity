@@ -224,7 +224,7 @@
 
 - [ ] Documentar a separação entre revisão por GitHub/Copilot, uso normal do app publicado sem instalação no cliente e instalação local opcional apenas para recursos de hardware específicos
 
-- [ ] Implementar canal privado de suporte e opiniões para clientes autenticados, com acesso por proprietário, limites contra abuso, registro protegido e revisão humana antes de qualquer melhoria automática
+- [x] Implementar canal privado de suporte e opiniões para clientes autenticados, com acesso por proprietário, limites contra abuso, registro protegido e revisão humana antes de qualquer melhoria automática — rota /suporte, conversa privada, resposta exclusiva do proprietário, regressões e verificação visual; TypeScript e 855 testes aprovados
 
 - [ ] Projetar e implementar funil comercial consentido: campanhas em redes sociais aprovadas, página de origem, interesse, avaliação de conversão, oferta proporcional de serviços e painel privado de métricas sem coleta publicitária não autorizada
 
