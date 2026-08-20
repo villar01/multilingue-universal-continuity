@@ -6,6 +6,7 @@ import { SEVENTH_BLOCK_LITERACY_LABS } from "./abcBookSeventhBlock";
 import { EIGHTH_BLOCK_QUANTIFIERS_AND_AUXILIARIES } from "./abcBookEighthBlock";
 import { NINTH_BLOCK_AUXILIARIES_AND_TENSES } from "./abcBookNinthBlock";
 import { TENTH_BLOCK_NEGATIONS_AND_SELF } from "./abcBookTenthBlock";
+import { ELEVENTH_BLOCK_ADVERBS_AND_TRAVEL } from "./abcBookEleventhBlock";
 import { getLanguageBlocks } from "./languageBlocksContent";
 
 export type ABCBookSection = {
@@ -2239,6 +2240,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     ...EIGHTH_BLOCK_QUANTIFIERS_AND_AUXILIARIES,
     ...NINTH_BLOCK_AUXILIARIES_AND_TENSES,
     ...TENTH_BLOCK_NEGATIONS_AND_SELF,
+    ...ELEVENTH_BLOCK_ADVERBS_AND_TRAVEL,
   ],
   memorySteps: [
     {
