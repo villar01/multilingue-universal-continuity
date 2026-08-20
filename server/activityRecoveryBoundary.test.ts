@@ -50,12 +50,14 @@ describe("recuperação local de atividades", () => {
     vi.unstubAllGlobals();
   });
 
-  it("protege vídeos, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
+  it("protege vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
     const app = read("client/src/App.tsx");
     expect(app).toContain("const ResilientInteractiveVideos");
     expect(app).toContain('<Route path="/interactive-videos" component={ResilientInteractiveVideos} />');
     expect(app).toContain("const ResilientReels");
     expect(app).toContain('<Route path="/reels" component={ResilientReels} />');
+    expect(app).toContain("const ResilientClips");
+    expect(app).toContain('<Route path="/clips" component={ResilientClips} />');
     expect(app).toContain("const ResilientRoleplay");
     expect(app).toContain('<Route path="/roleplay" component={ResilientRoleplay} />');
     expect(app).toContain("const ResilientARMode");

@@ -188,6 +188,11 @@ const ResilientNaturalLearning = () => (
     <NaturalLearning />
   </ActivityRecoveryBoundary>
 );
+const ResilientClips = () => (
+  <ActivityRecoveryBoundary activityLabel="os clipes educacionais">
+    <Clips />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -256,7 +261,7 @@ function Router() {
       <Route path="/interactive-videos" component={ResilientInteractiveVideos} />
         <Route path="/reels" component={ResilientReels} />
         <Route path="/roleplay" component={ResilientRoleplay} />
-        <Route path="/clips" component={Clips} />
+        <Route path="/clips" component={ResilientClips} />
         <Route path="/ar-teacher" component={ResilientARTeacher} />
         <Route path="/pricing-assistencial" component={PricingAssistencial} />
         <Route path="/sales-dashboard" component={SalesDashboard} />
