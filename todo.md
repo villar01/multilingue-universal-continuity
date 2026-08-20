@@ -238,6 +238,8 @@
 - [ ] Eliminar a repetição de áudio no diálogo sem remover painel, sequência de aula ou fala do professor
 - [ ] Restaurar o diálogo publicado que continua indisponível, preservando todas as demais funções confirmadas como boas
 - [x] Tornar o ciclo Pareto de memória da cena autoexplicativo, com instrução, etapa atual, ação esperada e conclusão visível — prática exibe quatro etapas numeradas, instrução contextual, ação indicada por etapa, validação e conclusão com próxima palavra; contratos de ciclo/painel e tela Pareto validados em 19/08
+- [ ] Reorganizar a prática inicial de inglês para ensinar vocabulário dentro da receita sujeito → verbo → complemento, com função visível de cada palavra e produção progressiva de frase
+- [ ] Modelar cada prática de frase pela ordem gramatical do idioma estudado, comparando com a ordem do português sem copiar sua posição
 - [x] Corrigir a legibilidade do feedback do ciclo Pareto, mantendo instruções, etapas, ações e conteúdo pedagógico inalterados — retorno agora usa fundo âmbar claro, borda de contraste e texto escuro; etapas, ações, conteúdo e voz foram preservados. TypeScript sem erros, 792 testes aprovados e tela Pareto validada visualmente em 19/08
 - [ ] Priorizar correções simples, isoladas e verificáveis antes de retomar integrações complexas de voz, GPU e animação
 - [x] Auditar e preservar todas as listas de verificação, testes e pendências antes de qualquer limpeza ou reclassificação — inventário de 2026-08-14 confirma 1.307 linhas no controle mestre, 857 itens concluídos, 136 pendentes, 168 regressões e checkpoints recentes preservados; falhas funcionais foram reabertas sem apagar histórico
@@ -1653,6 +1655,10 @@
 - [ ] Converter fielmente cada edição do livro: preservar ordem e função de cada folha da referência, traduzir o conteúdo para o par ativo e alterar somente o que a gramática daquela dupla exige, sem acrescentar método diferente nem reduzir assuntos
 - [ ] Preservar todos os exercícios da referência na conversão por dupla: manter ordem, função e progressão de reconhecimento, associação, completar, ordenar, formar, escrever, responder e revisar, adaptando apenas língua, vocabulário e gramática da dupla ativa
 - [x] Criar uma matriz capítulo-folha-exercício da referência para guiar a conversão fiel por dupla de idiomas antes de substituir qualquer conteúdo do Livro SOS — matriz verificável criada em `docs/pdf-reference-conversion-matrix.md`, com regras de adaptação em `docs/language-pair-conversion-rules.md`
+- [ ] Ler e comparar cada bloco de exercícios da referência antes de converter o Livro SOS, preservando sequência, exemplos, instruções e resposta esperada
+- [ ] Reconstruir cada seção do Livro SOS somente após comparação direta com a referência original, sem reduzir ou inventar metodologia
+- [ ] Suspender novas conversões do Livro SOS até localizar ou receber novamente o PDF original para conferência por exercício
+- [ ] Executar correções técnicas somente de forma isolada, mantendo o aplicativo utilizável e comprovando continuidade antes da publicação
 - [x] Reduzir o painel de diálogo das cenas: manter fala e comandos essenciais em formato compacto e recolhível, sem cobrir hotspots, Livro SOS, professor, controles de cena ou navegação — validado em 19/08: cada nova abertura retorna recolhida; TypeScript sem erros, 787 testes aprovados e captura da Praia Tropical confirmou professor, hotspots, Livro SOS e controles visíveis
 - [x] Substituir o retângulo flutuante do Livro SOS nas cenas por uma mini-ilustração reconhecível de livro fechado, com capa, lombada e páginas visíveis, posicionada em canto livre sem cobrir fala, objetos, professor ou controles — a miniatura agora mostra capa dourada, lombada escura, páginas claras e etiqueta SOS; TypeScript sem erros, 806 testes aprovados e Cena da Praia validada visualmente
 - [x] Corrigir sobreposições na Cena Imersiva móvel: atalhos de estudo foram movidos para a base esquerda em tela estreita, fora da área do avatar docente à direita; hotspots, Livro SOS e navegação foram preservados. TypeScript e suíte completa com 768 testes aprovados
@@ -2005,3 +2011,21 @@
 - [x] Abrir o Pareto a partir de cada cena imersiva já filtrado pelo vocabulário protegido da própria cena e com retorno completo ao mesmo ponto — a cena envia somente seu identificador ao currículo protegido; a prática se identifica como Pareto da cena imersiva e a Praia Tropical foi validada visualmente com 99 palavras, retorno contextual e conteúdo não exposto no cliente; TypeScript e suíte completa com 671 testes aprovados
 - [x] Preservar a cena que o aluno escolheu dentro da imersão ao abrir Pareto, Base, lições ou conversa e retornar ao estudo — o retorno serializa o identificador da cena ativa junto aos demais parâmetros permitidos, inclusive depois de troca de cenário; regressão dedicada, TypeScript e suíte completa com 671 testes aprovados
 - [x] Ajustar o rótulo de retorno do Pareto para indicar cena, livro, lição ou painel conforme o destino contextual preservado — o Pareto mostra retorno à cena, Livro ABC, lição, Base ou painel conforme o URL seguro; a origem Café foi validada visualmente como “Voltar à cena”; TypeScript e suíte completa com 673 testes aprovados
+
+- [ ] Definir e validar um fluxo de tradução fiel, linha a linha, para o Livro SOS: preservar conteúdo, ordem, exemplos, exercícios e respostas da referência, sem sinônimos, condensação ou reescrita; só substituir conteúdo após comparação verificável e revisão humana
+
+- [ ] Avaliar e integrar, somente com credencial autorizada, um serviço de controle de similaridade para bloquear publicação de conteúdo complementar que apresente reprodução indevida; manter a tradução autorizada separada do conteúdo novo
+
+- [ ] Bloquear publicação de cada folha do Livro SOS enquanto regra, tradução, exemplo, instrução, exercício, resposta esperada e progressão de dificuldade não tiverem validação pedagógica rastreável contra a referência autorizada
+
+- [ ] Reconstruir o Livro SOS como interpretação pedagógica superior: preservar conhecimento e sequência corretos, ampliar explicações, exemplos e exercícios de forma verificável, e impedir qualquer simplificação ou erro de conteúdo
+
+- [ ] Exigir validação independente de conteúdo e verificação visual antes de cada mudança docente; manter cada correção isolada e bloquear a publicação quando TypeScript, regressões, prévia autenticada ou recuperação local falharem
+
+- [ ] Comprovar por diagnóstico real o estado de GitHub, Claude, Ollama e Qwen 2.5; não exibir nem usar como “ativo” qualquer serviço sem conexão, modelo carregado, credencial válida e evidência de execução registrada
+
+- [ ] Habilitar Claude para revisão independente e comprovar uma execução real registrada antes de utilizá-lo em conteúdo ou código; definir separadamente a reinstalação e o teste real de Ollama com Qwen 2.5
+
+- [ ] Usar somente alternativas gratuitas comprovadas para revisão independente até instrução explícita em contrário; não solicitar, configurar ou induzir cobrança de API, fundos ou assinatura
+
+- [ ] Inspecionar o GitHub por workflows ou serviços de IA inativos e ativar apenas aqueles que não exijam cobrança, tenham credenciais autorizadas e produzam evidência real de execução
