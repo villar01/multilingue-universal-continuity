@@ -150,6 +150,12 @@ export default function Dashboard() {
               </div>
             </Link>
             <div className="flex items-center gap-4">
+              <Link href="/suporte">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Suporte privado
+                </Button>
+              </Link>
               <Link href="/chat">
                 <Button variant="outline" size="sm" className="gap-2">
                   <MessageCircle className="h-4 w-4" />

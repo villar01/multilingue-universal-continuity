@@ -226,6 +226,8 @@
 
 - [x] Implementar canal privado de suporte e opiniões para clientes autenticados, com acesso por proprietário, limites contra abuso, registro protegido e revisão humana antes de qualquer melhoria automática — rota /suporte, conversa privada, resposta exclusiva do proprietário, regressões e verificação visual; TypeScript e 855 testes aprovados
 
+- [x] Expor acesso visível ao Suporte privado no painel autenticado do aluno, preservando o bloqueio de visitantes e sem adicionar automação comercial — botão exibido no DashboardReal usado na rota /dashboard, regressão dedicada, TypeScript e 861 testes aprovados
+
 - [ ] Projetar e implementar funil comercial consentido: campanhas em redes sociais aprovadas, página de origem, interesse, avaliação de conversão, oferta proporcional de serviços e painel privado de métricas sem coleta publicitária não autorizada
 
 - [ ] Implementar vendedor assistido do app: preparar campanhas e mensagens, qualificar interesse, organizar funil e sugerir ofertas, com publicação, orçamento e cobranças sempre bloqueados até aprovação explícita do proprietário

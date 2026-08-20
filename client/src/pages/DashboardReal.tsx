@@ -21,6 +21,7 @@ import {
   ChevronRight,
   CheckCircle2,
   AlertCircle,
+  MessageCircle,
 } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -251,6 +252,12 @@ export default function DashboardReal() {
               </div>
             </Link>
             <div className="flex items-center gap-4">
+              <Link href="/suporte">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Suporte privado
+                </Button>
+              </Link>
               <div className="flex items-center gap-2 text-orange-600">
                 <Flame className="h-5 w-5" />
                 <span className="font-bold">{userProgress.currentStreak} dias</span>
