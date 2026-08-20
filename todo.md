@@ -2097,3 +2097,5 @@
 - [x] Reconstruir o bloco de saudações, despedidas, dias, meses e estações do Livro SOS Português–Inglês: preservar registro comunicativo–sequência calendário–frases contextualizadas, substituir a coluna fonética hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha — cinco folhas novas, regressão dedicada, TypeScript e 832 testes aprovados
 
 - [x] Reconstruir o bloco de phrasal verbs e idioms do Livro SOS Português–Inglês: preservar expressões fixas–verbos com call/get/look–frases e ilustrações contextualizadas, explicar significado pelo uso, substituir fonetização hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha — cinco folhas novas, regressão dedicada, TypeScript e 833 testes aprovados
+
+- [ ] Reconstruir o bloco de corpo humano, campo e planeta do Livro SOS Português–Inglês: preservar domínios temáticos–inventários–ilustrações–descrições simples, corrigir singular/plural e escolhas lexicais frágeis, substituir fonetização hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha
