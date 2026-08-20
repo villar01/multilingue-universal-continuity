@@ -98,6 +98,7 @@
 - [ ] Estender o contrato de recuperação imediata às atividades críticas do aplicativo, com bloqueio de publicação, preservação da versão anterior e retorno seguro sem alteração de dados do aluno
 - [x] Ampliar a regressão de recuperação para todas as rotas críticas resilientes e executar esse contrato no bloqueio de build — 50+ rotas resilientes, as duas fronteiras locais e as saídas seguras são verificadas por `criticalRecoveryCoverage.test.ts`; TypeScript e 358 arquivos/898 testes aprovados
 - [x] Proibir alterações ou transmissão de dados do aluno enquanto uma fronteira local contém uma falha — regressão rejeita tRPC, mutações, fetch e escritas em armazenamento nas fronteiras de lição e atividade; TypeScript e 358 arquivos/899 testes aprovados
+- [x] Comprovar que a restauração de dados cria um ponto de retorno antes de qualquer exclusão — teste de ponta a ponta registra a gravação cifrada do backup de retorno antes do primeiro `DELETE`; TypeScript e 358 arquivos/899 testes aprovados
 - [x] Isolar a rota de lição em recuperação local com retorno seguro ao painel, sem derrubar as demais atividades em caso de falha — `LessonRecoveryBoundary` envolve `/lesson/:id`, tenta uma recuperação única e preserva saídas para lições e painel
 
 - [x] Estender a recuperação local à Lição Estruturada crítica, preservando saídas seguras e sem tocar na fronteira global — `/structured-lesson` agora usa `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
