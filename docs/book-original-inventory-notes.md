@@ -292,3 +292,11 @@ Na página seguinte, o livro inicia formalmente o capítulo **Aprendamos a Salud
 Em seguida, o capítulo **Los Días, Meses y Estaciones del Año** começa pelos **dias da semana** e pelo termo **weekend**, com exemplos frasais como **Have a nice weekend**, **He will go to my house Sunday morning** e **I have to work on Saturday**. Isso confirma que o próximo arco didático após comparativos deve preservar a ordem **saudação → despedida → dias da semana → meses → estações**, mantendo a utilidade comunicativa do original.
 
 Portanto, a continuação da reconstrução precisa tratar **comparativos e superlativos** como um bloco autônomo antes de **saudações e calendário**. As correções obrigatórias já confirmadas são: explicar melhor o uso de **more/most**, revisar naturalidade em alguns superlativos, substituir a coluna de pronúncia hispanizada por ponte pt-BR com áudio nativo e manter Pareto separado por folha em cada subbloco.
+
+## Conferência visual direta — meses e estações do ano (páginas 135 a 136 do livro)
+
+As duas páginas seguintes completam o arco de calendário iniciado pelos dias da semana. O original apresenta os **meses do ano** em sequência — **January, February, March, April, May, June, July, August, September, October, November, December** — com frases como **My son was born in August**, **She will get married in March** e **December is a very cold month**. A reconstrução deve preservar mês com preposição **in** e capitalização dos nomes de mês, sem reutilizar a coluna de pronúncia hispanizada.
+
+Em seguida, o original apresenta as estações: **spring, summer, fall/autumn, winter**, e as expressões **seasons** e **the seasons of the year**. As frases-modelo são **This is a very hot summer** e **I will go to Mexico next winter**. Esse trecho confirma a ordem final do bloco: **dias da semana → meses → estações → frases contextualizadas**.
+
+No rodapé da página 136 começa o próximo capítulo, **Verbos compuestos (phrasal verbs) y Modismos (idioms)**. Portanto, o bloco imediato de saudações e calendário deve reunir **saudações e despedidas formais/informais → dias da semana → meses → estações**, com áudio nativo, ponte pt-BR, prática de registro comunicativo e Pareto separado. O capítulo de phrasal verbs/idioms deverá permanecer como bloco posterior, sem antecipar ou misturar as sequências.

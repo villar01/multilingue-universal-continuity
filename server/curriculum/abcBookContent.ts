@@ -10,6 +10,7 @@ import { ELEVENTH_BLOCK_ADVERBS_AND_TRAVEL } from "./abcBookEleventhBlock";
 import { TWELFTH_BLOCK_PREPOSITIONS_PHRASALS_CONJUNCTIONS } from "./abcBookTwelfthBlock";
 import { THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS } from "./abcBookThirteenthBlock";
 import { FOURTEENTH_BLOCK_COMPARATIVES_SUPERLATIVES } from "./abcBookFourteenthBlock";
+import { FIFTEENTH_BLOCK_GREETINGS_CALENDAR } from "./abcBookFifteenthBlock";
 import { getLanguageBlocks } from "./languageBlocksContent";
 
 export type ABCBookSection = {
@@ -2247,6 +2248,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     ...TWELFTH_BLOCK_PREPOSITIONS_PHRASALS_CONJUNCTIONS,
     ...THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS,
     ...FOURTEENTH_BLOCK_COMPARATIVES_SUPERLATIVES,
+    ...FIFTEENTH_BLOCK_GREETINGS_CALENDAR,
   ],
   memorySteps: [
     {
