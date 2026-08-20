@@ -243,6 +243,11 @@ const ResilientLessonHistory = () => (
     <LessonHistory />
   </ActivityRecoveryBoundary>
 );
+const ResilientCertificates = () => (
+  <ActivityRecoveryBoundary activityLabel="os certificados de aprendizagem">
+    <Certificates />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -329,7 +334,7 @@ function Router() {
         <Route path="/achievements" component={ResilientAchievements} />
         <Route path="/lesson-history" component={ResilientLessonHistory} />
         <Route path="/battle" component={ResilientBattleMode} />
-        <Route path="/certificates" component={Certificates} />
+        <Route path="/certificates" component={ResilientCertificates} />
         <Route path="/pronunciation-history" component={PronunciationHistory} />
         <Route path="/structured-lesson" component={ResilientStructuredLesson} />
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
