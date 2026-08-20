@@ -229,6 +229,18 @@
 - [ ] Projetar e implementar funil comercial consentido: campanhas em redes sociais aprovadas, página de origem, interesse, avaliação de conversão, oferta proporcional de serviços e painel privado de métricas sem coleta publicitária não autorizada
 
 - [ ] Implementar vendedor assistido do app: preparar campanhas e mensagens, qualificar interesse, organizar funil e sugerir ofertas, com publicação, orçamento e cobranças sempre bloqueados até aprovação explícita do proprietário
+
+- [ ] Implementar centro privado do proprietário com comunicação, gráficos de conversão e cadastro controlado de vendedores humanos, com papéis, permissões, histórico de ações e aprovação obrigatória para ofertas, campanhas e cobranças
+
+- [ ] Implementar vendedor assistido exclusivamente por IA: atendimento inicial, qualificação de interesse e oferta dentro de catálogo aprovado, sem vendedores externos e com publicação, preço, desconto, contrato e cobrança bloqueados até aprovação explícita do proprietário
+
+- [ ] Aplicar somente recursos internos gratuitos do vendedor assistido: registro privado de interesse, classificação de intenção, rascunhos de campanha e opinião, sem vendedores humanos e sem integração que publique anúncios ou gere gasto externo
+
+- [ ] Preservar o plano futuro do vendedor assistido e funil comercial em especificação versionada, checklist rastreável e checkpoint, para incorporação posterior sem reabrir escopo, ativar campanhas ou perder controles de aprovação
+
+- [x] Aplicar política de melhor opção técnica: implementar diretamente melhorias seguras e exigir aprovação explícita somente para gasto, publicação externa, preço, cobrança, contrato ou dado sensível — regra verificável em código, TypeScript e 844 testes aprovados
+
+- [ ] Restringir o CRM comercial e as métricas de conversão ao proprietário, impedindo que contas comuns leiam ou alterem contatos, propostas e atividades de vendas
 - [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
 - [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
 - [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados
