@@ -67,6 +67,11 @@ const ResilientLesson = () => (
     <Lesson />
   </LessonRecoveryBoundary>
 );
+const ResilientStructuredLesson = () => (
+  <LessonRecoveryBoundary>
+    <StructuredLesson />
+  </LessonRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -155,7 +160,7 @@ function Router() {
         <Route path="/battle" component={BattleMode} />
         <Route path="/certificates" component={Certificates} />
         <Route path="/pronunciation-history" component={PronunciationHistory} />
-        <Route path="/structured-lesson" component={StructuredLesson} />
+        <Route path="/structured-lesson" component={ResilientStructuredLesson} />
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
         <Route path="/ai-monitor" component={AIMonitor} />
         <Route path="/terms" component={TermsOfUse} />

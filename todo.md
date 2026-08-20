@@ -94,8 +94,10 @@
 - [x] Invalidar o cache de aplicação da Cena Imersiva na próxima atualização para impedir mistura de recursos de versões diferentes durante o diagnóstico da queda — service worker atualizado para `v12`, preservando a ativação imediata e removendo caches de versões anteriores; TypeScript sem erros e 800 testes aprovados
 - [ ] Bloquear a publicação de alterações da Cena Imersiva sem regressão de renderização, TypeScript, suíte aprovada e verificação funcional autenticada registrada
 - [ ] Estender o contrato de recuperação imediata às atividades críticas do aplicativo, com bloqueio de publicação, preservação da versão anterior e retorno seguro sem alteração de dados do aluno
-- [ ] Isolar a rota de lição em recuperação local com retorno seguro ao painel, sem derrubar as demais atividades em caso de falha
-- [ ] Adicionar teste de integração da rota de lição em erro, comprovando fallback local e ausência de acionamento da fronteira global
+- [x] Isolar a rota de lição em recuperação local com retorno seguro ao painel, sem derrubar as demais atividades em caso de falha — `LessonRecoveryBoundary` envolve `/lesson/:id`, tenta uma recuperação única e preserva saídas para lições e painel
+
+- [x] Estender a recuperação local à Lição Estruturada crítica, preservando saídas seguras e sem tocar na fronteira global — `/structured-lesson` agora usa `LessonRecoveryBoundary`; regressão, TypeScript, 861 testes e abertura visual aprovados
+- [ ] Adicionar teste de integração real da rota `/lesson/:id` em erro, comprovando fallback local, saídas seguras e ausência de acionamento da fronteira global — o teste atual cobre a fronteira isolada, mas ainda não monta a rota real
 - [ ] Definir e testar metas de detecção, isolamento e retorno seguro para falhas críticas, sem prometer prazo que não possa ser monitorado em produção
 - [x] Manter rotas de aprendizagem legítimas disponíveis sob excesso de requisições, isolando e limitando somente o tráfego abusivo com recuperação verificável — a regressão confirma que o IP abusivo recebe 429, enquanto outro IP continua abrindo a Cena; TypeScript sem erros e 801 testes aprovados
 - [x] Substituir o contador global compartilhado de requisições por limitação por origem, para que o abuso de um IP não bloqueie todos os alunos — contador por origem preserva bloqueio de 1.001ª requisição abusiva e libera outro aluno; TypeScript sem erros e 801 testes aprovados
@@ -254,7 +256,7 @@
 
 - [x] Adiar o carregamento do guia interativo da navegação inicial, preservando o acesso ao botão e o conteúdo do modal sem aumentar a carga da primeira tela — componente carregado sob demanda, acesso às instruções preservado visualmente, TypeScript e 859 testes aprovados
 
-- [ ] Consolidar manifesto permanente de pendências e controles para o proprietário e revisão externa do GitHub: continuidade, segurança, desempenho, áudio, professores, plano comercial futuro e aprovação obrigatória
+- [x] Consolidar manifesto permanente de pendências e controles para o proprietário e revisão externa do GitHub: continuidade, segurança, desempenho, áudio, professores, plano comercial futuro e aprovação obrigatória — manifesto versionado e regressão integrada; TypeScript e 861 testes aprovados
 
 - [ ] Projetar backups redundantes e recuperação testada, incluindo exportação verificável para o notebook do proprietário sem substituir cópias existentes nem criar rotina de restauração automática
 
