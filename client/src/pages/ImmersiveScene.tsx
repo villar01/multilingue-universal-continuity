@@ -819,6 +819,7 @@ export default function ImmersiveScene() {
   const [dialogAudioSource, setDialogAudioSource] = useState<string | null>(null);
   const [dialogAudioDuration, setDialogAudioDuration] = useState<number | null>(null);
   const [dialogAudioPosition, setDialogAudioPosition] = useState(0);
+  const [dialogAudioNeedsGesture, setDialogAudioNeedsGesture] = useState(false);
   const [dialogSpeechRate, setDialogSpeechRate] = useState<number>(loadDialogSpeechRate);
   const [dialogAuthRequired, setDialogAuthRequired] = useState(false);
   const [sceneMaterialTimedOut, setSceneMaterialTimedOut] = useState(false);
@@ -1093,6 +1094,7 @@ export default function ImmersiveScene() {
     setDialogAudioSource(source);
     setDialogAudioDuration(null);
     setDialogAudioPosition(0);
+    setDialogAudioNeedsGesture(false);
     audioRef.current = audio;
     const releaseRequest = () => {
       if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
@@ -1142,6 +1144,8 @@ export default function ImmersiveScene() {
       reportAudioEvent("play");
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
+      setDialogAudioNeedsGesture(false);
+      if (activeDialogLineRef.current === phrase) setDlgOpen(true);
       const confirmedJamesClipId = pendingJamesClipIdRef.current
         || (requestKey === "james-tropical-introduction" ? "james-tropical-greeting" : null);
       if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && confirmedJamesClipId) {
@@ -1230,6 +1234,10 @@ export default function ImmersiveScene() {
     if (autoPlay) {
       void audio.play().catch((error) => {
         reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");
+        if (updatesActiveDialog()) {
+          setDlgOpen(true);
+          setDialogAudioNeedsGesture(true);
+        }
         if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
           setDlgAudioNotice("");
           return;
@@ -1266,7 +1274,9 @@ export default function ImmersiveScene() {
         pendingJamesClipIdRef.current = null;
       }
       setDlgAudioNotice("");
+      setDialogAudioNeedsGesture(false);
     } catch {
+      setDialogAudioNeedsGesture(true);
       const fallbackKey = `manual-replay:${selectedScene?.teacherLang || "en-US"}:${selectedScene?.teacherGender || "female"}:${activeSpeechText}`;
       if (activeSpeechText && playLocalDialogFallback(activeSpeechText, selectedScene?.teacherLang || "en-US", fallbackKey, selectedScene?.teacherGender)) {
         setDlgAudioNotice("");
@@ -2865,6 +2875,16 @@ export default function ImmersiveScene() {
                   >
                     {isPreparingNeuralAudio ? "Preparando inglês…" : isSpeaking ? "Reiniciar inglês" : "Ouvir inglês"}
                   </button>
+                  {dialogAudioNeedsGesture && dialogAudioSource && (
+                    <button
+                      type="button"
+                      onClick={() => { void replayVisibleDialogAudio(); }}
+                      className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1.5 text-xs font-extrabold text-amber-50 transition hover:bg-amber-300/25"
+                      title="Iniciar a fala em um toque explícito"
+                    >
+                      Tocar agora
+                    </button>
+                  )}
                   {!isAuthenticated && (
                     <button
                       type="button"
