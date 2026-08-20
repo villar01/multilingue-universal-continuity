@@ -173,6 +173,11 @@ const ResilientPareto1000 = () => (
     <Pareto1000 />
   </ActivityRecoveryBoundary>
 );
+const ResilientImmersiveDialogue = () => (
+  <ActivityRecoveryBoundary activityLabel="o diálogo imersivo">
+    <ImmersiveDialogue />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -274,7 +279,7 @@ function Router() {
         <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
         <Route path="/lessons-hub" component={LessonsHub} />
         <Route path="/demo" component={Demo} />
-        <Route path="/dialogue" component={ImmersiveDialogue} />
+        <Route path="/dialogue" component={ResilientImmersiveDialogue} />
         <Route path="/natural-learning" component={NaturalLearning} />
         <Route path="/natural-lesson" component={ResilientNaturalLesson} />
         <Route path="/master-lesson" component={ResilientMasterLesson} />
