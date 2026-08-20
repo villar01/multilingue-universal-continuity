@@ -216,7 +216,19 @@
 
 - [x] Restaurar a fala ao pressionar o botão de áudio em cada registro do Caderno de Anotações, com idioma da palavra preservado, retorno seguro caso a voz não esteja disponível e regressão de clique — o clique explícito agora solicita reprodução imediata da faixa preparada; Cena e acesso ao Caderno verificados visualmente, TypeScript e 837 testes aprovados
 
-- [ ] Corrigir a falha persistente de reprodução real no Caderno de Anotações: substituir a rota da Cena que ainda não produziu som por uma rota local de fala própria do clique, validar no dispositivo e manter a voz do sistema fora do fluxo
+- [x] Corrigir a falha persistente de reprodução real no Caderno de Anotações: substituir a rota da Cena que ainda não produziu som por uma rota local de fala própria do clique, validar no dispositivo e manter a voz do sistema fora do fluxo — Bird tocou normalmente após a publicação, confirmado pelo usuário
+
+- [ ] Verificar e documentar a continuidade de acesso do GitHub e GitHub Copilot Free após a conclusão do aplicativo, sem criar automação, cobrança ou mudança de integração
+
+- [ ] Definir arquitetura de evolução contínua revisável, benefícios por cliente, execução local opcional para GPU e defesa em camadas contra ataques, sem ativar serviços, pagamentos ou automações sem aprovação
+
+- [ ] Documentar a separação entre revisão por GitHub/Copilot, uso normal do app publicado sem instalação no cliente e instalação local opcional apenas para recursos de hardware específicos
+
+- [ ] Implementar canal privado de suporte e opiniões para clientes autenticados, com acesso por proprietário, limites contra abuso, registro protegido e revisão humana antes de qualquer melhoria automática
+
+- [ ] Projetar e implementar funil comercial consentido: campanhas em redes sociais aprovadas, página de origem, interesse, avaliação de conversão, oferta proporcional de serviços e painel privado de métricas sem coleta publicitária não autorizada
+
+- [ ] Implementar vendedor assistido do app: preparar campanhas e mensagens, qualificar interesse, organizar funil e sugerir ofertas, com publicação, orçamento e cobranças sempre bloqueados até aprovação explícita do proprietário
 - [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
 - [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
 - [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados

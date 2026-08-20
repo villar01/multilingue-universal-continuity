@@ -42,6 +42,7 @@ import { controlCenterRouter } from './control-center-router';
 import { liveTeacherRouter } from './live-teacher-router';
 import { parentalControlRouter } from './parental-control-router';
 import { immersiveSceneTutorRouter } from './immersive-scene-tutor-router';
+import { customerSupportRouter } from './customer-support-router';
 import { filterLessonsForEntitlement, getAuthorizedTrialLessonIds, getLearningContentEntitlement, trialAccessRouter } from './trial-access-router';
 import { curriculumRouter } from './curriculum-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
@@ -129,6 +130,7 @@ export const appRouter = router({
   controlCenter: controlCenterRouter,
   liveTeacher: liveTeacherRouter,
   parentalControl: parentalControlRouter,
+  customerSupport: customerSupportRouter,
   trialAccess: trialAccessRouter,
   immersiveSceneTutor: immersiveSceneTutorRouter,
   offlineAI: router({

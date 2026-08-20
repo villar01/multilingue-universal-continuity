@@ -1,4 +1,4 @@
-import { bigint, int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date, uniqueIndex } from "drizzle-orm/mysql-core";
+import { bigint, foreignKey, int, mysqlEnum, mysqlTable, text, timestamp, varchar, float, boolean, json, date, uniqueIndex } from "drizzle-orm/mysql-core";
 
 /**
  * MULTILINGUE UNIVERSAL - DATABASE SCHEMA
@@ -2460,3 +2460,35 @@ export const appUpdatesRead = mysqlTable("app_updates_read", {
 });
 export type AppUpdateRead = typeof appUpdatesRead.$inferSelect;
 export type InsertAppUpdateRead = typeof appUpdatesRead.$inferInsert;
+
+// ===== Private Customer Support & Product Feedback =====
+// Every record belongs to an authenticated account. Customer messages are never
+// exposed to other customers and changes are reviewed by an administrator.
+export const customerSupportThreads = mysqlTable("customer_support_threads", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  subject: varchar("subject", { length: 180 }).notNull(),
+  category: mysqlEnum("category", ["help", "bug", "feedback", "idea", "security"]).notNull(),
+  status: mysqlEnum("status", ["open", "in_review", "replied", "closed"]).default("open").notNull(),
+  priority: mysqlEnum("priority", ["normal", "high"]).default("normal").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  closedAt: timestamp("closedAt"),
+}, (table) => [
+  foreignKey({ columns: [table.userId], foreignColumns: [users.id], name: "cs_thread_user_fk" }).onDelete("cascade"),
+]);
+
+export const customerSupportMessages = mysqlTable("customer_support_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  threadId: int("threadId").notNull(),
+  authorUserId: int("authorUserId").notNull(),
+  authorRole: mysqlEnum("authorRole", ["customer", "admin"]).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  foreignKey({ columns: [table.threadId], foreignColumns: [customerSupportThreads.id], name: "cs_msg_thread_fk" }).onDelete("cascade"),
+  foreignKey({ columns: [table.authorUserId], foreignColumns: [users.id], name: "cs_msg_author_fk" }).onDelete("cascade"),
+]);
+
+export type CustomerSupportThread = typeof customerSupportThreads.$inferSelect;
+export type CustomerSupportMessage = typeof customerSupportMessages.$inferSelect;

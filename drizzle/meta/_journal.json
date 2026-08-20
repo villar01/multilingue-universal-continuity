@@ -246,6 +246,20 @@
       "when": 1787141851411,
       "tag": "0034_massive_magneto",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1787205719528,
+      "tag": "0035_keen_nightcrawler",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1787205788577,
+      "tag": "0036_mushy_purifiers",
+      "breakpoints": true
     }
   ]
 }
