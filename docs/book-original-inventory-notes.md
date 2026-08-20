@@ -166,3 +166,13 @@ A sequência didática real é, portanto, **posse em objetos visuais → vocabul
 Os problemas que exigem correção permanecem claros. A lista do armário e as listas de pessoas e profissões usam transliteração em espanhol como `Zdz Closet`, `Jus ar dis zdings`, `Fáder`, `Greenfader`, `Polisman` e `Secretaeri`; algumas grafias, equivalências e categorias profissionais são antigas ou imprecisas. A reconstrução deve manter os temas e o encadeamento, mas substituir essa mediação por áudio nativo, ponte pt-BR e linguagem inclusiva e atualizada quando necessária.
 
 O próximo trecho a reconstruir deve seguir a ordem **objetos do armário → pergunta de posse → pessoas e relações → profissões**. O Pareto continuará separado, reforçando palavras de alta frequência e frases de posse sem substituir as listas e exercícios-base do original.
+
+## Bloco seguinte confirmado visualmente — profissões aplicadas e transição para a casa
+
+As páginas seguintes do original completam o vocabulário de profissões e o transformam em prática. A sequência observada é clara: primeiro continua a lista de ocupações com traduções e pronúncias; depois surge uma **sopa de letras** com pessoas e ofícios ilustrados; em seguida aparece um **quadro para formar orações sobre pessoas e suas profissões**; por fim começa o campo semântico da **casa**, seguido de **quarto e banheiro**.
+
+O percurso didático real deste trecho é, portanto, **profissões isoladas → reconhecimento visual em jogo lexical → formação de frases com pessoa + be + profissão → vocabulário da casa → vocabulário do quarto e do banheiro**. Essa ordem deve ser preservada na reconstrução.
+
+Os problemas a corrigir continuam evidentes. A lista de profissões ainda usa transliterações hispanizadas e formas antigas ou marcadas por gênero, como `policeman`, `fireman`, `actress`, além de aproximações de pronúncia pouco úteis para pt-BR. O quadro de frases usa estruturas úteis, mas precisa de mediação melhor para artigo, profissão e concordância em português brasileiro. Já o bloco da casa introduz muito vocabulário concreto, porém ainda depende de coluna de "pronunciación" simplificada demais.
+
+Na reconstrução, o bloco deve manter os mesmos temas e a mesma progressão, mas com três melhorias obrigatórias: **pronúncia guiada para pt-BR com áudio nativo**, **termos profissionais atualizados quando necessário** e **prática Pareto separada por folha**, sem substituir a sopa de letras, o quadro de frases ou as listas-base. O próximo trecho a implementar deve seguir a ordem **profissões → frases com profissão → casa → quarto e banheiro**.
