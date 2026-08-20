@@ -273,6 +273,11 @@ const ResilientParentalControl = () => (
     <ParentalControlPanel />
   </ActivityRecoveryBoundary>
 );
+const ResilientBackupGuide = () => (
+  <ActivityRecoveryBoundary activityLabel="o guia de backup">
+    <BackupGuide />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -384,7 +389,7 @@ function Router() {
         <Route path="/base-de-estudos" component={ResilientStudyBase} />
         <Route path="/abc-book" component={ResilientABCBook} />
         <Route path="/pareto-1000" component={ResilientPareto1000} />
-        <Route path="/guia-backup" component={BackupGuide} />
+        <Route path="/guia-backup" component={ResilientBackupGuide} />
         <Route path="/suporte" component={CustomerSupport} />
       <Route path={"/ 404"} component={NotFound} />
       {/* Final fallback route */}
