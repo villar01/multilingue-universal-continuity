@@ -248,6 +248,11 @@ const ResilientCertificates = () => (
     <Certificates />
   </ActivityRecoveryBoundary>
 );
+const ResilientPronunciationHistory = () => (
+  <ActivityRecoveryBoundary activityLabel="o histórico de pronúncia">
+    <PronunciationHistory />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -335,7 +340,7 @@ function Router() {
         <Route path="/lesson-history" component={ResilientLessonHistory} />
         <Route path="/battle" component={ResilientBattleMode} />
         <Route path="/certificates" component={ResilientCertificates} />
-        <Route path="/pronunciation-history" component={PronunciationHistory} />
+        <Route path="/pronunciation-history" component={ResilientPronunciationHistory} />
         <Route path="/structured-lesson" component={ResilientStructuredLesson} />
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
         <Route path="/ai-monitor" component={AIMonitor} />
