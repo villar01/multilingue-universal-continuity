@@ -268,6 +268,11 @@ const ResilientLanguageDetect = () => (
     <LanguageDetect />
   </ActivityRecoveryBoundary>
 );
+const ResilientParentalControl = () => (
+  <ActivityRecoveryBoundary activityLabel="o controle parental">
+    <ParentalControlPanel />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -375,7 +380,7 @@ function Router() {
         <Route path="/master-lesson" component={ResilientMasterLesson} />
         <Route path="/ia-nativa" component={ResilientIANativa} />
         <Route path="/smart-review" component={ResilientSmartReview} />
-        <Route path="/parental-control" component={ParentalControlPanel} />
+        <Route path="/parental-control" component={ResilientParentalControl} />
         <Route path="/base-de-estudos" component={ResilientStudyBase} />
         <Route path="/abc-book" component={ResilientABCBook} />
         <Route path="/pareto-1000" component={ResilientPareto1000} />
