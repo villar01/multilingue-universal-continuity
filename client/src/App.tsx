@@ -113,6 +113,11 @@ const ResilientNaturalLesson = () => (
     <NaturalLesson />
   </LessonRecoveryBoundary>
 );
+const ResilientPhrasalVerbsExercises = () => (
+  <LessonRecoveryBoundary>
+    <PhrasalVerbsExercises />
+  </LessonRecoveryBoundary>
+);
 const ResilientInteractiveVideos = () => (
   <ActivityRecoveryBoundary activityLabel="os vídeos interativos">
     <InteractiveVideos />
@@ -247,7 +252,7 @@ function Router() {
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/pricing-comparison"} component={PricingComparison} />
       <Route path={"/prelaunch"} component={PreLaunch} />
-      <Route path={"/phrasal-verbs-exercises"} component={PhrasalVerbsExercises} />
+      <Route path="/phrasal-verbs-exercises" component={ResilientPhrasalVerbsExercises} />
       <Route path="/interactive-videos" component={ResilientInteractiveVideos} />
         <Route path="/reels" component={ResilientReels} />
         <Route path="/roleplay" component={ResilientRoleplay} />
