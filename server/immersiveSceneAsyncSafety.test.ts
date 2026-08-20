@@ -12,6 +12,7 @@ describe("segurança assíncrona da cena imersiva", () => {
   it("usa o invólucro em diálogos, respostas, hotspots e botões", () => {
     expect(source).toContain("requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);");
     expect(source).toContain("requestSpeechSafely(interaction.speech.text, interaction.speech.language, interaction.speech.gender, interaction.speech.purpose);");
-    expect(source.match(/void speak\(/g)).toHaveLength(1);
+    expect(source).toContain('speak(text, language, undefined, undefined, "teacher", true)');
+    expect(source.match(/void speak\(/g)).toHaveLength(2);
   });
 });

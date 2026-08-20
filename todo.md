@@ -213,6 +213,8 @@
 - [x] Migrar o jogo de memória curricular para receber A1–C2 explícito e encaminhar o mesmo estágio à prática Pareto — contrato usa o tipo CEFR central, padrão A1 e entrega direta ao ciclo Pareto; TypeScript sem erros e 360 testes aprovados
 - [x] Eliminar a contagem de 40 erros exibida na cena imersiva, preservando voz, diálogos, hotspots e controles de segurança — disparos de fala do diálogo, hotspot e botões agora passam por proteção contra rejeições assíncronas; prévia da cena não gerou falhas novas de console/rede, TypeScript sem erros e 362 testes aprovados
 - [ ] Restaurar diálogo, fala neural e movimentos labiais da cena imersiva após a regressão reportada com 28 erros
+
+- [x] Restaurar a fala ao pressionar o botão de áudio em cada registro do Caderno de Anotações, com idioma da palavra preservado, retorno seguro caso a voz não esteja disponível e regressão de clique — o clique explícito agora solicita reprodução imediata da faixa preparada; Cena e acesso ao Caderno verificados visualmente, TypeScript e 837 testes aprovados
 - [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
 - [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
 - [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados

@@ -1458,6 +1458,12 @@ export default function ImmersiveScene() {
     });
   }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, selectedScene?.teacherGender, selectedScene?.teacherName, speak, stopTeacherAudio]);
 
+  const speakNotebookEntry = useCallback((text: string, language: string) => {
+    // O botão do caderno é um gesto explícito do aluno. A faixa preparada deve
+    // tocar no mesmo clique, sem depender dos gatilhos de diálogo ou hotspot.
+    void speak(text, language, undefined, undefined, "teacher", true);
+  }, [speak]);
+
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
   const [practiceHotspot, setPracticeHotspot] = useState<Hotspot | null>(null);
@@ -3190,7 +3196,7 @@ export default function ImmersiveScene() {
         <Notebook
           isOpen={notebookOpen}
           onClose={() => setNotebookOpen(false)}
-          onSpeak={speak}
+          onSpeak={speakNotebookEntry}
           nativeLang={nativeLang}
         />
         {/* Pareto Vocabulary Panel */}
