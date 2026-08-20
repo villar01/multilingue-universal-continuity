@@ -228,6 +228,11 @@ const ResilientLanguageSelect = () => (
     <LanguageSelect />
   </ActivityRecoveryBoundary>
 );
+const ResilientRanking = () => (
+  <ActivityRecoveryBoundary activityLabel="o ranking de aprendizagem">
+    <Ranking />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -307,7 +312,7 @@ function Router() {
         <Route path="/vr-conversation" component={ResilientVRConversation} />
         <Route path="/free-talk" component={ResilientFreeTalk} />
         <Route path="/word-game" component={ResilientWordGame} />
-        <Route path="/ranking" component={Ranking} />
+        <Route path="/ranking" component={ResilientRanking} />
         <Route path="/daily-challenge" component={ResilientDailyChallenge} />
         <Route path="/progress" component={ResilientStudentProgress} />
         <Route path="/subscription-plans" component={SubscriptionPlans} />
