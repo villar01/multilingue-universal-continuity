@@ -4,7 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
-import { LANGUAGES_57, type Language } from "@/lib/languages";
+import { ACTIVE_LANGUAGE_COUNT, LANGUAGES_57, TOTAL_LANGUAGES, type Language } from "@/lib/languages";
 import LanguageSelector from "@/components/LanguageSelector";
 import { toast } from "sonner";
 
@@ -239,7 +239,7 @@ export default function Certificates() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-white">🏅 Certificados de Proficiência</h1>
-            <p className="text-slate-400 text-sm">Comprove seu domínio em 69 idiomas</p>
+            <p className="text-slate-400 text-sm">Emita certificados nos {ACTIVE_LANGUAGE_COUNT} idiomas ativos agora · {TOTAL_LANGUAGES} no catálogo</p>
           </div>
         </div>
 
