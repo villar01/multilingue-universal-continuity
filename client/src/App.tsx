@@ -138,6 +138,11 @@ const ResilientARTeacher = () => (
     <ARTeacher />
   </ActivityRecoveryBoundary>
 );
+const ResilientDailyMemory = () => (
+  <ActivityRecoveryBoundary activityLabel="a memória diária">
+    <DailyMemoryPage />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -234,7 +239,7 @@ function Router() {
         <Route path="/admin/updates" component={AdminUpdates} />
         <Route path="/admin/control-center" component={AdminControlCenter} />
         <Route path="/language-select" component={LanguageSelect} />
-        <Route path="/daily-memory" component={DailyMemoryPage} />
+        <Route path="/daily-memory" component={ResilientDailyMemory} />
         <Route path="/my-teacher" component={MyTeacher} />
         <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
         <Route path="/lessons-hub" component={LessonsHub} />
