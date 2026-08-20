@@ -29,10 +29,11 @@ import {
 import { Link, useLocation } from "wouter";
 import UserGuide from "@/components/UserGuide";
 import { trpc } from "@/lib/trpc";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { lazy, Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import AnimatedTeacher from "@/components/AnimatedTeacher";
 import { AVAILABLE_LANGUAGES } from "@/lib/languages";
+
+const AnimatedTeacher = lazy(async () => ({ default: (await import("@/components/AnimatedTeacher")).AnimatedTeacher }));
 // Floating flag items for hero animation — bandeira SVG + sigla
 const FLOAT_FLAGS = [
   { cc: "us", sigla: "US" }, { cc: "br", sigla: "BR" }, { cc: "fr", sigla: "FR" },
@@ -666,14 +667,16 @@ export default function Home() {
           <div className="rounded-3xl overflow-hidden border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-8 md:p-12">
             <div className="grid md:grid-cols-[auto_1fr] items-center gap-8">
               <div className="flex justify-center">
-                <AnimatedTeacher
-                  teacherName="Ingrid"
-                  teacherGender="female"
-                  teacherImageUrl="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
-                  languageCode="en-US"
-                  text="Hello! I am Ingrid. Let us learn English together."
-                  size="lg"
-                />
+                <Suspense fallback={<div className="w-64 h-64 rounded-full bg-indigo-100 animate-pulse" aria-label="Carregando demonstração do professor" />}>
+                  <AnimatedTeacher
+                    teacherName="Ingrid"
+                    teacherGender="female"
+                    teacherImageUrl="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+                    languageCode="en-US"
+                    text="Hello! I am Ingrid. Let us learn English together."
+                    size="lg"
+                  />
+                </Suspense>
               </div>
               <div>
                 <Badge className="mb-4 bg-violet-100 text-violet-700">Demonstração do professor virtual</Badge>

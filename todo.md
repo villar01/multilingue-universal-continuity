@@ -246,6 +246,8 @@
 
 - [ ] Manter desempenho responsivo: evitar processos duplicados, controlar memória, carregar recursos de forma eficiente e validar cada melhoria contra regressão de lentidão antes de publicar
 
+- [x] Aplicar a próxima otimização segura de desempenho: identificar uma carga evitável de carregamento ou memória, reduzir sem alterar fluxos estáveis e proteger o resultado com regressão — a demonstração docente abaixo da dobra agora é carregada sob demanda, preservando foto e conteúdo; TypeScript e 858 testes aprovados
+
 - [ ] Consolidar manifesto permanente de pendências e controles para o proprietário e revisão externa do GitHub: continuidade, segurança, desempenho, áudio, professores, plano comercial futuro e aprovação obrigatória
 
 - [ ] Projetar backups redundantes e recuperação testada, incluindo exportação verificável para o notebook do proprietário sem substituir cópias existentes nem criar rotina de restauração automática
