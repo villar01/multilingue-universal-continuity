@@ -245,12 +245,14 @@ export default function ABCBook() {
                 <article>
                   <h3 className="font-serif text-xl font-bold text-slate-950">{lesson.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.explanation}</p>
+                  {lesson.nativeBridge && <p className="mt-3 border-l-2 border-amber-400 bg-amber-50/70 py-2 pl-4 text-sm font-semibold leading-6 text-slate-800"><strong className="text-slate-950">Ponte para português brasileiro:</strong> {lesson.nativeBridge}</p>}
                   <div className="mt-4 grid divide-y divide-stone-200 border-y border-stone-200 text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                     {lesson.examples.map((example) => (
                       <div key={example.target} className="px-3 py-3"><p className="font-semibold text-slate-950">{example.target}</p><button type="button" onClick={() => playNativeReference(example.target)} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950"><Volume2 className="h-3.5 w-3.5" /> {playingNativeText === example.target ? "Falando…" : "Ouvir inglês nativo"}</button><p className="mt-2 text-slate-600">Em português: {example.native}</p></div>
                     ))}
                   </div>
                   <p className="mt-3 border-l-2 border-violet-300 pl-4 text-sm font-semibold leading-6 text-slate-700"><strong className="text-slate-950">Escrita:</strong> {lesson.writingPrompt}</p>
+                  {lesson.paretoPrompt && <p className="mt-4 border-l-2 border-emerald-400 bg-emerald-50/70 py-2 pl-4 text-sm font-semibold leading-6 text-slate-800"><strong className="text-slate-950">Pareto da folha:</strong> {lesson.paretoPrompt}</p>}
                 </article>
               </div>
             </section>

@@ -90,3 +90,35 @@ Segundo, a notação fonética do original é explicitamente orientada para leit
 Terceiro, a verificação visual confirmou que algumas regras são realmente apresentadas de forma muito ampla, por exemplo a organização da letra `A` e a explicação de que a letra `B` “sempre” mantém o mesmo som. Isso reforça a decisão editorial: manter a função pedagógica da página, mas substituir generalizações rígidas por explicações graduais, exemplos melhores e alertas de exceção quando necessário.
 
 Essas páginas serão a base do primeiro bloco piloto de reconstrução: **alfabeto e sons com fidelidade estrutural, correção fonética e camada Pareto separada**.
+
+### Continuação da conferência visual — letras E a K
+
+A conferência visual das páginas seguintes confirmou que o capítulo continua no mesmo padrão de micro-regras por letra, sempre com tabelas de exemplo. Isso permite reconstrução fiel da metodologia sem reaproveitar a fonetização hispânica.
+
+As páginas verificadas mostram, de forma explícita, mais generalizações que precisarão ser tratadas como aproximações pedagógicas, não como regras finais. Entre elas estão: a letra `E` com quatro comportamentos fixos; a letra `G` dividida em apenas dois comportamentos centrais; a letra `H` apresentada como se “sempre” soasse como `j`; e a letra `I` organizada por poucos padrões amplos. A estrutura é útil para iniciar o aluno, mas a edição nova precisará incluir ressalvas, exceções frequentes e apoio de áudio.
+
+Também ficou visualmente confirmado que o livro usa o espanhol como base de pronúncia aproximada em palavras como `Jí`, `Jái`, `Jáus`, `Ki`, `Kik`, `Kichen`, `Fáit`, `Máind` e `Ráis`. Isso reforça a regra editorial já adotada: no piloto pt-BR, a camada de pronúncia será redesenhada para falante brasileiro e separada da regra ortográfica principal.
+
+Por fim, a leitura visual confirmou que o bloco de sons é coerente como **espinha pedagógica**, mas não como verdade fonológica completa. A reconstrução manterá a sequência letra por letra, porém trocará as afirmações absolutas por explicações graduais, com observações de uso real e prática Pareto após o fechamento do bloco.
+
+### Fechamento da conferência visual — letras finais do primeiro ciclo fonético
+
+A conferência visual das páginas seguintes confirmou a continuação do mesmo desenho didático: cada letra recebe um conjunto curto de regras, uma lista de exemplos com aproximação fonética e, em vários casos, uma tradução pontual. O bloco segue útil como ordem de apresentação, mas continua excessivamente rígido como descrição sonora.
+
+As páginas verificadas mostram que o original acumula várias simplificações de pronúncia que não podem ser mantidas como regra final no piloto. Entre elas, aparecem descrições muito abrangentes para consoantes e vogais intermediárias, além de novas transcrições aproximadas guiadas pelo espanhol. Isso reforça a decisão editorial de trocar a fonetização improvisada por uma ponte pt-BR com áudio, observação de exceções e contraste entre som principal e variações frequentes.
+
+Ficou visualmente confirmado também que o capítulo não é um simples alfabeto; ele já tenta ensinar **padrões ortografia–som** desde o início. Essa é precisamente a parte metodológica que será preservada no piloto: o aluno verá a letra, o padrão principal, exemplos úteis, pronúncia nativa e depois uma prática Pareto separada, sem receber generalizações absolutas como se fossem universais.
+
+Com isso, o capítulo inicial de sons pode ser tratado como **bloco piloto pronto para reconstrução editorial**: a sequência do original está confirmada visualmente, e os problemas principais já estão catalogados como correções obrigatórias.
+
+### Conferência visual final — T, U, V, W, Y, Z e transição para numeração
+
+A conferência visual direta das páginas finais do capítulo confirmou de forma inequívoca vários pontos que o OCR já sugeria. A letra **T** é apresentada com três comportamentos amplos, incluindo a formulação de `th` como se fosse uma adaptação direta à letra `z` espanhola, além do grupo `ture` tratado por aproximação sonora fixa. Essa explicação é útil como intuição inicial, mas não pode ser mantida como regra fechada no piloto.
+
+As páginas de **U** mostram três famílias principais de som, com aproximações espanholas como `Foen`, `Goen`, `Soen`, `Kiúb` e `Miúsik`. A estrutura será preservada, porém a nova edição precisará separar com mais clareza o som curto central, os casos com glide /juː/ e as palavras que fogem do padrão. A ortografia e a prosódia terão apoio em áudio nativo e observações de exceção.
+
+As páginas de **V** e **W** confirmam outro limite do original: várias letras são tratadas como se não representassem dificuldade real, quando na prática exigem distinções importantes para falantes lusófonos. A letra `V` aparece como trivial; a letra `W` é dividida em blocos amplos (`u`, `ju`, `r muda`) com transcrições hispanizadas. No piloto, essas letras receberão contraste auditivo mais cuidadoso e exemplos controlados por frequência real.
+
+As páginas de **Y** e **Z** fecham o capítulo com a mesma lógica: categorias simplificadas e transliteração aproximada, seguidas da transição para **numeração**. Isso confirma que o primeiro grande ciclo do livro é realmente: **alfabeto → padrões sonoros por letra → passagem imediata para números**. Essa ordem será preservada no Livro SOS reconstruído.
+
+Conclusão visual do bloco piloto: o original oferece uma espinha pedagógica aproveitável, mas sua camada de pronúncia é dependente do espanhol e excessivamente generalizante. A reconstrução do par Português–Inglês manterá a progressão letra–som–palavra–escrita e corrigirá a mediação fonética, as regras absolutas e os exemplos que hoje induzem pronúncia inadequada para o aluno brasileiro.

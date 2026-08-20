@@ -100,6 +100,8 @@ export type ABCAlphabetLetter = {
 export type ABCBookSoundLesson = {
   title: string;
   explanation: string;
+  nativeBridge?: string;
+  paretoPrompt?: string;
   examples: Array<{
     target: string;
     pronunciation: string;
@@ -365,6 +367,22 @@ const NATIVE_SOUND_REFERENCE: Record<string, string> = {
   "H soprado e combinações iniciais": "Ouça hello, study e speak. Perceba o pequeno sopro antes de hello e repita os grupos iniciais sem colocar uma vogal antes deles.",
   "R, L e final da palavra": "Ouça read, learn e word. R e l não soam como em português; preserve o final de cada palavra e deixe a voz nativa guiar a diferença.",
 };
+
+const SOUND_LESSON_PARETO_PROMPTS: Record<string, string> = {
+  "A em palavra curta": "No Pareto, recupere cat, map e family. Diga uma frase curta com uma das palavras antes de conferir o modelo.",
+  "A que diz o nome da letra": "No Pareto, recupere name, late e same. Compare duas palavras e diga qual delas você consegue ouvir no modelo.",
+  "A em sílaba sem força": "No Pareto, recupere about, banana e America. Marque mentalmente a parte forte antes de falar a palavra inteira.",
+  "I curto e I longo": "No Pareto, compare sit, ship e need. Ouça uma vez e escolha a palavra que tem o som mais longo.",
+  "E aberto": "No Pareto, recupere help, friend e ten. Use uma delas em uma frase curta de apoio ou amizade.",
+  "U central": "No Pareto, recupere bus, cup e understand. Escolha uma palavra, ouça e repita sem prolongar a vogal.",
+  "O em palavra curta": "No Pareto, recupere hot, not e stop. Transforme uma afirmação curta em negativa com not.",
+  "P e B no início": "No Pareto, compare pen, book e please. Faça um pedido educado com please e uma palavra iniciada por b.",
+  "TH de thank e this": "No Pareto, compare thank, this e three. Escolha thank ou this e complete uma frase de cortesia.",
+  "H soprado e combinações iniciais": "No Pareto, recupere hello, study e speak. Diga uma saudação e uma ação sem acrescentar vogal no começo.",
+  "R, L e final da palavra": "No Pareto, recupere read, learn e word. Forme uma frase curta e mantenha o final de cada palavra audível.",
+};
+
+const NATIVE_SOUND_LESSON_INTRO = "Observe o padrão em palavras frequentes. A explicação em português só prepara sua escuta; a voz em inglês é a referência principal.";
 
 const THIRD_BLOCK_PROGRESSIVE_LESSONS: ABCBookProgressiveLesson[] = [
   {
@@ -2038,7 +2056,9 @@ export function getABCBookDelivery(input: { nativeLanguage: string; targetLangua
       })),
       soundLessons: PORTUGUESE_ENGLISH_BOOK.soundLessons.map((lesson) => ({
         ...lesson,
-        explanation: NATIVE_SOUND_REFERENCE[lesson.title] ?? "Ouça a palavra em inglês nativo, repita sem pressa e use a fala como referência principal.",
+        explanation: NATIVE_SOUND_LESSON_INTRO,
+        nativeBridge: NATIVE_SOUND_REFERENCE[lesson.title] ?? "Ouça a palavra em inglês nativo, repita sem pressa e use a fala como referência principal.",
+        paretoPrompt: SOUND_LESSON_PARETO_PROMPTS[lesson.title] ?? "No Pareto, recupere as palavras desta folha, ouça uma vez e use uma delas em uma frase curta.",
         examples: lesson.examples.map(({ target, native }) => ({
           target,
           pronunciation: "Ouça a fala nativa e repita.",

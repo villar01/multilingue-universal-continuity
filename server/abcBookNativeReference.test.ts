@@ -11,6 +11,7 @@ describe("referência auditiva nativa do Livro ABC", () => {
 
     expect(book.alphabetLetters.every((letter) => !letter.guide.includes("/"))).toBe(true);
     expect(book.soundLessons.every((lesson) => !lesson.explanation.includes("/") && lesson.examples.every((example) => !example.pronunciation.includes("/")))).toBe(true);
+    expect(book.soundLessons.every((lesson) => Boolean(lesson.nativeBridge?.trim()) && Boolean(lesson.paretoPrompt?.trim()))).toBe(true);
     expect(book.termCard.pronunciation).toContain("Ouça a palavra em inglês nativo");
   });
 
@@ -18,6 +19,8 @@ describe("referência auditiva nativa do Livro ABC", () => {
     const source = readFileSync(resolve(process.cwd(), "client/src/pages/ABCBook.tsx"), "utf8");
     expect(source).toContain('import { speakEdgeTTS } from "@/lib/edgeTTSClient";');
     expect(source).toContain("Ouvir inglês nativo");
+    expect(source).toContain("Ponte para português brasileiro:");
+    expect(source).toContain("Pareto da folha:");
     expect(source).not.toContain("{item.guide}");
     expect(source).not.toContain("{example.pronunciation}");
     expect(source).not.toContain("{book.termCard.pronunciation}");

@@ -2055,3 +2055,5 @@
 - [ ] Usar o GitHub Copilot Free como revisão externa somente de leitura para propor melhorias na arquitetura de animações docentes e na matriz de replicação do Livro SOS para 143 idiomas; nenhuma mídia, código ou tradução poderá ser aplicada automaticamente sem testes e revisão humana
 
 - [ ] Catalogar e corrigir, página por página, erros do original do Livro SOS em tradução, gramática, instrução, exemplo, exercício, resposta e fonética; preservar a sequência metodológica, mas registrar cada correção como melhoria verificável
+
+- [x] Reconstruir o bloco piloto “Alfabeto e sons” do Livro SOS Português–Inglês: manter a progressão letra–som–palavra–escrita do original, substituir a fonetização espanhola por ponte pt-BR e áudio nativo, e acrescentar recuperação Pareto separada em cada folha — 26 letras, 11 folhas de som, ponte pt-BR e Pareto por folha validados; Livro carregado visualmente, TypeScript e 813 testes aprovados
