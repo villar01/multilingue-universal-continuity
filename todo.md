@@ -92,7 +92,9 @@
 - [x] Corrigir a queda persistente da Cena Imersiva para a tela “Algo deu errado”, preservando professores, áudio, Livro SOS, currículo e controles — variante estável restaurada, cache da aplicação renovado e Praia Tropical renderizada sem tela global de erro; TypeScript sem erros e 800 testes aprovados
 - [x] Reverter a integração recente de rótulo dinâmico da Cena para o rótulo nativo simples já estável, enquanto a causa da queda é isolada — a Cena não importa mais o resolvedor opcional de rótulo; regressões da imersão foram alinhadas e aprovadas
 - [x] Invalidar o cache de aplicação da Cena Imersiva na próxima atualização para impedir mistura de recursos de versões diferentes durante o diagnóstico da queda — service worker atualizado para `v12`, preservando a ativação imediata e removendo caches de versões anteriores; TypeScript sem erros e 800 testes aprovados
-- [ ] Bloquear a publicação de alterações da Cena Imersiva sem regressão de renderização, TypeScript, suíte aprovada e verificação funcional autenticada registrada
+- [ ] Bloquear a publicação de alterações da Cena Imersiva sem regressão de renderização, TypeScript, suíte aprovada e verificação funcional autenticada registrada — o `prebuild` já bloqueia build sem TypeScript e suíte aprovada, mas ainda precisa exigir a renderização real e o fluxo autenticado completo
+- [ ] Automatizar no gate de publicação da Cena Imersiva uma verificação funcional autenticada registrada, cobrindo o fluxo real da cena com sessão protegida
+- [ ] Adicionar ao bloqueio de release uma checagem de renderização da rota `/immersive-scene?scene=beach` que falhe a publicação se a cena não abrir corretamente
 - [ ] Estender o contrato de recuperação imediata às atividades críticas do aplicativo, com bloqueio de publicação, preservação da versão anterior e retorno seguro sem alteração de dados do aluno
 - [x] Isolar a rota de lição em recuperação local com retorno seguro ao painel, sem derrubar as demais atividades em caso de falha — `LessonRecoveryBoundary` envolve `/lesson/:id`, tenta uma recuperação única e preserva saídas para lições e painel
 
