@@ -53,11 +53,11 @@ export default function ReelsPage() {
   );
 
   useEffect(() => {
-    if (fetchedReels && (fetchedReels as any[]).length > 0) {
-      setReels((fetchedReels as unknown) as ReelData[]);
+    if (!isFetching) {
+      setReels(Array.isArray(fetchedReels) ? (fetchedReels as unknown as ReelData[]) : []);
       setIsLoading(false);
     }
-  }, [fetchedReels]);
+  }, [fetchedReels, isFetching]);
 
   // Like mutation - local toggle
   const likeReelMutation = {
@@ -204,7 +204,7 @@ export default function ReelsPage() {
     }
   };
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="text-center">
