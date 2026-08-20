@@ -252,6 +252,8 @@
 
 - [ ] Definir kit de recuperação utilizável em crise total: código/configuração, dados exportáveis, checkpoint conhecido, verificação de integridade e instrução curta de restabelecimento para o proprietário
 
+- [x] Exibir no Centro de Controle uma lista privada e verificável de continuidade para backup, cópia independente e recuperação de crise, sem acionar rotina automática — guia Manutenção reúne checklist recuperável, regressão dedicada, TypeScript e 857 testes aprovados
+
 - [ ] Exigir segunda cópia utilizável do backup em máquina ou mídia independente sob supervisão do proprietário, com verificação separada para sobreviver à perda do notebook principal
 
 - [x] Implementar painel privado de alertas de manutenção para exibir pendências críticas de backup, integridade, segurança, desempenho e suporte antes que afetem o serviço, sem notificações externas automáticas — centro de controle restrito ao proprietário, guia Manutenção validada visualmente, TypeScript e 853 testes aprovados

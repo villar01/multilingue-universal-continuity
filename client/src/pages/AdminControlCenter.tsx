@@ -493,6 +493,29 @@ export default function AdminControlCenter() {
               )}
             </CardContent>
           </Card>
+          <Card className="mt-4 bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Database className="w-4 h-4 text-cyan-400" /> Lista de continuidade recuperável
+              </CardTitle>
+              <p className="text-xs text-gray-400">Conferência privada antes de qualquer crise. Esta lista não restaura nem altera dados.</p>
+            </CardHeader>
+            <CardContent className="grid gap-3 md:grid-cols-2">
+              {[
+                ["Checkpoint estável", "Identifique a última versão publicada que foi validada."],
+                ["Exportação de dados", "Confirme arquivo disponível, conferido e separado do código."],
+                ["Notebook principal", "Verifique nome, data e tamanho da cópia baixada."],
+                ["Cópia independente", "Mantenha outra cópia em máquina ou mídia sob sua supervisão."],
+                ["Mídia e documentos", "Confirme ativos de referência e URLs de armazenamento."],
+                ["Recuperação orientada", "Em crise, escolha a recuperação menos destrutiva e valide acesso, conteúdo e áudio."],
+              ].map(([title, description]) => (
+                <div key={title} className="rounded-lg border border-cyan-500/20 bg-cyan-950/10 p-3">
+                  <p className="text-sm font-medium text-cyan-100 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-cyan-400" /> {title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-gray-400">{description}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* ── TAB: SEGURANÇA ── */}
