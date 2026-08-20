@@ -2692,7 +2692,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // Phrasal Verbs Dictionary
   phrasalVerbs: router({
     // Buscar phrasal verbs
-    search: publicProcedure
+    search: protectedProcedure
       .input(
         z.object({
           searchTerm: z.string().optional(),
@@ -2730,7 +2730,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Obter phrasal verb por ID
-    getById: publicProcedure
+    getById: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         const connection = await db.getDb();

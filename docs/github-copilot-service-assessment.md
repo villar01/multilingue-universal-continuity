@@ -28,6 +28,10 @@ O resultado é um parecer externo, não uma substituição de regressões. A có
 
 A regressão local `server/curriculumAnonymousAccess.test.ts` foi executada após a revisão externa e foi aprovada. Ela confirma que chamadas diretas de visitante são recusadas antes da entrega de qualquer material curricular. Assim, o parecer externo e a verificação local concordam no ponto analisado, sem necessidade de alteração de código.
 
+### Fechamento do achado do dicionário
+
+A inspeção posterior identificou que os procedimentos `phrasalVerbs.search` e `phrasalVerbs.getById` ainda eram públicos. Embora a interface de exercícios já fosse protegida pela rota de aprendizagem, os procedimentos foram convertidos para `protectedProcedure` para impedir leitura direta do dicionário curricular por visitantes. A regressão anônima agora cobre os dois procedimentos e foi aprovada junto com TypeScript sem erros.
+
 ## Limite importante
 
 Copilot Free é um apoio de desenvolvimento com uso limitado. A utilização dele não cria, por si só, uma rotina autônoma de correção do aplicativo. Para ser considerado parte real do fluxo, deve ser aberto na conta, ter seu estado confirmado e realizar uma revisão de teste com resultado verificável.

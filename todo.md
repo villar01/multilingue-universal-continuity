@@ -2036,4 +2036,6 @@
 
 - [ ] Definir e comprovar uma arquitetura de apoio externo para o MultiLingue: GitHub para continuidade e colaboração, Claude para revisão quando disponível e Ollama/Qwen local para processamento sem API; cada serviço deve ter função, teste e estado real registrados
 
-- [ ] Usar o GitHub Copilot Free confirmado na conta `villar01` em uma revisão externa de teste, sem upgrade de plano, sem alteração automática de código e com comparação obrigatória contra os testes e regras do projeto
+- [x] Usar o GitHub Copilot Free confirmado na conta `villar01` em uma revisão externa de teste, sem upgrade de plano, sem alteração automática de código e com comparação obrigatória contra os testes e regras do projeto — Copilot leu a estrutura, revisou o bloqueio curricular sem criar artefatos e a regressão local `curriculumAnonymousAccess` foi aprovada
+
+- [x] Auditar a rota pública de dicionário apontada pelo Copilot e comprovar por regressão que visitantes recebem somente definições isoladas, nunca lições, exercícios, progresso ou outro conteúdo curricular — os procedimentos `phrasalVerbs.search` e `phrasalVerbs.getById` foram protegidos por sessão; TypeScript e regressão de visitante aprovados
