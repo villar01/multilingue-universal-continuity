@@ -27,13 +27,13 @@ import {
   CreditCard,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import UserGuide from "@/components/UserGuide";
 import { trpc } from "@/lib/trpc";
 import { lazy, Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AVAILABLE_LANGUAGES } from "@/lib/languages";
 
 const AnimatedTeacher = lazy(async () => ({ default: (await import("@/components/AnimatedTeacher")).AnimatedTeacher }));
+const UserGuide = lazy(() => import("@/components/UserGuide"));
 // Floating flag items for hero animation — bandeira SVG + sigla
 const FLOAT_FLAGS = [
   { cc: "us", sigla: "US" }, { cc: "br", sigla: "BR" }, { cc: "fr", sigla: "FR" },
@@ -307,7 +307,9 @@ export default function Home() {
                   Termos & Privacidade
                 </button>
               </Link>
-              <UserGuide nativeLang={nativeLang} compact />
+              <Suspense fallback={<span className="h-6 w-24 rounded bg-white/20" aria-label="Carregando instruções" />}>
+                <UserGuide nativeLang={nativeLang} compact />
+              </Suspense>
             </nav>
 
             {/* Auth buttons */}

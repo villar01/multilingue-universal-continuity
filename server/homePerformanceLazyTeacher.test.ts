@@ -10,4 +10,9 @@ describe("home initial load performance", () => {
     expect(source).toContain("<Suspense fallback=");
     expect(source).not.toContain('import AnimatedTeacher from "@/components/AnimatedTeacher"');
   });
+
+  it("loads the optional user guide separately from the initial navigation bundle", () => {
+    expect(source).toContain('const UserGuide = lazy(() => import("@/components/UserGuide"));');
+    expect(source).not.toContain('import UserGuide from "@/components/UserGuide"');
+  });
 });
