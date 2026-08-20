@@ -298,6 +298,11 @@ const ResilientAdminControlCenter = () => (
     <AdminControlCenter />
   </ActivityRecoveryBoundary>
 );
+const ResilientAdminUpdates = () => (
+  <ActivityRecoveryBoundary activityLabel="as atualizações administrativas">
+    <AdminUpdates />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -391,7 +396,7 @@ function Router() {
         <Route path="/ai-monitor" component={ResilientAIMonitor} />
         <Route path="/terms" component={TermsOfUse} />
         <Route path="/language-detect" component={ResilientLanguageDetect} />
-        <Route path="/admin/updates" component={AdminUpdates} />
+        <Route path="/admin/updates" component={ResilientAdminUpdates} />
         <Route path="/admin/control-center" component={ResilientAdminControlCenter} />
         <Route path="/language-select" component={ResilientLanguageSelect} />
         <Route path="/daily-memory" component={ResilientDailyMemory} />

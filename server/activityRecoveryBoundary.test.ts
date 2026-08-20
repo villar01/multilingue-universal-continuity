@@ -50,7 +50,7 @@ describe("recuperação local de atividades", () => {
     vi.unstubAllGlobals();
   });
 
-  it("protege onboarding, IA nativa, monitor de IA, detecção de idioma, controle parental, guia de backup, demonstração, suporte privado, centro de controle, painel, seleção de idiomas, ranking, conquistas, históricos, certificados, chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
+  it("protege onboarding, IA nativa, monitor de IA, detecção de idioma, controle parental, guia de backup, demonstração, suporte privado, centro de controle, atualizações administrativas, painel, seleção de idiomas, ranking, conquistas, históricos, certificados, chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
     const app = read("client/src/App.tsx");
     expect(app).toContain("const ResilientInteractiveVideos");
     expect(app).toContain('<Route path="/interactive-videos" component={ResilientInteractiveVideos} />');
@@ -96,6 +96,8 @@ describe("recuperação local de atividades", () => {
     expect(app).toContain('<Route path="/suporte" component={ResilientCustomerSupport} />');
     expect(app).toContain("const ResilientAdminControlCenter");
     expect(app).toContain('<Route path="/admin/control-center" component={ResilientAdminControlCenter} />');
+    expect(app).toContain("const ResilientAdminUpdates");
+    expect(app).toContain('<Route path="/admin/updates" component={ResilientAdminUpdates} />');
     expect(app).toContain("const ResilientReels");
     expect(app).toContain('<Route path="/reels" component={ResilientReels} />');
     expect(app).toContain("const ResilientClips");
