@@ -19,6 +19,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 import { IMMERSIVE_SCENE_COUNT } from "@/lib/immersiveSceneStats";
+import { IMMERSIVE_CONVERSATION_SCENARIO_COUNT } from "@/lib/immersiveConversationStats";
 
 const ARVocabulary = lazy(() => import("@/components/ARVocabulary"));
 const CameraTranslator = lazy(() => import("@/components/CameraTranslator"));
@@ -44,12 +45,12 @@ const MODES = [
     emoji: "🎭",
     badge: "NOVO · Imersivo",
     badgeColor: "bg-purple-600/40 text-purple-200 border-purple-500/40",
-    description: "8 cenários reais com IA · Voz neural · Feedback de pronúncia",
+    description: `${IMMERSIVE_CONVERSATION_SCENARIO_COUNT} cenários reais com IA · Voz neural · Feedback de pronúncia`,
     color: "from-purple-700 to-indigo-800",
     glow: "shadow-purple-900/50",
     isExternal: true,
     href: "/vr-conversation",
-    stats: ["12 cenários", ACTIVE_LANGUAGE_LABEL, "IA generativa", "WebXR"],
+    stats: [`${IMMERSIVE_CONVERSATION_SCENARIO_COUNT} cenários`, ACTIVE_LANGUAGE_LABEL, "IA generativa", "WebXR"],
   },
   {
     id: "word-game",
