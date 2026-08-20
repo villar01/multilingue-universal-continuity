@@ -27,4 +27,22 @@ describe("backup audiovisual aprovado de James", () => {
     expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
     expect(sceneSource).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL,");
   });
+
+  it("agenda o clipe da apresentação antes da faixa e o promove apenas após a confirmação do áudio", () => {
+    const introBranchStart = sceneSource.indexOf('if (dialogueScene.id === "beach" && dialogueScene.teacherName === "James" && teacherSpeech.text === JAMES_TROPICAL_INTRO_LINE)');
+    const introBranch = sceneSource.slice(introBranchStart, introBranchStart + 900);
+    const onPlayingStart = sceneSource.indexOf("audio.onplaying = () => {");
+    const onPlayingBlock = sceneSource.slice(onPlayingStart, onPlayingStart + 650);
+
+    expect(introBranchStart).toBeGreaterThan(-1);
+    expect(introBranch.indexOf('playJamesTropicalClip("james-tropical-greeting")')).toBeGreaterThan(-1);
+    expect(introBranch.indexOf('playJamesTropicalClip("james-tropical-greeting")')).toBeLessThan(introBranch.indexOf("void playTeacherAudio("));
+    expect(onPlayingBlock).toContain("pendingJamesClipIdRef.current");
+    expect(onPlayingBlock).toContain("setActiveJamesClipId(confirmedJamesClipId);");
+  });
+
+  it("promove a saudação no áudio confirmado mesmo se a referência pendente for limpa antes do evento", () => {
+    expect(sceneSource).toContain('requestKey === "james-tropical-introduction" ? "james-tropical-greeting" : null');
+    expect(sceneSource).toContain("setActiveJamesClipId(confirmedJamesClipId);");
+  });
 });

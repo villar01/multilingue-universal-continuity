@@ -1142,8 +1142,10 @@ export default function ImmersiveScene() {
       reportAudioEvent("play");
       setIsPreparingNeuralAudio(false);
       setIsSpeaking(true);
-      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
-        setActiveJamesClipId(pendingJamesClipIdRef.current);
+      const confirmedJamesClipId = pendingJamesClipIdRef.current
+        || (requestKey === "james-tropical-introduction" ? "james-tropical-greeting" : null);
+      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && confirmedJamesClipId) {
+        setActiveJamesClipId(confirmedJamesClipId);
         pendingJamesClipIdRef.current = null;
       }
       if (selectedScene?.id === "cafe" && selectedScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {

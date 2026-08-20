@@ -94,6 +94,8 @@
 - [x] Invalidar o cache de aplicação da Cena Imersiva na próxima atualização para impedir mistura de recursos de versões diferentes durante o diagnóstico da queda — service worker atualizado para `v12`, preservando a ativação imediata e removendo caches de versões anteriores; TypeScript sem erros e 800 testes aprovados
 - [ ] Bloquear a publicação de alterações da Cena Imersiva sem regressão de renderização, TypeScript, suíte aprovada e verificação funcional autenticada registrada
 - [ ] Estender o contrato de recuperação imediata às atividades críticas do aplicativo, com bloqueio de publicação, preservação da versão anterior e retorno seguro sem alteração de dados do aluno
+- [ ] Isolar a rota de lição em recuperação local com retorno seguro ao painel, sem derrubar as demais atividades em caso de falha
+- [ ] Adicionar teste de integração da rota de lição em erro, comprovando fallback local e ausência de acionamento da fronteira global
 - [ ] Definir e testar metas de detecção, isolamento e retorno seguro para falhas críticas, sem prometer prazo que não possa ser monitorado em produção
 - [x] Manter rotas de aprendizagem legítimas disponíveis sob excesso de requisições, isolando e limitando somente o tráfego abusivo com recuperação verificável — a regressão confirma que o IP abusivo recebe 429, enquanto outro IP continua abrindo a Cena; TypeScript sem erros e 801 testes aprovados
 - [x] Substituir o contador global compartilhado de requisições por limitação por origem, para que o abuso de um IP não bloqueie todos os alunos — contador por origem preserva bloqueio de 1.001ª requisição abusiva e libera outro aluno; TypeScript sem erros e 801 testes aprovados
@@ -211,6 +213,10 @@
 - [x] Migrar o jogo de memória curricular para receber A1–C2 explícito e encaminhar o mesmo estágio à prática Pareto — contrato usa o tipo CEFR central, padrão A1 e entrega direta ao ciclo Pareto; TypeScript sem erros e 360 testes aprovados
 - [x] Eliminar a contagem de 40 erros exibida na cena imersiva, preservando voz, diálogos, hotspots e controles de segurança — disparos de fala do diálogo, hotspot e botões agora passam por proteção contra rejeições assíncronas; prévia da cena não gerou falhas novas de console/rede, TypeScript sem erros e 362 testes aprovados
 - [ ] Restaurar diálogo, fala neural e movimentos labiais da cena imersiva após a regressão reportada com 28 erros
+- [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
+- [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
+- [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados
+- [x] Cobrir a apresentação de James por regressão: clipe pendente antes da faixa masculina e promoção somente em `audio.onplaying` ou reprodução confirmada — quatro regressões cobrem clipe canônico, faixa masculina, ordem de agendamento e fallback no evento confirmado. TypeScript sem erros e 811 testes aprovados
 - [ ] Manter o painel inferior do diálogo visível durante a fala autenticada do professor, junto da animação labial natural
 - [ ] Bloquear de forma explícita o início do diálogo imersivo sem sessão e evitar o redirecionamento/falhas repetidas das mutações de voz protegidas — o visitante foi validado, mas o clique autenticado reportado continua sem abrir o diálogo e exige correção
 - [x] Instrumentar o clique autenticado de Iniciar Diálogo até o estado visual do painel para identificar a interrupção real do fluxo — o bloqueio indevido de sessão no painel roteirizado foi identificado e removido

@@ -12,6 +12,7 @@ import { DownloadManager } from "./components/DownloadManager";
 import UpdatesNotificationBanner from "./components/UpdatesNotificationBanner";
 import { registerServiceWorker } from "./lib/registerSW";
 import { ImmersiveSceneRecoveryBoundary } from "./components/ImmersiveSceneRecoveryBoundary";
+import { LessonRecoveryBoundary } from "./components/LessonRecoveryBoundary";
 
 // Lazy load non-critical routes for faster initial load
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -61,6 +62,11 @@ const ResilientImmersiveScene = () => (
     <ImmersiveScene />
   </ImmersiveSceneRecoveryBoundary>
 );
+const ResilientLesson = () => (
+  <LessonRecoveryBoundary>
+    <Lesson />
+  </LessonRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -106,7 +112,7 @@ function Router() {
         <Route path="/onboarding" component={Onboarding} />
         <Route path="/dashboard" component={DashboardReal} />
         <Route path="/dashboard-real" component={DashboardReal} />
-      <Route path={"/lesson/:id"} component={Lesson} />
+      <Route path={"/lesson/:id"} component={ResilientLesson} />
        <Route path="/complete-lesson/:id" component={CompleteLesson} />
       <Route path="/practice/clips" component={PracticeClips} />
       <Route path="/practice/clips/:id" component={VideoPlayer} />
