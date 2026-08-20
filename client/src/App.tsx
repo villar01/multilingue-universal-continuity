@@ -103,6 +103,11 @@ const ResilientStudyBase = () => (
     <StudyBase />
   </LessonRecoveryBoundary>
 );
+const ResilientMasterLesson = () => (
+  <LessonRecoveryBoundary>
+    <MasterLesson />
+  </LessonRecoveryBoundary>
+);
 const ResilientInteractiveVideos = () => (
   <ActivityRecoveryBoundary activityLabel="os vídeos interativos">
     <InteractiveVideos />
@@ -267,7 +272,7 @@ function Router() {
         <Route path="/dialogue" component={ImmersiveDialogue} />
         <Route path="/natural-learning" component={NaturalLearning} />
         <Route path="/natural-lesson" component={NaturalLesson} />
-        <Route path="/master-lesson" component={MasterLesson} />
+        <Route path="/master-lesson" component={ResilientMasterLesson} />
         <Route path="/ia-nativa" component={IANativa} />
         <Route path="/smart-review" component={ResilientSmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
