@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 import { useState, useEffect } from "react";
 
 // ─── Etapas CEFR ────────────────────────────────────────────────────────────
@@ -433,7 +434,7 @@ export default function DashboardReal() {
                     {!isPremium && (
                       <div className="p-4 rounded-lg border-2 border-gray-200 bg-gray-50 flex flex-col items-center justify-center">
                         <Lock className="h-8 w-8 text-gray-400 mb-2" />
-                        <div className="text-xs text-gray-500 text-center">+57 idiomas ativos</div>
+                        <div className="text-xs text-gray-500 text-center">+{ACTIVE_LANGUAGE_COUNT} idiomas ativos · {TOTAL_LANGUAGES} no catálogo</div>
                       </div>
                     )}
                   </div>
