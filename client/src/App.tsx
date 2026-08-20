@@ -258,6 +258,11 @@ const ResilientOnboarding = () => (
     <Onboarding />
   </ActivityRecoveryBoundary>
 );
+const ResilientIANativa = () => (
+  <ActivityRecoveryBoundary activityLabel="a IA de estudo">
+    <IANativa />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -363,7 +368,7 @@ function Router() {
         <Route path="/natural-learning" component={ResilientNaturalLearning} />
         <Route path="/natural-lesson" component={ResilientNaturalLesson} />
         <Route path="/master-lesson" component={ResilientMasterLesson} />
-        <Route path="/ia-nativa" component={IANativa} />
+        <Route path="/ia-nativa" component={ResilientIANativa} />
         <Route path="/smart-review" component={ResilientSmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
         <Route path="/base-de-estudos" component={ResilientStudyBase} />

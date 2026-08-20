@@ -50,7 +50,7 @@ describe("recuperação local de atividades", () => {
     vi.unstubAllGlobals();
   });
 
-  it("protege onboarding, painel, seleção de idiomas, ranking, conquistas, históricos, certificados, chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
+  it("protege onboarding, IA nativa, painel, seleção de idiomas, ranking, conquistas, históricos, certificados, chat, perfil docente, progresso, desafios, vídeos, clipes, Reels, aprendizado, revisões, Pareto, diálogo, roleplay, batalha e experiências de realidade aumentada com a fronteira local", () => {
     const app = read("client/src/App.tsx");
     expect(app).toContain("const ResilientInteractiveVideos");
     expect(app).toContain('<Route path="/interactive-videos" component={ResilientInteractiveVideos} />');
@@ -80,6 +80,8 @@ describe("recuperação local de atividades", () => {
     expect(app).toContain('<Route path="/pronunciation-history" component={ResilientPronunciationHistory} />');
     expect(app).toContain("const ResilientOnboarding");
     expect(app).toContain('<Route path="/onboarding" component={ResilientOnboarding} />');
+    expect(app).toContain("const ResilientIANativa");
+    expect(app).toContain('<Route path="/ia-nativa" component={ResilientIANativa} />');
     expect(app).toContain("const ResilientReels");
     expect(app).toContain('<Route path="/reels" component={ResilientReels} />');
     expect(app).toContain("const ResilientClips");
