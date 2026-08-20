@@ -252,7 +252,7 @@
 
 - [ ] Exigir segunda cópia utilizável do backup em máquina ou mídia independente sob supervisão do proprietário, com verificação separada para sobreviver à perda do notebook principal
 
-- [ ] Implementar painel privado de alertas de manutenção para exibir pendências críticas de backup, integridade, segurança, desempenho e suporte antes que afetem o serviço, sem notificações externas automáticas
+- [x] Implementar painel privado de alertas de manutenção para exibir pendências críticas de backup, integridade, segurança, desempenho e suporte antes que afetem o serviço, sem notificações externas automáticas — centro de controle restrito ao proprietário, guia Manutenção validada visualmente, TypeScript e 853 testes aprovados
 
 - [ ] Concluir o aplicativo com avanço acelerado e controlado: priorizar correções de maior impacto, aplicar uma por vez com regressão, validar e publicar marcos sem perder controles de segurança, desempenho ou continuidade
 

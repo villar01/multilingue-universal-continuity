@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { adminProcedure as protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { sql } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
+import { deriveMaintenanceAlerts } from "./maintenanceAlertPolicy";
 
 export const controlCenterRouter = router({
 
@@ -40,6 +41,21 @@ export const controlCenterRouter = router({
       threatsBlocked: Number(threatsBlocked),
       lastCheck: now,
     };
+  }),
+
+  getMaintenanceAlerts: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const supportResult = await db.execute(
+      sql`SELECT COUNT(*) as cnt FROM customer_support_threads WHERE status = 'open' AND priority = 'high'`
+    );
+    const unresolvedCriticalSupport = Number(((supportResult as any)[0] as any[])[0]?.cnt ?? 0);
+
+    return deriveMaintenanceAlerts({
+      unresolvedCriticalSupport,
+      performanceStatus: "unknown",
+      securityStatus: "unknown",
+    });
   }),
 
   // ── Security Events ────────────────────────────────────────────────────────

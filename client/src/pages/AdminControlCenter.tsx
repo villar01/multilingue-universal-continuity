@@ -100,6 +100,10 @@ export default function AdminControlCenter() {
     undefined,
     { refetchInterval: 60000 },
   );
+  const maintenanceAlerts = trpc.controlCenter.getMaintenanceAlerts.useQuery(
+    undefined,
+    { refetchInterval: 60000 },
+  );
 
   // ── Mutations ──
   const applyKnowledge = trpc.controlCenter.applyKnowledge.useMutation({
@@ -162,6 +166,7 @@ export default function AdminControlCenter() {
   const criticalEvents = (securityEvents.data ?? []).filter(
     (e: SecurityEvent) => e.severity === "critical" && !e.resolved
   );
+  const criticalMaintenanceAlerts = (maintenanceAlerts.data ?? []).filter((alert) => alert.level === "critical");
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-4 md:p-6">
@@ -181,6 +186,12 @@ export default function AdminControlCenter() {
             <Badge className="bg-red-500/20 text-red-400 border-red-500/30 animate-pulse">
               <AlertTriangle className="w-3 h-3 mr-1" />
               {criticalEvents.length} crítico{criticalEvents.length > 1 ? "s" : ""}
+            </Badge>
+          )}
+          {criticalMaintenanceAlerts.length > 0 && (
+            <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30">
+              <Bell className="w-3 h-3 mr-1" />
+              {criticalMaintenanceAlerts.length} manutenção
             </Badge>
           )}
           <Button
@@ -270,6 +281,9 @@ export default function AdminControlCenter() {
           </TabsTrigger>
           <TabsTrigger value="support" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white text-gray-400">
             <MessageSquare className="w-4 h-4 mr-1" /> Apoio Interno
+          </TabsTrigger>
+          <TabsTrigger value="maintenance" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-400">
+            <Bell className="w-4 h-4 mr-1" /> Manutenção
           </TabsTrigger>
           <TabsTrigger value="history" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400">
             <Eye className="w-4 h-4 mr-1" /> Histórico
@@ -476,6 +490,34 @@ export default function AdminControlCenter() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="maintenance">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Bell className="w-4 h-4 text-orange-400" /> Alertas de manutenção
+              </CardTitle>
+              <p className="text-xs text-gray-400">Visão privada do proprietário. Nenhuma notificação externa é enviada por esta tela.</p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {(maintenanceAlerts.data ?? []).map((alert) => (
+                <div key={alert.id} className={`rounded-lg border p-3 ${
+                  alert.level === "critical" ? "border-red-500/40 bg-red-950/30" : "border-yellow-500/30 bg-yellow-950/20"
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className={`w-4 h-4 ${alert.level === "critical" ? "text-red-300" : "text-yellow-300"}`} />
+                    <p className="text-sm font-medium text-white">{alert.message}</p>
+                  </div>
+                </div>
+              ))}
+              {(maintenanceAlerts.data ?? []).length === 0 && (
+                <div className="rounded-lg border border-green-500/30 bg-green-950/20 p-4 text-sm text-green-200 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" /> Nenhuma pendência de manutenção identificada.
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* ── TAB: SEGURANÇA ── */}
