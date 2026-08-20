@@ -53,7 +53,7 @@ export default function IANativa() {
           </Link>
           <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
             <Cpu className="h-5 w-5 text-purple-600" />
-            IA Local — Runtime do Servidor
+            IA para estudo
           </h1>
         </div>
       </header>
@@ -70,15 +70,15 @@ export default function IANativa() {
                 </>
               ) : (
                 <>
-                  <XCircle className="h-6 w-6 text-amber-600" />
-                  Runtime local do servidor indisponível
+                  <Sparkles className="h-6 w-6 text-amber-600" />
+                  Assistência de estudo disponível
                 </>
               )}
             </CardTitle>
             <CardDescription>
               {anyLocal
                 ? "O servidor deste app encontrou um provedor local configurado. Esse status não verifica o Ollama instalado apenas no computador do aluno."
-                : "Nenhum provedor local foi encontrado no servidor deste app. Uma instalação no computador do aluno requer integração cliente-local explícita."}
+                : "Este ambiente está usando a assistência integrada da plataforma. O processamento local permanece uma opção para ambientes preparados."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -97,8 +97,8 @@ export default function IANativa() {
                       <Wifi className="h-3 w-3 mr-1" /> Online
                     </Badge>
                   ) : (
-                    <Badge variant="destructive">
-                      <WifiOff className="h-3 w-3 mr-1" /> Offline
+                    <Badge variant="secondary">
+                      <WifiOff className="h-3 w-3 mr-1" /> Não conectado
                     </Badge>
                   )}
                 </div>
@@ -119,8 +119,8 @@ export default function IANativa() {
                       <Wifi className="h-3 w-3 mr-1" /> Online
                     </Badge>
                   ) : (
-                    <Badge variant="destructive">
-                      <WifiOff className="h-3 w-3 mr-1" /> Offline
+                    <Badge variant="secondary">
+                      <WifiOff className="h-3 w-3 mr-1" /> Não conectado
                     </Badge>
                   )}
                 </div>
@@ -173,18 +173,18 @@ export default function IANativa() {
           </CardContent>
         </Card>
 
-        {/* Aviso importante ao aluno */}
+        {/* Informação opcional para o aluno */}
         <Card className="mb-8 border-2 border-blue-300 bg-blue-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg text-blue-900">
               <AlertCircle className="h-5 w-5 text-blue-600" />
-              Aviso Importante para o Aluno
+              IA local é opcional
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-blue-800">
-              Qwen2.5 no Ollama é uma opção para prática local de texto. Sua instalação não é obrigatória para usar esta plataforma e não ativa automaticamente voz neural, animação ou modo offline do app hospedado.
-              Consulte as licenças e requisitos atuais do modelo antes de instalar.
+              Você não precisa instalar nenhum modelo local para estudar. Qwen2.5 no Ollama é apenas uma opção para prática de texto em um ambiente preparado; ele não ativa automaticamente voz neural, animação ou modo offline nesta versão hospedada.
+              Consulte licenças e requisitos atuais do modelo somente se decidir usar essa opção.
             </p>
           </CardContent>
         </Card>
@@ -429,12 +429,12 @@ export default function IANativa() {
           ) : (
             <div className="space-y-3">
               <p className="text-lg font-semibold text-amber-700">
-                Consulte as opções de IA local para prática de texto em ambiente configurado.
+                A plataforma está pronta para estudar com a assistência integrada. Processamento local é opcional e só é usado quando configurado no servidor.
               </p>
               <a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
                   <Download className="h-5 w-5 mr-2" />
-                  Baixar Ollama Agora
+                  Conhecer a opção local
                 </Button>
               </a>
             </div>
