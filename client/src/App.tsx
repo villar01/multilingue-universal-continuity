@@ -148,6 +148,11 @@ const ResilientSmartReview = () => (
     <SmartReview />
   </ActivityRecoveryBoundary>
 );
+const ResilientPareto1000 = () => (
+  <ActivityRecoveryBoundary activityLabel="o treinamento Pareto 1000">
+    <Pareto1000 />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -258,7 +263,7 @@ function Router() {
         <Route path="/parental-control" component={ParentalControlPanel} />
         <Route path="/base-de-estudos" component={StudyBase} />
         <Route path="/abc-book" component={ABCBook} />
-        <Route path="/pareto-1000" component={Pareto1000} />
+        <Route path="/pareto-1000" component={ResilientPareto1000} />
         <Route path="/guia-backup" component={BackupGuide} />
         <Route path="/suporte" component={CustomerSupport} />
       <Route path={"/ 404"} component={NotFound} />
