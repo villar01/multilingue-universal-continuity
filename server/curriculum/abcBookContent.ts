@@ -11,6 +11,7 @@ import { TWELFTH_BLOCK_PREPOSITIONS_PHRASALS_CONJUNCTIONS } from "./abcBookTwelf
 import { THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS } from "./abcBookThirteenthBlock";
 import { FOURTEENTH_BLOCK_COMPARATIVES_SUPERLATIVES } from "./abcBookFourteenthBlock";
 import { FIFTEENTH_BLOCK_GREETINGS_CALENDAR } from "./abcBookFifteenthBlock";
+import { SIXTEENTH_BLOCK_PHRASALS_IDIOMS } from "./abcBookSixteenthBlock";
 import { getLanguageBlocks } from "./languageBlocksContent";
 
 export type ABCBookSection = {
@@ -2249,6 +2250,7 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     ...THIRTEENTH_BLOCK_ADJECTIVES_AND_COLORS,
     ...FOURTEENTH_BLOCK_COMPARATIVES_SUPERLATIVES,
     ...FIFTEENTH_BLOCK_GREETINGS_CALENDAR,
+    ...SIXTEENTH_BLOCK_PHRASALS_IDIOMS,
   ],
   memorySteps: [
     {
