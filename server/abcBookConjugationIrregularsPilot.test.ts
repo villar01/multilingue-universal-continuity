@@ -7,7 +7,7 @@ describe("conjugação e irregulares", () => {
     expect(book.available).toBe(true);
     if (!book.available) return;
     const lessons = book.progressiveLessons.filter((lesson) => lesson.section === "Conjugação e tempos");
-    expect(lessons).toHaveLength(2);
+    expect(lessons).toHaveLength(4);
     expect(lessons[0].explanation).toContain("não usa auxiliar");
     expect(lessons[1].languageFocus).toContain("drink–drank–drunk");
     expect(lessons.every((lesson) => lesson.paretoPrompt.startsWith("No Pareto"))).toBe(true);
