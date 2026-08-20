@@ -2083,3 +2083,5 @@
 - [x] Reconstruir o bloco de alimentos, quantificadores, there is/there are, to be e can do Livro SOS Português–Inglês: preservar a sequência alimento–contável/não contável–some/any/no–existência–ser/estar–habilidade, corrigir regras e fonetização para pt-BR com áudio nativo, e adicionar Pareto separado sem remover práticas-base — oito folhas novas, regressão dedicada, TypeScript e 825 testes aprovados
 
 - [x] Reconstruir o bloco de auxiliares, modais, tempos perfeitos e presente contínuo do Livro SOS Português–Inglês: preservar a sequência da tabela de referência e exemplos, separar funções de do/does/did, will/would, can/could, may/might, must e have/has/had, corrigir contexto e preposição, e adicionar Pareto separado por folha — seis folhas novas, regressão dedicada, TypeScript e 826 testes aprovados
+
+- [ ] Reconstruir o bloco de negações, contrações, perfect negativo e pronomes em -self do Livro SOS Português–Inglês: preservar forma cheia–contração–passado–perfect–classificação de -self, corrigir would como não-futuro simples e had not climbed, e adicionar Pareto separado por folha
