@@ -242,6 +242,8 @@
 
 - [ ] Manter ciclo de melhoria eficiente: selecionar uma correção segura de maior impacto, implementar com regressão, validar e publicar por marcos sem alterar recursos estáveis
 
+- [x] Remover a aplicação automática recorrente de melhorias do Centro de Controle e manter somente decisões manuais, auditáveis e aprovadas pelo proprietário — intervalo automático removido, regra protegida por regressão, tela validada visualmente, TypeScript e 856 testes aprovados
+
 - [ ] Manter desempenho responsivo: evitar processos duplicados, controlar memória, carregar recursos de forma eficiente e validar cada melhoria contra regressão de lentidão antes de publicar
 
 - [ ] Consolidar manifesto permanente de pendências e controles para o proprietário e revisão externa do GitHub: continuidade, segurança, desempenho, áudio, professores, plano comercial futuro e aprovação obrigatória

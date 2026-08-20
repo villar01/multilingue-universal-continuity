@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
@@ -71,7 +71,6 @@ const priorityColor: Record<string, string> = {
 export default function AdminControlCenter() {
   useAuth();
   const [emergencyMode, setEmergencyMode] = useState(false);
-  const [autoApply, setAutoApply] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(null);
 
   // ── Queries ──
@@ -150,17 +149,6 @@ export default function AdminControlCenter() {
   const blockUser = trpc.controlCenter.blockUser.useMutation({
     onSuccess: () => toast.success("🚫 Usuário bloqueado"),
   });
-
-  // ── Auto-apply best configs on mount ──
-  useEffect(() => {
-    if (autoApply && activeBatch.data && !applyAllBest.isPending) {
-      // Silently apply best configs every 5 minutes
-      const interval = setInterval(() => {
-        applyAllBest.mutate({ batchNumber: activeBatch.data.batch_number, autoMode: true });
-      }, 5 * 60 * 1000);
-      return () => clearInterval(interval);
-    }
-  }, [autoApply, activeBatch.data]);
 
   const health = systemHealth.data;
   const criticalEvents = (securityEvents.data ?? []).filter(
@@ -428,29 +416,16 @@ export default function AdminControlCenter() {
             </Card>
           </div>
 
-          {/* Auto-apply toggle */}
           <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <RefreshCw className={`w-5 h-5 ${autoApply ? "text-purple-400 animate-spin" : "text-gray-500"}`}
-                  style={{ animationDuration: "3s" }} />
+                <Shield className="w-5 h-5 text-emerald-400" />
                 <div>
-                  <p className="text-sm text-white font-medium">Aplicação Automática de Melhorias</p>
-                  <p className="text-xs text-gray-400">
-                    {autoApply
-                      ? "IA aplica as melhores configurações automaticamente a cada 5 minutos"
-                      : "Aplicação manual — você decide o que aplicar"}
-                  </p>
+                  <p className="text-sm text-white font-medium">Aplicação manual protegida</p>
+                  <p className="text-xs text-gray-400">Melhorias só são aplicadas por decisão explícita do proprietário.</p>
                 </div>
               </div>
-              <Button
-                size="sm"
-                variant={autoApply ? "default" : "outline"}
-                className={autoApply ? "bg-purple-600 hover:bg-purple-700" : "border-gray-700 text-gray-300 hover:bg-gray-800"}
-                onClick={() => setAutoApply(!autoApply)}
-              >
-                {autoApply ? "Automático ✓" : "Ativar Auto"}
-              </Button>
+              <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">Revisão obrigatória</Badge>
             </CardContent>
           </Card>
         </TabsContent>
