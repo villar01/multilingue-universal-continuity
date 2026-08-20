@@ -143,6 +143,11 @@ const ResilientDailyMemory = () => (
     <DailyMemoryPage />
   </ActivityRecoveryBoundary>
 );
+const ResilientSmartReview = () => (
+  <ActivityRecoveryBoundary activityLabel="a revisão inteligente">
+    <SmartReview />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -249,7 +254,7 @@ function Router() {
         <Route path="/natural-lesson" component={NaturalLesson} />
         <Route path="/master-lesson" component={MasterLesson} />
         <Route path="/ia-nativa" component={IANativa} />
-        <Route path="/smart-review" component={SmartReview} />
+        <Route path="/smart-review" component={ResilientSmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
         <Route path="/base-de-estudos" component={StudyBase} />
         <Route path="/abc-book" component={ABCBook} />
