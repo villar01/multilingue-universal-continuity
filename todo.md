@@ -2084,4 +2084,4 @@
 
 - [x] Reconstruir o bloco de auxiliares, modais, tempos perfeitos e presente contínuo do Livro SOS Português–Inglês: preservar a sequência da tabela de referência e exemplos, separar funções de do/does/did, will/would, can/could, may/might, must e have/has/had, corrigir contexto e preposição, e adicionar Pareto separado por folha — seis folhas novas, regressão dedicada, TypeScript e 826 testes aprovados
 
-- [ ] Reconstruir o bloco de negações, contrações, perfect negativo e pronomes em -self do Livro SOS Português–Inglês: preservar forma cheia–contração–passado–perfect–classificação de -self, corrigir would como não-futuro simples e had not climbed, e adicionar Pareto separado por folha
+- [x] Reconstruir o bloco de negações, contrações, perfect negativo e pronomes em -self do Livro SOS Português–Inglês: preservar forma cheia–contração–passado–perfect–classificação de -self, corrigir would como não-futuro simples e had not climbed, e adicionar Pareto separado por folha — cinco folhas novas, regressão dedicada, TypeScript e 827 testes aprovados
