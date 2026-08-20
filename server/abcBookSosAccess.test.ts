@@ -15,7 +15,8 @@ const lessonSource = readFileSync(path.join(root, "client/src/pages/Lesson.tsx")
 describe("Livro ABC e Socorro SOS voluntário", () => {
   it("registra a rota protegida de leitura do Livro ABC", () => {
     expect(appSource).toContain('const ABCBook = lazy(() => import("./pages/ABCBook"))');
-    expect(appSource).toContain('<Route path="/abc-book" component={ABCBook} />');
+    expect(appSource).toContain("const ResilientABCBook = () => (");
+    expect(appSource).toContain('<Route path="/abc-book" component={ResilientABCBook} />');
   });
 
   it("entrega o conteúdo da edição inicial somente pelo roteador curricular protegido", () => {
