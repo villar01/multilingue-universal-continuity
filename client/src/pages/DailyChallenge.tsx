@@ -1,6 +1,6 @@
 /**
  * Desafio Diário — 1 conversa + 1 jogo de palavras por dia
- * Bônus de XP ao completar ambos · Streak diário · 69 idiomas
+ * Bônus de XP ao completar ambos · Streak diário · catálogo canônico de idiomas
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -9,6 +9,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
 
 export default function DailyChallenge() {
   const [, navigate] = useLocation();
@@ -52,6 +53,7 @@ export default function DailyChallenge() {
           <div className="text-6xl mb-3">🌟</div>
           <h1 className="text-3xl font-bold text-white mb-1">Desafio Diário</h1>
           <p className="text-orange-300 text-sm">{todayCapitalized}</p>
+          <p className="mt-1 text-xs text-slate-400">{ACTIVE_LANGUAGE_COUNT} idiomas ativos agora · {TOTAL_LANGUAGES} no catálogo</p>
         </div>
 
         {/* Streak */}
