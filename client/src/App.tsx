@@ -223,6 +223,11 @@ const ResilientDashboardReal = () => (
     <DashboardReal />
   </ActivityRecoveryBoundary>
 );
+const ResilientLanguageSelect = () => (
+  <ActivityRecoveryBoundary activityLabel="a seleção de idiomas">
+    <LanguageSelect />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -318,7 +323,7 @@ function Router() {
         <Route path="/language-detect" component={LanguageDetect} />
         <Route path="/admin/updates" component={AdminUpdates} />
         <Route path="/admin/control-center" component={AdminControlCenter} />
-        <Route path="/language-select" component={LanguageSelect} />
+        <Route path="/language-select" component={ResilientLanguageSelect} />
         <Route path="/daily-memory" component={ResilientDailyMemory} />
         <Route path="/my-teacher" component={ResilientMyTeacher} />
         <Route path="/immersive-lesson" component={ResilientImmersiveLesson} />
