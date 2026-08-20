@@ -30,6 +30,8 @@ describe("recuperação local da lição", () => {
     expect(appSource).toContain('<Route path="/immersive-lesson" component={ResilientImmersiveLesson} />');
     expect(appSource).toContain("const ResilientABCBook = () => (");
     expect(appSource).toContain('<Route path="/abc-book" component={ResilientABCBook} />');
+    expect(appSource).toContain("const ResilientStudyBase = () => (");
+    expect(appSource).toContain('<Route path="/base-de-estudos" component={ResilientStudyBase} />');
     expect(boundarySource).toContain("Lição temporariamente indisponível");
     expect(boundarySource).toContain('window.location.assign("/lessons-hub")');
     expect(boundarySource).toContain('window.location.assign("/dashboard")');

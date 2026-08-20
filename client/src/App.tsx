@@ -98,6 +98,11 @@ const ResilientABCBook = () => (
     <ABCBook />
   </LessonRecoveryBoundary>
 );
+const ResilientStudyBase = () => (
+  <LessonRecoveryBoundary>
+    <StudyBase />
+  </LessonRecoveryBoundary>
+);
 const ResilientInteractiveVideos = () => (
   <ActivityRecoveryBoundary activityLabel="os vídeos interativos">
     <InteractiveVideos />
@@ -266,7 +271,7 @@ function Router() {
         <Route path="/ia-nativa" component={IANativa} />
         <Route path="/smart-review" component={ResilientSmartReview} />
         <Route path="/parental-control" component={ParentalControlPanel} />
-        <Route path="/base-de-estudos" component={StudyBase} />
+        <Route path="/base-de-estudos" component={ResilientStudyBase} />
         <Route path="/abc-book" component={ResilientABCBook} />
         <Route path="/pareto-1000" component={ResilientPareto1000} />
         <Route path="/guia-backup" component={BackupGuide} />
