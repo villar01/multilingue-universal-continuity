@@ -63,7 +63,7 @@ const ResilientImmersiveScene = () => (
     <ImmersiveScene />
   </ImmersiveSceneRecoveryBoundary>
 );
-const ResilientLesson = () => (
+export const ResilientLesson = () => (
   <LessonRecoveryBoundary>
     <Lesson />
   </LessonRecoveryBoundary>
@@ -341,7 +341,7 @@ const PageLoader = () => (
   </div>
 );
 
-function Router() {
+export function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
