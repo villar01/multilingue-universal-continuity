@@ -11,14 +11,15 @@ Este kit define o que deve existir para restabelecer o MultiLingue Universal dep
 | Código e configuração | Checkpoint publicado e repositório privado atualizado | Versão conhecida e identificável |
 | Dados do aplicativo | Exportação de dados e referência de esquema | Arquivo disponível e conferido antes de guardar |
 | Mídia e documentos | Arquivos de referência e URLs de armazenamento | Lista de ativos e acesso confirmado |
-| Cópia local | Arquivo exportado baixado para o notebook do proprietário | Presença em Downloads e tamanho diferente de zero |
+| Cópia local principal | Arquivo exportado baixado para o notebook do proprietário | Presença em Downloads e tamanho diferente de zero |
+| Cópia local independente | Segunda cópia na outra máquina ou em mídia externa sob supervisão do proprietário | Nome, data, tamanho e integridade conferidos separadamente |
 | Procedimento | Passos curtos de recuperação e ponto de decisão | Nenhuma restauração iniciada sem confirmação |
 
 ## Rotina de preservação
 
 1. Criar um checkpoint após cada marco funcional comprovado.
 2. Usar o fluxo oficial de exportação de dados quando ele estiver disponível.
-3. Baixar a exportação para o notebook e manter pelo menos duas cópias em locais distintos.
+3. Baixar a exportação para o notebook e copiar o mesmo conjunto para outra máquina ou mídia independente sob supervisão do proprietário.
 4. Registrar data, nome do arquivo, tamanho e resultado da verificação.
 5. Não importar ou restaurar uma cópia apenas para testar sem uma decisão explícita: preservar primeiro, restaurar somente diante de necessidade real.
 
@@ -33,7 +34,7 @@ Este kit define o que deve existir para restabelecer o MultiLingue Universal dep
 
 ## Regras de segurança
 
-- Não depender de uma única cópia.
+- Não depender de uma única cópia nem de um único notebook.
 - Não chamar uma exportação de "backup" se ela não tiver sido baixada e conferida.
 - Não restaurar às cegas nem sobrescrever dados sem confirmação do proprietário.
 - Separar recuperação de código de recuperação de dados para reduzir perdas acidentais.

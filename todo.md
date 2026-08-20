@@ -250,6 +250,8 @@
 
 - [ ] Definir kit de recuperação utilizável em crise total: código/configuração, dados exportáveis, checkpoint conhecido, verificação de integridade e instrução curta de restabelecimento para o proprietário
 
+- [ ] Exigir segunda cópia utilizável do backup em máquina ou mídia independente sob supervisão do proprietário, com verificação separada para sobreviver à perda do notebook principal
+
 - [ ] Concluir o aplicativo com avanço acelerado e controlado: priorizar correções de maior impacto, aplicar uma por vez com regressão, validar e publicar marcos sem perder controles de segurança, desempenho ou continuidade
 
 - [x] Aplicar política de melhor opção técnica: implementar diretamente melhorias seguras e exigir aprovação explícita somente para gasto, publicação externa, preço, cobrança, contrato ou dado sensível — regra verificável em código, TypeScript e 844 testes aprovados

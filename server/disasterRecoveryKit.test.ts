@@ -10,11 +10,13 @@ describe("disaster recovery kit", () => {
     expect(kit).toContain("Dados do aplicativo");
     expect(kit).toContain("Cópia local");
     expect(kit).toContain("notebook do proprietário");
+    expect(kit).toContain("Cópia local independente");
+    expect(kit).toContain("outra máquina ou mídia independente");
   });
 
   it("forbids automatic or destructive recovery without confirmation", () => {
     expect(kit).toContain("não executa restauração automática");
     expect(kit).toContain("Não importar ou restaurar");
-    expect(kit).toContain("Não depender de uma única cópia");
+    expect(kit).toContain("Não depender de uma única cópia nem de um único notebook");
   });
 });
