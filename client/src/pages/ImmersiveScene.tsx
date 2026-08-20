@@ -266,7 +266,7 @@ function TeacherAvatar({
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
-    (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
+    teacherMedia.mode === "pre_generated_video"
       && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
@@ -691,7 +691,7 @@ export default function ImmersiveScene() {
   const playJamesTropicalClip = useCallback((clipId: JamesTropicalPilotClipId) => {
     if (selectedScene?.id !== "beach" || selectedScene.teacherName !== "James") return null;
     const clip = JAMES_TROPICAL_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
-    if (!clip) return null;
+    if (!clip || !clip.audioVideoExactPair) return null;
     pendingJamesClipIdRef.current = clip.id;
     return clip;
   }, [selectedScene?.id, selectedScene?.teacherName]);
