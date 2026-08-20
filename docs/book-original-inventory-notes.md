@@ -156,3 +156,13 @@ Os problemas encontrados também ficaram evidentes. A coluna de “pronunciació
 As páginas ilustradas confirmam ainda que os exercícios-base são úteis: “This is my bicycle”, “That is my father’s armchair”, “Whose coffee is that?” e itens em branco para completar. Esses exercícios não devem ser removidos; devem ser reconstruídos com português natural, áudio nativo, explicação explícita da diferença entre posse com `'s`, com adjetivo possessivo e com pronome possessivo, além de Pareto separado por folha.
 
 Conclusão documental: o próximo bloco reconstruído deve seguir a ordem **demonstrativos → possessivos adjetivos → possessivos pronominais → perguntas de posse → prática ilustrada**. A melhoria principal será pedagógica e fonética: explicar melhor a função de cada forma e abandonar a transliteração hispanizada como eixo do ensino.
+
+## Bloco seguinte confirmado visualmente — posse aplicada e vocabulário básico de pessoas, roupas e profissões
+
+As páginas seguintes fecham a prática de posse em um cenário visual: o armário, roupas e objetos pessoais. A página de exercício pergunta **“Whose are these things?”**, com pares como **“Whose hat is this? It’s Alice’s hat. It’s her hat.”**. Em seguida, o original inicia o capítulo de vocabulário básico com listas de pessoas, relações familiares, pronomes e profissões.
+
+A sequência didática real é, portanto, **posse em objetos visuais → vocabulário de pessoas e relações → pronomes pessoais → profissões**. O princípio deve ser preservado: primeiro identificar de quem é um objeto, depois nomear pessoas e funções para formar frases úteis.
+
+Os problemas que exigem correção permanecem claros. A lista do armário e as listas de pessoas e profissões usam transliteração em espanhol como `Zdz Closet`, `Jus ar dis zdings`, `Fáder`, `Greenfader`, `Polisman` e `Secretaeri`; algumas grafias, equivalências e categorias profissionais são antigas ou imprecisas. A reconstrução deve manter os temas e o encadeamento, mas substituir essa mediação por áudio nativo, ponte pt-BR e linguagem inclusiva e atualizada quando necessária.
+
+O próximo trecho a reconstruir deve seguir a ordem **objetos do armário → pergunta de posse → pessoas e relações → profissões**. O Pareto continuará separado, reforçando palavras de alta frequência e frases de posse sem substituir as listas e exercícios-base do original.
