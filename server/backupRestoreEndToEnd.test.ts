@@ -32,7 +32,10 @@ function makeDatabase() {
           if (query.startsWith("DELETE FROM")) state.events.push("delete");
           if (query === "SHOW TABLES") return [[{ Tables_in_test: "users" }, { Tables_in_test: "backup_snapshots" }], []];
           if (query.startsWith("SELECT * FROM `users`")) return [[{ id: 7, name: "Aluno de teste" }], []];
-          if (query.startsWith("SELECT id, backup_type")) return [[], []];
+          if (query.startsWith("SELECT id, backup_type")) {
+            const snapshot = [...state.snapshots.values()].find((item) => item.schedule_bucket === values[0]);
+            return [snapshot ? [snapshot] : [], []];
+          }
           if (query.startsWith("SELECT * FROM backup_snapshots WHERE id")) {
             const snapshot = state.snapshots.get(String(values[0]));
             return [snapshot ? [snapshot] : [], []];
@@ -97,5 +100,17 @@ describe("backup e restauração de ponta a ponta sem banco real", () => {
     const firstDeletionIndex = state.events.indexOf("delete");
     expect(restorePointStorageIndex).toBeGreaterThanOrEqual(0);
     expect(restorePointStorageIndex).toBeLessThan(firstDeletionIndex);
+  });
+
+  it("reutiliza a cópia da mesma janela e acumula uma nova cópia na janela seguinte", async () => {
+    const first = await createBackup("full", { id: "backup_scheduled_100", scheduleBucket: "100" });
+    const repeated = await createBackup("full", { id: "backup_scheduled_100_retry", scheduleBucket: "100" });
+    const next = await createBackup("full", { id: "backup_scheduled_101", scheduleBucket: "101" });
+
+    expect(first.status).toBe("completed");
+    expect(repeated).toMatchObject({ id: "backup_scheduled_100", status: "completed" });
+    expect(next).toMatchObject({ id: "backup_scheduled_101", status: "completed" });
+    expect(state.snapshots.size).toBe(2);
+    expect(state.objects.size).toBe(2);
   });
 });
