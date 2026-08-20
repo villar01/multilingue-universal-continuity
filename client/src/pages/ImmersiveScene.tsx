@@ -142,10 +142,7 @@ function getSceneLocationDisclosure(scene: Scene): string {
 }
 
 function getSceneObjectGuidancePt(scene: Scene): string {
-  const greeting = scene.greetingPt.trim();
-  return /objetos?/i.test(greeting)
-    ? greeting
-    : `${greeting} Clique nos objetos para aprender.`;
+  return `Ative o acesso para praticar com os objetos de ${scene.name}.`;
 }
 
 type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
@@ -1773,7 +1770,7 @@ export default function ImmersiveScene() {
         targetLocale: scene.teacherLang,
         nativeLanguage: nativeLang || "pt-BR",
         sceneTitle: scene.nameEn,
-        sceneDescription: scene.teacherGreeting,
+        sceneDescription: activeSceneDialog.find((line) => line.speaker === "teacher")?.text || scene.nameEn,
         locationDisclosure: getSceneLocationDisclosure(scene),
         vocabulary: scene.hotspots.map((hotspot) => ({ label: hotspot.label, translation: hotspot.translation, example: hotspot.example })),
         studentMessage: question,

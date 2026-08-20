@@ -217,7 +217,7 @@ export default function SceneLesson({
         targetLanguage,
         nativeLanguage: profile.nativeCode || 'pt-BR',
         sceneId: selectedScene?.id || 'kitchen',
-        sceneDescription: sceneContent?.sceneDescription || selectedScene?.teacherGreeting || '',
+        sceneDescription: sceneContent?.sceneDescription || selectedScene?.nameEn || '',
         studentMessage: userMsg,
         history: newHistory.slice(-8).map(m => ({ role: m.role, content: m.content })),
       },

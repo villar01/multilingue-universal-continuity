@@ -21,4 +21,10 @@ describe("prévia segura da Cena Imersiva para visitantes", () => {
     expect(source).toContain('>Ativar acesso</button>');
     expect(source).toContain("window.location.href = getLoginUrl();");
   });
+
+  it("não mantém falas pedagógicas no catálogo de prévias enviado ao navegador", () => {
+    const catalog = readFileSync(resolve(process.cwd(), "client/src/lib/immersiveScenesCatalog.ts"), "utf8");
+    expect(catalog).not.toContain("teacherGreeting:");
+    expect(catalog).not.toContain("greetingPt:");
+  });
 });
