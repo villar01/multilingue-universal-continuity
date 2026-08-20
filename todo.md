@@ -252,11 +252,13 @@
 
 - [ ] Exigir segunda cópia utilizável do backup em máquina ou mídia independente sob supervisão do proprietário, com verificação separada para sobreviver à perda do notebook principal
 
+- [ ] Implementar painel privado de alertas de manutenção para exibir pendências críticas de backup, integridade, segurança, desempenho e suporte antes que afetem o serviço, sem notificações externas automáticas
+
 - [ ] Concluir o aplicativo com avanço acelerado e controlado: priorizar correções de maior impacto, aplicar uma por vez com regressão, validar e publicar marcos sem perder controles de segurança, desempenho ou continuidade
 
 - [x] Aplicar política de melhor opção técnica: implementar diretamente melhorias seguras e exigir aprovação explícita somente para gasto, publicação externa, preço, cobrança, contrato ou dado sensível — regra verificável em código, TypeScript e 844 testes aprovados
 
-- [ ] Restringir o CRM comercial e as métricas de conversão ao proprietário, impedindo que contas comuns leiam ou alterem contatos, propostas e atividades de vendas
+- [x] Restringir o CRM comercial e as métricas de conversão ao proprietário, impedindo que contas comuns leiam ou alterem contatos, propostas e atividades de vendas — proteção uniforme em todas as rotas, regressão dedicada, TypeScript e 852 testes aprovados
 - [ ] Confirmar visualmente na Cena publicada que James se move durante a apresentação ou resposta com áudio real, sem criar reserva sintética fora da fala
 - [ ] Confirmar visualmente a correção do caso reportado em que a faixa de James chega a 0:06 mas o clipe lateral não aparece
 - [x] Corrigir a promoção do clipe lateral aprovado de James no evento `audio.onplaying` mesmo se a marca pendente for limpa antes do áudio — correção restrita à Praia Tropical, com faixa masculina preservada. TypeScript sem erros e 811 testes aprovados
