@@ -263,6 +263,11 @@ const ResilientIANativa = () => (
     <IANativa />
   </ActivityRecoveryBoundary>
 );
+const ResilientAIMonitor = () => (
+  <ActivityRecoveryBoundary activityLabel="o monitor de IA">
+    <AIMonitor />
+  </ActivityRecoveryBoundary>
+);
 const ResilientLanguageDetect = () => (
   <ActivityRecoveryBoundary activityLabel="a detecção de idioma">
     <LanguageDetect />
@@ -383,7 +388,7 @@ function Router() {
         <Route path="/pronunciation-history" component={ResilientPronunciationHistory} />
         <Route path="/structured-lesson" component={ResilientStructuredLesson} />
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
-        <Route path="/ai-monitor" component={AIMonitor} />
+        <Route path="/ai-monitor" component={ResilientAIMonitor} />
         <Route path="/terms" component={TermsOfUse} />
         <Route path="/language-detect" component={ResilientLanguageDetect} />
         <Route path="/admin/updates" component={AdminUpdates} />
