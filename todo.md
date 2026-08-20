@@ -2095,3 +2095,5 @@
 - [x] Reconstruir o bloco de comparativos e superlativos do Livro SOS Português–Inglês: preservar -er/than–more/most–the + superlativo–prática com lacunas, corrigir naturalidade e explicação de formas curtas e longas, substituir fonetização hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha — cinco folhas novas, regressão dedicada, TypeScript e 831 testes aprovados
 
 - [x] Reconstruir o bloco de saudações, despedidas, dias, meses e estações do Livro SOS Português–Inglês: preservar registro comunicativo–sequência calendário–frases contextualizadas, substituir a coluna fonética hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha — cinco folhas novas, regressão dedicada, TypeScript e 832 testes aprovados
+
+- [ ] Reconstruir o bloco de phrasal verbs e idioms do Livro SOS Português–Inglês: preservar expressões fixas–verbos com call/get/look–frases e ilustrações contextualizadas, explicar significado pelo uso, substituir fonetização hispanizada por pt-BR e áudio nativo, e adicionar Pareto separado por folha

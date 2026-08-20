@@ -300,3 +300,15 @@ As duas páginas seguintes completam o arco de calendário iniciado pelos dias d
 Em seguida, o original apresenta as estações: **spring, summer, fall/autumn, winter**, e as expressões **seasons** e **the seasons of the year**. As frases-modelo são **This is a very hot summer** e **I will go to Mexico next winter**. Esse trecho confirma a ordem final do bloco: **dias da semana → meses → estações → frases contextualizadas**.
 
 No rodapé da página 136 começa o próximo capítulo, **Verbos compuestos (phrasal verbs) y Modismos (idioms)**. Portanto, o bloco imediato de saudações e calendário deve reunir **saudações e despedidas formais/informais → dias da semana → meses → estações**, com áudio nativo, ponte pt-BR, prática de registro comunicativo e Pareto separado. O capítulo de phrasal verbs/idioms deverá permanecer como bloco posterior, sem antecipar ou misturar as sequências.
+
+## Conferência visual direta — phrasal verbs e idioms (páginas 137 a 141 do livro)
+
+As páginas visuais seguintes confirmam que o novo capítulo é organizado em listas numeradas por blocos. O primeiro conjunto combina **expressões fixas e idioms** como **all of a sudden, as usual, at first, at last, at once, be over, be up, by heart, by oneself, by the way**. O original usa frases completas e depois um exercício com lacunas. Isso mostra que a reconstrução precisa preservar a ordem **expressão → frase-modelo → prática de preenchimento**, sem transformar o capítulo apenas em glossário solto.
+
+Na sequência, o segundo conjunto apresenta **phrasal verbs com call e get**: **call up, call on, call off, figure out, for good, get on, get off, get up, get along, get back, get over, get to, get better/worse, get sick/tired/wet, get in touch with, get rid of**. A conferência visual mostra também ilustrações e comandos para escrever a frase correta com base no desenho. Portanto, o próximo bloco deve preservar a ponte entre item lexical e uso observável.
+
+O terceiro conjunto visível começa com **had better**, **hang up**, **have time off**, **have a good time**, **keep on**, **leave out**, **lie down**, **little by little** e segue com o grupo **look at, look for, look out, look over**. Há sentidos múltiplos em alguns itens, como **hang up** e **look over**, que exigem explicação em pt-BR centrada em contexto, não tradução mecânica palavra por palavra.
+
+Também ficam confirmadas correções obrigatórias. Algumas frases do original soam duras ou pouco naturais se reproduzidas literalmente; por exemplo, a reconstrução deve preferir comandos naturais como **Hang up your coat** em vez de copiar formas estranhas sem validação contextual, e precisa distinguir quando um item é **idiom**, quando é **phrasal verb** e quando é **expressão fixa de tempo, modo ou comentário**, como **by the way** ou **at once**.
+
+Assim, o próximo bloco a reconstruir deve preservar a progressão **expressões fixas/idioms → phrasal verbs por verbo-base → ilustração e frase contextual → continuação com look/had better e afins**, sempre substituindo a fonetização hispanizada por mediação pt-BR com áudio nativo e mantendo Pareto separado por folha.
