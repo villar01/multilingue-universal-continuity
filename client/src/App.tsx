@@ -123,6 +123,11 @@ const ResilientWordGame = () => (
     <WordGame />
   </ActivityRecoveryBoundary>
 );
+const ResilientBattleMode = () => (
+  <ActivityRecoveryBoundary activityLabel="o modo batalha">
+    <BattleMode />
+  </ActivityRecoveryBoundary>
+);
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AIMonitor = lazy(() => import("./pages/AIMonitor"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -208,7 +213,7 @@ function Router() {
         <Route path="/subscription-plans" component={SubscriptionPlans} />
         <Route path="/achievements" component={Achievements} />
         <Route path="/lesson-history" component={LessonHistory} />
-        <Route path="/battle" component={BattleMode} />
+        <Route path="/battle" component={ResilientBattleMode} />
         <Route path="/certificates" component={Certificates} />
         <Route path="/pronunciation-history" component={PronunciationHistory} />
         <Route path="/structured-lesson" component={ResilientStructuredLesson} />
