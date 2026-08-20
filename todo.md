@@ -2029,3 +2029,11 @@
 - [ ] Usar somente alternativas gratuitas comprovadas para revisão independente até instrução explícita em contrário; não solicitar, configurar ou induzir cobrança de API, fundos ou assinatura
 
 - [ ] Inspecionar o GitHub por workflows ou serviços de IA inativos e ativar apenas aqueles que não exijam cobrança, tenham credenciais autorizadas e produzam evidência real de execução
+
+- [ ] Comparar e confirmar a sincronização entre a versão publicada do projeto e `github/main` antes de considerar o GitHub uma cópia externa atualizada; solicitar confirmação explícita antes de qualquer envio manual
+
+- [ ] Localizar e verificar o serviço de IA visto pelo titular dentro da conta GitHub, separado de repositórios e arquivos; identificar sua ativação, requisitos e eventual custo antes de qualquer uso
+
+- [ ] Definir e comprovar uma arquitetura de apoio externo para o MultiLingue: GitHub para continuidade e colaboração, Claude para revisão quando disponível e Ollama/Qwen local para processamento sem API; cada serviço deve ter função, teste e estado real registrados
+
+- [ ] Usar o GitHub Copilot Free confirmado na conta `villar01` em uma revisão externa de teste, sem upgrade de plano, sem alteração automática de código e com comparação obrigatória contra os testes e regras do projeto
