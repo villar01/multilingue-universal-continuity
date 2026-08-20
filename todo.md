@@ -2039,3 +2039,19 @@
 - [x] Usar o GitHub Copilot Free confirmado na conta `villar01` em uma revisão externa de teste, sem upgrade de plano, sem alteração automática de código e com comparação obrigatória contra os testes e regras do projeto — Copilot leu a estrutura, revisou o bloqueio curricular sem criar artefatos e a regressão local `curriculumAnonymousAccess` foi aprovada
 
 - [x] Auditar a rota pública de dicionário apontada pelo Copilot e comprovar por regressão que visitantes recebem somente definições isoladas, nunca lições, exercícios, progresso ou outro conteúdo curricular — os procedimentos `phrasalVerbs.search` e `phrasalVerbs.getById` foram protegidos por sessão; TypeScript e regressão de visitante aprovados
+
+- [x] Exibir retorno seguro e positivo na prática de phrasal verbs quando não houver sessão, evitando carregamento indefinido após a proteção do procedimento curricular — visitante recebe “Retome sua sessão de estudo” com entrada segura; TypeScript, regressões e captura visual aprovados
+
+- [ ] Reconstruir o Livro SOS conforme o original, folha por folha, e melhorar somente explicações, exemplos e exercícios que preservem integralmente o conhecimento, a ordem e as respostas-modelo; bloquear substituições até obter e comparar a referência detalhada
+
+- [ ] Após cada bloco fiel do Livro SOS original, incluir uma prática Pareto complementar com revisão espaçada, vocabulário de frequência e produção de frase, sem substituir nem modificar a estrutura, regras, exemplos ou respostas do livro-base
+
+- [ ] Manter a metodologia, a sequência e o texto-base do original na reconstrução do Livro SOS; aceitar sinônimos apenas como reforço pedagógico complementar de sentido equivalente, identificados fora da regra, frase-modelo, exercício e resposta do livro-base
+
+- [ ] Após validar o piloto Português–Inglês, replicar a arquitetura do Livro SOS para os 143 idiomas do catálogo, com gramática, ordem de frase, exemplos, sons e exercícios próprios de cada língua; nunca copiar a estrutura do português como regra universal
+
+- [ ] Adaptar a pronúncia de cada bloco do Livro SOS ao idioma nativo do aluno, com explicação por sons familiares e áudio regional; manter IPA apenas como referência técnica opcional, sem impor a notação difícil do original como método de ensino
+
+- [ ] Usar o GitHub Copilot Free como revisão externa somente de leitura para propor melhorias na arquitetura de animações docentes e na matriz de replicação do Livro SOS para 143 idiomas; nenhuma mídia, código ou tradução poderá ser aplicada automaticamente sem testes e revisão humana
+
+- [ ] Catalogar e corrigir, página por página, erros do original do Livro SOS em tradução, gramática, instrução, exemplo, exercício, resposta e fonética; preservar a sequência metodológica, mas registrar cada correção como melhoria verificável

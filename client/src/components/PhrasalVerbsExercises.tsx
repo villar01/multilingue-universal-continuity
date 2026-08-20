@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Target } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { getLoginUrl } from "@/const";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
 type ExerciseType = "multiple_choice" | "fill_blank" | "matching";
@@ -25,6 +27,7 @@ interface Exercise {
 }
 
 export default function PhrasalVerbsExercises() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -32,14 +35,20 @@ export default function PhrasalVerbsExercises() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: phrasalVerbs } = trpc.phrasalVerbs.search.useQuery({});
+  const phrasalVerbsQuery = trpc.phrasalVerbs.search.useQuery(
+    {},
+    { enabled: isAuthenticated && !authLoading, retry: false },
+  );
+  const { data: phrasalVerbs } = phrasalVerbsQuery;
 
   useEffect(() => {
     if (phrasalVerbs && (phrasalVerbs as unknown as any[]).length > 0) {
       generateExercises(phrasalVerbs as unknown as any[]);
       setIsLoading(false);
+    } else if (!authLoading && isAuthenticated && phrasalVerbsQuery.isFetched) {
+      setIsLoading(false);
     }
-  }, [phrasalVerbs]);
+  }, [authLoading, isAuthenticated, phrasalVerbs, phrasalVerbsQuery.isFetched]);
 
   const generateExercises = (pvList: any[]) => {
     const generated: Exercise[] = [];
@@ -135,12 +144,65 @@ export default function PhrasalVerbsExercises() {
     }
   };
 
-  if (isLoading || exercises.length === 0) {
+  if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading exercises...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center px-5">
+        <div className="max-w-md text-center">
+          <Target className="mx-auto mb-4 h-12 w-12 text-purple-600" aria-hidden="true" />
+          <h2 className="text-2xl font-bold text-slate-900">Entre para praticar phrasal verbs</h2>
+          <p className="mt-2 text-slate-600">Sua prática, respostas e progresso são liberados na sua sessão de estudo protegida.</p>
+          <Button className="mt-6" onClick={() => { window.location.href = getLoginUrl(); }}>
+            Criar conta ou entrar
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (phrasalVerbsQuery.isError) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center px-5">
+        <div className="max-w-md text-center">
+          <Target className="mx-auto mb-4 h-12 w-12 text-purple-600" aria-hidden="true" />
+          <h2 className="text-2xl font-bold text-slate-900">Retome sua sessão de estudo</h2>
+          <p className="mt-2 text-slate-600">Entre novamente para abrir sua prática de phrasal verbs com segurança.</p>
+          <Button className="mt-6" onClick={() => { window.location.href = getLoginUrl(); }}>
+            Entrar para continuar
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Preparando exercícios...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (exercises.length === 0) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center px-5">
+        <div className="max-w-md text-center">
+          <Target className="mx-auto mb-4 h-12 w-12 text-purple-600" aria-hidden="true" />
+          <h2 className="text-2xl font-bold text-slate-900">Prática em preparação</h2>
+          <p className="mt-2 text-slate-600">Escolha outra trilha de estudo enquanto novos exercícios são organizados para esta prática.</p>
         </div>
       </div>
     );
