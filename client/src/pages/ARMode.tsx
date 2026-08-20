@@ -18,6 +18,7 @@ import {
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { ACTIVE_LANGUAGE_COUNT, TOTAL_LANGUAGES } from "@/lib/languages";
+import { IMMERSIVE_SCENE_COUNT } from "@/lib/immersiveSceneStats";
 
 const ARVocabulary = lazy(() => import("@/components/ARVocabulary"));
 const CameraTranslator = lazy(() => import("@/components/CameraTranslator"));
@@ -152,7 +153,7 @@ const MODES = [
     glow: "shadow-fuchsia-900/50",
     isExternal: true,
     href: "/immersive-scene",
-    stats: ["6 cenas", "Paris · Tokyo · NY", "Professor animado", ACTIVE_LANGUAGE_LABEL],
+    stats: [`${IMMERSIVE_SCENE_COUNT} cenas no catálogo`, "Paris · Tokyo · NY", "Professor animado", ACTIVE_LANGUAGE_LABEL],
   },
   {
     id: "ar-vocab",
