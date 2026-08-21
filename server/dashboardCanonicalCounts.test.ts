@@ -5,10 +5,11 @@ import { resolve } from 'node:path';
 const source = readFileSync(resolve(import.meta.dirname, '../client/src/pages/DashboardReal.tsx'), 'utf8');
 
 describe('contagens canônicas do painel principal', () => {
-  it('comunica 143 idiomas no catálogo e 58 ativos sem repetir números contraditórios', () => {
-    expect(source).toContain('143 idiomas');
-    expect(source).toContain('58 idiomas ativos agora');
-    expect(source).toContain('85 idiomas em preparação');
+  it('comunica o catálogo canônico de 143 idiomas e as seis trilhas comerciais iniciais', () => {
+    expect(source).toContain('TOTAL_LANGUAGES');
+    expect(source).toContain('seis trilhas comerciais iniciais');
+    expect(source).toContain('6 trilhas comerciais iniciais');
+    expect(source).not.toContain('58 idiomas ativos agora');
     expect(source).not.toContain('69 idiomas');
     expect(source).not.toContain('200 lições');
   });

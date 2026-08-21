@@ -126,6 +126,9 @@ const LEGACY_LEVEL_TO_CEFR: Record<string, CourseLevel> = {
   negocios_tecnologia: "B2",
 };
 
+// Mantido como referência canônica de capacidade técnica; o painel comercial não o usa como promessa de currículo ativo.
+void ACTIVE_LANGUAGE_COUNT;
+
 function resolveStoredCefrLevel(value: string | null): CourseLevel {
   if (value && LEVEL_OPTIONS.some(level => level.id === value)) return value as CourseLevel;
   return LEGACY_LEVEL_TO_CEFR[value || ""] || "A1";
@@ -384,12 +387,13 @@ export default function DashboardReal() {
                     <div className="flex-1">
                       <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita — 10 Lições</h3>
                       <p className="text-gray-700 mb-4">
-                        Desbloqueie o catálogo de <strong>143 idiomas</strong>, com <strong>58 idiomas ativos agora</strong> e
-                        85 idiomas em preparação, além de recursos premium.
+                        Comece pelas seis trilhas comerciais iniciais — português, inglês, espanhol, francês, italiano e alemão — dentro do catálogo de <strong>{TOTAL_LANGUAGES} idiomas</strong>.
+                        O inglês A1 é o piloto curricular disponível nesta etapa.
                       </p>
                       <div className="flex flex-wrap gap-2 mb-4">
                         <Badge variant="secondary" className="bg-white">✅ Conteúdo curricular em expansão</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ 58 idiomas ativos agora</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ 6 trilhas comerciais iniciais</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Inglês A1 como piloto curricular</Badge>
                         <Badge variant="secondary" className="bg-white">✅ Progressão A1–C2</Badge>
                       </div>
                       <div className="mb-4 rounded-lg border border-amber-200 bg-white/70 p-3">
@@ -413,7 +417,7 @@ export default function DashboardReal() {
                   Selecione seu Idioma
                 </CardTitle>
                 <CardDescription>
-                  {isPremium ? "58 idiomas ativos agora" : "1 idioma na versão gratuita"}
+                  {isPremium ? "Trilhas comerciais iniciais e catálogo de idiomas" : "1 idioma na versão gratuita"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -445,7 +449,7 @@ export default function DashboardReal() {
                     {!isPremium && (
                       <div className="p-4 rounded-lg border-2 border-gray-200 bg-gray-50 flex flex-col items-center justify-center">
                         <Lock className="h-8 w-8 text-gray-400 mb-2" />
-                        <div className="text-xs text-gray-500 text-center">+{ACTIVE_LANGUAGE_COUNT} idiomas ativos · {TOTAL_LANGUAGES} no catálogo</div>
+                        <div className="text-xs text-gray-500 text-center">Idiomas adicionais em preparação · {TOTAL_LANGUAGES} no catálogo</div>
                       </div>
                     )}
                   </div>
