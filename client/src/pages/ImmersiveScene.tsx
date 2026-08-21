@@ -13,6 +13,7 @@ import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
+import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -140,10 +141,8 @@ function getSceneLocationDisclosure(scene: Scene): string {
     || `This is a generic educational illustration called ${scene.nameEn}; it is not assigned to a real country or city.`;
 }
 
-function getSceneObjectGuidancePt(scene: Scene, hasAuthorizedMaterial: boolean): string {
-  return hasAuthorizedMaterial
-    ? `Explore os objetos de ${scene.name} e pratique com o professor.`
-    : `Ative o acesso para praticar com os objetos de ${scene.name}.`;
+function getSceneObjectGuidancePt(scene: Scene): string {
+  return `Ative o acesso para praticar com os objetos de ${scene.name}.`;
 }
 
 type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
@@ -486,7 +485,7 @@ function VocabCard({
           <div>
             {/* Show the word in the target language (what student is learning) */}
             <div className="text-white font-bold" style={{ fontSize: "clamp(14px, 1.8vw, 18px)" }}>
-              {hotspot.label}
+              {getHotspotLabel(hotspot.id, hotspot.label, langCode.split("-")[0].toLowerCase())}
             </div>
             {/* Show native language translation below */}
             <div style={{ color: hotspot.color, fontSize: "clamp(10px, 1.2vw, 13px)" }}>
@@ -520,7 +519,7 @@ function VocabCard({
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-xs font-semibold active:scale-95 transition-transform"
             style={{ background: hotspot.color }}
           >
-            🔊 {hotspot.label}
+            🔊 {getHotspotLabel(hotspot.id, hotspot.label, langCode)}
           </button>
         </div>
 
@@ -866,16 +865,8 @@ export default function ImmersiveScene() {
     staleTime: 1000 * 60 * 30,
     retry: false,
   });
-  const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog ?? [];
-  const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots ?? [];
-  const activeTeachingScene = useMemo<Scene | null>(() => {
-    if (!teachingScene) return null;
-    return {
-      ...teachingScene,
-      dialog: activeSceneDialog,
-      hotspots: activeSceneHotspots,
-    };
-  }, [activeSceneDialog, activeSceneHotspots, teachingScene]);
+  const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
+  const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
   const selectedSceneRequiresProtectedMaterial = selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "airport_family" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "family_home" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain";
   const sceneMaterialAccessFailed = Boolean(
     selectedSceneRequiresProtectedMaterial
@@ -892,9 +883,6 @@ export default function ImmersiveScene() {
   const sceneMaterialRequiresLogin = Boolean(selectedSceneRequiresProtectedMaterial && !isAuthenticated);
   const sceneMaterialNeedsAccess = sceneMaterialRequiresLogin || sceneMaterialAccessFailed;
   const sceneMaterialActionLabel = isAuthenticated ? "Atualizar cena" : "Ativar acesso";
-  const hasAuthorizedSceneMaterial = Boolean(
-    isAuthenticated && activeSceneDialog.length > 0 && !sceneMaterialNeedsAccess,
-  );
 
   useEffect(() => {
     if (!isAuthenticated || !selectedScene || !isInitialCommercialTargetLanguage(targetLang)) return;
@@ -1474,10 +1462,7 @@ export default function ImmersiveScene() {
   const [notebookCount, setNotebookCount] = useState(() => loadNotebook().length);
   // Pareto Panel state
   const [paretoOpen, setParetoOpen] = useState(false);
-  useEffect(() => {
-    if (!hasAuthorizedSceneMaterial) setParetoOpen(false);
-  }, [hasAuthorizedSceneMaterial]);
-  const quizHotspots = activeSceneHotspots;
+  const quizHotspots = selectedScene?.hotspots || [];
   const quizQuestion = quizHotspots.length ? quizHotspots[quizIndex % quizHotspots.length] : null;
   const quizOptions = quizQuestion
     ? [quizQuestion.translation, ...quizHotspots
@@ -1635,7 +1620,7 @@ export default function ImmersiveScene() {
     setLearnedWords(new Set());
     setQuizIndex(0);
     setQuizFeedback(null);
-    setGreetingText(getSceneObjectGuidancePt(selectedScene, hasAuthorizedSceneMaterial));
+    setGreetingText(getSceneObjectGuidancePt(selectedScene));
     setShowGreeting(true);
     if (greetingTimerRef.current) clearTimeout(greetingTimerRef.current);
     greetingTimerRef.current = setTimeout(() => setShowGreeting(false), 6000);
@@ -1648,10 +1633,10 @@ export default function ImmersiveScene() {
       dlgRecordingStreamRef.current?.getTracks().forEach((track) => track.stop());
       dlgRecordingStreamRef.current = null;
     };
-  }, [hasAuthorizedSceneMaterial, selectedScene?.id, stopTeacherAudio]);
+  }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
-    const dialogueScene = activeTeachingScene ?? scene;
+    const dialogueScene = teachingScene ?? scene;
     // O cartão de objeto não pode ficar sobre o diálogo nem manter seu áudio
     // ativo quando o aluno inicia a fala principal do professor.
     setActiveHotspot(null);
@@ -1695,7 +1680,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, activeTeachingScene, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio]);
+  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1708,7 +1693,7 @@ export default function ImmersiveScene() {
   }, [dialogSpeechRate, dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
   const dlgNext = useCallback(() => {
     if (!selectedScene) return;
-    const dialogueScene = activeTeachingScene ?? selectedScene;
+    const dialogueScene = teachingScene ?? selectedScene;
     const next = dlgStep + 1;
     if (next >= activeSceneDialog.length) {
       activeDialogLineRef.current = null;
@@ -1734,10 +1719,10 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, activeTeachingScene, dlgStep, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
+  }, [activeSceneDialog, dlgStep, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
 
   const askImmersiveTutor = useCallback(async (answer: string) => {
-    const scene = activeTeachingScene ?? selectedScene;
+    const scene = teachingScene ?? selectedScene;
     const question = answer.trim();
     if (!scene || !question) return;
     const requestId = ++dlgTutorRequestRef.current;
@@ -1819,10 +1804,10 @@ export default function ImmersiveScene() {
       window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
     }
-  }, [activeTeachingScene, currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
+  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
-    const scene = activeTeachingScene ?? selectedScene;
+    const scene = teachingScene ?? selectedScene;
     if (!scene) return;
     const line = activeSceneDialog[dlgStep];
     if (!line) return;
@@ -1864,7 +1849,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [activeSceneDialog, activeTeachingScene, askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene]);
+  }, [activeSceneDialog, askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene, teachingScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
@@ -1881,7 +1866,7 @@ export default function ImmersiveScene() {
   }, [askImmersiveTutor, dlgWrittenAnswer]);
 
   const replayTeacherSpeechFromGesture = useCallback(() => {
-    const scene = activeTeachingScene ?? selectedScene;
+    const scene = teachingScene ?? selectedScene;
     if (!scene) return;
     const lineText = activeSceneDialog[dlgStep]?.text || "";
     const phrase = (dlgTutorSpokenText || activeSpeechText || lineText).trim();
@@ -1913,7 +1898,7 @@ export default function ImmersiveScene() {
     if (scene.id === "beach" && scene.teacherName === "James") {
       playJamesTropicalClip("james-tropical-greeting");
     }
-  }, [activeSceneDialog, activeSpeechText, activeTeachingScene, dialogAudioSource, dlgStep, dlgTutorSpokenText, playJamesTropicalClip, playLocalDialogFallback, primeDialogAudioFromGesture, replayVisibleDialogAudio, requestSpeechSafely, selectedScene, stopTeacherAudio]);
+  }, [activeSceneDialog, activeSpeechText, dialogAudioSource, dlgStep, dlgTutorSpokenText, playJamesTropicalClip, playLocalDialogFallback, primeDialogAudioFromGesture, replayVisibleDialogAudio, requestSpeechSafely, selectedScene, stopTeacherAudio, teachingScene]);
 
   const stopDialogRecording = useCallback(() => {
     if (dlgRecorderRef.current?.state === "recording") {
@@ -2461,16 +2446,14 @@ export default function ImmersiveScene() {
                 />
               </div>
               <NotebookButton onClick={() => setNotebookOpen(true)} count={notebookCount} />
-              {hasAuthorizedSceneMaterial && (
-                <button
-                  onClick={() => setParetoOpen(true)}
-                  className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
-                  style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
-                  title="Vocabulário Pareto 1000+"
-                >
-                  📚 Pareto
-                </button>
-              )}
+              <button
+                onClick={() => setParetoOpen(true)}
+                className="flex items-center gap-1 text-white font-semibold px-3 py-1.5 rounded-full text-xs"
+                style={{ background: "rgba(20,184,166,0.25)", backdropFilter: "blur(8px)", border: "1px solid rgba(20,184,166,0.6)" }}
+                title="Vocabulário Pareto 1000+"
+              >
+                📚 Pareto
+              </button>
               <div
                 className="flex items-center gap-1 text-yellow-400 font-bold px-3 py-1.5 rounded-full"
                 style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
@@ -2498,7 +2481,7 @@ export default function ImmersiveScene() {
         {!immersionMode && isAuthenticated && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
 
         {/* AR Hotspots */}
-        {hasAuthorizedSceneMaterial && activeSceneHotspots.map((hotspot) => {
+        {isAuthenticated && activeSceneHotspots.map((hotspot) => {
           const learned = learnedWords.has(hotspot.id);
           return (
             <div
@@ -2564,7 +2547,7 @@ export default function ImmersiveScene() {
         })}
 
         {/* Vocabulary Card */}
-        {hasAuthorizedSceneMaterial && activeHotspot && (
+        {isAuthenticated && activeHotspot && (
           <div
             style={{ animation: "vocab-slide-in 0.25s ease-out" }}
             onClick={(e) => e.stopPropagation()}
@@ -2602,7 +2585,7 @@ export default function ImmersiveScene() {
           </div>
         )}
 
-        {hasAuthorizedSceneMaterial && practiceHotspot && (
+        {isAuthenticated && practiceHotspot && (
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
@@ -2611,7 +2594,7 @@ export default function ImmersiveScene() {
           />
         )}
 
-        {hasAuthorizedSceneMaterial && quizOpen && quizQuestion && (
+        {isAuthenticated && quizOpen && quizQuestion && (
           <div
             className="absolute left-1/2 top-1/2 z-40 w-[min(92vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border p-5 shadow-2xl"
             style={{ background: "rgba(15,23,42,.95)", borderColor: "rgba(129,140,248,.65)", backdropFilter: "blur(18px)" }}
@@ -2663,7 +2646,7 @@ export default function ImmersiveScene() {
             {quizFeedback && (
               <div className={`mt-4 rounded-xl border p-3 ${quizFeedback === "correct" ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-100" : "border-amber-300/40 bg-amber-300/10 text-amber-100"}`}>
                 <p className="text-sm font-bold">
-                  {quizFeedback === "correct" ? `Correto! “${quizQuestion.label}” é ${quizQuestion.translation}.` : `Quase. A estrela escondia “${quizQuestion.label}”.`}
+                  {quizFeedback === "correct" ? `Correto! “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}” é ${quizQuestion.translation}.` : `Quase. A estrela escondia “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}”.`}
                 </p>
                 <p className="mt-1 text-sm">Diga a palavra, escreva uma frase e fixe o vocabulário no Pareto.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -2682,11 +2665,11 @@ export default function ImmersiveScene() {
         {/* Teacher */}
         <TeacherAvatar
           scene={teachingScene ?? selectedScene!}
-          greeting={hasAuthorizedSceneMaterial ? greetingText : ""}
-          showGreeting={hasAuthorizedSceneMaterial && showGreeting}
-          isSpeaking={hasAuthorizedSceneMaterial && isSpeaking}
-          isPreparingAudio={hasAuthorizedSceneMaterial && isPreparingNeuralAudio}
-          spokenText={hasAuthorizedSceneMaterial ? activeSpeechText || greetingText : ""}
+          greeting={isAuthenticated ? greetingText : ""}
+          showGreeting={isAuthenticated && showGreeting}
+          isSpeaking={isAuthenticated && isSpeaking}
+          isPreparingAudio={isAuthenticated && isPreparingNeuralAudio}
+          spokenText={isAuthenticated ? activeSpeechText || greetingText : ""}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
@@ -3224,7 +3207,7 @@ export default function ImmersiveScene() {
         />
         {/* Pareto Vocabulary Panel */}
         <ParetoPanel
-          isOpen={hasAuthorizedSceneMaterial && paretoOpen}
+          isOpen={paretoOpen}
           onClose={() => setParetoOpen(false)}
           targetLang={targetLang || "en-US"}
           targetLangName={currentLangInfo.name || "English"}
@@ -3430,7 +3413,7 @@ export default function ImmersiveScene() {
                     className="px-1.5 py-0.5 rounded-full text-white"
                     style={{ background: `${h.color}44`, border: `1px solid ${h.color}66`, fontSize: "clamp(8px, 1vw, 11px)" }}
                   >
-                    {h.icon} {h.label}
+                    {h.icon} {getHotspotLabel(h.id, h.label, targetLang || "en-US")}
                   </span>
                 ))}
                 {scene.hotspots.length > 4 && (

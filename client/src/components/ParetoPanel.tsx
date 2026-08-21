@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { X, BookOpen, Volume2, Search, Star, ChevronLeft, ChevronRight, BookMarked } from "lucide-react";
 import type { ParetoWord } from "@/lib/curriculum-types";
+import { HOTSPOT_TRANSLATIONS } from "@/lib/hotspot-translations";
 import { trpc } from "@/lib/trpc";
 import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import type { CEFRLevel } from "@/lib/lesson-levels";
