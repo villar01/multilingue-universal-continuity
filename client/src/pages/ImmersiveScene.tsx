@@ -320,14 +320,9 @@ function TeacherAvatar({
         style={{
           position: "relative",
           width: "100%",
-          // Animação de presença: respiração suave em repouso, balanceio natural ao falar.
-          animation: isSpeaking
-            ? "teacher-float 3.2s ease-in-out infinite"
-            : "teacher-breathe 4s ease-in-out infinite",
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
             : "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",
-          transformOrigin: "bottom center",
           transition: "filter 0.3s ease",
         }}
       >
@@ -2133,24 +2128,23 @@ export default function ImmersiveScene() {
       >
         {/* CSS Animations */}
         <style>{`
-          /* ── Professor breathing (idle) ── */
-          @keyframes teacher-breathe {
-            0%,100% { transform: scaleY(1) translateY(0); }
-            50% { transform: scaleY(1.018) translateY(-4px); }
-          }
-          /* ── Natural head sway (gentle side-to-side) ── */
-          @keyframes head-sway {
-            0%,100% { transform: rotate(0deg) translateY(0); }
-            25% { transform: rotate(-1.5deg) translateY(-2px); }
-            50% { transform: rotate(0deg) translateY(-3px); }
-            75% { transform: rotate(1.5deg) translateY(-2px); }
-          }
-          /* ── Gentle float while speaking (no rotation to avoid shake) ── */
-          @keyframes teacher-float {
-            0%,100% { transform: translateY(0) translateX(0); }
-            33% { transform: translateY(-5px) translateX(1px); }
-            66% { transform: translateY(-3px) translateX(-1px); }
-          }
+         /* ── Professor breathing (idle) ── */
+         @keyframes teacher-breathe {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.97; }
+         }
+         /* ── Natural head sway (gentle side-to-side) ── */
+         @keyframes head-sway {
+           0%,100% { transform: rotate(0deg) translateY(0); }
+           25% { transform: rotate(-1.5deg) translateY(-2px); }
+           50% { transform: rotate(0deg) translateY(-3px); }
+           75% { transform: rotate(1.5deg) translateY(-2px); }
+         }
+         /* ── Gentle float while speaking (no rotation to avoid shake) ── */
+         @keyframes teacher-float {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.98; }
+         }
           /* ── Eye blink (natural every 3-5 seconds) ── */
           @keyframes eye-blink {
             0%, 92%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0; }
