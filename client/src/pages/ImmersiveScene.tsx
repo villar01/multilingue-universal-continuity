@@ -322,7 +322,7 @@ function TeacherAvatar({
           width: "100%",
           // Animação de presença: respiração suave em repouso, balanceio natural ao falar.
           animation: isSpeaking
-            ? "head-sway 2.8s ease-in-out infinite"
+            ? "teacher-float 3.2s ease-in-out infinite"
             : "teacher-breathe 4s ease-in-out infinite",
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
@@ -2144,6 +2144,12 @@ export default function ImmersiveScene() {
             25% { transform: rotate(-1.5deg) translateY(-2px); }
             50% { transform: rotate(0deg) translateY(-3px); }
             75% { transform: rotate(1.5deg) translateY(-2px); }
+          }
+          /* ── Gentle float while speaking (no rotation to avoid shake) ── */
+          @keyframes teacher-float {
+            0%,100% { transform: translateY(0) translateX(0); }
+            33% { transform: translateY(-5px) translateX(1px); }
+            66% { transform: translateY(-3px) translateX(-1px); }
           }
           /* ── Eye blink (natural every 3-5 seconds) ── */
           @keyframes eye-blink {
