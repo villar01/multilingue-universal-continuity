@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 
 const chatbot = readFileSync(resolve(process.cwd(), "client/src/components/AIChatbot.tsx"), "utf8");
 const lesson = readFileSync(resolve(process.cwd(), "client/src/pages/Lesson.tsx"), "utf8");
+const routers = readFileSync(resolve(process.cwd(), "server/routers.ts"), "utf8");
 
 describe("contrato do chatbot da lição", () => {
   it("usa o perfil de idioma selecionado e CEFR recebido, sem valores fixos", () => {
@@ -33,5 +34,7 @@ describe("contrato do chatbot da lição", () => {
     expect(lesson).toContain("teacherGender={teacherVoice.gender}");
     expect(chatbot).toContain("teacherId,");
     expect(chatbot).toContain("speakNaturalVoice(text, targetLanguage, { rate: 0.9, gender: teacherGender })");
+    expect(routers).toContain("teacherId: z.number().int().positive().optional()");
+    expect(routers).toContain("resolveConversationTeacherName(ctx.user.id, input.teacherId)");
   });
 });
