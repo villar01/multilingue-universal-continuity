@@ -320,9 +320,10 @@ function TeacherAvatar({
         style={{
           position: "relative",
           width: "100%",
-          // A foto permanece estável até existir um motor facial guiado por áudio.
-          // Não simulamos gestos ou tremores como se fossem fala natural.
-          animation: "none",
+          // Animação de presença: respiração suave em repouso, balanceio natural ao falar.
+          animation: isSpeaking
+            ? "head-sway 2.8s ease-in-out infinite"
+            : "teacher-breathe 4s ease-in-out infinite",
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
             : "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",

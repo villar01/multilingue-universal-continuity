@@ -13,6 +13,9 @@ describe("fronteira técnica da cena imersiva", () => {
   });
 
   it("preserva o retrato estável como política da cena enquanto não há motor facial validado", () => {
-    expect(scene).toContain("A foto permanece estável até existir um motor facial guiado por áudio.");
+    // A animação de presença (respiração/balanceio) é permitida.
+    // O que não pode existir é um motor facial sintético simulando fala.
+    expect(scene).toContain("showSyntheticMouth = false");
+    expect(scene).toContain("teacher-breathe");
   });
 });

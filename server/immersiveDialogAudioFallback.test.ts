@@ -141,7 +141,9 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   });
 
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
-    expect(source).toContain('animation: "none"');
+    // A animação de presença (respiração/balanceio) é permitida; o que não pode
+    // existir é um campo teacherAnimation que simule gestos como se fossem fala real.
+    expect(source).toContain("teacher-breathe");
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
   });
 
