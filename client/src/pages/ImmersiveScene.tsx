@@ -762,13 +762,13 @@ export default function ImmersiveScene() {
   const effectiveSpeakLang = (_scene: { teacherLang: string }) => targetLang || "en-US";
   const sceneTeacherResolution = useMemo(
     () => selectedScene
-      ? resolveSceneTeacherForTarget(selectedScene, targetLang)
+      ? resolveSceneTeacherForTarget(selectedScene, targetLang, profile.nativeCode)
       : { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true },
-    [selectedScene, targetLang],
+    [profile.nativeCode, selectedScene, targetLang],
   );
   const compatibleSceneTeachers = useMemo(
-    () => sceneTeacherResolution.materialIsInTargetLanguage ? getTargetLanguageTeachers(targetLang) : [],
-    [sceneTeacherResolution.materialIsInTargetLanguage, targetLang],
+    () => sceneTeacherResolution.materialIsInTargetLanguage && !sceneTeacherResolution.lockedToLanguagePair ? getTargetLanguageTeachers(targetLang) : [],
+    [sceneTeacherResolution.lockedToLanguagePair, sceneTeacherResolution.materialIsInTargetLanguage, targetLang],
   );
   const selectedSceneTeacher = compatibleSceneTeachers.find((teacher) => teacher.id === selectedSceneTeacherId) || null;
   const activeSceneTeacher = selectedSceneTeacher || sceneTeacherResolution.teacher;
@@ -2684,8 +2684,8 @@ export default function ImmersiveScene() {
           spokenText={canUseAuthorizedSceneInteractions ? activeSpeechText || greetingText : ""}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
-          overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
-          overrideImage={selectedScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}
+          overrideName={teachingScene?.teacherName === "James" ? "James" : undefined}
+          overrideImage={teachingScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}
           onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}
           onExactClipPlaying={() => {
             setIsPreparingNeuralAudio(false);
@@ -2726,7 +2726,7 @@ export default function ImmersiveScene() {
           controls={false}
           preload="auto"
           className="sr-only"
-          aria-label={`Áudio da fala em ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
+          aria-label={`Áudio da fala em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`}
         />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
@@ -2740,7 +2740,7 @@ export default function ImmersiveScene() {
                 setShowGreeting(true);
                 return;
               }
-              startDialog(selectedScene);
+              startDialog(teachingScene ?? selectedScene);
             }}
             className="immersive-start-dialog absolute z-[80] flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full"
             style={{
@@ -2751,7 +2751,7 @@ export default function ImmersiveScene() {
             }}
           >
             {isAuthenticated
-              ? immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`
+              ? immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${(teachingScene ?? selectedScene).teacherName}`
               : "Ativar acesso para iniciar"}
           </button>
         )}

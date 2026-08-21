@@ -6,6 +6,7 @@
  */
 import { Request, Response } from "express";
 import { invokeLLM } from "../_core/llm";
+import { sdk } from "../_core/sdk";
 import { getDb } from "../db";
 
 const CATEGORIES = [
@@ -23,6 +24,12 @@ const SCENES = [
 
 export async function handleVocabExpand(req: Request, res: Response) {
   try {
+    const user = await sdk.authenticateRequest(req);
+    if (!user.isCron || !user.taskUid) {
+      res.status(403).json({ error: "cron-only" });
+      return;
+    }
+
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
     // Verificar se já rodou hoje

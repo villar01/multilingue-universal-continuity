@@ -11,8 +11,8 @@ describe("James motion promotion in immersive scenes", () => {
     expect(sceneSource).toContain("showPilotClip && activeClip?.videoUrl");
     expect(sceneSource).not.toContain("JAMES_NEUTRAL_MOTION_URL");
     expect(sceneSource).not.toContain("showNeutralJamesMotion");
-    expect(sceneSource).toContain('overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}');
-    expect(sceneSource).toContain('overrideImage={selectedScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}');
+    expect(sceneSource).toContain('overrideName={teachingScene?.teacherName === "James" ? "James" : undefined}');
+    expect(sceneSource).toContain('overrideImage={teachingScene?.teacherName === "James" ? JAMES_CANONICAL_PORTRAIT_URL : undefined}');
   });
 
   it("preserves the no-synthetic-mouth contract while visual motion is active", () => {

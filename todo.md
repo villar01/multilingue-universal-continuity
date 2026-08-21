@@ -475,6 +475,18 @@
 - [x] Exigir sessão nas mutações legadas de TTS e lip-sync ainda expostas por `routers-tts.ts`, mantendo públicas somente consultas estáticas de idioma e sotaque — síntese, geração de lip-sync, phonemas, frames e melhoria agora exigem sessão; TypeScript e 356 arquivos/896 testes aprovados
 - [x] Bloquear as mutações públicas legadas de semeadura de conteúdo, conquistas e professores, exigindo proprietário autenticado antes de alterar o banco ou executar scripts — quatro semeaduras agora usam `adminProcedure`; TypeScript e 357 arquivos/897 testes aprovados
 - [x] Exigir sessão para aplicação de código de indicação, impedindo que visitantes recebam resultado de recompensa sem conta autenticada — `applyReferral` agora usa procedimento protegido; TypeScript e 358 arquivos/898 testes aprovados
+- [ ] Corrigir em lote a seleção docente das 29 cenas para Português–Inglês, permitindo somente James ou professora de inglês compatível
+- [ ] Preservar em cada uma das 29 cenas o par exato professor–retrato–voz–gravação, bloqueando qualquer substituição aleatória no percurso Português–Inglês
+- [x] Distribuir 14 cenas de Português–Inglês para James e 15 para Ingrid — matriz fixa validada em todas as 29 prévias; retrato, idioma e rótulos usam o professor ativo
+- [ ] Preservar sem alteração as duas animações já validadas de James durante a correção em lote das 29 cenas
+- [ ] Replicar às outras 27 cenas o padrão aprovado das duas cenas concluídas, sem trocar professor, retrato, áudio ou animação entre pares incompatíveis
+- [ ] Garantir animação compatível do professor correto em todas as 29 cenas de Português–Inglês, sem reutilizar mídia de outro professor
+- [ ] Vincular as leituras de frases das 29 cenas à voz e à animação do professor correto, com James em 14 cenas e Ingrid em 15
+- [ ] Replicar nas outras 27 cenas Livro SOS, perguntas e respostas, Pareto, quiz, diálogo, leitura de frases, áudio e animação das duas cenas aprovadas
+- [ ] Congelar e preservar integralmente as duas cenas já concluídas durante a replicação do lote para as outras 27
+- [x] Substituir todos os rótulos e ações residuais do professor original pelo professor ativo da matriz, evitando botões como “Yuki” quando Ingrid estiver em cena — botão, diálogo, avatar e rótulo de áudio de Tóquio agora exibem Ingrid; regressão e verificação visual aprovadas
+- [ ] Replicar a regra docente validada das 29 cenas para os demais pares de idiomas, sem misturar professores de idiomas não selecionados
+- [ ] Exigir autenticação cron na expansão programada de vocabulário, impedindo chamadas públicas que acionem LLM e inserções no banco
 - [x] Streaming de respostas LLM palavra por palavra — useStreamingText integrado em LiveLessonTeacher
 - [x] Comprimir prompts para reduzir tokens — promptCompression.ts (client+server) integrado em aiProvider.ts generateAI
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)

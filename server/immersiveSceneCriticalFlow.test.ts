@@ -18,7 +18,7 @@ describe("contrato crítico da cena imersiva", () => {
     expect(sceneSource).toContain("if (!isAuthenticated) {");
     expect(sceneSource).toContain("setDialogAuthRequired(true);");
     expect(sceneSource).toContain("Ative o acesso protegido para iniciar o diálogo desta cena.");
-    expect(sceneSource).toContain("startDialog(selectedScene);");
+    expect(sceneSource).toContain("startDialog(teachingScene ?? selectedScene);");
     expect(startDialogBlock).toContain("setActiveHotspot(null);");
     expect(startDialogBlock).toContain("setPracticeHotspot(null);");
     expect(startDialogBlock).toContain("stopTeacherAudio();");

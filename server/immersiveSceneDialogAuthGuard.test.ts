@@ -15,7 +15,7 @@ describe("diálogo roteirizado e sessão da cena imersiva", () => {
     expect(startDialog).toContain('playJamesTropicalClip("james-tropical-greeting")');
     expect(startDialog).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(startDialog).toContain('"james-tropical-introduction"');
-    expect(source).toContain("`🔊 Ouvir apresentação de ${selectedScene.teacherName}`");
+    expect(source).toContain("`🔊 Ouvir apresentação de ${(teachingScene ?? selectedScene).teacherName}`");
     expect(source).toContain("if (dialogAudioSource) {");
     expect(source).toContain("void replayVisibleDialogAudio();");
     expect(source).toContain("const [dialogAudioNeedsGesture, setDialogAudioNeedsGesture] = useState(false);");

@@ -37,6 +37,6 @@ describe("bloqueio de diálogo imersivo sem sessão", () => {
     expect(introButton).toContain("setDialogAuthRequired(true);");
     expect(introButton).toContain("Ative o acesso protegido para iniciar o diálogo desta cena.");
     expect(introButton).toContain('"Ativar acesso para iniciar"');
-    expect(introButton.indexOf("if (!isAuthenticated) {")).toBeLessThan(introButton.indexOf("startDialog(selectedScene);"));
+    expect(introButton.indexOf("if (!isAuthenticated) {")).toBeLessThan(introButton.indexOf("startDialog(teachingScene ?? selectedScene);"));
   });
 });
