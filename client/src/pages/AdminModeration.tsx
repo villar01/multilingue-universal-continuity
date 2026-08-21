@@ -181,9 +181,7 @@ export default function AdminModeration() {
                         </Badge>
                         <span className="text-base">{alert.violationType.replace(/_/g, " ")}</span>
                       </CardTitle>
-                      <CardDescription>
-                        Usuário #{alert.userId} • {new Date(alert.createdAt).toLocaleString("pt-BR")}
-                      </CardDescription>
+                      <CardDescription>{new Date(alert.createdAt).toLocaleString("pt-BR")}</CardDescription>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -197,27 +195,6 @@ export default function AdminModeration() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium mb-2">Conteúdo Detectado:</p>
-                    <div className="bg-muted p-3 rounded-md text-sm">
-                      {alert.detectedContent}
-                    </div>
-                  </div>
-
-                  {(alert as any).flaggedContent && (alert as any).flaggedContent.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Problemas Identificados:</p>
-                      <div className="space-y-2">
-                        {(alert as any).flaggedContent.map((flag: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm">
-                            <Badge variant="outline">{flag.word}</Badge>
-                            <span className="text-muted-foreground">{flag.reason}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {selectedAlert === alert.id && (
                     <div className="space-y-3 pt-4 border-t">
                       <div>

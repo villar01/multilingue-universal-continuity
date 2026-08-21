@@ -149,7 +149,14 @@ export const moderationRouter = router({
     if (!db) return [];
 
     const alerts = await (db as any)
-      .select()
+      .select({
+        id: moderationAlerts.id,
+        violationType: moderationAlerts.violationType,
+        severity: moderationAlerts.severity,
+        status: moderationAlerts.status,
+        actionTaken: moderationAlerts.actionTaken,
+        createdAt: moderationAlerts.createdAt,
+      })
       .from(moderationAlerts)
       .where(eq(moderationAlerts.status, "pending"))
       .orderBy(desc(moderationAlerts.createdAt))
