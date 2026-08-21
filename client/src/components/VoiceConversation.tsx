@@ -27,6 +27,12 @@ interface VoiceConversationProps {
   level?: CEFRLevel;
 }
 
+function isCurricularAccessDenied(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { data?: { code?: string } };
+  return candidate.data?.code === "UNAUTHORIZED" || candidate.data?.code === "FORBIDDEN";
+}
+
 export default function VoiceConversation({
   lessonId,
   vocabularyContext = [],
@@ -405,6 +411,10 @@ export default function VoiceConversation({
           teacherId: typeof selectedTeacher?.id === "number" ? selectedTeacher.id : undefined,
         });
       } catch (err) {
+        if (isCurricularAccessDenied(err)) {
+          toast.error("O acesso a esta atividade precisa ser ativado antes da conversa.");
+          return;
+        }
         // Fallback: use offlineAI for local response
         console.log("[VoiceConversation] Falling back to offlineAI");
         const offlineResult = await offlineAI.mutateAsync({
