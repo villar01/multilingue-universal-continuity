@@ -15,7 +15,7 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     enabled: isAuthenticated && isLearningRoute,
     retry: false,
   });
-  const [trialState, setTrialState] = useState<"idle" | "checking" | "allowed" | "blocked" | "error">("idle");
+  const [trialState, setTrialState] = useState<"idle" | "checking" | "allowed" | "blocked" | "revoked" | "error">("idle");
   const [authWaitExceeded, setAuthWaitExceeded] = useState(false);
   const trialAccess = trpc.trialAccess.authorizeLesson.useMutation();
 
@@ -27,7 +27,7 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
     setTrialState("checking");
     trialAccess.mutate({ lessonKey: createTrialLessonKey(location) }, {
       onSuccess: (result) => {
-        if (active) setTrialState(result.allowed ? "allowed" : "blocked");
+        if (active) setTrialState(result.allowed ? "allowed" : ("revoked" in result && result.revoked ? "revoked" : "blocked"));
       },
       onError: () => {
         if (active) setTrialState("error");
@@ -111,6 +111,20 @@ export function LearningAccessGate({ children }: { children: React.ReactNode }) 
           <h1 className="mt-2 text-2xl font-bold text-white">As 10 lições iniciais foram utilizadas</h1>
           <p className="mt-3 text-sm leading-relaxed text-slate-200">Para proteger o conteúdo e continuar o aprendizado, novas lições ficam bloqueadas após o período de teste.</p>
           <Button className="mt-6 w-full bg-amber-300 font-bold text-slate-950 hover:bg-amber-200" onClick={() => window.location.assign("/pricing")}>Ver opções de continuidade</Button>
+        </section>
+      </main>
+    );
+  }
+
+  if (canCheckTrial && trialState === "revoked") {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 px-5 py-10">
+        <section className="w-full max-w-lg rounded-3xl border border-cyan-300/30 bg-white/10 p-7 text-center shadow-2xl backdrop-blur-sm">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950"><LockKeyhole className="h-7 w-7" aria-hidden="true" /></div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">Acesso de avaliação encerrado</p>
+          <h1 className="mt-2 text-2xl font-bold text-white">Esta conta não libera novas lições de avaliação</h1>
+          <p className="mt-3 text-sm leading-relaxed text-slate-200">O encerramento protege o conteúdo desta conta. Você pode retornar ao painel a qualquer momento.</p>
+          <Button className="mt-6 w-full bg-cyan-300 font-bold text-slate-950 hover:bg-cyan-200" onClick={() => window.location.assign("/dashboard")}>Voltar ao painel</Button>
         </section>
       </main>
     );

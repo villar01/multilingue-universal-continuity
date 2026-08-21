@@ -1,0 +1,2 @@
+ALTER TABLE `learning_trials` MODIFY COLUMN `status` enum('active','limit_reached','converted','expired','revoked') NOT NULL DEFAULT 'active';--> statement-breakpoint
+ALTER TABLE `learning_trials` ADD `revoked_at` timestamp;

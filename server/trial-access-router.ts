@@ -5,7 +5,7 @@ import { learningTrials, parentalConsents, termsAcceptances, trialLessonAccesses
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 import { checkTrialLessonAuthorizationAttempt } from "./trial-authorization-abuse-guard";
-import { getTrialExpiryDate, hasFullCurriculumAccess, isTrialExpired } from "./trial-access-policy";
+import { getTrialExpiryDate, hasFullCurriculumAccess, isTrialExpired, isTrialRevoked } from "./trial-access-policy";
 
 export const TRIAL_LESSON_LIMIT = 10;
 
@@ -88,6 +88,10 @@ export async function getLearningContentEntitlement(userId: number) {
   const lessonsUsed = trial?.lessonsUsed ?? 0;
   let expiresAt = trial?.expiresAt ?? null;
 
+  if (!hasFullCurriculum && isTrialRevoked(trial?.status)) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "O acesso de avaliação desta conta foi encerrado." });
+  }
+
   if (!hasFullCurriculum && trial) {
     expiresAt = getTrialExpiryDate(trial.expiresAt);
     if (!trial.expiresAt) {
@@ -156,6 +160,7 @@ export const trialAccessRouter = router({
     const lessonsUsed = trial?.lessonsUsed ?? 0;
     const lessonLimit = trial?.lessonLimit ?? TRIAL_LESSON_LIMIT;
     let expiresAt = trial?.expiresAt ?? null;
+    const revoked = !hasFullCurriculum && isTrialRevoked(trial?.status);
 
     if (!hasFullCurriculum && trial) {
       expiresAt = getTrialExpiryDate(trial.expiresAt);
@@ -176,6 +181,7 @@ export const trialAccessRouter = router({
       lessonLimit,
       expiresAt,
       expired,
+      revoked,
       remainingLessons: hasFullCurriculum ? null : Math.max(0, lessonLimit - lessonsUsed),
       limitReached: !hasFullCurriculum && lessonsUsed >= lessonLimit,
     };
@@ -195,6 +201,18 @@ export const trialAccessRouter = router({
         [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
       }
       if (!trial) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Não foi possível iniciar o período gratuito." });
+
+      if (!hasFullCurriculum && isTrialRevoked(trial.status)) {
+        return {
+          allowed: false,
+          revoked: true,
+          expired: false,
+          remainingLessons: 0,
+          lessonLimit: trial.lessonLimit,
+          lessonsUsed: trial.lessonsUsed,
+          expiresAt: trial.expiresAt,
+        };
+      }
 
       const expiresAt = getTrialExpiryDate(trial.expiresAt);
       if (!trial.expiresAt) {
@@ -255,4 +273,32 @@ export const trialAccessRouter = router({
         lessonsUsed,
       };
     }),
+
+  revoke: protectedProcedure.mutation(async ({ ctx }) => {
+    const db = await assertAcceptedTerms(ctx.user.id);
+    const [account] = await db.select({ subscriptionType: users.subscriptionType, role: users.role }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+    if (hasFullCurriculumAccess(account ?? {})) {
+      return { revoked: false, reason: "full_curriculum_access" as const };
+    }
+
+    const [trial] = await db.select().from(learningTrials).where(eq(learningTrials.userId, ctx.user.id)).limit(1);
+    if (trial?.status === "revoked") {
+      return { revoked: true, reason: "already_revoked" as const };
+    }
+
+    const now = new Date();
+    if (trial) {
+      await db.update(learningTrials).set({ status: "revoked", revokedAt: now }).where(eq(learningTrials.id, trial.id));
+    } else {
+      await db.insert(learningTrials).values({
+        userId: ctx.user.id,
+        lessonLimit: TRIAL_LESSON_LIMIT,
+        lessonsUsed: 0,
+        status: "revoked",
+        revokedAt: now,
+      });
+    }
+
+    return { revoked: true, reason: "access_revoked" as const };
+  }),
 });

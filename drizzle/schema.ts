@@ -2194,10 +2194,11 @@ export const learningTrials = mysqlTable("learning_trials", {
   userId: int("user_id").notNull().references(() => users.id).unique(),
   lessonLimit: int("lesson_limit").notNull().default(10),
   lessonsUsed: int("lessons_used").notNull().default(0),
-  status: mysqlEnum("status", ["active", "limit_reached", "converted", "expired"]).notNull().default("active"),
+  status: mysqlEnum("status", ["active", "limit_reached", "converted", "expired", "revoked"]).notNull().default("active"),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   expiresAt: timestamp("expires_at"),
   limitReachedAt: timestamp("limit_reached_at"),
+  revokedAt: timestamp("revoked_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });

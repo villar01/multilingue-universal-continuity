@@ -19,3 +19,8 @@ export function getTrialExpiryDate(existingExpiry: Date | null | undefined, now 
 export function isTrialExpired(expiresAt: Date | null | undefined, now = new Date()): boolean {
   return Boolean(expiresAt && expiresAt.getTime() <= now.getTime());
 }
+
+/** Revogação encerra somente o acesso de avaliação dentro do aplicativo, não a sessão OAuth do provedor. */
+export function isTrialRevoked(status: string | null | undefined): boolean {
+  return status === "revoked";
+}

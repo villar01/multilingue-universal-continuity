@@ -267,6 +267,13 @@
       "when": 1787210200930,
       "tag": "0037_lame_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "5",
+      "when": 1787298926225,
+      "tag": "0038_certain_deathstrike",
+      "breakpoints": true
     }
   ]
 }
