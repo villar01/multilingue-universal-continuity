@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolveSceneTeacherMotion } from "../shared/sceneTeacherMotionResolver";
 
 describe("scene teacher motion resolver", () => {
-  it("reuses James's canonical neutral motion in every James scene only while audio is confirmed", () => {
+  it("mantém o retrato canônico quando a cena exige mídia específica, mesmo com áudio confirmado", () => {
     const moving = resolveSceneTeacherMotion({
       sceneId: "forest",
       teacherName: "James",
@@ -18,12 +18,14 @@ describe("scene teacher motion resolver", () => {
       hasCanonicalReusableMotion: true,
     });
 
-    expect(moving.showReusableTeacherMotion).toBe(true);
+    expect(moving.showReusableTeacherMotion).toBe(false);
+    expect(moving.showApprovedSceneClip).toBe(false);
+    expect(moving.fallback).toBe("canonical_portrait");
     expect(silent.showReusableTeacherMotion).toBe(false);
     expect(silent.fallback).toBe("canonical_portrait");
   });
 
-  it("never grants James's reusable motion to another scene teacher", () => {
+  it("never grants movement to another scene teacher", () => {
     const decision = resolveSceneTeacherMotion({
       sceneId: "tokyo",
       teacherName: "James",
@@ -34,5 +36,23 @@ describe("scene teacher motion resolver", () => {
 
     expect(decision.showReusableTeacherMotion).toBe(false);
     expect(decision.showApprovedSceneClip).toBe(false);
+  });
+
+  it("só mostra o clipe aprovado quando áudio e professor canônico coincidem", () => {
+    expect(resolveSceneTeacherMotion({
+      sceneId: "beach",
+      teacherName: "James",
+      audioConfirmed: true,
+      hasApprovedSceneClip: true,
+      hasCanonicalReusableMotion: true,
+    }).showApprovedSceneClip).toBe(true);
+
+    expect(resolveSceneTeacherMotion({
+      sceneId: "beach",
+      teacherName: "James",
+      audioConfirmed: false,
+      hasApprovedSceneClip: true,
+      hasCanonicalReusableMotion: true,
+    }).showApprovedSceneClip).toBe(false);
   });
 });

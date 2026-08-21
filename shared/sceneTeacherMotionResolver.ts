@@ -39,8 +39,7 @@ export function resolveSceneTeacherMotion(
         && request.hasApprovedSceneClip,
     ),
     showReusableTeacherMotion: Boolean(
-      audioAllowsMotion
-        && request.hasCanonicalReusableMotion,
+      false,
     ),
     fallback: "canonical_portrait",
   };
