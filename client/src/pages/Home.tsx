@@ -403,8 +403,8 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10">
-              Professores virtuais com voz natural, cenas imersivas em realidade aumentada e 
-              personalização extrema. A plataforma mais avançada para aprender idiomas.
+              Professores virtuais com voz natural, 29 cenas imersivas guiadas e prática contextual.
+              Uma experiência completa para aprender idiomas.
             </p>
           </div>
 
@@ -484,8 +484,8 @@ export default function Home() {
               Tecnologia que Nenhuma Outra Plataforma Tem
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Combinamos realidade aumentada, IA conversacional e voz natural para criar 
-              a experiência de aprendizado mais imersiva do mundo.
+              Combinamos cenas imersivas guiadas, IA conversacional e voz natural para criar
+              uma prática contextual de idiomas.
             </p>
           </div>
 
@@ -780,7 +780,7 @@ export default function Home() {
                 <span className="font-bold text-white">MultiLingue Universal</span>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed">
-                A plataforma mais avançada para aprender idiomas com inteligência artificial e realidade aumentada.
+                Uma plataforma de idiomas com inteligência artificial, cenas imersivas e prática guiada.
               </p>
             </div>
             <div>

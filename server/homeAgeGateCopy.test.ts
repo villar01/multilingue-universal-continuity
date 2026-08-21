@@ -16,4 +16,9 @@ describe("comunicação de cadastro por faixa etária", () => {
     expect(homeSource).not.toContain("Dados falsos são rastreados");
     expect(homeSource).toContain("O responsável pode revisar ou revogar a autorização a qualquer momento");
   });
+
+  it("descreve as cenas imersivas disponíveis sem prometer realidade aumentada", () => {
+    expect(homeSource).toContain("29 cenas imersivas guiadas e prática contextual");
+    expect(homeSource).not.toContain("cenas imersivas em realidade aumentada");
+  });
 });
