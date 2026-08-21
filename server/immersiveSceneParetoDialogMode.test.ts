@@ -13,6 +13,6 @@ describe("modo opcional de palavras Pareto no diálogo imersivo", () => {
   it("entrega palavra, tradução, exemplo, áudio e ciclo de escrita sem transferir o catálogo", () => {
     expect(sceneSource).toContain("<ParetoPracticeCycle");
     expect(sceneSource).toContain("word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example");
-    expect(sceneSource).toContain('onSpeak={(text) => requestSpeechSafely(text, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot")}');
+    expect(sceneSource).toContain('onSpeak={(text) => requestSpeechSafely(text, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot")}');
   });
 });

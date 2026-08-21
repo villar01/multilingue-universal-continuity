@@ -15,7 +15,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("const playLocalDialogFallback = useCallback");
     expect(source).toContain("synth.speak(utterance);");
     expect(source).toContain("Toque em Ouvir ${getSpokenLanguageLabel(lang)} para repetir a frase e continuar praticando.");
-    expect(source).toContain("Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}");
+    expect(source).toContain("Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}");
     expect(source).not.toContain("A voz neural não respondeu.");
     expect(source).not.toContain("A faixa neural não ficou disponível.");
     expect(source).not.toContain("A voz da cena não está disponível agora.");
@@ -52,7 +52,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(neuralPreparation).toContain("const useFallbackForInvalidTrack");
     expect(neuralPreparation).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
     expect(neuralPreparation).toContain("setDialogAudioSource(null);");
-    expect(neuralPreparation).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
+    expect(neuralPreparation).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender))");
     expect(neuralPreparation).toContain("Sua frase está pronta para repetir. Toque em Ouvir ${getSpokenLanguageLabel(_language)} para continuar.");
     expect(neuralPreparation).toContain("Alguns navegadores anunciam metadata antes de calcular a duração");
   });
@@ -73,8 +73,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     const speechFlow = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(source).toContain('const JAMES_TROPICAL_INTRO_LINE = "Hello! My name is James. Welcome to this beautiful tropical beach!";');
     expect(source).toContain('const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-exact-fallback_2d892849.wav";');
-    expect(speechFlow).toContain('selectedScene?.id === "beach"');
-    expect(speechFlow).toContain('selectedScene.teacherName === "James"');
+    expect(speechFlow).toContain('teachingScene?.id === "beach"');
+    expect(speechFlow).toContain('teachingScene.teacherName === "James"');
     expect(speechFlow).toContain("text.trim() === JAMES_TROPICAL_INTRO_LINE");
     expect(speechFlow).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(speechFlow.indexOf("JAMES_TROPICAL_INTRO_FALLBACK_URL")).toBeGreaterThan(speechFlow.indexOf("const googleAudio"));
@@ -112,14 +112,14 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('reportAudioEvent("loaded");');
     expect(source).toContain('reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");');
     expect(source).toContain('reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));');
-    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {");
+    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)) {");
     expect(source).not.toContain("phrase: phrase");
   });
 
   it("usa a reserva masculina depois de uma falha no botão explícito de reprodução", () => {
     const replayFlow = source.slice(source.indexOf("const replayVisibleDialogAudio"), source.indexOf("const primeDialogAudioFromGesture"));
     expect(replayFlow).toContain("const fallbackKey = `manual-replay:");
-    expect(replayFlow).toContain("if (activeSpeechText && playLocalDialogFallback(activeSpeechText, selectedScene?.teacherLang || \"en-US\", fallbackKey, selectedScene?.teacherGender)) {");
+    expect(replayFlow).toContain("if (activeSpeechText && playLocalDialogFallback(activeSpeechText, teachingScene?.teacherLang || \"en-US\", fallbackKey, teachingScene?.teacherGender)) {");
     expect(replayFlow).toContain('setDlgAudioNotice("");');
   });
 
@@ -186,7 +186,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
   it("mantém a reserva masculina de James disponível tanto para pergunta quanto para pronúncia", () => {
     expect(source).toContain("James continua exclusivamente masculino");
     expect(source).toContain("prioriza uma voz regional masculina");
-    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
+    expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender))");
   });
 
   it("mantém o único elemento de áudio montado e oculto quando o diálogo está fechado para os cartões de objeto", () => {

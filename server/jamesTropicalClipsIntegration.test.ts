@@ -43,7 +43,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
     ]);
     expect(sceneSource).toContain("const pendingJamesClipIdRef = useRef<JamesTropicalPilotClipId | null>(null);");
     expect(sceneSource).toContain("pendingJamesClipIdRef.current = clip.id;");
-    expect(sceneSource).toContain("if (selectedScene?.id === \"beach\" && selectedScene.teacherName === \"James\" && pendingJamesClipIdRef.current) {");
+    expect(sceneSource).toContain("if (teachingScene?.id === \"beach\" && teachingScene.teacherName === \"James\" && pendingJamesClipIdRef.current) {");
     expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
     expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
     expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
@@ -90,7 +90,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
 
   it("mantém a mesma regra para a reserva local: clipe só inicia em utterance.onstart e termina com a voz", () => {
     expect(sceneSource).toContain("utterance.onstart = () => {");
-    expect(sceneSource).toContain('selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current');
+    expect(sceneSource).toContain('teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current');
     expect(sceneSource).toContain("const finish = () => {");
     expect(sceneSource).toContain("pendingJamesClipIdRef.current = null;");
   });

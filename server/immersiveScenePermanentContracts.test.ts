@@ -28,7 +28,7 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("ttsMut.mutateAsync({ text: text.slice(0, 500), voiceLang: lang, gender: teacherGender })");
     expect(sceneSource).toContain("googleTtsMut.mutateAsync({");
     expect((sceneSource.match(/6_000/g) || []).length).toBeGreaterThanOrEqual(2);
-    expect(sceneSource).toContain("if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender))");
+    expect(sceneSource).toContain("if (playLocalDialogFallback(text, lang, requestKey, teachingScene?.teacherGender))");
   });
 
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {

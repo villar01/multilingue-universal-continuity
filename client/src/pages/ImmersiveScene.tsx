@@ -1038,11 +1038,11 @@ export default function ImmersiveScene() {
         // A reserva local também tem um evento real de início de áudio. Assim,
         // o movimento lateral já aprovado só aparece quando a fala de fato
         // começou — nunca no clique, na preparação ou no silêncio.
-        if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
+        if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current) {
           setActiveJamesClipId(pendingJamesClipIdRef.current);
           pendingJamesClipIdRef.current = null;
         }
-        if (selectedScene?.id === "cafe" && selectedScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
+        if (teachingScene?.id === "cafe" && teachingScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
           setActiveSophieClipId(pendingSophieClipIdRef.current);
           pendingSophieClipIdRef.current = null;
         }
@@ -1059,7 +1059,7 @@ export default function ImmersiveScene() {
       return true;
     };
     return startWithAvailableVoices(2);
-  }, [dialogSpeechRate, selectedScene?.id, selectedScene?.teacherName, stopVisemeSync]);
+  }, [dialogSpeechRate, stopVisemeSync, teachingScene?.id, teachingScene?.teacherName]);
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
@@ -1130,7 +1130,7 @@ export default function ImmersiveScene() {
       // James continua exclusivamente masculino: o resolvedor local já exclui
       // nomes explicitamente femininos e prioriza uma voz regional masculina.
       // Assim uma faixa neural inválida não deixa a pergunta do aluno silenciosa.
-      if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
+      if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)) {
         setDlgAudioNotice(`Sua frase está pronta para repetir. Toque em Ouvir ${getSpokenLanguageLabel(_language)} para continuar.`);
         return;
       }
@@ -1148,11 +1148,11 @@ export default function ImmersiveScene() {
       if (activeDialogLineRef.current === phrase) setDlgOpen(true);
       const confirmedJamesClipId = pendingJamesClipIdRef.current
         || (requestKey === "james-tropical-introduction" ? "james-tropical-greeting" : null);
-      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && confirmedJamesClipId) {
+      if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && confirmedJamesClipId) {
         setActiveJamesClipId(confirmedJamesClipId);
         pendingJamesClipIdRef.current = null;
       }
-      if (selectedScene?.id === "cafe" && selectedScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
+      if (teachingScene?.id === "cafe" && teachingScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
         setActiveSophieClipId(pendingSophieClipIdRef.current);
         pendingSophieClipIdRef.current = null;
       }
@@ -1238,7 +1238,7 @@ export default function ImmersiveScene() {
           setDlgOpen(true);
           setDialogAudioNeedsGesture(true);
         }
-        if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender)) {
+        if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)) {
           setDlgAudioNotice("");
           return;
         }
@@ -1247,7 +1247,7 @@ export default function ImmersiveScene() {
       return;
     }
     setDlgAudioNotice("Voz de James pronta. Toque em Ouvir James para iniciar.");
-  }, [dialogSpeechRate, playLocalDialogFallback, selectedScene?.teacherGender, selectedScene?.teacherName, stopVisemeSync]);
+  }, [dialogSpeechRate, playLocalDialogFallback, stopVisemeSync, teachingScene?.teacherGender, teachingScene?.teacherName]);
 
   const replayVisibleDialogAudio = useCallback(async () => {
     const audio = dialogAudioElementRef.current;
@@ -1256,7 +1256,7 @@ export default function ImmersiveScene() {
       return;
     }
     try {
-      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James") {
+      if (teachingScene?.id === "beach" && teachingScene.teacherName === "James") {
         setActiveJamesClipId(null);
         playJamesTropicalClip("james-tropical-greeting");
       }
@@ -1269,7 +1269,7 @@ export default function ImmersiveScene() {
       // Alguns navegadores resolvem play() sem emitir onplaying no elemento
       // visualmente oculto. A promessa resolvida também confirma reprodução;
       // só então promovemos o clipe lateral pendente.
-      if (selectedScene?.id === "beach" && selectedScene.teacherName === "James" && pendingJamesClipIdRef.current) {
+      if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current) {
         setActiveJamesClipId(pendingJamesClipIdRef.current);
         pendingJamesClipIdRef.current = null;
       }
@@ -1277,14 +1277,14 @@ export default function ImmersiveScene() {
       setDialogAudioNeedsGesture(false);
     } catch {
       setDialogAudioNeedsGesture(true);
-      const fallbackKey = `manual-replay:${selectedScene?.teacherLang || "en-US"}:${selectedScene?.teacherGender || "female"}:${activeSpeechText}`;
-      if (activeSpeechText && playLocalDialogFallback(activeSpeechText, selectedScene?.teacherLang || "en-US", fallbackKey, selectedScene?.teacherGender)) {
+      const fallbackKey = `manual-replay:${teachingScene?.teacherLang || "en-US"}:${teachingScene?.teacherGender || "female"}:${activeSpeechText}`;
+      if (activeSpeechText && playLocalDialogFallback(activeSpeechText, teachingScene?.teacherLang || "en-US", fallbackKey, teachingScene?.teacherGender)) {
         setDlgAudioNotice("");
         return;
       }
-      setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.`);
+      setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.`);
     }
-  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, selectedScene?.id, selectedScene?.teacherGender, selectedScene?.teacherLang, selectedScene?.teacherName, targetLang]);
+  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, targetLang, teachingScene?.id, teachingScene?.teacherGender, teachingScene?.teacherLang, teachingScene?.teacherName]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
@@ -1315,9 +1315,9 @@ export default function ImmersiveScene() {
   // Neural speech only: object pronunciation must never use a system/browser voice.
   const speak = useCallback(async (text: string, lang: string, _rate?: number, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher", autoPlay = false) => {
     if (!text?.trim()) return;
-    const teacherGender = selectedScene?.teacherName === "James"
+    const teacherGender = teachingScene?.teacherName === "James"
       ? "male"
-      : gender || (selectedScene?.teacherGender === 'male' ? 'male' : 'female');
+      : gender || (teachingScene?.teacherGender === 'male' ? 'male' : 'female');
     const requestKey = `${purpose}:${lang}:${teacherGender}:${text}`;
     // A mesma linha pode ser solicitada por clique e atualização visual quase ao
     // mesmo tempo. Mantemos um único pedido até o áudio encerrar ou falhar.
@@ -1365,8 +1365,8 @@ export default function ImmersiveScene() {
       }
     } catch { /* Preserve the existing neural-TTS fallback. */ }
     if (
-      selectedScene?.id === "beach"
-      && selectedScene.teacherName === "James"
+      teachingScene?.id === "beach"
+      && teachingScene.teacherName === "James"
       && text.trim() === JAMES_TROPICAL_INTRO_LINE
     ) {
       await playTeacherAudio(
@@ -1379,7 +1379,7 @@ export default function ImmersiveScene() {
       );
       return;
     }
-    const jamesObjectFallback = selectedScene?.id === "beach" && selectedScene.teacherName === "James"
+    const jamesObjectFallback = teachingScene?.id === "beach" && teachingScene.teacherName === "James"
       ? JAMES_TROPICAL_OBJECT_FALLBACKS[text.trim() as keyof typeof JAMES_TROPICAL_OBJECT_FALLBACKS]
       : undefined;
     if (jamesObjectFallback) {
@@ -1399,7 +1399,7 @@ export default function ImmersiveScene() {
       );
       return;
     }
-    if (playLocalDialogFallback(text, lang, requestKey, selectedScene?.teacherGender)) {
+    if (playLocalDialogFallback(text, lang, requestKey, teachingScene?.teacherGender)) {
       setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(lang)} para repetir a frase e continuar praticando.`);
       return;
     }
@@ -1409,13 +1409,13 @@ export default function ImmersiveScene() {
     setIsSpeaking(false);
     setActiveSpeechText("");
     if (activeSpeechRequestRef.current === requestKey) activeSpeechRequestRef.current = null;
-  }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, selectedScene?.teacherGender, selectedScene?.id, selectedScene?.teacherName, stopTeacherAudio, ttsMut]);
+  }, [googleTtsMut, playLocalDialogFallback, playTeacherAudio, stopTeacherAudio, teachingScene?.teacherGender, teachingScene?.id, teachingScene?.teacherName, ttsMut]);
 
   const requestSpeechSafely = useCallback((text: string, language: string, gender?: 'male' | 'female', purpose: ImmersiveSpeechPurpose = "teacher", autoPlay = false) => {
     if (isAuthLoading) return;
-    const effectiveGender = selectedScene?.teacherName === "James"
+    const effectiveGender = teachingScene?.teacherName === "James"
       ? "male"
-      : gender || selectedScene?.teacherGender || "female";
+      : gender || teachingScene?.teacherGender || "female";
     if (!isAuthenticated) {
       setDialogAuthRequired(true);
       stopTeacherAudio();
@@ -1452,7 +1452,7 @@ export default function ImmersiveScene() {
           setDlgFeedback((feedback) => feedback || "A resposta está visível. A voz não ficou disponível nesta tentativa; use o controle de áudio ou pergunte novamente.");
         });
     });
-  }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, selectedScene?.teacherGender, selectedScene?.teacherName, speak, stopTeacherAudio]);
+  }, [isAuthenticated, isAuthLoading, playLocalDialogFallback, playPublicSceneDialogue, primeVisemeAudio, speak, stopTeacherAudio, teachingScene?.teacherGender, teachingScene?.teacherName]);
 
   const [showGreeting, setShowGreeting] = useState(true);
   const [greetingText, setGreetingText] = useState("");
@@ -2601,7 +2601,7 @@ export default function ImmersiveScene() {
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
-            onSpeak={(text) => requestSpeechSafely(text, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot")}
+            onSpeak={(text) => requestSpeechSafely(text, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot")}
             level={sceneCefrLevel(selectedScene)}
           />
         )}
@@ -2623,7 +2623,7 @@ export default function ImmersiveScene() {
               type="button"
               onClick={() => {
                 setQuizHintVisible(true);
-                requestSpeechSafely(quizQuestion.example, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot");
+                requestSpeechSafely(quizQuestion.example, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot");
               }}
               className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-amber-300/60 bg-amber-300/15 text-amber-200 shadow-lg transition hover:scale-105 hover:bg-amber-300/25"
               aria-label="Ouvir pista do professor para o objeto escondido"
@@ -2662,7 +2662,7 @@ export default function ImmersiveScene() {
                 </p>
                 <p className="mt-1 text-sm">Diga a palavra, escreva uma frase e fixe o vocabulário no Pareto.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <button type="button" onClick={() => requestSpeechSafely(quizQuestion.label, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot")} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Ouvir professor</button>
+                  <button type="button" onClick={() => requestSpeechSafely(quizQuestion.label, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot")} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Ouvir professor</button>
                   <button type="button" onClick={() => setPracticeHotspot(quizQuestion)} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Fixar no Pareto</button>
                   <button type="button" onClick={advanceSceneGuess} className="rounded-full border border-current/50 px-3 py-1.5 text-xs font-bold hover:bg-white/10">Próxima estrela</button>
                 </div>
@@ -2833,7 +2833,7 @@ export default function ImmersiveScene() {
               {/* Speaker label */}
               <div className="flex items-center gap-2 mb-2">
                 <span style={{ fontSize: "11px", fontWeight: 700, color: activeSceneDialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  {activeSceneDialog[dlgStep].speaker === 'teacher' ? `🏫 ${selectedScene.teacherName}` : '👤 Você'}
+                  {activeSceneDialog[dlgStep].speaker === 'teacher' ? `🏫 ${(teachingScene ?? selectedScene).teacherName}` : '👤 Você'}
                 </span>
                 {!immersionMode && dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
                   <span className="text-[11px] text-cyan-100/65">Traduzindo para {nativeLangLabel}…</span>
@@ -2868,18 +2868,18 @@ export default function ImmersiveScene() {
                         void replayVisibleDialogAudio();
                         return;
                       }
-                      const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, selectedScene);
+                      const teacherSpeech = getImmersiveDialogTeacherSpeech(activeSceneDialog[dlgStep].text, teachingScene ?? selectedScene);
                       requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                     }}
                     className="rounded-full border border-indigo-300/45 bg-indigo-400/10 px-3 py-1.5 text-xs font-extrabold text-indigo-100 transition hover:bg-indigo-400/20"
-                    title={`Repetir a fala do professor em ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`}
+                    title={`Repetir a fala do professor em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`}
                   >
                     {isPreparingNeuralAudio
-                      ? `Preparando ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}…`
+                      ? `Preparando ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}…`
                       : isSpeaking
-                        ? `Reiniciar ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`
+                        ? `Reiniciar ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`
                         : isAuthenticated
-                          ? `Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}`
+                          ? `Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`
                           : "Ativar acesso para ouvir"}
                   </button>
                   {dialogAudioNeedsGesture && dialogAudioSource && (
@@ -3040,7 +3040,7 @@ export default function ImmersiveScene() {
                           onClick={() => {
                             setPracticeHotspot(hotspot);
                             setDlgFeedback(`Vamos começar por “${hotspot.label}”. Ouça, escreva e crie uma frase quando estiver pronto.`);
-                            requestSpeechSafely(hotspot.label, selectedScene.teacherLang, selectedScene.teacherGender, "hotspot");
+                            requestSpeechSafely(hotspot.label, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot");
                           }}
                           className="rounded-full border border-violet-300/35 bg-violet-300/10 px-2.5 py-1 text-xs font-bold text-violet-100 hover:bg-violet-300/20"
                         >
@@ -3063,7 +3063,7 @@ export default function ImmersiveScene() {
                         const correct = activeSceneDialog[dlgStep].correctIndex === i;
                         if (correct) {
                           const praiseClip = playJamesTropicalClip("james-tropical-praise") || playSophieCafeClip("sophie-cafe-praise");
-                          const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `✅ ${opt}`, selectedScene);
+                          const teacherSpeech = getImmersiveDialogTeacherSpeech(praiseClip?.dialogue || `✅ ${opt}`, teachingScene ?? selectedScene);
                           requestSpeechSafely(teacherSpeech.text, teacherSpeech.language, teacherSpeech.gender, teacherSpeech.purpose);
                         } else {
                           const retryClip = playJamesTropicalClip("james-tropical-retry") || playSophieCafeClip("sophie-cafe-retry");

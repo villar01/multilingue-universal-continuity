@@ -27,7 +27,7 @@ describe("diálogo roteirizado e sessão da cena imersiva", () => {
 
   it("mantém sessão protegida como caminho aprimorado sem esconder o diálogo do visitante", () => {
     expect(source).toContain("if (!isAuthenticated) {");
-    expect(source).toContain("const effectiveGender = selectedScene?.teacherName === \"James\"");
+    expect(source).toContain("const effectiveGender = teachingScene?.teacherName === \"James\"");
     expect(source).toContain("playPublicSceneDialogue(text, language, effectiveGender, requestKey, autoPlay)");
     expect(source).toContain("const playPublicSceneDialogue = useCallback(async (text: string, language: string, gender: 'male' | 'female', requestKey: string, autoPlay = false)");
     expect(source).toContain("O diálogo com voz neural requer uma sessão protegida.");

@@ -10,7 +10,7 @@ const source = readFileSync(
 describe("rótulos de áudio da Cena Imersiva", () => {
   it("deriva os controles de áudio do idioma efetivamente selecionado", () => {
     expect(source).toContain("function getSpokenLanguageLabel(languageCode: string)");
-    expect(source).toContain("Ouvir ${getSpokenLanguageLabel(selectedScene?.teacherLang || targetLang)}");
+    expect(source).toContain("Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}");
     expect(source).toContain("Áudio da fala em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}");
     expect(source).toContain("Ouvir frase em {getSpokenLanguageLabel(langCode)}");
   });

@@ -29,7 +29,7 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const useFallbackForInvalidTrack");
     expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
-    expect(sceneSource).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, selectedScene?.teacherGender))");
+    expect(sceneSource).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender))");
     expect(sceneSource).toContain("regionalVoices.find((voice) => maleVoicePattern.test(voice.name)) || nonFemaleRegionalVoice");
     expect(sceneSource).toContain("trpc.sceneDialogueVoice.speak.useMutation()");
   });

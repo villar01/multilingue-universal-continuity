@@ -22,7 +22,7 @@ describe("fluxo compartilhado das cenas imersivas", () => {
     const sharedSpeech = source.slice(source.indexOf("const speak = useCallback"), source.indexOf("const requestSpeechSafely = useCallback"));
     expect(sharedSpeech.indexOf("if (await playEdgeNeural()) return;")).toBeLessThan(sharedSpeech.indexOf("const googleAudio"));
     expect(sharedSpeech).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
-    expect((sharedSpeech.match(/selectedScene\?\.id === "beach"/g) || [])).toHaveLength(2);
+    expect((sharedSpeech.match(/teachingScene\?\.id === "beach"/g) || [])).toHaveLength(2);
     expect(sharedSpeech).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(sharedSpeech).toContain("JAMES_TROPICAL_OBJECT_FALLBACKS");
   });
