@@ -6,11 +6,10 @@ const notebookSource = readFileSync(
   "utf8",
 );
 
-describe("áudio do Caderno de Anotações", () => {
-  it("reproduz cada registro pelo mecanismo próprio acionado no clique", () => {
-    expect(notebookSource).toContain('import { speakEdgeTTS, stopEdgeTTS } from "@/lib/edgeTTSClient"');
-    expect(notebookSource).toContain("const speakEntry = useCallback");
-    expect(notebookSource).toContain("void speakEdgeTTS(entry.word, entry.langCode");
-    expect(notebookSource).toContain("onClick={() => speakEntry(entry)}");
+describe("modo silencioso do Caderno de Anotações", () => {
+  it("não reproduz registros nem inicia fala ao revelar a tradução", () => {
+    expect(notebookSource).not.toContain("edgeTTSClient");
+    expect(notebookSource).not.toContain("speakEntry");
+    expect(notebookSource).toContain("onClick={() => setQuizRevealed(true)}");
   });
 });
