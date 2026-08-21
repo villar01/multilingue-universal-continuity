@@ -440,19 +440,19 @@ export default function Home() {
               Sem cartão de crédito · Acesso imediato · Cancele quando quiser
             </p>
 
-            {/* ⚠️ AVISO OBRIGATÓRIO — Responsável maior de 18 anos */}
+            {/* Cadastro e proteção apropriada à idade */}
             <div className="mt-4 bg-red-600/30 border-2 border-red-400/60 rounded-2xl px-5 py-4 text-left">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">🚨</span>
-                <span className="text-red-200 font-extrabold text-sm uppercase tracking-wide">Atenção Obrigatória</span>
+                <span className="text-red-200 font-extrabold text-sm uppercase tracking-wide">Cadastro com proteção</span>
               </div>
               <p className="text-white font-semibold text-sm leading-relaxed mb-2">
-                O cadastro nesta plataforma <span className="text-yellow-300 underline">só pode ser realizado por pais e/ou responsáveis maiores de 18 anos</span>.
+                Adultos podem criar a própria conta. <span className="text-yellow-300 underline">Para menores de 18 anos, o cadastro e o acesso às lições exigem autorização de pai, mãe ou responsável legal</span>.
               </p>
               <ul className="text-white/80 text-xs space-y-1">
-                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> Menores de 18 anos não podem se cadastrar sozinhos</li>
-                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> Os pais ou responsável legal deverão fornecer seus dados e foto de identificação</li>
-                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> Dados falsos são rastreados e sujeitos a responsabilidade legal (LGPD / ECA / Código Civil)</li>
+                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> Menores participam com acompanhamento e controles parentais apropriados</li>
+                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> O responsável pode revisar ou revogar a autorização a qualquer momento</li>
+                <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> O acesso de aprendizagem permanece protegido por conta e aceite de segurança</li>
               </ul>
             </div>
           </div>
