@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
@@ -63,11 +63,12 @@ const ResilientImmersiveScene = () => (
     <ImmersiveScene />
   </ImmersiveSceneRecoveryBoundary>
 );
-const ResilientLesson = () => (
+export const ResilientLesson = ({ children }: { children?: ReactNode }) => (
   <LessonRecoveryBoundary>
-    <Lesson />
+    {children ?? <Lesson />}
   </LessonRecoveryBoundary>
 );
+const ResilientLessonRoute = () => <ResilientLesson />;
 const ResilientStructuredLesson = () => (
   <LessonRecoveryBoundary>
     <StructuredLesson />
@@ -349,7 +350,7 @@ function Router() {
         <Route path="/onboarding" component={ResilientOnboarding} />
         <Route path="/dashboard" component={ResilientDashboardReal} />
         <Route path="/dashboard-real" component={ResilientDashboardReal} />
-      <Route path={"/lesson/:id"} component={ResilientLesson} />
+      <Route path={"/lesson/:id"} component={ResilientLessonRoute} />
        <Route path="/complete-lesson/:id" component={ResilientCompleteLesson} />
       <Route path="/practice/clips" component={ResilientPracticeClips} />
       <Route path="/practice/clips/:id" component={ResilientVideoPlayer} />

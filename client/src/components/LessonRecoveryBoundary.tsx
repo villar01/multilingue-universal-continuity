@@ -1,4 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { ArrowLeft, BookOpen, RefreshCw } from "lucide-react";
 
 type Props = { children: ReactNode };

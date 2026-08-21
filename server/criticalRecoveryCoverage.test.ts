@@ -8,7 +8,7 @@ const lessonBoundarySource = readFileSync(path.join(root, "client/src/components
 const activityBoundarySource = readFileSync(path.join(root, "client/src/components/ActivityRecoveryBoundary.tsx"), "utf8");
 
 const lessonRouteBindings = [
-  '<Route path={"/lesson/:id"} component={ResilientLesson} />',
+  '<Route path={"/lesson/:id"} component={ResilientLessonRoute} />',
   '<Route path="/complete-lesson/:id" component={ResilientCompleteLesson} />',
   '<Route path="/structured-lesson" component={ResilientStructuredLesson} />',
   '<Route path="/practice/clips" component={ResilientPracticeClips} />',

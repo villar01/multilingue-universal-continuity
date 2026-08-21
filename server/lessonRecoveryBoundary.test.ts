@@ -16,8 +16,9 @@ afterEach(() => {
 describe("recuperação local da lição", () => {
   it("contém somente a rota de lição e preserva o aplicativo", () => {
     expect(appSource).toContain('import { LessonRecoveryBoundary } from "./components/LessonRecoveryBoundary"');
-    expect(appSource).toContain("const ResilientLesson = () => (");
-    expect(appSource).toContain('<Route path={"/lesson/:id"} component={ResilientLesson} />');
+    expect(appSource).toContain("export const ResilientLesson = ({ children }");
+    expect(appSource).toContain("const ResilientLessonRoute = () => <ResilientLesson />;");
+    expect(appSource).toContain('<Route path={"/lesson/:id"} component={ResilientLessonRoute} />');
     expect(appSource).toContain("const ResilientStructuredLesson = () => (");
     expect(appSource).toContain('<Route path="/structured-lesson" component={ResilientStructuredLesson} />');
     expect(appSource).toContain("const ResilientCompleteLesson = () => (");
