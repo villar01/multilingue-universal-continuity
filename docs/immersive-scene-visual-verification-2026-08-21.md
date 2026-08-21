@@ -31,5 +31,6 @@
 | Floresta e Nova York — verificação final | As duas cenas renderizaram com **James**, cenário visível e hotspots em inglês. A Floresta mostrou **Tree, Sun, Bird, Flower, Mushroom, River**; Nova York mostrou **Statue, Building, Sun, City, Window, Water**. |
 | Praia Tropical e Família no Aeroporto — referências finais | As duas cenas renderizaram com **James**, cenário visível e hotspots em inglês. A Praia mostrou **Palm Tree, Wave, Ocean, Sand**; Família no Aeroporto mostrou **Flight Board, Gate, Boarding Pass, Passport, Suitcase, Security**. |
 | Academia e Jardim Japonês — verificação final | As duas cenas renderizaram com **Ingrid**, cenário visível e hotspots em inglês. A Academia mostrou **Coach, Mirror, Treadmill, Water Bottle, Dumbbell, Mat**; o Jardim mostrou **Cherry Blossom, Bamboo, Lantern, Bridge, Pond, Stone**. |
+| Praia Tropical, Tóquio, Hotel e Casa da Família — disponibilidade | As quatro cenas abriram em paralelo sem retorno de sobrecarga. Cenários, hotspots em inglês e os professores compatíveis — James ou Ingrid — permaneceram visíveis. |
 
 Esta verificação cobre apenas a renderização visual de prévia. O material pedagógico continua protegido pelo fluxo autenticado e as regras de voz, retrato e clipes são cobertas pela suíte de regressão.

@@ -79,9 +79,18 @@ describe("securityMiddleware", () => {
     }
   });
 
-  it("mantém o bloqueio global de DDoS após separar navegação e API", () => {
+  it("permite o burst de ativos de múltiplas cenas antes do bloqueio global", () => {
     const request = createRequest("198.51.100.30", {}, "/assets/scene_beach.jpg");
-    for (let count = 0; count < 1000; count += 1) {
+    for (let count = 0; count < 1500; count += 1) {
+      securityMiddleware(request as any, createResponse() as any, () => undefined);
+    }
+    const sceneBurstResponse = createResponse();
+    let sceneBurstContinued = false;
+    securityMiddleware(request as any, sceneBurstResponse as any, () => { sceneBurstContinued = true; });
+    expect(sceneBurstContinued).toBe(true);
+    expect(sceneBurstResponse.statusCode).toBe(200);
+
+    for (let count = 1501; count <= 2000; count += 1) {
       securityMiddleware(request as any, createResponse() as any, () => undefined);
     }
     const response = createResponse();
@@ -93,7 +102,7 @@ describe("securityMiddleware", () => {
   it("não deixa o excesso de uma origem bloquear a navegação legítima de outra", () => {
     const abusiveIp = "198.51.100.32";
     const legitimateIp = "198.51.100.33";
-    for (let count = 0; count < 1000; count += 1) {
+    for (let count = 0; count < 2000; count += 1) {
       securityMiddleware(createRequest(abusiveIp, {}, "/assets/scene_beach.jpg") as any, createResponse() as any, () => undefined);
     }
 
@@ -117,7 +126,7 @@ describe("securityMiddleware", () => {
   it("recupera uma origem depois que a janela de limitação expira", () => {
     const now = vi.spyOn(Date, "now").mockReturnValue(1_000);
     const ip = "198.51.100.34";
-    for (let count = 0; count < 1000; count += 1) {
+    for (let count = 0; count < 2000; count += 1) {
       securityMiddleware(createRequest(ip, {}, "/assets/scene_beach.jpg") as any, createResponse() as any, () => undefined);
     }
 

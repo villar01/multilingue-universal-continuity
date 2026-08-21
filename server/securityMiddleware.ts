@@ -10,7 +10,8 @@ const AUTH_RATE_LIMIT_MAX = 30;
 
 // ── DDoS Protection ───────────────────────────────────────────
 const globalRequestCounts = new Map<string, { count: number; resetTime: number }>();
-const GLOBAL_RATE_LIMIT = 1000;
+const GLOBAL_API_RATE_LIMIT = 1000;
+const GLOBAL_PAGE_ASSET_RATE_LIMIT = 2000;
 const MAX_TRACKED_ORIGINS = 10_000;
 
 // ── SQL Injection Patterns ────────────────────────────────────
@@ -147,7 +148,12 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   } else {
     globalData.count++;
   }
-  if ((globalRequestCounts.get(clientIp)?.count ?? 0) > GLOBAL_RATE_LIMIT) {
+  // Uma prévia imersiva pode carregar muitos módulos e imagens estáticas no
+  // mesmo minuto. Mantém-se limite global rígido para APIs; páginas e ativos
+  // recebem uma janela maior, ainda limitada, para não transformar uma abertura
+  // legítima de cena em resposta 429.
+  const globalLimit = getRateLimitBucket(req) ? GLOBAL_API_RATE_LIMIT : GLOBAL_PAGE_ASSET_RATE_LIMIT;
+  if ((globalRequestCounts.get(clientIp)?.count ?? 0) > globalLimit) {
     res.status(429).json({ error: 'Servidor sobrecarregado. Tente novamente.' });
     return;
   }
