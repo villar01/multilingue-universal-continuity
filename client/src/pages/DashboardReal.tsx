@@ -220,8 +220,17 @@ export default function DashboardReal() {
 
   // Premium check: user has paid subscription
   const isPremium = (user as any)?.subscriptionTier === 'premium' || (user as any)?.subscriptionTier === 'vip' || (user as any)?.subscriptionType === 'monthly' || (user as any)?.subscriptionType === 'annual' || (user as any)?.subscriptionType === 'lifetime';
-  const freeLessonsLimit = 5; // Lições 1-5 grátis, 6+ requer Premium
+  const trialStatusQuery = trpc.trialAccess.status.useQuery(undefined, { enabled: !!user, retry: false });
+  const revokeTrialMutation = trpc.trialAccess.revoke.useMutation({
+    onSuccess: () => { void trialStatusQuery.refetch(); },
+  });
+  const freeLessonsLimit = trialStatusQuery.data?.lessonLimit ?? 10;
   const premiumLessonsTotal = 200;
+
+  const revokeTrialAccess = () => {
+    if (!window.confirm("Encerrar o acesso de avaliação desta conta? Novas lições de avaliação serão bloqueadas.")) return;
+    revokeTrialMutation.mutate();
+  };
 
   // Status de IA nativa local (Ollama / LM Studio)
   const { data: iaNativaStatus } = trpc.offlineAI.getStatus.useQuery(undefined, { refetchInterval: 15000, retry: false });
@@ -382,6 +391,12 @@ export default function DashboardReal() {
                         <Badge variant="secondary" className="bg-white">✅ Conteúdo curricular em expansão</Badge>
                         <Badge variant="secondary" className="bg-white">✅ 58 idiomas ativos agora</Badge>
                         <Badge variant="secondary" className="bg-white">✅ Progressão A1–C2</Badge>
+                      </div>
+                      <div className="mb-4 rounded-lg border border-amber-200 bg-white/70 p-3">
+                        <p className="text-sm text-gray-700">Deseja encerrar a avaliação nesta conta? O encerramento bloqueia novos acessos de avaliação, sem alterar sua sessão de entrada.</p>
+                        <Button type="button" variant="outline" className="mt-2 border-amber-300 text-amber-800 hover:bg-amber-100" onClick={revokeTrialAccess} disabled={revokeTrialMutation.isPending || trialStatusQuery.data?.revoked}>
+                          {trialStatusQuery.data?.revoked ? "Avaliação encerrada" : revokeTrialMutation.isPending ? "Encerrando avaliação..." : "Encerrar acesso de avaliação"}
+                        </Button>
                       </div>
                       <Link href="/checkout">
                         <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
