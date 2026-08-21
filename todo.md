@@ -316,7 +316,7 @@
 
 - [x] Adicionar interesse comercial consentido ao suporte privado: categoria “Tenho interesse” registrada apenas para conta autenticada e revisão do proprietário, sem oferta automática, preço, anúncio ou cobrança — migração aplicada, TypeScript e 860 testes aprovados
 
-- [ ] Preservar o plano futuro do vendedor assistido e funil comercial em especificação versionada, checklist rastreável e checkpoint, para incorporação posterior sem reabrir escopo, ativar campanhas ou perder controles de aprovação
+- [x] Preservar o plano futuro do vendedor assistido e funil comercial em especificação versionada, checklist rastreável e checkpoint, para incorporação posterior sem reabrir escopo, ativar campanhas ou perder controles de aprovação — blueprint versionado e política testada mantêm publicação, orçamento, preço, desconto, contrato e cobrança bloqueados por aprovação do proprietário
 
 - [ ] Priorizar recursos internos gratuitos e estáveis no lançamento; preservar marcos de reinvestimento posterior em GPU, mídia docente e animações reais somente após monetização comprovada e sem substituir proteções atuais
 
