@@ -172,7 +172,14 @@ export const moderationRouter = router({
       if (!db) return [];
 
       const logs = await (db as any)
-        .select()
+        .select({
+          createdAt: conversationLogs.createdAt,
+          conversationType: conversationLogs.conversationType,
+          userAgeGroup: conversationLogs.userAgeGroup,
+          moderationScore: conversationLogs.moderationScore,
+          wasBlocked: conversationLogs.wasBlocked,
+          wasReformulated: conversationLogs.wasReformulated,
+        })
         .from(conversationLogs)
         .orderBy(desc(conversationLogs.createdAt))
         .limit(input.limit);

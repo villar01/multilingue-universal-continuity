@@ -64,7 +64,7 @@ export default function AdminModeration() {
       a.href = url;
       a.download = `moderation-logs-${new Date().toISOString()}.csv`;
       a.click();
-      toast.success("Logs exportados com sucesso!");
+      toast.success("Resumo de moderação exportado com sucesso!");
     },
   });
 
@@ -82,7 +82,7 @@ export default function AdminModeration() {
           disabled={exportLogs.isPending}
         >
           <FileText className="mr-2 h-4 w-4" />
-          Exportar Logs (30 dias)
+          Exportar Resumo (30 dias)
         </Button>
       </div>
 
@@ -148,7 +148,7 @@ export default function AdminModeration() {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="logs">Logs de Conversas</TabsTrigger>
+          <TabsTrigger value="logs">Resumo de Moderação</TabsTrigger>
           <TabsTrigger value="blacklist">Blacklist/Whitelist</TabsTrigger>
           <TabsTrigger value="stats">Estatísticas</TabsTrigger>
         </TabsList>
@@ -282,18 +282,18 @@ export default function AdminModeration() {
           )}
         </TabsContent>
 
-        {/* LOGS DE CONVERSAS */}
+        {/* RESUMO DE MODERAÇÃO */}
         <TabsContent value="logs" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Conversas Recentes</CardTitle>
-              <CardDescription>Últimas 50 interações IA-aluno</CardDescription>
+              <CardTitle>Registros Recentes de Moderação</CardTitle>
+              <CardDescription>Últimas 50 interações, apresentadas sem conteúdo de conversa ou identificação do aluno</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentLogs?.map((log: any) => (
+                {recentLogs?.map((log: any, index: number) => (
                   <div
-                    key={log.id}
+                    key={`${String(log.createdAt)}-${index}`}
                     className={`p-4 rounded-lg border ${
                       log.wasBlocked ? "bg-red-50 border-red-200" :
                       log.wasReformulated ? "bg-yellow-50 border-yellow-200" :
@@ -303,7 +303,7 @@ export default function AdminModeration() {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">
-                          Usuário #{log.userId}
+                          {log.conversationType.replace(/_/g, " ")}
                         </Badge>
                         <Badge variant="secondary">
                           {log.userAgeGroup}
@@ -318,18 +318,6 @@ export default function AdminModeration() {
                       <span className="text-xs text-muted-foreground">
                         {new Date(log.createdAt).toLocaleString("pt-BR")}
                       </span>
-                    </div>
-
-                    {log.userMessage && (
-                      <div className="mb-2">
-                        <p className="text-xs font-medium text-muted-foreground">Aluno:</p>
-                        <p className="text-sm">{log.userMessage}</p>
-                      </div>
-                    )}
-
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground">IA:</p>
-                      <p className="text-sm">{log.aiResponse}</p>
                     </div>
 
                     {log.moderationScore != null && log.moderationScore > 0 && (
