@@ -10,6 +10,7 @@ import { generateConversationStarter, continueConversation, provideFeedback, gen
 import { generateLesson, generateExercises } from "./_core/lessonGenerator";
 import { sql } from "drizzle-orm";
 import * as db from "./db";
+import { derivePedagogicalReadiness } from "./curriculum/learningLevelRoles";
 
 async function resolveConversationTeacherName(userId: number, activeTeacherId?: number): Promise<string | undefined> {
   const database = await db.getDb();
@@ -1470,8 +1471,12 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         if (!ctx.user) {
           throw new Error("Usuário não autenticado");
         }
-        
-        return await db.getUserProgress(ctx.user.id, input.courseId);
+
+        const progress = await db.getUserProgress(ctx.user.id, input.courseId);
+        return {
+          progress,
+          pedagogicalReadiness: derivePedagogicalReadiness(progress ?? {}),
+        };
       }),
     
     // Buscar lições completadas
