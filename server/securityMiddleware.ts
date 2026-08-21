@@ -13,6 +13,8 @@ const globalRequestCounts = new Map<string, { count: number; resetTime: number }
 const GLOBAL_API_RATE_LIMIT = 1000;
 const GLOBAL_PAGE_ASSET_RATE_LIMIT = 2000;
 const MAX_TRACKED_ORIGINS = 10_000;
+const BUCKET_CLEANUP_INTERVAL = 5 * 60 * 1000;
+let lastBucketCleanupAt = 0;
 
 // ── SQL Injection Patterns ────────────────────────────────────
 const SQL_INJECTION_PATTERNS = [
@@ -80,6 +82,13 @@ function removeExpiredBuckets(
   }
 }
 
+function cleanExpiredBucketsWhenDue(now: number): void {
+  if (now - lastBucketCleanupAt < BUCKET_CLEANUP_INTERVAL) return;
+  removeExpiredBuckets(requestCounts, now);
+  removeExpiredBuckets(globalRequestCounts, now);
+  lastBucketCleanupAt = now;
+}
+
 function getRateLimitBucket(req: Request): { key: string; max: number } | null {
   const path = req.path || req.originalUrl || "";
   if (!path.startsWith("/api/")) return null;
@@ -121,6 +130,7 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   const clientIp = getClientIp(req);
   const userAgent = req.headers['user-agent'] || '';
   const now = Date.now();
+  cleanExpiredBucketsWhenDue(now);
 
   if (isTemporarilyAbuseBlocked(clientIp, now)) {
     res.status(429).json({ error: "Acesso temporariamente limitado por atividade técnica repetida." });
@@ -239,15 +249,9 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   next();
 }
 
-// ── Clean up expired entries ──────────────────────────────────
-setInterval(() => {
-  const now = Date.now();
-  removeExpiredBuckets(requestCounts, now);
-  removeExpiredBuckets(globalRequestCounts, now);
-}, 5 * 60 * 1000);
-
 /** Somente para isolamento determinístico dos testes de segurança. */
 export function __resetSecurityStateForTests(): void {
   requestCounts.clear();
   globalRequestCounts.clear();
+  lastBucketCleanupAt = 0;
 }
