@@ -260,11 +260,7 @@ export default function Dashboard() {
                         <Badge variant="secondary" className="bg-white">✅ Acesso curricular protegido</Badge>
                         <Badge variant="secondary" className="bg-white">✅ Continuidade quando disponível</Badge>
                       </div>
-              <Link href="/checkout">
-                <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
-                  ⭐ Upgrade para Premium - R$ 59,00/mês
-                </Button>
-              </Link>
+                      <p className="text-sm font-medium text-amber-900">A continuidade comercial permanece protegida e só será apresentada após aprovação explícita do proprietário.</p>
                     </div>
                   </div>
                 </CardContent>
