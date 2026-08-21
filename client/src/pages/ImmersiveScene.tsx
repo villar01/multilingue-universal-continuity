@@ -2993,7 +2993,7 @@ export default function ImmersiveScene() {
                         onClick={replayTeacherSpeechFromGesture}
                         className="mt-3 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-indigo-500"
                       >
-                        🔊 Ouvir resposta de James
+                        🔊 Ouvir resposta de {(teachingScene ?? selectedScene).teacherName}
                       </button>
                       <div className="mt-3 border-t border-amber-300/20 pt-3">
                         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Aprofundar esta dúvida no curso ABC</p>

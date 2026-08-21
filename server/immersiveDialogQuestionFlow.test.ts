@@ -39,7 +39,7 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain('const [dlgTutorSpokenText, setDlgTutorSpokenText] = useState("");');
     expect(sceneSource).toContain("const replayTeacherSpeechFromGesture = useCallback(() => {");
     expect(sceneSource).toContain('onClick={replayTeacherSpeechFromGesture}');
-    expect(sceneSource).toContain("🔊 Ouvir resposta de James");
+    expect(sceneSource).toContain("🔊 Ouvir resposta de {(teachingScene ?? selectedScene).teacherName}");
     expect(sceneSource).toContain('const phrase = (dlgTutorSpokenText || activeSpeechText || lineText).trim();');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-greeting");');
   });

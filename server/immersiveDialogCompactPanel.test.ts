@@ -15,6 +15,6 @@ describe("painel compacto de diálogo da cena", () => {
   it("mantém texto completo, pergunta e controles disponíveis apenas quando o painel é aberto", () => {
     expect(page).toContain('{dlgExpanded && <div className="mt-3">');
     expect(page).toContain("Pergunte ao professor sobre a fala atual, sua resposta, a cena ou uma palavra:");
-    expect(page).toContain("Ouvir resposta de James");
+    expect(page).toContain("Ouvir resposta de {(teachingScene ?? selectedScene).teacherName}");
   });
 });
