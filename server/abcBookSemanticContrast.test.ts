@@ -13,8 +13,18 @@ describe("contrastes semânticos do Livro SOS", () => {
       "sound-there-their-theyre",
       "report-say-tell",
       "phrasal-look-up-look-for",
+      "movement-bring-take",
+      "description-fun-funny",
+      "quantity-few-little",
+      "exchange-borrow-lend",
+      "false-friend-actually-currently",
     ]);
     expect(delivery.semanticContrasts.map((contrast) => contrast.level)).toEqual([
+      "initial",
+      "intermediate",
+      "intermediate",
+      "advanced",
+      "initial",
       "initial",
       "intermediate",
       "intermediate",

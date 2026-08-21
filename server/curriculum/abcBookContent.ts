@@ -2668,6 +2668,76 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       comprehensionPrompt: "A tarefa é consultar uma informação ou procurar um objeto? Explique por que a partícula muda o sentido.",
       paretoPrompt: "Recupere look up, look for, word, dictionary e keys; descreva uma consulta e uma busca em frases diferentes.",
     },
+    {
+      id: "movement-bring-take",
+      level: "initial",
+      kind: "near_meaning",
+      focus: "bring / take",
+      contrast: "bring aproxima algo de quem fala ou do lugar de chegada; take leva algo para outro lugar.",
+      explanation: "Observe o ponto de referência antes de traduzir. As duas ações envolvem levar, mas a direção muda a escolha.",
+      examples: [
+        { target: "Please bring your book here.", native: "Por favor, traga seu livro aqui.", meaning: "movimento em direção ao ponto de fala" },
+        { target: "Take this bag to the bedroom.", native: "Leve esta bolsa para o quarto.", meaning: "movimento para outro lugar" },
+      ],
+      comprehensionPrompt: "O objeto vem para cá ou vai para outro lugar? Diga o destino antes de escolher bring ou take.",
+      paretoPrompt: "Recupere bring, take, book, bag e bedroom; descreva um objeto vindo para você e outro indo para um lugar.",
+    },
+    {
+      id: "description-fun-funny",
+      level: "initial",
+      kind: "near_meaning",
+      focus: "fun / funny",
+      contrast: "fun descreve algo prazeroso ou divertido; funny descreve algo que causa riso ou parece engraçado.",
+      explanation: "Não use funny apenas porque em português algo é 'divertido'. Pergunte se a ideia é prazer ou risada.",
+      examples: [
+        { target: "The café is fun on Saturday.", native: "O café é divertido aos sábados.", meaning: "atividade ou lugar prazeroso" },
+        { target: "That story is funny.", native: "Essa história é engraçada.", meaning: "algo que causa riso" },
+      ],
+      comprehensionPrompt: "A frase fala de uma experiência prazerosa ou de algo que faz rir? Explique sua escolha.",
+      paretoPrompt: "Recupere fun, funny, café, story e Saturday; escreva uma frase sobre uma atividade e outra sobre algo engraçado.",
+    },
+    {
+      id: "quantity-few-little",
+      level: "intermediate",
+      kind: "near_meaning",
+      focus: "few / little",
+      contrast: "few acompanha coisas contáveis no plural; little acompanha quantidade não contável.",
+      explanation: "Conte os itens antes de escolher. Tables, chairs e guests são contáveis; water, time e money são tratados como quantidade.",
+      examples: [
+        { target: "There are few tables available.", native: "Há poucas mesas disponíveis.", meaning: "itens contáveis" },
+        { target: "We have little time before dinner.", native: "Temos pouco tempo antes do jantar.", meaning: "quantidade não contável" },
+      ],
+      comprehensionPrompt: "Você consegue contar os elementos um a um? Se não, teste little; se sim, teste few.",
+      paretoPrompt: "Recupere few, little, tables, time e dinner; compare uma quantidade contável e outra não contável.",
+    },
+    {
+      id: "exchange-borrow-lend",
+      level: "intermediate",
+      kind: "near_meaning",
+      focus: "borrow / lend",
+      contrast: "borrow recebe algo temporariamente; lend entrega algo temporariamente a outra pessoa.",
+      explanation: "A direção da troca define a palavra. Pergunte quem fica com o objeto agora e quem o entrega.",
+      examples: [
+        { target: "Can I borrow your charger?", native: "Posso pegar seu carregador emprestado?", meaning: "receber temporariamente" },
+        { target: "I can lend you my charger.", native: "Posso lhe emprestar meu carregador.", meaning: "entregar temporariamente" },
+      ],
+      comprehensionPrompt: "Quem recebe o objeto e quem o entrega? Reescreva a frase trocando o ponto de vista.",
+      paretoPrompt: "Recupere borrow, lend, charger, can e you; faça um pedido e ofereça a resposta oposta.",
+    },
+    {
+      id: "false-friend-actually-currently",
+      level: "advanced",
+      kind: "near_meaning",
+      focus: "actually / currently",
+      contrast: "actually significa 'na verdade'; currently significa 'atualmente' ou 'neste momento'.",
+      explanation: "A forma parecida com o português pode enganar. Escolha actually para corrigir ou contrastar uma informação e currently para marcar o tempo presente.",
+      examples: [
+        { target: "Actually, the meeting is online.", native: "Na verdade, a reunião é on-line.", meaning: "correção ou contraste" },
+        { target: "She is currently working from home.", native: "Ela está atualmente trabalhando de casa.", meaning: "situação no momento presente" },
+      ],
+      comprehensionPrompt: "A frase corrige uma ideia ou informa a situação atual? Explique por que actually e currently não são intercambiáveis.",
+      paretoPrompt: "Recupere actually, currently, meeting, online e working; escreva uma correção e uma informação de tempo presente.",
+    },
   ],
   sections: [
     {
@@ -2773,6 +2843,11 @@ const SCENE_SEMANTIC_CONTRAST_IDS: Record<string, string> = {
   airport: "sound-there-their-theyre",
   newyork: "report-say-tell",
   museum: "phrasal-look-up-look-for",
+  family_home: "movement-bring-take",
+  cafe: "description-fun-funny",
+  restaurant: "quantity-few-little",
+  hotel: "exchange-borrow-lend",
+  office: "false-friend-actually-currently",
 };
 
 export function getABCBookSemanticContrastForScene(input: {
