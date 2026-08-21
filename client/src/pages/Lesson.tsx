@@ -1185,6 +1185,7 @@ export default function Lesson() {
                   vocabulary={lesson.vocabularyDetailed.map((v: any) => v.word)}
                   teacherId={teacher.id}
                   teacherName={teacher.name}
+                  teacherGender={teacherVoice.gender}
                   languageCode={lesson.languageCode || 'en-US'}
                 />
               </div>

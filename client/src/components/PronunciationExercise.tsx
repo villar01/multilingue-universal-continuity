@@ -12,6 +12,7 @@ interface PronunciationExerciseProps {
   vocabulary: string[];
   teacherId: number;
   teacherName: string;
+  teacherGender: 'male' | 'female';
   languageCode: string;
 }
 
@@ -19,6 +20,7 @@ export default function PronunciationExercise({
   vocabulary,
   teacherId,
   teacherName,
+  teacherGender,
   languageCode,
 }: PronunciationExerciseProps) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -55,7 +57,7 @@ export default function PronunciationExercise({
       const result = await generateTTS.mutateAsync({
         text: `Repeat after me: ${currentWord}`,
         languageCode: languageCode,
-        voiceGender: "FEMALE",
+        voiceGender: teacherGender === 'male' ? "MALE" : "FEMALE",
       });
 
       if (audioElementRef.current) {
