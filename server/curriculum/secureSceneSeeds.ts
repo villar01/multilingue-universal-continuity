@@ -667,14 +667,20 @@ const PT_BR_ENGLISH_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
   },
 };
 
-function createPortugueseEnglishSceneSeed(source: SecureSceneSeed, vocabulary: EnglishSceneVocabulary): SecureSceneSeed {
+const PT_BR_ENGLISH_JAMES_SCENE_IDS = new Set([
+  "beach", "forest", "newyork", "airport", "school", "cinema", "family_home", "airport_family",
+  "paris", "kitchen", "restaurant", "supermarket", "hotel", "hospital",
+]);
+
+function createPortugueseEnglishSceneSeed(sceneId: string, source: SecureSceneSeed, vocabulary: EnglishSceneVocabulary): SecureSceneSeed {
+  const teacherName = PT_BR_ENGLISH_JAMES_SCENE_IDS.has(sceneId) ? "James" : "Ingrid";
   const first = vocabulary.terms[0];
   const second = vocabulary.terms[1] ?? first;
   const third = vocabulary.terms[2] ?? second;
   return {
     dialog: [
-      { speaker: "teacher", text: `Hello! I am Ingrid. Welcome to the ${vocabulary.title}!`, textPt: `Olá! Eu sou a Ingrid. Bem-vindo a ${vocabulary.titlePt}!` },
-      { speaker: "user", text: `Hello, Ingrid! I can see the ${first.label}.`, textPt: `Olá, Ingrid! Eu consigo ver ${first.translation.toLowerCase()}.`, options: [`Hello, Ingrid! I can see the ${first.label}.`, "I cannot see it.", "Where is it?"], correctIndex: 0 },
+      { speaker: "teacher", text: `Hello! I am ${teacherName}. Welcome to the ${vocabulary.title}!`, textPt: `Olá! Eu sou ${teacherName}. Bem-vindo a ${vocabulary.titlePt}!` },
+      { speaker: "user", text: `Hello, ${teacherName}! I can see the ${first.label}.`, textPt: `Olá, ${teacherName}! Eu consigo ver ${first.translation.toLowerCase()}.`, options: [`Hello, ${teacherName}! I can see the ${first.label}.`, "I cannot see it.", "Where is it?"], correctIndex: 0 },
       { speaker: "teacher", text: `Great! Look at the ${second.label} and the ${third.label}.`, textPt: `Ótimo! Olhe para ${second.translation.toLowerCase()} e ${third.translation.toLowerCase()}.` },
       { speaker: "user", text: `I can name the ${first.label}, the ${second.label}, and the ${third.label}.`, textPt: `Eu consigo nomear ${first.translation.toLowerCase()}, ${second.translation.toLowerCase()} e ${third.translation.toLowerCase()}.`, options: [`I can name the ${first.label}, the ${second.label}, and the ${third.label}.`, "I need more practice.", "I do not understand."], correctIndex: 0 },
       { speaker: "teacher", text: "Excellent! Listen, repeat, and use these words in a complete sentence.", textPt: "Excelente! Ouça, repita e use essas palavras em uma frase completa." },
@@ -697,7 +703,7 @@ export function getSecureSceneSeedForLanguage(sceneId: string, targetLanguage: s
   }
   if (isPortugueseToEnglish && PT_BR_ENGLISH_REMAINING_VOCABULARY[sceneId]) {
     const source = getSecureSceneSeed(sceneId);
-    return source ? createPortugueseEnglishSceneSeed(source, PT_BR_ENGLISH_REMAINING_VOCABULARY[sceneId]) : null;
+    return source ? createPortugueseEnglishSceneSeed(sceneId, source, PT_BR_ENGLISH_REMAINING_VOCABULARY[sceneId]) : null;
   }
   return getSecureSceneSeed(sceneId);
 }

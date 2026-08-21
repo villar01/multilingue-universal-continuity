@@ -13,6 +13,7 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
     ["library", ["Book", "Shelf", "Reading Table", "Lamp", "Catalog", "Quiet"]],
     ["office", ["Computer", "Desk", "Phone", "Window", "Coffee Machine", "Folder"]],
     ["metro", ["Train", "Platform", "Sign", "Door", "Ticket", "Corridor"]],
+    ["hotel", ["Reception", "Chandelier", "Column", "Armchair", "Plant", "Lamp"]],
   ] as const)("entrega rótulos e diálogo em inglês para %s", (sceneId, expectedLabels) => {
     const material = getSecureSceneSeedForLanguage(sceneId, "en-US", "pt-BR");
 
@@ -27,11 +28,13 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
     expect(getSecureSceneSeed("library")?.hotspots[0]?.label).toBe("Książka");
     expect(getSecureSceneSeed("office")?.hotspots[0]?.label).toBe("Компьютер");
     expect(getSecureSceneSeed("metro")?.hotspots[0]?.label).toBe("Train");
+    expect(getSecureSceneSeed("hotel")?.hotspots[1]?.label).toBe("Lampadario");
     expect(getSecureSceneSeedForLanguage("desert", "ar-SA", "pt-BR")?.hotspots[0]?.label).toBe("رمل");
     expect(getSecureSceneSeedForLanguage("farm", "pl-PL", "pt-BR")?.hotspots[0]?.label).toBe("Krowa");
     expect(getSecureSceneSeedForLanguage("library", "pl-PL", "pt-BR")?.hotspots[0]?.label).toBe("Książka");
     expect(getSecureSceneSeedForLanguage("office", "ru-RU", "pt-BR")?.hotspots[0]?.label).toBe("Компьютер");
     expect(getSecureSceneSeedForLanguage("metro", "fr-FR", "pt-BR")?.hotspots[1]?.label).toBe("Quai");
+    expect(getSecureSceneSeedForLanguage("hotel", "it-IT", "pt-BR")?.hotspots[1]?.label).toBe("Lampadario");
   });
 
   it("entrega inglês para toda cena remanescente do catálogo PT-BR→EN", () => {
@@ -41,6 +44,12 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
       expect(material?.dialog.every((line) => /^[\x00-\x7F]+$/.test(line.text)), sceneId).toBe(true);
       expect(material?.dialog.every((line) => line.textPt.trim().length > 0), sceneId).toBe(true);
     }
+  });
+
+  it("mantém James e Ingrid coerentes com a matriz docente em diálogos localizados", () => {
+    expect(getSecureSceneSeedForLanguage("hotel", "en-US", "pt-BR")?.dialog[0]?.text).toContain("I am James");
+    expect(getSecureSceneSeedForLanguage("paris", "en-US", "pt-BR")?.dialog[0]?.text).toContain("I am James");
+    expect(getSecureSceneSeedForLanguage("garden", "en-US", "pt-BR")?.dialog[0]?.text).toContain("I am Ingrid");
   });
 
   it("encaminha o par de idiomas pela rota protegida antes de renderizar o material canônico", () => {
