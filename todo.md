@@ -491,7 +491,7 @@
 - [ ] Ampliar a revisão externa da matriz docente para detectar conflitos residuais de professor, mídia, idioma, segurança e regressões nas 29 cenas
 - [ ] Executar revisão externa de leitura antes de cada bloco ativo e corrigir localmente somente achados confirmados por código e teste
 - [ ] Concluir integralmente as 29 cenas antes de solicitar a verificação manual do usuário por clique
-- [ ] Exigir autenticação cron na expansão programada de vocabulário, impedindo chamadas públicas que acionem LLM e inserções no banco
+- [x] Exigir autenticação cron na expansão programada de vocabulário, impedindo chamadas públicas que acionem LLM e inserções no banco — visitante e cron sem `taskUid` recebem 403 antes de `invokeLLM` ou banco; regressão dedicada, TypeScript e 366 arquivos/926 testes aprovados
 - [x] Streaming de respostas LLM palavra por palavra — useStreamingText integrado em LiveLessonTeacher
 - [x] Comprimir prompts para reduzir tokens — promptCompression.ts (client+server) integrado em aiProvider.ts generateAI
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)
