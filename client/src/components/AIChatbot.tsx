@@ -24,13 +24,14 @@ interface AIChatbotProps {
   languageCode: string;
   level?: CEFRLevel;
   teacherName?: string;
+  teacherGender?: 'male' | 'female';
 }
 
 /**
  * Chatbot IA Conversacional para prática de idiomas
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
-export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor' }: AIChatbotProps) {
+export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor', teacherGender }: AIChatbotProps) {
   const { profile } = useLanguage();
   const targetLanguage = languageCode || profile.targetCode;
   const nativeLanguage = profile.nativeCode;
@@ -166,7 +167,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
   };
 
   const playAudio = (text: string) => {
-    speakNaturalVoice(text, targetLanguage, { rate: 0.9 });
+    speakNaturalVoice(text, targetLanguage, { rate: 0.9, gender: teacherGender });
   };
 
   const stopRecording = () => {
