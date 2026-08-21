@@ -745,15 +745,17 @@ export default function DashboardReal() {
                     </div>
                   </button>
                 </Link>
-                <Link href="/sales-dashboard">
-                  <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 hover:from-indigo-100 hover:to-purple-100 transition-all text-left">
-                    <span className="text-xl">📊</span>
-                    <div>
-                      <div className="font-semibold text-indigo-800 text-sm">Painel de Vendas</div>
-                      <div className="text-xs text-gray-500">CRM & Analytics interno</div>
-                    </div>
-                  </button>
-                </Link>
+                {user?.role === "admin" && (
+                  <Link href="/sales-dashboard">
+                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 hover:from-indigo-100 hover:to-purple-100 transition-all text-left">
+                      <span className="text-xl">📊</span>
+                      <div>
+                        <div className="font-semibold text-indigo-800 text-sm">Painel de Vendas</div>
+                        <div className="text-xs text-gray-500">CRM & Analytics interno</div>
+                      </div>
+                    </button>
+                  </Link>
+                )}
               </CardContent>
             </Card>
 
