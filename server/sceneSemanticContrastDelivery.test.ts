@@ -28,6 +28,13 @@ describe("contrastes semânticos contextuais no Pareto", () => {
     expect(getABCBookSemanticContrastForScene({ sceneId: "hospital", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("sick / ill");
     expect(getABCBookSemanticContrastForScene({ sceneId: "supermarket", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("some / any");
     expect(getABCBookSemanticContrastForScene({ sceneId: "tokyo", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("travel / trip / journey");
+    const coveredSceneIds = [
+      "paris", "beach", "kitchen", "restaurant", "supermarket", "school", "park", "cinema", "library", "cafe", "family_home",
+      "forest", "newyork", "airport", "hotel", "hospital", "mountain", "farm", "gym", "office", "metro", "port", "spa", "airport_family",
+      "tokyo", "desert", "museum", "medieval", "garden",
+    ];
+    expect(coveredSceneIds).toHaveLength(29);
+    expect(coveredSceneIds.every((sceneId) => getABCBookSemanticContrastForScene({ sceneId, nativeLanguage: "pt-BR", targetLanguage: "en-US" }) !== null)).toBe(true);
   });
 
   it("não fabrica contraste para idioma ou cena sem conteúdo aprovado", () => {
