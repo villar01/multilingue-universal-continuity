@@ -24,9 +24,12 @@ describe("jornada pedagógica das cenas imersivas", () => {
     expect(journey.slice(0, firstIntermediate).every((scene) => scene.difficulty === "beginner")).toBe(true);
   });
 
-  it("faz a galeria principal usar a proteção de jornada central", () => {
+  it("faz a galeria e o avanço para a próxima cena usarem a proteção de jornada central", () => {
     const source = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
     expect(source).toContain("orderScenesForPedagogicalJourney");
-    expect(source).toContain("}), targetLang);");
+    expect(source).toContain("const pedagogicalSceneJourney = orderScenesForPedagogicalJourney(IMMERSIVE_SCENES, targetLang);");
+    expect(source).toContain("const filteredScenes = pedagogicalSceneJourney.filter");
+    expect(source).toContain("const idx = pedagogicalSceneJourney.findIndex");
+    expect(source).toContain("const next = pedagogicalSceneJourney[(idx + 1) % pedagogicalSceneJourney.length];");
   });
 });

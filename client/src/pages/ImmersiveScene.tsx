@@ -2073,12 +2073,13 @@ export default function ImmersiveScene() {
     });
   }, []);
 
-  const filteredScenes = orderScenesForPedagogicalJourney(IMMERSIVE_SCENES.filter(s => {
+  const pedagogicalSceneJourney = orderScenesForPedagogicalJourney(IMMERSIVE_SCENES, targetLang);
+  const filteredScenes = pedagogicalSceneJourney.filter(s => {
     if (filter !== "all" && sceneCefrLevel(s) !== filter) return false;
     if (search && !s.name.toLowerCase().includes(search.toLowerCase()) &&
         !s.nameEn.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
-  }), targetLang);
+  });
 
   const cefrColor = (level: ImmersiveCEFRLevel) =>
     level === "A1" || level === "A2" ? "#22c55e" : level === "B1" || level === "B2" ? "#f59e0b" : "#ef4444";
@@ -3235,8 +3236,8 @@ export default function ImmersiveScene() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const idx = IMMERSIVE_SCENES.findIndex(s => s.id === selectedScene.id);
-              const next = IMMERSIVE_SCENES[(idx + 1) % IMMERSIVE_SCENES.length];
+              const idx = pedagogicalSceneJourney.findIndex(s => s.id === selectedScene.id);
+              const next = pedagogicalSceneJourney[(idx + 1) % pedagogicalSceneJourney.length];
               console.log('[Próxima] clicked. current:', selectedScene.id, 'idx:', idx, 'next:', next.id);
               setSelectedScene(next);
             }}
