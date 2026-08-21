@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { adminProcedure, publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { textToSpeech, batchTextToSpeech, listAvailableVoices, getTTSUsage } from "./_core/tts";
@@ -1237,7 +1237,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
   // Seed (popular banco de dados)
   seed: router({
     // Popular conteúdo massivo: 54 idiomas + 1080+ lições
-    populateMassive: publicProcedure
+    populateMassive: adminProcedure
       .mutation(async () => {
         const dbInstance = await db.getDb();
         if (!dbInstance) return { success: false, message: "Erro ao conectar ao banco" };
@@ -1249,7 +1249,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Popular lições extras (atingir 1000+)
-    populateExtraLessons: publicProcedure
+    populateExtraLessons: adminProcedure
       .mutation(async () => {
         const dbInstance = await db.getDb();
         if (!dbInstance) return { success: false, message: "Erro ao conectar ao banco" };
@@ -1259,7 +1259,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
 
     // Popular conquistas
-    populateAchievements: publicProcedure
+    populateAchievements: adminProcedure
       .mutation(async () => {
         const allAchievements = await db.getAllAchievements();
         
@@ -1298,7 +1298,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
       }),
     
     // Popular professores virtuais
-    populateTeachers: publicProcedure
+    populateTeachers: adminProcedure
       .mutation(async () => {
         const { exec } = await import("child_process");
         const { promisify } = await import("util");
