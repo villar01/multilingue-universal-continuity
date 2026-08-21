@@ -5,7 +5,7 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { ttsRouter } from "./tts-coqui-server";
 import { lipSyncRouter } from "./lip-sync-claude";
@@ -33,7 +33,7 @@ export const ttsPublicRouter = router({
    * Sintetizar fala com Coqui XTTS v2
    * Suporta 57 idiomas com sotaques realistas
    */
-  synthesize: publicProcedure
+  synthesize: protectedProcedure
     .input(TTSRequestSchema)
     .mutation(async ({ input }) => {
       try {
@@ -96,7 +96,7 @@ export const lipSyncPublicRouter = router({
   /**
    * Gerar lip-sync completo (phonemas + frames)
    */
-  generate: publicProcedure
+  generate: protectedProcedure
     .input(LipSyncRequestSchema)
     .mutation(async ({ input }) => {
       try {
@@ -118,7 +118,7 @@ export const lipSyncPublicRouter = router({
   /**
    * Gerar apenas phonemas
    */
-  generatePhonemes: publicProcedure
+  generatePhonemes: protectedProcedure
     .input(z.object({ text: z.string(), language: z.string() }))
     .mutation(async ({ input }) => {
       try {
@@ -139,7 +139,7 @@ export const lipSyncPublicRouter = router({
   /**
    * Gerar frames de animação
    */
-  generateFrames: publicProcedure
+  generateFrames: protectedProcedure
     .input(
       z.object({
         phonemes: z.array(
@@ -174,7 +174,7 @@ export const lipSyncPublicRouter = router({
   /**
    * Melhorar qualidade com feedback
    */
-  improve: publicProcedure
+  improve: protectedProcedure
     .input(
       z.object({
         text: z.string(),
