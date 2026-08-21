@@ -1,4 +1,5 @@
 import type { DialogLine, Hotspot } from "../../shared/immersiveSceneTypes";
+import { PT_BR_ENGLISH_REMAINING_VOCABULARY, type EnglishSceneVocabulary } from "./ptEnglishSceneVocabulary";
 
 export type SecureSceneSeed = {
   dialog: DialogLine[];
@@ -666,11 +667,37 @@ const PT_BR_ENGLISH_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
   },
 };
 
+function createPortugueseEnglishSceneSeed(source: SecureSceneSeed, vocabulary: EnglishSceneVocabulary): SecureSceneSeed {
+  const first = vocabulary.terms[0];
+  const second = vocabulary.terms[1] ?? first;
+  const third = vocabulary.terms[2] ?? second;
+  return {
+    dialog: [
+      { speaker: "teacher", text: `Hello! I am Ingrid. Welcome to the ${vocabulary.title}!`, textPt: `Olá! Eu sou a Ingrid. Bem-vindo a ${vocabulary.titlePt}!` },
+      { speaker: "user", text: `Hello, Ingrid! I can see the ${first.label}.`, textPt: `Olá, Ingrid! Eu consigo ver ${first.translation.toLowerCase()}.`, options: [`Hello, Ingrid! I can see the ${first.label}.`, "I cannot see it.", "Where is it?"], correctIndex: 0 },
+      { speaker: "teacher", text: `Great! Look at the ${second.label} and the ${third.label}.`, textPt: `Ótimo! Olhe para ${second.translation.toLowerCase()} e ${third.translation.toLowerCase()}.` },
+      { speaker: "user", text: `I can name the ${first.label}, the ${second.label}, and the ${third.label}.`, textPt: `Eu consigo nomear ${first.translation.toLowerCase()}, ${second.translation.toLowerCase()} e ${third.translation.toLowerCase()}.`, options: [`I can name the ${first.label}, the ${second.label}, and the ${third.label}.`, "I need more practice.", "I do not understand."], correctIndex: 0 },
+      { speaker: "teacher", text: "Excellent! Listen, repeat, and use these words in a complete sentence.", textPt: "Excelente! Ouça, repita e use essas palavras em uma frase completa." },
+      { speaker: "user", text: `The ${first.label} is easy to see here.`, textPt: `${first.translation} é fácil de ver aqui.`, options: [`The ${first.label} is easy to see here.`, "This is too difficult.", "I want to stop."], correctIndex: 0 },
+      { speaker: "teacher", text: "Well done! Your English is getting better every day.", textPt: "Muito bem! Seu inglês está melhorando a cada dia." },
+    ],
+    hotspots: source.hotspots.map((hotspot, index) => {
+      const term = vocabulary.terms[index];
+      if (!term) return hotspot;
+      return { ...hotspot, label: term.label, translation: term.translation, pronunciation: term.label, example: `Look at the ${term.label.toLowerCase()}.`, examplePt: `Olhe para ${term.translation.toLowerCase()}.` };
+    }),
+  };
+}
+
 export function getSecureSceneSeedForLanguage(sceneId: string, targetLanguage: string, nativeLanguage: string): SecureSceneSeed | null {
   const isPortugueseToEnglish = nativeLanguage.toLowerCase().startsWith("pt")
     && targetLanguage.toLowerCase().startsWith("en");
   if (isPortugueseToEnglish && PT_BR_ENGLISH_SCENE_SEEDS[sceneId]) {
     return PT_BR_ENGLISH_SCENE_SEEDS[sceneId];
+  }
+  if (isPortugueseToEnglish && PT_BR_ENGLISH_REMAINING_VOCABULARY[sceneId]) {
+    const source = getSecureSceneSeed(sceneId);
+    return source ? createPortugueseEnglishSceneSeed(source, PT_BR_ENGLISH_REMAINING_VOCABULARY[sceneId]) : null;
   }
   return getSecureSceneSeed(sceneId);
 }

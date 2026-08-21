@@ -18,5 +18,11 @@
 | Biblioteca — após a correção PT-BR→EN | Os hotspots passaram a mostrar **Book, Shelf, Reading Table, Lamp, Catalog e Quiet**; a cena, os controles e Ingrid continuaram visíveis. |
 | Escritório e Metrô — baixa concorrência | Cenários e Ingrid renderizaram corretamente. O Escritório mostrou hotspots em russo e o Metrô mostrou hotspots em francês, portanto ambas as cenas ainda requerem correção curricular para PT-BR→EN. |
 | Escritório e Metrô — após a correção PT-BR→EN | Os hotspots passaram a mostrar **Computer, Desk, Phone, Window, Coffee Machine, Folder** no Escritório e **Train, Platform, Sign, Door, Ticket, Corridor** no Metrô. Ingrid, cenários e controles foram preservados. |
+| Jardim Japonês e Café Parisiense — correção em lote | As cenas renderizaram com **Ingrid** e hotspots em inglês, incluindo **Cherry Blossom, Pond, Bridge, Stone, Bamboo, Lantern** e **Coffee, Croissant, Waiter, Terrace, Newspaper, Bill**. |
+| Paris e Cozinha — correção em lote | As cenas renderizaram com **James** e hotspots em inglês, incluindo **Eiffel Tower, Cafe, Street, Flower, Building, Bakery, Bridge** e **Refrigerator, Oven, Table, Window, Spoon, Counter**. |
+| Restaurante e Supermercado — correção em lote | As cenas renderizaram com **James** e hotspots em inglês, incluindo **Pasta, Wine, Table, Candle, Picture, Window** e **Cart, Fruit, Bread, Milk, Checkout, Price**. |
+| Tóquio e Mercado Medieval — correção em lote | As cenas renderizaram com **Ingrid** e hotspots em inglês, incluindo **Mount Fuji, Street, Advertisement, Screen, Building, Sign** e **Castle, Market, Knight, Flag, Fountain, Candle**. |
+| Porto e Museu — correção em lote | O Porto renderizou com **Ingrid** e hotspots em inglês: **Boat, Sea, Lighthouse, Seagull, Net, Anchor**. O Museu preservou o cenário e Ingrid durante o estado transitório de preparação; a regressão confirma **Painting, Sculpture, Frame, Visitor, Gallery, Light** assim que o material protegido é liberado. |
+| Parque e Montanha — correção em lote | As cenas renderizaram com **Ingrid** e hotspots em inglês: **Tree, Playground, Fountain, People, Dog, Grass** e **Peak, Snow, Forest, Rock, Cloud, Lake**. |
 
 Esta verificação cobre apenas a renderização visual de prévia. O material pedagógico continua protegido pelo fluxo autenticado e as regras de voz, retrato e clipes são cobertas pela suíte de regressão.

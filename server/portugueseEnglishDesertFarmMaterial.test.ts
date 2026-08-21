@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { getSecureSceneSeed, getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
+import { PT_BR_ENGLISH_REMAINING_VOCABULARY } from "./curriculum/ptEnglishSceneVocabulary";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
 const routerSource = readFileSync("server/curriculum-router.ts", "utf8");
@@ -31,6 +32,15 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
     expect(getSecureSceneSeedForLanguage("library", "pl-PL", "pt-BR")?.hotspots[0]?.label).toBe("Książka");
     expect(getSecureSceneSeedForLanguage("office", "ru-RU", "pt-BR")?.hotspots[0]?.label).toBe("Компьютер");
     expect(getSecureSceneSeedForLanguage("metro", "fr-FR", "pt-BR")?.hotspots[1]?.label).toBe("Quai");
+  });
+
+  it("entrega inglês para toda cena remanescente do catálogo PT-BR→EN", () => {
+    for (const [sceneId, vocabulary] of Object.entries(PT_BR_ENGLISH_REMAINING_VOCABULARY)) {
+      const material = getSecureSceneSeedForLanguage(sceneId, "en-US", "pt-BR");
+      expect(material?.hotspots.map((hotspot) => hotspot.label), sceneId).toEqual(vocabulary.terms.map((term) => term.label));
+      expect(material?.dialog.every((line) => /^[\x00-\x7F]+$/.test(line.text)), sceneId).toBe(true);
+      expect(material?.dialog.every((line) => line.textPt.trim().length > 0), sceneId).toBe(true);
+    }
   });
 
   it("encaminha o par de idiomas pela rota protegida antes de renderizar o material canônico", () => {
