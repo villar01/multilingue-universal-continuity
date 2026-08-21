@@ -49,7 +49,6 @@ import { gamificationRouter } from './gamification-router';
 import { autoImprovementRouter } from './auto-improvement-router';
 import { precisionClipsRouter } from './precision-clips-router';
 import { bilingualConversationRouter } from './bilingual-conversation-router';
-import { animatePortrait, animatePortraitWithText, checkLivePortraitHealth } from './_core/liveportrait';
 import { clipsRouter } from './routers-clips';
 import { generateAI, generateAIBatch, getProvidersStatus } from './aiProvider';
 import { sigaRouter } from './siga-router';
@@ -2645,9 +2644,11 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           audioUrl: z.string().url(),
         })
       )
-      .mutation(async ({ input }) => {
-        const videoUrl = await animatePortrait(input.imageUrl, input.audioUrl);
-        return { videoUrl };
+      .mutation(async (): Promise<{ videoUrl: string | null }> => {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "A animação facial por áudio permanece em validação. O retrato e o áudio compatível continuam disponíveis nesta lição.",
+        });
       }),
     
      // Animar com texto direto (D-ID gera TTS Neural internamente)
@@ -2660,29 +2661,21 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           voiceId: z.string().optional(),
         })
       )
-      .mutation(async ({ input }) => {
-        const videoUrl = await animatePortraitWithText(
-          input.imageUrl,
-          input.text,
-          input.languageCode,
-          input.voiceId
-        );
-        return { videoUrl };
+      .mutation(async (): Promise<{ videoUrl: string | null }> => {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "A animação facial por áudio permanece em validação. O retrato e o áudio compatível continuam disponíveis nesta lição.",
+        });
       }),
 
     healthCheck: publicProcedure
       .query(async () => {
-        const isHealthy = await checkLivePortraitHealth();
-        return { isHealthy };
+        return { isHealthy: false };
       }),
-    // Verificar se D-ID está configurado
     didStatus: publicProcedure
       .query(async () => {
-        const { ENV } = await import("./_core/env");
-        const hasKey = !!ENV.didApiKey && ENV.didApiKey.length > 10;
-        return { configured: hasKey };
+        return { configured: false };
       }),
-    // Gerar vídeo D-ID com texto (endpoint principal para professores)
     generateTeacherVideo: protectedProcedure
       .input(
         z.object({
@@ -2692,38 +2685,11 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           voiceId: z.string().optional(),
         })
       )
-      .mutation(async ({ input }) => {
-        const { ENV } = await import("./_core/env");
-        if (!ENV.didApiKey) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'DID_API_KEY not configured' });
-        const voiceMap: Record<string, string> = {
-          'en-US': 'en-US-JennyNeural', 'en-GB': 'en-GB-SoniaNeural',
-          'es-ES': 'es-ES-ElviraNeural', 'es-MX': 'es-MX-DaliaNeural',
-          'fr-FR': 'fr-FR-DeniseNeural', 'de-DE': 'de-DE-KatjaNeural',
-          'pt-BR': 'pt-BR-FranciscaNeural', 'it-IT': 'it-IT-ElsaNeural',
-          'ja-JP': 'ja-JP-NanamiNeural', 'ko-KR': 'ko-KR-SunHiNeural',
-          'zh-CN': 'zh-CN-XiaoxiaoNeural', 'ru-RU': 'ru-RU-SvetlanaNeural',
-        };
-        const voiceId = input.voiceId || voiceMap[input.languageCode] || 'en-US-JennyNeural';
-        const payload = {
-          source_url: input.imageUrl,
-          script: { type: 'text', input: input.text, provider: { type: 'microsoft', voice_id: voiceId } },
-          config: { fluent: true, pad_audio: 0.5, stitch: true }
-        };
-        const createResp = await fetch('https://api.d-id.com/talks', {
-          method: 'POST',
-          headers: { 'accept': 'application/json', 'content-type': 'application/json', 'authorization': ENV.didApiKey.startsWith('Basic ') ? ENV.didApiKey : `Basic ${ENV.didApiKey}` },
-          body: JSON.stringify(payload)
+      .mutation(async (): Promise<{ videoUrl: string | null }> => {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "A animação facial por áudio permanece em validação. O retrato e o áudio compatível continuam disponíveis nesta lição.",
         });
-        if (!createResp.ok) { const err = await createResp.json(); throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `D-ID: ${JSON.stringify(err)}` }); }
-        const { id } = await createResp.json() as { id: string };
-        for (let i = 0; i < 15; i++) {
-          await new Promise(r => setTimeout(r, 2000));
-          const pollResp = await fetch(`https://api.d-id.com/talks/${id}`, { headers: { 'authorization': ENV.didApiKey.startsWith('Basic ') ? ENV.didApiKey : `Basic ${ENV.didApiKey}` } });
-          const data = await pollResp.json() as { status: string; result_url?: string };
-          if (data.status === 'done' && data.result_url) return { videoUrl: data.result_url };
-          if (data.status === 'error') throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'D-ID video failed' });
-        }
-        throw new TRPCError({ code: 'TIMEOUT', message: 'D-ID timeout' });
       }),
   }),
   // Phrasal Verbs Dictionary
