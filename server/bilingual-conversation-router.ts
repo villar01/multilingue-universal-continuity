@@ -90,6 +90,7 @@ Start the conversation now:`;
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await ensureConversationAccess(ctx.user.id);
       const nativeTag = localeTag(input.nativeLanguage);
       const targetTag = localeTag(input.targetLanguage);
       try {
