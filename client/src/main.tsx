@@ -5,7 +5,6 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
-import { getLoginUrl } from "./const";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import "./index.css";
 
@@ -37,17 +36,13 @@ const isAuthError = (error: unknown): boolean => {
   return error.message === UNAUTHED_ERR_MSG || error.data?.code === 'UNAUTHORIZED';
 };
 
-// Silently handle all query errors — no toasts, no console noise for auth errors
+// Erros globais não navegam. Cada rota protegida preserva o próprio contexto e
+// apresenta a recuperação apropriada, evitando que um 401 transitório descarte
+// uma cena, lição ou formulário em andamento.
 queryClient.getQueryCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.query.state.error;
     if (isAuthError(error)) {
-      // On public pages: silently swallow the 401 — user is browsing without login
-      if (isPublicPath()) return;
-      // On protected pages: redirect to login
-      if (typeof window !== "undefined") {
-        window.location.href = getLoginUrl();
-      }
       return;
     }
     // Suppress all other errors from console — the manus-runtime ErrorCatcher
@@ -60,9 +55,6 @@ queryClient.getMutationCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.mutation.state.error;
     if (isAuthError(error)) {
-      if (!isPublicPath() && typeof window !== "undefined") {
-        window.location.href = getLoginUrl();
-      }
       return;
     }
     // if (import.meta.env.DEV) console.error("[Mutation Error]", error);
