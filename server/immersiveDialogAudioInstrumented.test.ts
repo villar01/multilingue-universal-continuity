@@ -15,9 +15,9 @@ describe("controle instrumental do áudio imersivo", () => {
     expect(sceneSource).toContain('max={dialogAudioDuration || 0}');
   });
 
-  it("mantém a barra nativa oculta por padrão, exibindo-a somente na retomada explícita", () => {
-    expect(sceneSource).toContain("controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}");
-    expect(sceneSource).toContain('className={dialogAudioNeedsGesture && dialogAudioSource');
+  it("expõe a barra nativa durante diálogo preparado ou retomada explícita", () => {
+    expect(sceneSource).toContain("controls={Boolean(dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture))}");
+    expect(sceneSource).toContain('className={dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture)');
     expect(sceneSource).toContain(': "sr-only"');
     expect(sceneSource).not.toContain('className="hidden"');
     expect(sceneSource).not.toContain('top-[160px] z-[75] h-9');

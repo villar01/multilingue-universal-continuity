@@ -135,8 +135,8 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("onClick={onReplaySpeech}");
     expect(source).toContain("hasPreparedSpeech={Boolean(dialogAudioSource)}");
     expect(source).toContain("onReplaySpeech={() => { void replayVisibleDialogAudio(); }}");
-    expect(source).toContain("controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}");
-    expect(source).toContain("className={dialogAudioNeedsGesture && dialogAudioSource");
+    expect(source).toContain("controls={Boolean(dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture))}");
+    expect(source).toContain("className={dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture)");
   });
 
   it("não usa tremor ou gesto sintético como substituto de animação facial natural", () => {
@@ -196,13 +196,13 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender))");
   });
 
-  it("mantém o único elemento de áudio montado, oculto por padrão e visível somente na retomada explícita", () => {
+  it("mantém o único elemento de áudio montado e visível durante diálogo preparado ou retomada explícita", () => {
     const teacherIndex = source.indexOf("<TeacherAvatar");
     const dialogPanelIndex = source.indexOf("{/* ── Dialog Panel:");
     const audioIndex = source.indexOf("ref={dialogAudioElementRef}");
     expect(audioIndex).toBeGreaterThan(teacherIndex);
     expect(audioIndex).toBeLessThan(dialogPanelIndex);
-    expect(source).toContain("controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}");
+    expect(source).toContain("controls={Boolean(dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture))}");
     expect(source).toContain(': "sr-only"');
     expect(source).not.toContain('className="hidden"');
     expect(source).toContain("os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural");
@@ -221,10 +221,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("Ouça a palavra primeiro");
   });
 
-  it("não renderiza barra nativa sobre cartões e só a exibe na retomada explícita do diálogo", () => {
+  it("não renderiza barra nativa sobre cartões e a exibe apenas no diálogo preparado ou retomada explícita", () => {
     expect(source).not.toContain('top-[160px] z-[75] h-9');
     expect(source).not.toContain('bottom-[112px] left-1/2 z-[75]');
-    expect(source).toContain("controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}");
+    expect(source).toContain("controls={Boolean(dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture))}");
     expect(source).toContain('bottom-24 w-[min(360px,calc(100%-32px))]');
   });
 });
