@@ -1761,9 +1761,11 @@ export default function ImmersiveScene() {
     setDlgTutorSpokenText(immediateSpokenText);
     setDlgTutorHistory((history) => [...history, { role: "user" as const, content: question }, { role: "assistant" as const, content: immediateReply.replace(/^[^:]+:\s*/, "") }].slice(-8));
     requestSpeechSafely(immediateReply.replace(/^[^:]+:\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);
+    // A resposta imediata continua visível e falada sem atraso. O tutor
+    // protegido segue em segundo plano para ampliar o contexto da lição,
+    // mas não repete a fala que já foi entregue ao aluno.
     if (fallback?.immediate) {
       setDlgTutorLoading(false);
-      return;
     }
     const loadingTimeout = window.setTimeout(() => {
       if (requestId === dlgTutorRequestRef.current) {
@@ -1794,7 +1796,9 @@ export default function ImmersiveScene() {
         ? scene.hotspots.find((hotspot) => hotspot.id === fallback.hotspotId) || null
         : null;
       setDlgSuggestedHotspot(relatedHotspot);
-      requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
+      if (!fallback?.immediate) {
+        requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
+      }
       void dialogTranslateMut.mutateAsync({ text: targetReply, sourceLanguage: scene.teacherLang, targetLanguage: nativeLang || "pt-BR" })
         .then((translation) => {
           if (requestId === dlgTutorRequestRef.current && translation.translation) {
@@ -1807,7 +1811,9 @@ export default function ImmersiveScene() {
       const targetReply = fallback?.text.replace(/^[^:]+:\s*/, "") || "I can help you practise vocabulary, grammar, and new sentences from this lesson.";
       setDlgFeedback(`${scene.teacherName}: ${targetReply}`);
       setDlgTutorSpokenText(targetReply);
-      requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
+      if (!fallback?.immediate) {
+        requestSpeechSafely(targetReply, scene.teacherLang, scene.teacherGender, "teacher");
+      }
     } finally {
       window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
