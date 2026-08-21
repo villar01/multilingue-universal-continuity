@@ -11,6 +11,7 @@ import { generateLesson, generateExercises } from "./_core/lessonGenerator";
 import { sql } from "drizzle-orm";
 import * as db from "./db";
 import { derivePedagogicalReadiness } from "./curriculum/learningLevelRoles";
+import { PEDAGOGICAL_LEVEL_PASSAGE } from "./curriculum/pedagogicalLevelPassage";
 
 async function resolveConversationTeacherName(userId: number, activeTeacherId?: number): Promise<string | undefined> {
   const database = await db.getDb();
@@ -1476,6 +1477,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         return {
           progress,
           pedagogicalReadiness: derivePedagogicalReadiness(progress ?? {}),
+          pedagogicalLevels: Object.values(PEDAGOGICAL_LEVEL_PASSAGE),
         };
       }),
     

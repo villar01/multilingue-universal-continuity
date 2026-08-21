@@ -133,6 +133,15 @@ const PEDAGOGICAL_LEVEL_LABELS: Record<string, string> = {
   technological: "Tecnológico",
 };
 
+const PEDAGOGICAL_EVIDENCE_LABELS: Record<string, string> = {
+  concept_recognition: "reconhecer o conceito",
+  guided_practice: "prática guiada",
+  short_response: "resposta curta",
+  contextual_correction: "correção contextual",
+  independent_transfer: "transferência independente",
+  domain_application: "aplicação no contexto",
+};
+
 // Mantido como referência canônica de capacidade técnica; o painel comercial não o usa como promessa de currículo ativo.
 void ACTIVE_LANGUAGE_COUNT;
 
@@ -263,6 +272,7 @@ export default function DashboardReal() {
   const selectedLanguage = languages?.find(l => l.id === selectedLanguageId);
   const currentLevelOption = LEVEL_OPTIONS.find(l => l.id === selectedLevel)!;
   const pedagogicalReadiness = courseProgressData?.pedagogicalReadiness;
+  const pedagogicalLevels = courseProgressData?.pedagogicalLevels ?? [];
   const masteryPercent = pedagogicalReadiness ? Math.round(pedagogicalReadiness.averageMastery * 100) : 0;
   const currentPedagogicalLevel = pedagogicalReadiness
     ? PEDAGOGICAL_LEVEL_LABELS[pedagogicalReadiness.currentLevel]
@@ -396,6 +406,30 @@ export default function DashboardReal() {
                     <p className="text-xs text-slate-500">
                       {pedagogicalReadiness.completedLessons} lições registradas neste curso. A seleção de nível acima organiza a visualização das lições; ela não libera currículo.
                     </p>
+                    <div className="grid gap-2 pt-1 sm:grid-cols-2">
+                      {pedagogicalLevels.map((level) => {
+                        const isCurrent = level.id === pedagogicalReadiness.currentLevel;
+                        const isNext = level.id === pedagogicalReadiness.nextLevel;
+                        const isPlanned = level.contentStatus === "planned_protected";
+                        return (
+                          <div
+                            key={level.id}
+                            className={`rounded-lg border p-3 ${isCurrent ? "border-indigo-400 bg-indigo-50" : isNext ? "border-cyan-200 bg-cyan-50" : "border-slate-200 bg-white/70"}`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-sm font-bold text-slate-800">{level.label}</p>
+                              {isCurrent && <Badge className="bg-indigo-600 text-white hover:bg-indigo-600">Atual</Badge>}
+                              {!isCurrent && isNext && <Badge variant="outline" className="border-cyan-300 bg-white text-cyan-800">Próxima</Badge>}
+                            </div>
+                            <p className="mt-1 text-xs text-slate-600">{level.cefrRange.join("–")} · domínio mínimo {Math.round(level.minimumMastery * 100)}%</p>
+                            <p className="mt-1 text-xs text-slate-500">Evidências: {level.requiredEvidence.map((evidence) => PEDAGOGICAL_EVIDENCE_LABELS[evidence] ?? evidence).join(" · ")}</p>
+                            <p className={`mt-2 text-xs font-semibold ${isPlanned ? "text-violet-700" : "text-emerald-700"}`}>
+                              {isPlanned ? "Etapa planejada: unidades aprovadas serão incorporadas quando disponíveis." : "Etapa disponível mediante domínio e evidências."}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 ) : (
                   <p className="text-sm text-slate-600">
