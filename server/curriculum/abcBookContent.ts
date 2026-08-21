@@ -114,6 +114,24 @@ export type ABCBookSemanticContrast = {
   paretoPrompt: string;
 };
 
+export const SEMANTIC_CONTRAST_LEVEL_ORDER = {
+  initial: 0,
+  intermediate: 1,
+  advanced: 2,
+} as const;
+
+/** Mantém os contrastes do currículo em ordem ascendente sem expor o catálogo ao cliente. */
+export function orderSemanticContrastsByLevel(contrasts: ABCBookSemanticContrast[]): ABCBookSemanticContrast[] {
+  return contrasts
+    .map((contrast, originalIndex) => ({ contrast, originalIndex }))
+    .sort((left, right) => (
+      SEMANTIC_CONTRAST_LEVEL_ORDER[left.contrast.level]
+      - SEMANTIC_CONTRAST_LEVEL_ORDER[right.contrast.level]
+      || left.originalIndex - right.originalIndex
+    ))
+    .map(({ contrast }) => contrast);
+}
+
 export type ABCAlphabetLetter = {
   letter: string;
   name: string;
@@ -2867,6 +2885,7 @@ export function getABCBookDelivery(input: { nativeLanguage: string; targetLangua
   if (isPortugueseEnglish) {
     return {
       ...PORTUGUESE_ENGLISH_BOOK,
+      semanticContrasts: orderSemanticContrastsByLevel(PORTUGUESE_ENGLISH_BOOK.semanticContrasts),
       alphabetLetters: PORTUGUESE_ENGLISH_BOOK.alphabetLetters.map(({ letter, name }) => ({
         letter,
         name,
