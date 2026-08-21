@@ -49,9 +49,10 @@ export const bilingualConversationRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       await ensureConversationAccess(ctx.user.id);
+      const activeTeacher = await resolveBilingualConversationTeacher(input.teacherId);
       const nativeTag = localeTag(input.nativeLanguage);
       const targetTag = localeTag(input.targetLanguage);
-      const prompt = `You are a language teacher. Start a conversation about a lesson topic in ${input.targetLanguage}.
+      const prompt = `You are ${activeTeacher?.name || "a language teacher"}. Start a conversation about a lesson topic in ${input.targetLanguage}.
 
 CRITICAL RULES:
 1. Respond in BOTH languages: ${input.nativeLanguage} first, then ${input.targetLanguage}

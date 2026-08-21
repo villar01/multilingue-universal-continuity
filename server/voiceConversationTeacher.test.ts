@@ -49,6 +49,7 @@ describe("perfil da conversa por voz", () => {
     expect(router).toContain("teacherId: z.number().int().positive().optional()");
     expect(router).toContain("resolveBilingualConversationTeacher(input.teacherId)");
     expect(router).toContain("You are ${activeTeacher?.name || \"a supportive language teacher\"}");
+    expect(router).toContain("You are ${activeTeacher?.name || \"a language teacher\"}. Start a conversation");
     expect(router).toContain("teacherId: activeTeacher?.id ?? null");
   });
 });
