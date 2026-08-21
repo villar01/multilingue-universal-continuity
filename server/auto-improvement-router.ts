@@ -117,6 +117,8 @@ export const autoImprovementRouter = router({
       const result = await generateFeatureCode(input);
       return {
         success: true,
+        executionMode: "proposal_only" as const,
+        requiresHumanApproval: true,
         code: result.code,
         explanation: result.explanation,
         dependencies: result.dependencies,
@@ -139,6 +141,8 @@ export const autoImprovementRouter = router({
       const result = await autoImproveSystem(input);
       return {
         success: true,
+        executionMode: "proposal_only" as const,
+        requiresHumanApproval: true,
         rootCause: result.rootCause,
         solution: result.solution,
         codeChanges: result.codeChanges,
