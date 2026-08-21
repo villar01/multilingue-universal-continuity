@@ -24,7 +24,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('audioBase64ToObjectUrl(edgeAudio.audioBase64, "audio/mpeg")');
     expect(source).toContain("dialogAudioObjectUrlRef");
     expect(source).toContain("const replayVisibleDialogAudio = useCallback");
-    expect(source).toContain("▶ Ouvir James");
+    expect(source).toContain("▶ Ouvir {(teachingScene ?? selectedScene).teacherName}");
     expect(source).not.toContain('audio.removeAttribute("src")');
     expect(source).toContain("src={dialogAudioSource || undefined}");
     expect(source).toContain("const dialogAudioElementRef = useRef<HTMLAudioElement | null>(null)");

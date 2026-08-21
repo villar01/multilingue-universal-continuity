@@ -2911,14 +2911,14 @@ export default function ImmersiveScene() {
                     ))}
                   </div>
                   {dialogAudioSource && (
-                    <div className="flex min-w-[210px] flex-1 items-center gap-2 rounded-xl border border-cyan-300/45 bg-cyan-400/10 px-2 py-1.5" role="group" aria-label="Controle de áudio da fala de James">
+                    <div className="flex min-w-[210px] flex-1 items-center gap-2 rounded-xl border border-cyan-300/45 bg-cyan-400/10 px-2 py-1.5" role="group" aria-label={`Controle de áudio da fala de ${(teachingScene ?? selectedScene).teacherName}`}>
                       <button
                         type="button"
                         onClick={() => { void replayVisibleDialogAudio(); }}
                         className="rounded-lg bg-cyan-300 px-2.5 py-1 text-[11px] font-black text-slate-950 transition hover:bg-cyan-200"
-                        title="Reproduzir a fala de James desde o início"
+                        title={`Reproduzir a fala de ${(teachingScene ?? selectedScene).teacherName} desde o início`}
                       >
-                        ▶ Ouvir James
+                        ▶ Ouvir {(teachingScene ?? selectedScene).teacherName}
                       </button>
                       <input
                         type="range"
@@ -2927,7 +2927,7 @@ export default function ImmersiveScene() {
                         step={0.01}
                         value={Math.min(dialogAudioPosition, dialogAudioDuration || 0)}
                         disabled={!dialogAudioDuration}
-                        aria-label="Posição da fala de James"
+                        aria-label={`Posição da fala de ${(teachingScene ?? selectedScene).teacherName}`}
                         onChange={(event) => {
                           const audio = dialogAudioElementRef.current;
                           const nextPosition = Number(event.target.value);

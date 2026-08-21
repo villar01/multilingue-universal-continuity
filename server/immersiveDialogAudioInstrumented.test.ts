@@ -10,8 +10,8 @@ describe("controle instrumental do áudio imersivo", () => {
     expect(sceneSource).toContain("setDialogAudioDuration(audio.duration);");
     expect(sceneSource).toContain("setDialogAudioPosition(audio.currentTime);");
     expect(sceneSource).toContain('ref={dialogAudioElementRef}');
-    expect(sceneSource).toContain('aria-label="Controle de áudio da fala de James"');
-    expect(sceneSource).toContain('aria-label="Posição da fala de James"');
+    expect(sceneSource).toContain('aria-label={`Controle de áudio da fala de ${(teachingScene ?? selectedScene).teacherName}`}');
+    expect(sceneSource).toContain('aria-label={`Posição da fala de ${(teachingScene ?? selectedScene).teacherName}`}');
     expect(sceneSource).toContain('max={dialogAudioDuration || 0}');
   });
 
