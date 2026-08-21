@@ -263,7 +263,7 @@ function TeacherAvatar({
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
   const showPilotClip = Boolean(
-    teacherMedia.mode === "pre_generated_video"
+    (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
       && activeClip?.videoUrl
       && activeClip.sceneId === scene.id
       && activeClip.teacherName === (overrideName || scene.teacherName),
@@ -688,7 +688,7 @@ export default function ImmersiveScene() {
   const playJamesTropicalClip = useCallback((clipId: JamesTropicalPilotClipId) => {
     if (selectedScene?.id !== "beach" || selectedScene.teacherName !== "James") return null;
     const clip = JAMES_TROPICAL_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
-    if (!clip || !clip.audioVideoExactPair) return null;
+    if (!clip) return null;
     pendingJamesClipIdRef.current = clip.id;
     return clip;
   }, [selectedScene?.id, selectedScene?.teacherName]);
@@ -1095,7 +1095,10 @@ export default function ImmersiveScene() {
         reason: reason ?? null,
       });
     };
-    setDialogAudioSource(source);
+    // A fonte só chega ao controle visível depois de a duração ser confirmada.
+    // Assim uma resposta vazia, corrompida ou ainda em decodificação não deixa
+    // o aluno com um player 0:00 na cena.
+    setDialogAudioSource(null);
     setDialogAudioDuration(null);
     setDialogAudioPosition(0);
     setDialogAudioNeedsGesture(false);
@@ -1168,7 +1171,10 @@ export default function ImmersiveScene() {
         window.clearTimeout(invalidTrackTimeout);
         invalidTrackTimeout = null;
       }
-      setDialogAudioDuration(audio.duration);
+      if (audio.src === source) {
+        setDialogAudioSource(source);
+        setDialogAudioDuration(audio.duration);
+      }
       reportAudioEvent("loaded");
       updateDialogWordsFromAudio();
       return true;

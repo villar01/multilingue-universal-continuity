@@ -17,11 +17,13 @@ describe("autoaperfeiçoamento agendado seguro", () => {
     expect(source).toContain('INSERT INTO ai_insights');
     expect(source).toContain('INSERT INTO maintenance_runs');
     expect(source).not.toMatch(/\b(exec|spawn|fork|writeFile|rmSync|git\s|publish)\b/);
+    expect(source).toContain("Toda recomendação é somente uma proposta para revisão humana.");
+    expect(source).not.toContain("autoFixable");
   });
 
   it("mantém o diagnóstico local e sem fallback remoto", () => {
     expect(source).toContain('preferredProvider: "ollama"');
     expect(source).toContain("allowRemoteFallback: false");
-    expect(source).toContain("Nunca sugira correções automáticas para: autenticação, permissões, dados de usuários, pagamentos, chaves de API.");
+    expect(source).toContain("Nunca sugira ou execute correções automáticas");
   });
 });

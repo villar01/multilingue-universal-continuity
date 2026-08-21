@@ -149,10 +149,11 @@ Analise os dados de telemetria do app e gere um diagnóstico técnico em JSON co
 - recommendations: array de objetos com { action, priority, isSecurity, estimatedImpact }
   * isSecurity: true se a recomendação envolve segurança/autenticação/dados sensíveis (requer aprovação do admin)
   * priority: "low" | "medium" | "high" | "critical"
-- autoFixable: array de correções que podem ser aplicadas automaticamente (apenas bugs de UI/UX, nunca segurança)
+- proposedActions: array de propostas revisáveis com { action, priority, estimatedImpact }
+  * nenhuma proposta pode ser aplicada automaticamente, inclusive mudanças de UI/UX
 - securityAlerts: array de alertas de segurança que DEVEM ser aprovados pelo admin antes de qualquer ação
 
-IMPORTANTE: Nunca sugira correções automáticas para: autenticação, permissões, dados de usuários, pagamentos, chaves de API.`
+IMPORTANTE: Toda recomendação é somente uma proposta para revisão humana. Nunca sugira ou execute correções automáticas, inclusive para autenticação, permissões, dados de usuários, pagamentos, chaves de API ou UI/UX.`
         },
         {
           role: "user",
