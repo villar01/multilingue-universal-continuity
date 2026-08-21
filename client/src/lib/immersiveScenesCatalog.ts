@@ -23,6 +23,24 @@ export function orderScenesByPedagogicalLevel<T extends { difficulty: keyof type
     .map(({ scene }) => scene);
 }
 
+export function orderScenesForPedagogicalJourney<
+  T extends { difficulty: keyof typeof PEDAGOGICAL_DIFFICULTY_ORDER; langCode: string; teacherLang: string }
+>(scenes: T[], targetLanguage?: string | null): T[] {
+  const targetBase = targetLanguage?.split("-")[0]?.toLowerCase() ?? "";
+
+  return scenes
+    .map((scene, originalIndex) => ({ scene, originalIndex }))
+    .sort((left, right) => {
+      const difficultyDifference = PEDAGOGICAL_DIFFICULTY_ORDER[left.scene.difficulty] - PEDAGOGICAL_DIFFICULTY_ORDER[right.scene.difficulty];
+      if (difficultyDifference) return difficultyDifference;
+
+      const leftMatchesTarget = targetBase && (left.scene.langCode === targetBase || left.scene.teacherLang.toLowerCase().startsWith(targetBase)) ? 0 : 1;
+      const rightMatchesTarget = targetBase && (right.scene.langCode === targetBase || right.scene.teacherLang.toLowerCase().startsWith(targetBase)) ? 0 : 1;
+      return leftMatchesTarget - rightMatchesTarget || left.originalIndex - right.originalIndex;
+    })
+    .map(({ scene }) => scene);
+}
+
 /**
  * Catálogo de prévias visuais. Falas, vocabulário, hotspots e diálogos são
  * buscados exclusivamente por procedimentos autenticados após a autorização.

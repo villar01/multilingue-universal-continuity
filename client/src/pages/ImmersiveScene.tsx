@@ -33,7 +33,7 @@ import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers } from "@/lib/sceneTeacherResolver";
 import { resolveCanonicalTeacherResource } from "@/lib/teacherResourceResolver";
 import { shouldRenderCompatibleTeacherClip } from "@/lib/sceneTeacherClipGuard";
-import { IMMERSIVE_SCENES, IMMERSIVE_VOICE_REFERENCE } from "@/lib/immersiveScenesCatalog";
+import { IMMERSIVE_SCENES, IMMERSIVE_VOICE_REFERENCE, orderScenesForPedagogicalJourney } from "@/lib/immersiveScenesCatalog";
 import { selectTeacherMedia, selectTeacherPoseAudioCue } from "@shared/teacherMediaStrategy";
 import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
 export type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
@@ -2059,18 +2059,12 @@ export default function ImmersiveScene() {
     });
   }, []);
 
-  const filteredScenes = IMMERSIVE_SCENES.filter(s => {
+  const filteredScenes = orderScenesForPedagogicalJourney(IMMERSIVE_SCENES.filter(s => {
     if (filter !== "all" && sceneCefrLevel(s) !== filter) return false;
     if (search && !s.name.toLowerCase().includes(search.toLowerCase()) &&
         !s.nameEn.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
-  }).sort((a, b) => {
-    // Sort: scenes matching the user's target language come first
-    const base = (targetLang || "").split("-")[0].toLowerCase();
-    const aMatch = base && (a.langCode === base || a.teacherLang.startsWith(base)) ? 0 : 1;
-    const bMatch = base && (b.langCode === base || b.teacherLang.startsWith(base)) ? 0 : 1;
-    return aMatch - bMatch;
-  });
+  }), targetLang);
 
   const cefrColor = (level: ImmersiveCEFRLevel) =>
     level === "A1" || level === "A2" ? "#22c55e" : level === "B1" || level === "B2" ? "#f59e0b" : "#ef4444";
