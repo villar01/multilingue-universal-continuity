@@ -11,6 +11,7 @@ import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
 import { getABCBookDelivery } from "./curriculum/abcBookContent";
+import { getCommercialLanguageA1Units } from "./curriculum/commercialLanguageUnits";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
 
@@ -126,5 +127,17 @@ export const curriculumRouter = router({
     const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     if (!entitlement.hasFullCurriculum) return LANGUAGE_BLOCKS.slice(0, 2);
     return input.level ? LANGUAGE_BLOCKS.filter((block) => block.cefr === input.level) : LANGUAGE_BLOCKS;
+  }),
+
+  commercialLanguageUnits: protectedProcedure.input(accessInput.extend({
+    targetLanguage: z.string().trim().min(2).max(16),
+    level: z.literal("A1").default("A1"),
+  })).query(async ({ ctx, input }) => {
+    const entitlement = await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    const units = getCommercialLanguageA1Units(input.targetLanguage);
+    if (!units) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Este bloco de idioma ainda não possui unidades A1 autorais." });
+    }
+    return entitlement.hasFullCurriculum ? units : units.slice(0, 1);
   }),
 });

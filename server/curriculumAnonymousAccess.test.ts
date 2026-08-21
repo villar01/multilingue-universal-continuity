@@ -37,6 +37,10 @@ describe("entrega curricular protegida", () => {
       sceneId: "beach",
     });
     const languageBlocks = caller.curriculum.languageBlocks({ lessonKey: "pt-BR-en-US-a1-01" });
+    const commercialLanguageUnits = caller.curriculum.commercialLanguageUnits({
+      lessonKey: "pt-BR-en-US-a1-01",
+      targetLanguage: "en-US",
+    });
     const phrasalVerbSearch = caller.phrasalVerbs.search({ searchTerm: "give up" });
     const phrasalVerbById = caller.phrasalVerbs.getById({ id: 1 });
 
@@ -48,6 +52,7 @@ describe("entrega curricular protegida", () => {
       expect(localizedSceneDialogue).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
       expect(sceneCanonicalMaterial).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
       expect(languageBlocks).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
+      expect(commercialLanguageUnits).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
       expect(phrasalVerbSearch).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
       expect(phrasalVerbById).rejects.toMatchObject({ code: "UNAUTHORIZED" }),
     ]);
