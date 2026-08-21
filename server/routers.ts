@@ -2320,7 +2320,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const safeFallback = { question: "Let us practice a safe language sentence." };
+        const safeFallback = { question: "" };
         await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
@@ -2365,7 +2365,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
        })
      )
       .mutation(async ({ input, ctx }) => {
-        const safeFallback = { response: "Let us continue with a safe language-practice sentence." };
+        const safeFallback = { response: "" };
         await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
@@ -2406,11 +2406,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const safeFallback = {
-          feedback: "Let us continue with safe language practice.",
-          corrections: [],
-          encouragement: "Keep practicing safely.",
-        };
+        const safeFallback = { feedback: "", corrections: [], encouragement: "" };
         await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {
@@ -2449,7 +2445,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const safeFallback = { prompts: ["Let us practice a safe language sentence."] };
+         const safeFallback = { prompts: [] };
         await ensureConversationAccess(ctx.user.id);
         const lesson = await db.getLessonById(input.lessonId);
         if (!lesson) {

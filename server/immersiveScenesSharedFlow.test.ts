@@ -35,7 +35,7 @@ describe("fluxo compartilhado das cenas imersivas", () => {
 
   it("orienta a ativação de acesso aos objetos sem manter fala curricular no catálogo público", () => {
     expect(source).toContain("function getSceneObjectGuidancePt(scene: Scene): string");
-    expect(source).toContain("Ative o acesso para praticar com os objetos de ${scene.name}.");
+    expect(source).toContain("A cena ${scene.name} está pronta para explorar os objetos.");
     expect(source).toContain("setGreetingText(getSceneObjectGuidancePt(selectedScene));");
   });
 });

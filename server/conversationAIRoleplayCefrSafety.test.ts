@@ -20,6 +20,16 @@ describe("roleplay CEFR e segurança", () => {
     expect(segment.match(/assessConversationOutput\(ctx\.user\.id/g)).toHaveLength(4);
   });
 
+  it("retorna estados vazios seguros quando uma conversa é bloqueada", () => {
+    const segment = routerSource.slice(routerSource.indexOf("conversationAI: router({"), routerSource.indexOf("// Tradução em tempo real"));
+    expect(segment).toContain('const safeFallback = { question: "" };');
+    expect(segment).toContain('const safeFallback = { response: "" };');
+    expect(segment).toContain('const safeFallback = { feedback: "", corrections: [], encouragement: "" };');
+    expect(segment).toContain('const safeFallback = { prompts: [] };');
+    expect(segment).not.toContain("Let us practice a safe language sentence.");
+    expect(segment).not.toContain("Let us continue with a safe language-practice sentence.");
+  });
+
   it("envia para o roleplay a língua e o nível escolhidos, sem fixar beginner/en/pt", () => {
     expect(pageSource).toContain("resolvePracticeCEFRLevel");
     expect(pageSource).toContain('localStorage.getItem("ml_target_lang")');
