@@ -4,6 +4,7 @@ import { z } from "zod";
 import { learningTrials, parentalConsents, termsAcceptances, trialLessonAccesses, userSafetyProfile, users } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { checkTrialLessonAuthorizationAttempt } from "./trial-authorization-abuse-guard";
 import { getTrialExpiryDate, hasFullCurriculumAccess, isTrialExpired } from "./trial-access-policy";
 
 export const TRIAL_LESSON_LIMIT = 10;
@@ -209,6 +210,16 @@ export const trialAccessRouter = router({
         .from(trialLessonAccesses)
         .where(and(eq(trialLessonAccesses.userId, ctx.user.id), eq(trialLessonAccesses.lessonKey, input.lessonKey)))
         .limit(1);
+
+      if (!hasFullCurriculum && !previousAccess) {
+        const abuseGuard = checkTrialLessonAuthorizationAttempt(ctx.user.id);
+        if (!abuseGuard.allowed) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "A proteção da conta pausou temporariamente novas liberações de lição. Tente novamente em alguns minutos.",
+          });
+        }
+      }
 
       const decision = decideTrialLessonAccess({
         isPaid: hasFullCurriculum,
