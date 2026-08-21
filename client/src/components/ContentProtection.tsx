@@ -13,7 +13,7 @@ interface ContentProtectionProps {
  * - Bloqueia botão direito do mouse
  * - Bloqueia atalhos de teclado (Ctrl+C, Ctrl+S, Ctrl+P, F12)
  * - Adiciona CSS user-select: none
- * - Exibe watermark com nome do usuário (opcional)
+ * - Exibe marca d'água com identificador interno mínimo (opcional)
  * - Mostra mensagem de marketing para upgrade
  */
 export default function ContentProtection({ 
@@ -116,7 +116,7 @@ export default function ContentProtection({
       {isFreeUser && showWatermark && (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 opacity-10 select-none">
           <div className="text-gray-900 text-6xl font-bold rotate-[-45deg] whitespace-nowrap">
-            DEMONSTRAÇÃO - {user?.name || 'Visitante'}
+            ACESSO PROTEGIDO {user?.id ? `• CONTA #${user.id}` : ''}
           </div>
         </div>
       )}
