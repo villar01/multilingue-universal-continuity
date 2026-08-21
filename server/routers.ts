@@ -2365,6 +2365,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: input.userLevel,
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
+          teacherName: await resolveConversationTeacherName(ctx.user.id),
         };
 
         const inputSafety = await assessConversationText(ctx.user.id, `${context.lessonTitle}\n${context.lessonTopic}`, input.targetLanguage);
