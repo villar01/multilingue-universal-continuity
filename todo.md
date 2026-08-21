@@ -1772,6 +1772,8 @@
 - [ ] Concluir com desempenho real: reduzir estados inválidos de áudio, preservar cenas e professores e validar regressões antes de qualquer expansão ou ação comercial
 - [ ] Garantir progressão pedagógica ascendente: primeiras cenas e recursos simples, com aumento verificável de vocabulário, estrutura, escrita, conversa e revisão nas etapas seguintes
 - [ ] Materializar quatro níveis pedagógicos: inicial, intermediário, avançado e tecnológico, com critérios verificáveis de conteúdo, interação e domínio para cada passagem
+- [ ] Integrar a passagem por nível ao progresso protegido do aluno, sem liberar conteúdo tecnológico não aprovado
+- [x] Evitar conflito entre nível por lições, nível de gamificação e passagem pedagógica, mantendo cada métrica com finalidade explícita no servidor — XP e contagem de lições não liberam currículo; somente passagem pedagógica baseada em domínio pode fazê-lo; TypeScript e 410 arquivos/1019 testes aprovados
 - [ ] Codificar o nível tecnológico e os critérios de passagem entre os quatro níveis, mantendo conteúdo tecnológico específico como pendência até haver unidades aprovadas
 - [x] Definir critérios verificáveis de passagem entre inicial, intermediário, avançado e tecnológico sem liberar conteúdo tecnológico não aprovado — domínio mínimo cresce de 70% a 90%, com evidências de reconhecimento, prática, correção, transferência e aplicação; TypeScript e 409 arquivos/1017 testes aprovados
 - [x] Codificar contrato de domínio dos quatro níveis com requisitos pedagógicos e bloqueio explícito da etapa tecnológica sem unidades aprovadas — o nível tecnológico permanece `planned_protected` e não libera passagem até haver conteúdo aprovado
