@@ -606,12 +606,12 @@ export default function DashboardReal() {
               </CardContent>
             </Card>
 
-            {/* IA Nativa Status */}
+            {/* Assistência de estudo */}
             <Card className={`border-2 ${iaNativaAtiva ? "border-green-300 bg-green-50" : "border-amber-300 bg-amber-50"}`}>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Cpu className={`h-5 w-5 ${iaNativaAtiva ? "text-green-600" : "text-amber-600"}`} />
-                  Runtime local do servidor
+                  Assistência de estudo
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -630,17 +630,12 @@ export default function DashboardReal() {
                 ) : (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-amber-700">
-                      <AlertCircle className="h-4 w-4" />
-                      Provedor local do servidor indisponível
+                      <Sparkles className="h-4 w-4" />
+                      Recursos pedagógicos disponíveis
                     </div>
                     <p className="text-xs text-amber-600">
-                      A página mostra somente provedores acessíveis ao servidor. Um modelo no computador do aluno requer integração cliente-local explícita.
+                      A plataforma mantém a assistência de estudo configurada de forma segura. Recursos locais podem ser incorporados posteriormente quando estiverem validados neste ambiente e exigem integração cliente-local explícita.
                     </p>
-                    <Link href="/ia-nativa">
-                      <Button size="sm" variant="outline" className="w-full mt-2 border-amber-400 text-amber-700 hover:bg-amber-100">
-                        Saber como instalar →
-                      </Button>
-                    </Link>
                   </div>
                 )}
               </CardContent>
