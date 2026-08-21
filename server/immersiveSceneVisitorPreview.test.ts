@@ -6,13 +6,14 @@ const source = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveSc
 
 describe("prévia segura da Cena Imersiva para visitantes", () => {
   it("preserva somente a prévia visual e oculta os elementos pedagógicos até a sessão protegida", () => {
-    expect(source).toContain("{isAuthenticated && activeSceneHotspots.map((hotspot) => {");
-    expect(source).toContain("{isAuthenticated && activeHotspot && (");
-    expect(source).toContain("{isAuthenticated && practiceHotspot && (");
-    expect(source).toContain("{isAuthenticated && quizOpen && quizQuestion && (");
-    expect(source).toContain("greeting={isAuthenticated ? greetingText : \"\"}");
-    expect(source).toContain("showGreeting={isAuthenticated && showGreeting}");
-    expect(source).toContain("spokenText={isAuthenticated ? activeSpeechText || greetingText : \"\"}");
+    expect(source).toContain("const canUseAuthorizedSceneInteractions = isAuthenticated");
+    expect(source).toContain("{canUseAuthorizedSceneInteractions && activeSceneHotspots.map((hotspot) => {");
+    expect(source).toContain("{canUseAuthorizedSceneInteractions && activeHotspot && (");
+    expect(source).toContain("{canUseAuthorizedSceneInteractions && practiceHotspot && (");
+    expect(source).toContain("{canUseAuthorizedSceneInteractions && quizOpen && quizQuestion && (");
+    expect(source).toContain("greeting={canUseAuthorizedSceneInteractions ? greetingText : \"\"}");
+    expect(source).toContain("showGreeting={canUseAuthorizedSceneInteractions && showGreeting}");
+    expect(source).toContain("spokenText={canUseAuthorizedSceneInteractions ? activeSpeechText || greetingText : \"\"}");
   });
 
   it("oferece ativação de acesso clara sem expor diálogo ou vocabulário", () => {

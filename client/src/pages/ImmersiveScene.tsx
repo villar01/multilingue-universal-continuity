@@ -889,6 +889,11 @@ export default function ImmersiveScene() {
   );
   const sceneMaterialRequiresLogin = Boolean(selectedSceneRequiresProtectedMaterial && !isAuthenticated);
   const sceneMaterialNeedsAccess = sceneMaterialRequiresLogin || sceneMaterialAccessFailed;
+  const canUseAuthorizedSceneInteractions = isAuthenticated
+    && !sceneMaterialNeedsAccess
+    && !sceneMaterialIsPreparing
+    && !dialogAuthRequired
+    && activeSceneDialog.length > 0;
   const sceneMaterialActionLabel = isAuthenticated ? "Atualizar cena" : "Ativar acesso";
 
   useEffect(() => {
@@ -2444,7 +2449,7 @@ export default function ImmersiveScene() {
               </label>
             )}
             <ImmersionModeToggle compact />
-            {!immersionMode && isAuthenticated && <>
+            {!immersionMode && canUseAuthorizedSceneInteractions && <>
               <div className="hidden sm:block">
                 <VoiceSelector
                   langCode={targetLang || effectiveLang(selectedScene)}
@@ -2488,7 +2493,7 @@ export default function ImmersiveScene() {
         {!immersionMode && isAuthenticated && <FlyingSOSBook compact className="fixed bottom-4 left-4 z-[90]" />}
 
         {/* AR Hotspots */}
-        {isAuthenticated && activeSceneHotspots.map((hotspot) => {
+        {canUseAuthorizedSceneInteractions && activeSceneHotspots.map((hotspot) => {
           const learned = learnedWords.has(hotspot.id);
           return (
             <div
@@ -2554,7 +2559,7 @@ export default function ImmersiveScene() {
         })}
 
         {/* Vocabulary Card */}
-        {isAuthenticated && activeHotspot && (
+        {canUseAuthorizedSceneInteractions && activeHotspot && (
           <div
             style={{ animation: "vocab-slide-in 0.25s ease-out" }}
             onClick={(e) => e.stopPropagation()}
@@ -2592,7 +2597,7 @@ export default function ImmersiveScene() {
           </div>
         )}
 
-        {isAuthenticated && practiceHotspot && (
+        {canUseAuthorizedSceneInteractions && practiceHotspot && (
           <ParetoPracticeCycle
             term={{ word: practiceHotspot.label, translation: practiceHotspot.translation, example: practiceHotspot.example }}
             onClose={() => setPracticeHotspot(null)}
@@ -2601,7 +2606,7 @@ export default function ImmersiveScene() {
           />
         )}
 
-        {isAuthenticated && quizOpen && quizQuestion && (
+        {canUseAuthorizedSceneInteractions && quizOpen && quizQuestion && (
           <div
             className="absolute left-1/2 top-1/2 z-40 w-[min(92vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border p-5 shadow-2xl"
             style={{ background: "rgba(15,23,42,.95)", borderColor: "rgba(129,140,248,.65)", backdropFilter: "blur(18px)" }}
@@ -2672,11 +2677,11 @@ export default function ImmersiveScene() {
         {/* Teacher */}
         <TeacherAvatar
           scene={teachingScene ?? selectedScene!}
-          greeting={isAuthenticated ? greetingText : ""}
-          showGreeting={isAuthenticated && showGreeting}
-          isSpeaking={isAuthenticated && isSpeaking}
-          isPreparingAudio={isAuthenticated && isPreparingNeuralAudio}
-          spokenText={isAuthenticated ? activeSpeechText || greetingText : ""}
+          greeting={canUseAuthorizedSceneInteractions ? greetingText : ""}
+          showGreeting={canUseAuthorizedSceneInteractions && showGreeting}
+          isSpeaking={canUseAuthorizedSceneInteractions && isSpeaking}
+          isPreparingAudio={canUseAuthorizedSceneInteractions && isPreparingNeuralAudio}
+          spokenText={canUseAuthorizedSceneInteractions ? activeSpeechText || greetingText : ""}
           audioViseme={audioViseme}
           activeClip={activeJamesClip || activeSophieClip}
           overrideName={selectedScene?.teacherName === "James" ? "James" : undefined}
@@ -3168,7 +3173,7 @@ export default function ImmersiveScene() {
         >
           <div />
           <div className="flex gap-2">
-            {isAuthenticated && activeSceneHotspots.map((h) => (
+            {canUseAuthorizedSceneInteractions && activeSceneHotspots.map((h) => (
               <div
                 key={h.id}
                 style={{
