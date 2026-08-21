@@ -120,11 +120,12 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("phrase: phrase");
   });
 
-  it("usa a reserva masculina depois de uma falha no botão explícito de reprodução", () => {
+  it("mantém a faixa neural e o player nativo depois de uma falha no botão explícito de reprodução", () => {
     const replayFlow = source.slice(source.indexOf("const replayVisibleDialogAudio"), source.indexOf("const primeDialogAudioFromGesture"));
-    expect(replayFlow).toContain("const fallbackKey = `manual-replay:");
-    expect(replayFlow).toContain("if (activeSpeechText && playLocalDialogFallback(activeSpeechText, teachingScene?.teacherLang || \"en-US\", fallbackKey, teachingScene?.teacherGender)) {");
-    expect(replayFlow).toContain('setDlgAudioNotice("");');
+    expect(replayFlow).toContain("setDialogAudioNeedsGesture(true);");
+    expect(replayFlow).toContain("Toque em Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.");
+    expect(replayFlow).not.toContain("manual-replay:");
+    expect(replayFlow).not.toContain("playLocalDialogFallback(");
   });
 
   it("oferece junto ao professor um único comando de ouvir para a faixa já preparada", () => {

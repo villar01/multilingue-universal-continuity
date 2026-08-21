@@ -1275,14 +1275,9 @@ export default function ImmersiveScene() {
       setDialogAudioNeedsGesture(false);
     } catch {
       setDialogAudioNeedsGesture(true);
-      const fallbackKey = `manual-replay:${teachingScene?.teacherLang || "en-US"}:${teachingScene?.teacherGender || "female"}:${activeSpeechText}`;
-      if (activeSpeechText && playLocalDialogFallback(activeSpeechText, teachingScene?.teacherLang || "en-US", fallbackKey, teachingScene?.teacherGender)) {
-        setDlgAudioNotice("");
-        return;
-      }
       setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.`);
     }
-  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, playLocalDialogFallback, targetLang, teachingScene?.id, teachingScene?.teacherGender, teachingScene?.teacherLang, teachingScene?.teacherName]);
+  }, [dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, targetLang, teachingScene?.id, teachingScene?.teacherGender, teachingScene?.teacherLang, teachingScene?.teacherName]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
