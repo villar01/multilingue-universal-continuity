@@ -16,12 +16,12 @@ export async function registerServiceWorker() {
       await registration.update();
       console.log('✅ Service Worker registrado:', registration);
 
-      // Novos bundles não ficam aguardando uma nova abertura manual. O
-      // recarregamento é limitado a uma vez por versão para evitar ciclos.
+      // Novos bundles assumem o controle sem forçar a recarga da tela atual.
+      // Isso preserva a rota e o estado de estudo; a próxima abertura já usa
+      // naturalmente os recursos atualizados.
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.sessionStorage.getItem(reloadKey) === '1') return;
         window.sessionStorage.setItem(reloadKey, '1');
-        window.location.reload();
       });
       registration.addEventListener('updatefound', () => {
         const installing = registration.installing;
