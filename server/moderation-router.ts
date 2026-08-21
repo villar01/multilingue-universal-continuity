@@ -321,8 +321,17 @@ export const moderationRouter = router({
       const endDate = input.endDate ? new Date(input.endDate) : new Date();
 
       const logs = await (db as any)
-        .select()
+        .select({
+          createdAt: conversationLogs.createdAt,
+          userAgeGroup: conversationLogs.userAgeGroup,
+          moderationScore: conversationLogs.moderationScore,
+          wasBlocked: conversationLogs.wasBlocked,
+          wasReformulated: conversationLogs.wasReformulated,
+          violationType: moderationAlerts.violationType,
+          severity: moderationAlerts.severity,
+        })
         .from(conversationLogs)
+        .leftJoin(moderationAlerts, eq(moderationAlerts.conversationLogId, conversationLogs.id))
         .where(
           and(
             gte(conversationLogs.createdAt, startDate),
@@ -333,33 +342,23 @@ export const moderationRouter = router({
 
       // Gerar CSV
       const headers = [
-        "ID",
-        "User ID",
+        "Timestamp",
+        "Violation Type",
+        "Severity",
         "Age Group",
-        "Country",
-        "Religion",
-        "Conversation Type",
-        "User Message",
-        "AI Response",
         "Moderation Score",
         "Was Blocked",
         "Was Reformulated",
-        "Created At",
       ];
 
       const rows = logs.map((log: any) => [
-        log.id,
-        log.userId,
+        log.createdAt.toISOString(),
+        log.violationType || "",
+        log.severity || "",
         log.userAgeGroup || "",
-        log.userCountry || "",
-        log.userReligion || "",
-        log.conversationType,
-        `"${(log.userMessage || "").replace(/"/g, '""')}"`,
-        `"${(log.aiResponse || "").replace(/"/g, '""')}"`,
         log.moderationScore,
         log.wasBlocked ? "Yes" : "No",
         log.wasReformulated ? "Yes" : "No",
-        log.createdAt.toISOString(),
       ]);
 
       const csv = [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
