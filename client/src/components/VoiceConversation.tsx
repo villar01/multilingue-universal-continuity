@@ -419,7 +419,7 @@ export default function VoiceConversation({
         console.log("[VoiceConversation] Falling back to offlineAI");
         const offlineResult = await offlineAI.mutateAsync({
           messages: [
-            { role: "system", content: `You are a language teacher. Respond in BOTH ${nativeLanguage} and ${languageCode}. Format: [${nativeTag}] Native-language text\n[${targetTag}] Target-language text` },
+            { role: "system", content: `You are ${activeTeacher.name}, a supportive language teacher. Respond in BOTH ${nativeLanguage} and ${languageCode}. Format: [${nativeTag}] Native-language text\n[${targetTag}] Target-language text` },
             ...conversationHistory.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
           ],
         });

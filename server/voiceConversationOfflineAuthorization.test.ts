@@ -11,5 +11,6 @@ describe("fallback offline da conversa por voz", () => {
     expect(deniedGuard).toBeGreaterThan(-1);
     expect(offlineFallback).toBeGreaterThan(deniedGuard);
     expect(source.slice(deniedGuard, offlineFallback)).toContain("return;");
+    expect(source).toContain("You are ${activeTeacher.name}, a supportive language teacher.");
   });
 });
