@@ -1244,11 +1244,11 @@ export default function ImmersiveScene() {
           setDlgAudioNotice("");
           return;
         }
-        setDlgAudioNotice("Resposta pronta. Toque em Ouvir James para ouvir.");
+        setDlgAudioNotice(`Resposta pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para ouvir.`);
       });
       return;
     }
-    setDlgAudioNotice("Voz de James pronta. Toque em Ouvir James para iniciar.");
+    setDlgAudioNotice(`Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.`);
   }, [dialogSpeechRate, playLocalDialogFallback, stopVisemeSync, teachingScene?.teacherGender, teachingScene?.teacherName]);
 
   const replayVisibleDialogAudio = useCallback(async () => {

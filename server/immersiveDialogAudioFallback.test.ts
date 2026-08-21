@@ -39,7 +39,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
       source.indexOf("const replayVisibleDialogAudio = useCallback"),
     );
     const jamesPreparation = neuralPreparation.slice(0, neuralPreparation.indexOf("const isObjectPronunciation"));
-    expect(neuralPreparation).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");
+    expect(neuralPreparation).toContain('Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.');
     expect(jamesPreparation).not.toContain("audio.play()");
     expect(source).toContain("await audio.play();");
   });

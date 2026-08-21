@@ -13,9 +13,9 @@ describe("resposta imediata de vocabulário na cena", () => {
 
   it("mantém o aviso de voz separado da resposta escrita antes de uma pergunta enviada", () => {
     expect(source).toContain('const [dlgAudioNotice, setDlgAudioNotice] = useState("");');
-    expect(source).toContain('setDlgAudioNotice("Voz de James pronta. Toque em Ouvir James para iniciar.");');
+    expect(source).toContain('setDlgAudioNotice(`Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.`);');
     expect(source).toContain("{dlgAudioNotice && (");
-    expect(source).not.toContain('setDlgFeedback("Voz de James pronta. Toque em Ouvir James para iniciar.");');
+    expect(source).not.toContain('setDlgFeedback(`Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.`);');
   });
 
   it("inicia a fala ao abrir ou avançar após o gesto explícito de diálogo", () => {

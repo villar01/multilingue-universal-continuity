@@ -63,7 +63,7 @@ describe("contrato crítico da cena imersiva", () => {
 
   it("exige ação explícita para a voz de James", () => {
     expect(sceneSource).toContain("▶ Ouvir {(teachingScene ?? selectedScene).teacherName}");
-    expect(sceneSource).toContain("Voz de James pronta. Toque em Ouvir James para iniciar.");
+    expect(sceneSource).toContain('Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.');
     expect(sceneSource).toContain("await audio.play()");
   });
 });
