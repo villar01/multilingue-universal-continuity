@@ -31,6 +31,8 @@ describe("immersive dialog written question flow", () => {
     expect(sceneSource).toContain("void askImmersiveTutor(question);");
     expect(sceneSource).toContain('onClick={submitTeacherQuestion}');
     expect(sceneSource).toContain('if (event.key === "Enter") submitTeacherQuestion();');
+    expect(sceneSource).toContain("{activeSceneDialog[dlgStep] && (");
+    expect(sceneSource).not.toContain("{activeSceneDialog[dlgStep].speaker === 'teacher' && (\n                <div className=\"mt-3 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3\">");
   });
 
   it("oferece controle explícito que fala exatamente a resposta mostrada e agenda James somente no gesto do aluno", () => {

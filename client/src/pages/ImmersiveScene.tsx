@@ -2962,9 +2962,9 @@ export default function ImmersiveScene() {
                   )}
                 </div>
               )}
-              {activeSceneDialog[dlgStep].speaker === 'teacher' && (
+              {activeSceneDialog[dlgStep] && (
                 <div className="mt-3 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
-                  <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre esta fala, a cena ou uma palavra:</p>
+                  <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre a fala atual, sua resposta, a cena ou uma palavra:</p>
                   <div className="flex gap-2">
                     <input
                       value={dlgWrittenAnswer}
