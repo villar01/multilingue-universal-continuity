@@ -210,6 +210,10 @@ describe("securityMiddleware", () => {
     expect(response.headers["Content-Security-Policy"]).toContain("frame-ancestors 'self' https://manus.im https://*.manus.im https://*.manus.computer");
     expect(response.headers["Content-Security-Policy"]).toContain("media-src 'self' data: blob: https:");
     expect(response.headers["X-Frame-Options"]).toBeUndefined();
+    expect(response.headers["X-Content-Type-Options"]).toBe("nosniff");
+    expect(response.headers["Referrer-Policy"]).toBe("strict-origin-when-cross-origin");
+    expect(response.headers["Permissions-Policy"]).toBe("geolocation=(), microphone=(self), camera=(self)");
+    expect(response.headers["Strict-Transport-Security"]).toBe("max-age=31536000; includeSubDomains");
     expect(response.headers["X-Permitted-Cross-Domain-Policies"]).toBe("none");
   });
 });
