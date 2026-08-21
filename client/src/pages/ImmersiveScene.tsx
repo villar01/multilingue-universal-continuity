@@ -1540,7 +1540,7 @@ export default function ImmersiveScene() {
     getNativeDialogueTranslation(line, nativeLang, dlgNativeTranslation);
 
   useEffect(() => {
-    const line = selectedScene?.dialog[dlgStep];
+    const line = activeSceneDialog[dlgStep];
     if (!line || isPortugueseLocale(nativeLang)) {
       setDlgNativeTranslation("");
       setDlgTranslationLoading(false);
@@ -1552,7 +1552,7 @@ export default function ImmersiveScene() {
     setDlgTranslationLoading(true);
     void dialogTranslateMut.mutateAsync({
       text: line.text,
-      sourceLanguage: selectedScene.teacherLang,
+      sourceLanguage: teachingScene?.teacherLang || targetLang,
       targetLanguage: nativeLang || "pt-BR",
     }).then((result) => {
       if (active) setDlgNativeTranslation(result.translation);
@@ -1562,7 +1562,7 @@ export default function ImmersiveScene() {
       if (active) setDlgTranslationLoading(false);
     });
     return () => { active = false; };
-  }, [dlgStep, nativeLang, selectedScene?.id]);
+  }, [activeSceneDialog, dlgStep, nativeLang, targetLang, teachingScene?.teacherLang]);
 
   const speakNativeHelp = useCallback(async (text: string) => {
     const helpText = text.trim();

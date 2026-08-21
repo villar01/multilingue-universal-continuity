@@ -39,6 +39,19 @@ describe("contrato crítico da cena imersiva", () => {
     expect(sceneSource).toContain("isOpen={paretoOpen}");
   });
 
+  it("não libera hotspots, cartões, prática Pareto ou quiz antes do material protegido autorizado", () => {
+    expect(sceneSource).toContain("const canUseAuthorizedSceneInteractions = isAuthenticated");
+    expect(sceneSource).toContain("&& !sceneMaterialNeedsAccess");
+    expect(sceneSource).toContain("&& !sceneMaterialIsPreparing");
+    expect(sceneSource).toContain("&& activeSceneDialog.length > 0;");
+    expect(sceneSource).toContain("{canUseAuthorizedSceneInteractions && activeSceneHotspots.map((hotspot) => {");
+    expect(sceneSource).toContain("{canUseAuthorizedSceneInteractions && activeHotspot && (");
+    expect(sceneSource).toContain("{canUseAuthorizedSceneInteractions && practiceHotspot && (");
+    expect(sceneSource).toContain("{canUseAuthorizedSceneInteractions && quizOpen && quizQuestion && (");
+    expect(sceneSource).not.toContain("selectedScene?.hotspots");
+    expect(sceneSource).not.toContain("selectedScene?.dialog");
+  });
+
   it("preserva o seletor avançado de voz fora da faixa estreita da cena", () => {
     expect(sceneSource).toContain('<div className="hidden sm:block">');
     expect(sceneSource).toContain("<VoiceSelector");
