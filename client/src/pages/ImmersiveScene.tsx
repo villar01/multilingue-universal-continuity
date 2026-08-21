@@ -1568,7 +1568,10 @@ export default function ImmersiveScene() {
     nativeHelpAudioRef.current?.pause();
     nativeHelpAudioRef.current = null;
     const nativeSpeech = getNativeHelpSpeechRequest(helpText, nativeLang);
-    const helpGender = selectedScene?.teacherGender === "male" ? "MALE" : "FEMALE";
+    const activeHelpGender = teachingScene?.teacherName === "James"
+      ? "male"
+      : teachingScene?.teacherGender || selectedScene?.teacherGender || "female";
+    const helpGender = activeHelpGender === "male" ? "MALE" : "FEMALE";
     const playHelpAudio = async (source: string, revokeOnEnd = false) => {
       const audio = new Audio(source);
       audio.playbackRate = dialogSpeechRate;
@@ -1589,7 +1592,7 @@ export default function ImmersiveScene() {
       }
     } catch { /* Use the other neural provider below. */ }
     try {
-      const neural = await ttsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), voiceLang: nativeSpeech.language, gender: "female" });
+      const neural = await ttsMut.mutateAsync({ text: nativeSpeech.text.slice(0, 500), voiceLang: nativeSpeech.language, gender: activeHelpGender });
       if (neural.success && neural.audioBase64) {
         const bytes = Uint8Array.from(atob(neural.audioBase64), (char) => char.charCodeAt(0));
         await playHelpAudio(URL.createObjectURL(new Blob([bytes], { type: "audio/mp3" })), true);

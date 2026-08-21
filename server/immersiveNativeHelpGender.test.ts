@@ -6,7 +6,10 @@ const source = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveSc
 
 describe("ajuda nativa da cena imersiva", () => {
   it("preserva o perfil masculino de James na síntese da ajuda em português", () => {
-    expect(source).toContain('const helpGender = selectedScene?.teacherGender === "male" ? "MALE" : "FEMALE";');
+    expect(source).toContain('const activeHelpGender = teachingScene?.teacherName === "James"');
+    expect(source).toContain('const helpGender = activeHelpGender === "male" ? "MALE" : "FEMALE";');
     expect(source).toContain("gender: helpGender");
+    expect(source).toContain("gender: activeHelpGender");
+    expect(source).not.toContain('voiceLang: nativeSpeech.language, gender: "female"');
   });
 });
