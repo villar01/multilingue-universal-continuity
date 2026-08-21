@@ -26,6 +26,8 @@ describe("entrega pedagógica progressiva das cenas", () => {
       requiresCompatibleTeacherMedia: true,
     });
     expect(getScenePedagogicalDelivery("beach")?.stages.map((stage) => stage.id)).toEqual(expectedStages);
+    expect(getScenePedagogicalDelivery("beach")?.stages.find((stage) => stage.id === "concept")?.guidance).toContain("modelo do professor");
+    expect(getScenePedagogicalDelivery("tokyo")?.stages.find((stage) => stage.id === "transfer")?.guidance).toContain("situação nova");
     expect(getScenePedagogicalDelivery("unknown-scene")).toBeNull();
   });
 
@@ -42,7 +44,9 @@ describe("entrega pedagógica progressiva das cenas", () => {
     expect(immersiveScene).toContain("canUseAuthorizedSceneInteractions && sceneInteractionProgressionQuery.data");
     expect(immersiveScene).toContain("sceneInteractionProgressionQuery.data.stages.map");
     expect(immersiveScene).toContain("Math.floor((dlgStep / Math.max(1, activeSceneDialog.length - 1)) * sceneInteractionProgressionQuery.data.stages.length)");
-    expect(immersiveScene).toContain("index === activeStage");
+    expect(immersiveScene).toContain("index === activeStageIndex");
+    expect(immersiveScene).toContain("Agora · {activeStage.label}");
+    expect(immersiveScene).toContain("activeStage.guidance");
     expect(immersiveScene).toContain("sceneInteractionProgressionQuery.data.focus");
   });
 });
