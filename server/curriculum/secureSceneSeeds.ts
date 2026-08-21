@@ -626,6 +626,44 @@ const PT_BR_ENGLISH_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "cisza", x: 15, y: 40, label: "Quiet", translation: "Silêncio", pronunciation: "KWAI-et", example: "The library is quiet.", examplePt: "A biblioteca é silenciosa.", icon: "🤫", color: "#8b5cf6" },
     ],
   },
+  office: {
+    dialog: [
+      { speaker: "teacher", text: "Hello! I am Ingrid. Welcome to our office!", textPt: "Olá! Eu sou a Ingrid. Bem-vindo ao nosso escritório!" },
+      { speaker: "user", text: "Hello, Ingrid! It is a beautiful office. How is work today?", textPt: "Olá, Ingrid! É um escritório bonito. Como está o trabalho hoje?", options: ["Hello, Ingrid! It is a beautiful office. How is work today?", "I do not know.", "I am lost."], correctIndex: 0 },
+      { speaker: "teacher", text: "Everything is fine. Here are my computer and desk.", textPt: "Tudo bem. Aqui estão meu computador e minha mesa." },
+      { speaker: "user", text: "The phone is ringing. Should I answer it?", textPt: "O telefone está tocando. Devo atender?", options: ["The phone is ringing. Should I answer it?", "Do not pay attention.", "Turn off the phone."], correctIndex: 0 },
+      { speaker: "teacher", text: "Yes, it is important. The window is open, and fresh air helps us work.", textPt: "Sim, é importante. A janela está aberta e o ar fresco ajuda a trabalhar." },
+      { speaker: "user", text: "Can I get coffee from the coffee machine?", textPt: "Posso pegar café na cafeteira?", options: ["Can I get coffee from the coffee machine?", "I do not drink coffee.", "Where is the cafeteria?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Of course. The folder is on the desk. Your English is excellent!", textPt: "Claro. A pasta está sobre a mesa. Seu inglês está excelente!" },
+    ],
+    hotspots: [
+      { id: "komputer", x: 50, y: 45, label: "Computer", translation: "Computador", pronunciation: "kəm-PYU-ter", example: "The computer is working.", examplePt: "O computador está funcionando.", icon: "💻", color: "#6366f1" },
+      { id: "stol", x: 35, y: 65, label: "Desk", translation: "Mesa", pronunciation: "DESK", example: "The desk is big.", examplePt: "A mesa é grande.", icon: "🪑", color: "#a16207" },
+      { id: "telefon", x: 70, y: 55, label: "Phone", translation: "Telefone", pronunciation: "FOHN", example: "The phone is ringing.", examplePt: "O telefone está tocando.", icon: "📞", color: "#22c55e" },
+      { id: "okno", x: 80, y: 25, label: "Window", translation: "Janela", pronunciation: "WIN-doh", example: "The window is open.", examplePt: "A janela está aberta.", icon: "🪟", color: "#0ea5e9" },
+      { id: "kofejnik", x: 20, y: 50, label: "Coffee Machine", translation: "Cafeteira", pronunciation: "KAW-fee mə-SHEEN", example: "The coffee machine is working.", examplePt: "A cafeteira está funcionando.", icon: "☕", color: "#f59e0b" },
+      { id: "papka", x: 60, y: 30, label: "Folder", translation: "Pasta", pronunciation: "FOHL-der", example: "The folder is on the desk.", examplePt: "A pasta está sobre a mesa.", icon: "📁", color: "#dc2626" },
+    ],
+  },
+  metro: {
+    dialog: [
+      { speaker: "teacher", text: "Hello! I am Ingrid. Welcome to the Paris Metro. Which station are you looking for?", textPt: "Olá! Eu sou a Ingrid. Bem-vindo ao Metrô de Paris. Qual estação você procura?" },
+      { speaker: "user", text: "I am looking for the Louvre station. How can I buy a ticket?", textPt: "Eu procuro a estação Louvre. Como posso comprar um bilhete?", options: ["I am looking for the Louvre station. How can I buy a ticket?", "I do not know where to go.", "I am lost."], correctIndex: 0 },
+      { speaker: "teacher", text: "Buy a ticket at the counter or machine. A ticket costs two euros.", textPt: "Compre um bilhete no guichê ou na máquina. Um bilhete custa dois euros." },
+      { speaker: "user", text: "Thank you. In how many minutes does the train arrive?", textPt: "Obrigado. Em quantos minutos o trem chega?", options: ["Thank you. In how many minutes does the train arrive?", "I do not have money.", "Where is the exit?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Look at the sign. The next train arrives in three minutes. Wait on the platform.", textPt: "Olhe o painel. O próximo trem chega em três minutos. Espere na plataforma." },
+      { speaker: "user", text: "I can see the door opening. Should I enter through the corridor on the right?", textPt: "Eu consigo ver a porta abrindo. Devo entrar pelo corredor à direita?", options: ["I can see the door opening. Should I enter through the corridor on the right?", "I do not want to enter.", "Where is the exit?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Yes, enter quickly. Your English is excellent. Have a good trip!", textPt: "Sim, entre rápido. Seu inglês está excelente. Boa viagem!" },
+    ],
+    hotspots: [
+      { id: "train", x: 50, y: 50, label: "Train", translation: "Trem", pronunciation: "TREYN", example: "The train is arriving.", examplePt: "O trem está chegando.", icon: "🚇", color: "#6366f1" },
+      { id: "quai", x: 30, y: 70, label: "Platform", translation: "Plataforma", pronunciation: "PLAT-form", example: "Wait on the platform.", examplePt: "Espere na plataforma.", icon: "🛤️", color: "#f59e0b" },
+      { id: "panneau", x: 70, y: 30, label: "Sign", translation: "Painel", pronunciation: "SAIN", example: "Read the sign.", examplePt: "Leia o painel.", icon: "📋", color: "#0ea5e9" },
+      { id: "porte", x: 20, y: 45, label: "Door", translation: "Porta", pronunciation: "DOR", example: "The door is opening.", examplePt: "A porta está abrindo.", icon: "🚪", color: "#dc2626" },
+      { id: "billet", x: 80, y: 55, label: "Ticket", translation: "Bilhete", pronunciation: "TIK-it", example: "Buy a ticket.", examplePt: "Compre um bilhete.", icon: "🎟️", color: "#22c55e" },
+      { id: "couloir", x: 55, y: 80, label: "Corridor", translation: "Corredor", pronunciation: "KOR-i-dor", example: "The corridor is long.", examplePt: "O corredor é longo.", icon: "🏃", color: "#8b5cf6" },
+    ],
+  },
 };
 
 export function getSecureSceneSeedForLanguage(sceneId: string, targetLanguage: string, nativeLanguage: string): SecureSceneSeed | null {

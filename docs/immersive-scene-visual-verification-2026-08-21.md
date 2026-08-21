@@ -16,5 +16,7 @@
 | Deserto e Fazenda — após a correção PT-BR→EN | Os hotspots passaram a mostrar vocabulário em inglês: **Sand, Caravan, Sun, Footprints, Dune** no Deserto e **Cow, Barn, Wheat, Tractor, Chicken, Sky** na Fazenda. Os cenários e Ingrid permaneceram visíveis. |
 | Academia e Biblioteca — baixa concorrência | Cenários e Ingrid renderizaram. A Academia permaneceu no estado transitório de preparação do material protegido. A Biblioteca mostrou hotspots em polonês, portanto ainda requer correção curricular para PT-BR→EN. |
 | Biblioteca — após a correção PT-BR→EN | Os hotspots passaram a mostrar **Book, Shelf, Reading Table, Lamp, Catalog e Quiet**; a cena, os controles e Ingrid continuaram visíveis. |
+| Escritório e Metrô — baixa concorrência | Cenários e Ingrid renderizaram corretamente. O Escritório mostrou hotspots em russo e o Metrô mostrou hotspots em francês, portanto ambas as cenas ainda requerem correção curricular para PT-BR→EN. |
+| Escritório e Metrô — após a correção PT-BR→EN | Os hotspots passaram a mostrar **Computer, Desk, Phone, Window, Coffee Machine, Folder** no Escritório e **Train, Platform, Sign, Door, Ticket, Corridor** no Metrô. Ingrid, cenários e controles foram preservados. |
 
 Esta verificação cobre apenas a renderização visual de prévia. O material pedagógico continua protegido pelo fluxo autenticado e as regras de voz, retrato e clipes são cobertas pela suíte de regressão.
