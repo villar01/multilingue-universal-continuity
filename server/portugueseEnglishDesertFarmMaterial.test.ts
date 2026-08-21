@@ -9,6 +9,7 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
   it.each([
     ["desert", ["Sand", "Caravan", "Sun", "Footprints", "Dune"]],
     ["farm", ["Cow", "Barn", "Wheat", "Tractor", "Chicken", "Sky"]],
+    ["library", ["Book", "Shelf", "Reading Table", "Lamp", "Catalog", "Quiet"]],
   ] as const)("entrega rótulos e diálogo em inglês para %s", (sceneId, expectedLabels) => {
     const material = getSecureSceneSeedForLanguage(sceneId, "en-US", "pt-BR");
 
@@ -20,8 +21,10 @@ describe("material protegido de Deserto e Fazenda para Português–Inglês", ()
   it("preserva as sementes originais para seus próprios pares de idioma", () => {
     expect(getSecureSceneSeed("desert")?.hotspots[0]?.label).toBe("رمل");
     expect(getSecureSceneSeed("farm")?.hotspots[0]?.label).toBe("Krowa");
+    expect(getSecureSceneSeed("library")?.hotspots[0]?.label).toBe("Książka");
     expect(getSecureSceneSeedForLanguage("desert", "ar-SA", "pt-BR")?.hotspots[0]?.label).toBe("رمل");
     expect(getSecureSceneSeedForLanguage("farm", "pl-PL", "pt-BR")?.hotspots[0]?.label).toBe("Krowa");
+    expect(getSecureSceneSeedForLanguage("library", "pl-PL", "pt-BR")?.hotspots[0]?.label).toBe("Książka");
   });
 
   it("encaminha o par de idiomas pela rota protegida antes de renderizar o material canônico", () => {

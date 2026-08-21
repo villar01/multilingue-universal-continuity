@@ -14,5 +14,7 @@
 | Mercado Medieval e Spa — baixa concorrência | As duas cenas renderizaram cenário e retrato de **Ingrid**. O Spa abriu com hotspots, Pareto, quiz e botão de apresentação; o Mercado Medieval permaneceu no estado transitório de preparação do material protegido, sem erro de renderização. |
 | Deserto e Fazenda — baixa concorrência | Cenários, controles e Ingrid renderizaram corretamente. Contudo, os rótulos dos hotspots permaneceram em árabe no Deserto e em polonês na Fazenda apesar do par PT-BR→EN; a correção curricular de idioma-alvo é necessária antes da validação pedagógica final. |
 | Deserto e Fazenda — após a correção PT-BR→EN | Os hotspots passaram a mostrar vocabulário em inglês: **Sand, Caravan, Sun, Footprints, Dune** no Deserto e **Cow, Barn, Wheat, Tractor, Chicken, Sky** na Fazenda. Os cenários e Ingrid permaneceram visíveis. |
+| Academia e Biblioteca — baixa concorrência | Cenários e Ingrid renderizaram. A Academia permaneceu no estado transitório de preparação do material protegido. A Biblioteca mostrou hotspots em polonês, portanto ainda requer correção curricular para PT-BR→EN. |
+| Biblioteca — após a correção PT-BR→EN | Os hotspots passaram a mostrar **Book, Shelf, Reading Table, Lamp, Catalog e Quiet**; a cena, os controles e Ingrid continuaram visíveis. |
 
 Esta verificação cobre apenas a renderização visual de prévia. O material pedagógico continua protegido pelo fluxo autenticado e as regras de voz, retrato e clipes são cobertas pela suíte de regressão.

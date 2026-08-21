@@ -607,6 +607,25 @@ const PT_BR_ENGLISH_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
       { id: "niebo", x: 55, y: 15, label: "Sky", translation: "Céu", pronunciation: "SKAI", example: "The sky is blue.", examplePt: "O céu está azul.", icon: "🌤️", color: "#3b82f6" },
     ],
   },
+  library: {
+    dialog: [
+      { speaker: "teacher", text: "Hello! I am Ingrid. Welcome to the library. What book would you like to read?", textPt: "Olá! Eu sou a Ingrid. Bem-vindo à biblioteca. Que livro você gostaria de ler?" },
+      { speaker: "user", text: "I would like to read an adventure novel. Where is the literature section?", textPt: "Eu gostaria de ler um romance de aventura. Onde fica a seção de literatura?", options: ["I would like to read an adventure novel. Where is the literature section?", "I do not know what to read.", "I do not like reading."], correctIndex: 0 },
+      { speaker: "teacher", text: "The literature section is on the second shelf to the left. Remember: the library is quiet.", textPt: "A seção de literatura fica na segunda prateleira à esquerda. Lembre-se: a biblioteca é silenciosa." },
+      { speaker: "user", text: "Of course. Can I sit at the table near the lamp?", textPt: "Claro. Posso sentar à mesa perto da lâmpada?", options: ["Of course. Can I sit at the table near the lamp?", "I prefer to stand.", "Can I eat here?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Yes, the table is free. You can also use the catalog to find books.", textPt: "Sim, a mesa está livre. Você também pode usar o catálogo para encontrar livros." },
+      { speaker: "user", text: "Thank you. How long can I borrow a book?", textPt: "Obrigado. Por quanto tempo posso pegar um livro emprestado?", options: ["Thank you. How long can I borrow a book?", "I do not want to borrow a book.", "Can I take it without asking?"], correctIndex: 0 },
+      { speaker: "teacher", text: "For two weeks. Your English is getting better. Well done!", textPt: "Por duas semanas. Seu inglês está melhorando. Muito bem!" },
+    ],
+    hotspots: [
+      { id: "ksiazka", x: 40, y: 45, label: "Book", translation: "Livro", pronunciation: "BUK", example: "The book is interesting.", examplePt: "O livro é interessante.", icon: "📖", color: "#6366f1" },
+      { id: "polka", x: 70, y: 35, label: "Shelf", translation: "Prateleira", pronunciation: "SHELF", example: "The shelf is full.", examplePt: "A prateleira está cheia.", icon: "📚", color: "#a16207" },
+      { id: "stolik", x: 30, y: 68, label: "Reading Table", translation: "Mesa de leitura", pronunciation: "REE-ding TEI-bəl", example: "The reading table is free.", examplePt: "A mesa de leitura está livre.", icon: "🪑", color: "#f59e0b" },
+      { id: "lampa", x: 55, y: 25, label: "Lamp", translation: "Lâmpada", pronunciation: "LAMP", example: "The lamp is bright.", examplePt: "A lâmpada está acesa.", icon: "💡", color: "#eab308" },
+      { id: "katalog", x: 80, y: 55, label: "Catalog", translation: "Catálogo", pronunciation: "KA-tə-log", example: "Look in the catalog.", examplePt: "Procure no catálogo.", icon: "🗂️", color: "#0ea5e9" },
+      { id: "cisza", x: 15, y: 40, label: "Quiet", translation: "Silêncio", pronunciation: "KWAI-et", example: "The library is quiet.", examplePt: "A biblioteca é silenciosa.", icon: "🤫", color: "#8b5cf6" },
+    ],
+  },
 };
 
 export function getSecureSceneSeedForLanguage(sceneId: string, targetLanguage: string, nativeLanguage: string): SecureSceneSeed | null {
