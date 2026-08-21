@@ -367,6 +367,7 @@ function Router() {
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/pricing-comparison"} component={PricingComparison} />
       <Route path={"/prelaunch"} component={PreLaunch} />
+      <Route path={"/pre-launch"} component={PreLaunch} />
       <Route path="/phrasal-verbs-exercises" component={ResilientPhrasalVerbsExercises} />
       <Route path="/interactive-videos" component={ResilientInteractiveVideos} />
         <Route path="/reels" component={ResilientReels} />

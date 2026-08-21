@@ -3,8 +3,15 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card } from "../components/ui/card";
 import { trpc } from "../lib/trpc";
+import { LANGUAGES_57, TOTAL_LANGUAGES } from "../lib/languages";
+import { INITIAL_COMMERCIAL_LANGUAGE_CODES } from "@shared/commercialLanguageBlocks";
 import { toast } from "sonner";
 import { Check, Sparkles, Globe, Brain, Video } from "lucide-react";
+
+const initialCommercialLanguageNames = INITIAL_COMMERCIAL_LANGUAGE_CODES.map((code) =>
+  LANGUAGES_57.find((language) => language.code === code)?.name ?? code,
+);
+const initialCommercialLanguageLabel = initialCommercialLanguageNames.join(", ");
 
 export default function PreLaunch() {
   const [email, setEmail] = useState("");
@@ -42,12 +49,13 @@ export default function PreLaunch() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
             Aprenda Qualquer Idioma
             <br />
-            Com IA GPT-4
+            Com IA Adaptativa
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
             A primeira plataforma do mundo com <strong>conversação ilimitada por IA</strong>, 
-            análise de pronúncia em tempo real e <strong>vídeos interativos</strong> em 54 idiomas.
+            análise de pronúncia em tempo real e <strong>vídeos interativos</strong> em um catálogo de {TOTAL_LANGUAGES} idiomas,
+            com lançamento comercial inicial em {initialCommercialLanguageLabel}.
           </p>
 
           {/* Form */}
@@ -86,14 +94,14 @@ export default function PreLaunch() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
             <Globe className="w-12 h-12 mb-4 text-blue-400" />
-            <h3 className="text-xl font-bold mb-2">54 Idiomas</h3>
-            <p className="text-gray-300">69 idiomas — mais do que qualquer outro app do mundo</p>
+            <h3 className="text-xl font-bold mb-2">{TOTAL_LANGUAGES} Idiomas</h3>
+            <p className="text-gray-300">Catálogo completo com {INITIAL_COMMERCIAL_LANGUAGE_CODES.length} idiomas comerciais iniciais</p>
           </Card>
 
           <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
             <Brain className="w-12 h-12 mb-4 text-purple-400" />
-            <h3 className="text-xl font-bold mb-2">IA GPT-4</h3>
-            <p className="text-gray-300">Conversação ilimitada e personalizada</p>
+          <h3 className="text-xl font-bold mb-2">IA Adaptativa</h3>
+          <p className="text-gray-300">Prática guiada e personalizada conforme o idioma disponível</p>
           </Card>
 
           <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
@@ -139,20 +147,9 @@ export default function PreLaunch() {
           </p>
         </div>
 
-        {/* Social Proof */}
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 border-2 border-white" />
-              ))}
-            </div>
-            <span className="text-gray-300">+ 47 pessoas já garantiram</span>
-          </div>
-          <p className="text-gray-400 text-sm">
-            Seja um dos primeiros a ter acesso à tecnologia mais avançada de aprendizado de idiomas
-          </p>
-        </div>
+        <p className="text-center text-gray-400 text-sm">
+          Cadastre seu interesse para receber informações de disponibilidade e lançamento.
+        </p>
       </div>
     </div>
   );
