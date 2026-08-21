@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import {
+  checkParetoAssembly,
   checkParetoRecall,
   checkParetoSentence,
+  getParetoAssemblyModel,
   getParetoLevelRequirement,
   type ParetoPracticeStep,
   type ParetoPracticeTerm,
@@ -24,18 +26,23 @@ const STEP_LABEL: Record<ParetoPracticeStep, string> = {
   observe: "1. Observe",
   recall: "2. Lembre",
   write: "3. Escreva",
-  create: "4. Crie",
+  assemble: "4. Monte",
+  create: "5. Crie",
 };
 
 export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak, embedded = false, level = "A1", feedbackLanguage = "pt-BR" }: ParetoPracticeCycleProps) {
   const [step, setStep] = useState<ParetoPracticeStep>("observe");
   const [recall, setRecall] = useState("");
   const [written, setWritten] = useState("");
+  const [assembledTokens, setAssembledTokens] = useState<number[]>([]);
   const [sentence, setSentence] = useState("");
   const [feedback, setFeedback] = useState("");
   const [completed, setCompleted] = useState(false);
-  const activeStep = useMemo(() => ["observe", "recall", "write", "create"].indexOf(step), [step]);
+  const activeStep = useMemo(() => ["observe", "recall", "write", "assemble", "create"].indexOf(step), [step]);
   const levelRequirement = useMemo(() => getParetoLevelRequirement(level), [level]);
+  const assemblyModel = useMemo(() => getParetoAssemblyModel(term), [term]);
+  const assemblyTokens = useMemo(() => assemblyModel.split(/\s+/), [assemblyModel]);
+  const assembledSentence = assembledTokens.map((index) => assemblyTokens[index]).join(" ");
   const withScriptedFeedback = (message: string, correct: boolean) => {
     const scripted = getScriptedExerciseFeedback(correct ? "correct" : "retry", feedbackLanguage);
     return correct
@@ -58,6 +65,12 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
     }
   };
 
+  const checkAssembly = () => {
+    const result = checkParetoAssembly(assembledSentence, term);
+    setFeedback(withScriptedFeedback(result.message, result.correct));
+    if (result.correct) setStep("create");
+  };
+
   return (
     <section className={`${embedded ? "relative" : "absolute inset-x-3 bottom-3 z-[70]"} mx-auto max-w-xl rounded-3xl border border-amber-200 bg-[#fffefb] p-4 text-slate-900 shadow-2xl shadow-amber-950/15`} aria-label="Prática Pareto">
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -68,7 +81,7 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
         <button type="button" onClick={onClose} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm hover:bg-amber-50">Fechar</button>
       </div>
 
-      <div className="mb-4 grid grid-cols-4 gap-1 text-center text-[10px] font-bold sm:text-xs">
+      <div className="mb-4 grid grid-cols-5 gap-1 text-center text-[10px] font-bold sm:text-xs">
         {(Object.keys(STEP_LABEL) as ParetoPracticeStep[]).map((key, index) => (
           <span key={key} className={`rounded-full px-1 py-1.5 ${index <= activeStep ? "bg-amber-400 text-slate-950" : "bg-amber-50 text-slate-500"}`}>{STEP_LABEL[key]}</span>
         ))}
@@ -103,7 +116,27 @@ export function ParetoPracticeCycle({ term, onClose, onComplete, onNext, onSpeak
         <div className="space-y-3">
           <p className="text-sm text-slate-700">Escreva novamente a palavra para fixar a grafia.</p>
           <input value={written} onChange={(event) => setWritten(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-950 outline-none focus:border-amber-400" autoComplete="off" />
-          <button type="button" onClick={() => checkRecall(written, "create")} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Validar escrita</button>
+          <button type="button" onClick={() => checkRecall(written, "assemble")} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950">Validar escrita</button>
+        </div>
+      )}
+
+      {step === "assemble" && (
+        <div className="space-y-3">
+          <p className="text-sm text-slate-700">Monte a frase-modelo antes de criar uma frase própria.</p>
+          <div className="min-h-11 rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm font-semibold text-slate-800" aria-live="polite">
+            {assembledSentence || "Toque nas palavras na ordem correta."}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {assemblyTokens.map((token, index) => (
+              <button key={`${token}-${index}`} type="button" disabled={assembledTokens.includes(index)} onClick={() => setAssembledTokens((current) => [...current, index])} className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-950 disabled:cursor-not-allowed disabled:opacity-40">
+                {token}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setAssembledTokens([])} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700">Limpar montagem</button>
+            <button type="button" onClick={checkAssembly} disabled={assembledTokens.length !== assemblyTokens.length} className="rounded-xl bg-amber-400 px-3 py-2 text-sm font-bold text-slate-950 disabled:opacity-40">Conferir montagem</button>
+          </div>
         </div>
       )}
 

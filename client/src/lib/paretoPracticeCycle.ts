@@ -18,7 +18,7 @@ export interface ParetoLevelRequirement {
   guidance: string;
 }
 
-export type ParetoPracticeStep = "observe" | "recall" | "write" | "create";
+export type ParetoPracticeStep = "observe" | "recall" | "write" | "assemble" | "create";
 
 export const PARETO_LEVEL_REQUIREMENTS: Record<CEFRLevel, ParetoLevelRequirement> = {
   A1: { minSentenceWords: 3, maxSentenceWords: 6, guidance: "Crie uma frase curta e concreta sobre o objeto." },
@@ -29,7 +29,7 @@ export const PARETO_LEVEL_REQUIREMENTS: Record<CEFRLevel, ParetoLevelRequirement
   C2: { minSentenceWords: 24, maxSentenceWords: 50, guidance: "Crie uma frase com nuance, precisão e vocabulário apropriado ao tema." },
 };
 
-export const PARETO_PRACTICE_STEPS: ReadonlyArray<ParetoPracticeStep> = ["observe", "recall", "write", "create"];
+export const PARETO_PRACTICE_STEPS: ReadonlyArray<ParetoPracticeStep> = ["observe", "recall", "write", "assemble", "create"];
 
 function normalize(text: string): string {
   return text.trim().toLocaleLowerCase().replace(/\s+/g, " ");
@@ -45,6 +45,20 @@ export function checkParetoRecall(answer: string, term: ParetoPracticeTerm): Par
     return { correct: true, message: "Ótimo. Você recuperou a palavra de memória." };
   }
   return { correct: false, message: "Veja a palavra mais uma vez e tente escrevê-la sem olhar." };
+}
+
+/** Mantém uma frase-modelo curta para a montagem guiada antes da criação independente. */
+export function getParetoAssemblyModel(term: ParetoPracticeTerm): string {
+  return term.example?.trim() || `I see ${term.word}.`;
+}
+
+/** Confirma a ordem da frase-modelo sem exigir capitalização ou espaços idênticos. */
+export function checkParetoAssembly(answer: string, term: ParetoPracticeTerm): ParetoPracticeCheck {
+  const model = getParetoAssemblyModel(term);
+  if (normalize(answer) === normalize(model)) {
+    return { correct: true, message: "Muito bem. Você organizou a frase antes de criar uma nova." };
+  }
+  return { correct: false, message: "Reorganize as palavras para formar a frase-modelo." };
 }
 
 /** A frase deve reutilizar a palavra, obedecer ao nível CEFR e ir além da simples repetição. */

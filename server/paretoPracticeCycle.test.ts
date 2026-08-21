@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  checkParetoAssembly,
   checkParetoRecall,
   checkParetoSentence,
+  getParetoAssemblyModel,
   getParetoLevelRequirement,
   nextParetoStep,
 } from "../client/src/lib/paretoPracticeCycle";
@@ -21,11 +23,19 @@ describe("Pareto practice cycle", () => {
     expect(checkParetoSentence("I drink juice.", term).correct).toBe(false);
   });
 
-  it("keeps the Pareto sequence from observation through sentence creation", () => {
+  it("keeps the Pareto sequence from observation through guided assembly and sentence creation", () => {
     expect(nextParetoStep("observe")).toBe("recall");
     expect(nextParetoStep("recall")).toBe("write");
-    expect(nextParetoStep("write")).toBe("create");
+    expect(nextParetoStep("write")).toBe("assemble");
+    expect(nextParetoStep("assemble")).toBe("create");
     expect(nextParetoStep("create")).toBeNull();
+  });
+
+  it("requires guided assembly of the model sentence before free creation", () => {
+    const modelTerm = { ...term, example: "I drink water." };
+    expect(getParetoAssemblyModel(modelTerm)).toBe("I drink water.");
+    expect(checkParetoAssembly("I drink water.", modelTerm).correct).toBe(true);
+    expect(checkParetoAssembly("Water drink I.", modelTerm).correct).toBe(false);
   });
 
   it("raises sentence depth gradually for CEFR levels while keeping an upper boundary", () => {
