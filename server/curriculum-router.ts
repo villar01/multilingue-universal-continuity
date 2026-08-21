@@ -9,7 +9,7 @@ import { getParetoBookContext, getParetoBookContextWords, PARETO_BOOK_CONTEXT_ID
 import { getParetoAdvancedChallenge } from "./curriculum/paretoAdvancedChallenges";
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
-import { getSecureSceneSeed } from "./curriculum/secureSceneSeeds";
+import { getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
 import { getABCBookDelivery } from "./curriculum/abcBookContent";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
@@ -111,9 +111,11 @@ export const curriculumRouter = router({
 
   sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({
     sceneId: z.string().trim().min(1).max(80),
+    targetLanguage: z.string().trim().min(2).max(16),
+    nativeLanguage: z.string().trim().min(2).max(16),
   })).query(async ({ ctx, input }) => {
     await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
-    const seed = getSecureSceneSeed(input.sceneId);
+    const seed = getSecureSceneSeedForLanguage(input.sceneId, input.targetLanguage, input.nativeLanguage);
     if (!seed) {
       throw new TRPCError({ code: "NOT_FOUND", message: "O conteúdo canônico desta cena ainda não foi migrado." });
     }

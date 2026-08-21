@@ -569,6 +569,55 @@ export function getSecureSceneSeed(sceneId: string): SecureSceneSeed | null {
   return SECURE_SCENE_SEEDS[sceneId] ?? null;
 }
 
+const PT_BR_ENGLISH_SCENE_SEEDS: Record<string, SecureSceneSeed> = {
+  desert: {
+    dialog: [
+      { speaker: "teacher", text: "Hello! I am Ingrid. Welcome to the Sahara Desert!", textPt: "Olá! Eu sou a Ingrid. Bem-vindo ao Deserto do Saara!" },
+      { speaker: "user", text: "Hello, Ingrid! The desert is beautiful.", textPt: "Olá, Ingrid! O deserto é bonito.", options: ["Hello, Ingrid! The desert is beautiful.", "I do not like the desert.", "Where is the hotel?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Look at the caravan. Camels can travel through the desert.", textPt: "Olhe para a caravana. Os camelos podem viajar pelo deserto." },
+      { speaker: "user", text: "I can see the sand, the sun, and the dunes.", textPt: "Eu consigo ver a areia, o sol e as dunas.", options: ["I can see the sand, the sun, and the dunes.", "I cannot see anything.", "Where is the water?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Excellent! The sun is hot, and the footprints are in the sand.", textPt: "Excelente! O sol está quente e as pegadas estão na areia." },
+      { speaker: "user", text: "The desert is hot, but it is amazing.", textPt: "O deserto é quente, mas é incrível.", options: ["The desert is hot, but it is amazing.", "I want to leave now.", "This is too difficult."], correctIndex: 0 },
+      { speaker: "teacher", text: "Great work! Keep practicing your English every day.", textPt: "Ótimo trabalho! Continue praticando seu inglês todos os dias." },
+    ],
+    hotspots: [
+      { id: "sand2", x: 50, y: 75, label: "Sand", translation: "Areia", pronunciation: "SÆND", example: "The sand is very hot.", examplePt: "A areia está muito quente.", icon: "🏜️", color: "#f59e0b" },
+      { id: "caravan", x: 82, y: 55, label: "Caravan", translation: "Caravana", pronunciation: "KA-rə-van", example: "The caravan travels through the desert.", examplePt: "A caravana viaja pelo deserto.", icon: "🐪", color: "#a16207" },
+      { id: "sun2", x: 70, y: 15, label: "Sun", translation: "Sol", pronunciation: "SʌN", example: "The sun is very hot.", examplePt: "O sol está muito quente.", icon: "☀️", color: "#eab308" },
+      { id: "footprints", x: 55, y: 72, label: "Footprints", translation: "Pegadas", pronunciation: "FUT-prints", example: "The footprints are in the sand.", examplePt: "As pegadas estão na areia.", icon: "👣", color: "#22c55e" },
+      { id: "dune", x: 55, y: 45, label: "Dune", translation: "Duna", pronunciation: "DYOON", example: "The dune is made of sand.", examplePt: "A duna é feita de areia.", icon: "🏔️", color: "#d97706" },
+    ],
+  },
+  farm: {
+    dialog: [
+      { speaker: "teacher", text: "Hello! I am Ingrid. Welcome to our farm!", textPt: "Olá! Eu sou a Ingrid. Bem-vindo à nossa fazenda!" },
+      { speaker: "user", text: "Hello, Ingrid! It is a beautiful farm. I can see cows and chickens.", textPt: "Olá, Ingrid! É uma fazenda bonita. Eu consigo ver vacas e galinhas.", options: ["Hello, Ingrid! It is a beautiful farm. I can see cows and chickens.", "I do not like farms.", "Where is the city?"], correctIndex: 0 },
+      { speaker: "teacher", text: "Yes! A cow gives us milk, and a chicken lays eggs. Can you say tractor?", textPt: "Sim! Uma vaca nos dá leite e uma galinha bota ovos. Você consegue dizer trator?" },
+      { speaker: "user", text: "Tractor! I can also see a barn full of wheat.", textPt: "Trator! Eu também consigo ver um celeiro cheio de trigo.", options: ["Tractor! I can also see a barn full of wheat.", "I do not understand.", "This is too difficult."], correctIndex: 0 },
+      { speaker: "teacher", text: "Excellent! The wheat is golden, and the sky is blue today.", textPt: "Excelente! O trigo é dourado e o céu está azul hoje." },
+      { speaker: "user", text: "Yes, the sky is wonderful. I would like to live here.", textPt: "Sim, o céu está maravilhoso. Eu gostaria de morar aqui.", options: ["Yes, the sky is wonderful. I would like to live here.", "I prefer the city.", "It is too quiet."], correctIndex: 0 },
+      { speaker: "teacher", text: "Wonderful! Your English is getting better. Well done!", textPt: "Maravilhoso! Seu inglês está melhorando. Muito bem!" },
+    ],
+    hotspots: [
+      { id: "krowa", x: 35, y: 55, label: "Cow", translation: "Vaca", pronunciation: "KAU", example: "The cow gives milk.", examplePt: "A vaca dá leite.", icon: "🐄", color: "#f59e0b" },
+      { id: "stodola", x: 65, y: 40, label: "Barn", translation: "Celeiro", pronunciation: "BAARN", example: "The barn is big.", examplePt: "O celeiro é grande.", icon: "🏚️", color: "#a16207" },
+      { id: "pszenica", x: 50, y: 72, label: "Wheat", translation: "Trigo", pronunciation: "WEET", example: "The wheat is golden.", examplePt: "O trigo é dourado.", icon: "🌾", color: "#eab308" },
+      { id: "traktor", x: 20, y: 65, label: "Tractor", translation: "Trator", pronunciation: "TRAK-ter", example: "The tractor is red.", examplePt: "O trator é vermelho.", icon: "🚜", color: "#dc2626" },
+      { id: "kura", x: 80, y: 60, label: "Chicken", translation: "Galinha", pronunciation: "CHI-ken", example: "The chicken lays eggs.", examplePt: "A galinha bota ovos.", icon: "🐔", color: "#f97316" },
+      { id: "niebo", x: 55, y: 15, label: "Sky", translation: "Céu", pronunciation: "SKAI", example: "The sky is blue.", examplePt: "O céu está azul.", icon: "🌤️", color: "#3b82f6" },
+    ],
+  },
+};
+
+export function getSecureSceneSeedForLanguage(sceneId: string, targetLanguage: string, nativeLanguage: string): SecureSceneSeed | null {
+  const isPortugueseToEnglish = nativeLanguage.toLowerCase().startsWith("pt")
+    && targetLanguage.toLowerCase().startsWith("en");
+  if (isPortugueseToEnglish && PT_BR_ENGLISH_SCENE_SEEDS[sceneId]) {
+    return PT_BR_ENGLISH_SCENE_SEEDS[sceneId];
+  }
+  return getSecureSceneSeed(sceneId);
+}
+
 export function getSecureSceneSeedCatalog() {
   return Object.entries(SECURE_SCENE_SEEDS).map(([sceneId, seed]) => ({
     sceneId,

@@ -855,6 +855,8 @@ export default function ImmersiveScene() {
   const canonicalSceneMaterialQuery = trpc.curriculum.sceneCanonicalMaterial.useQuery({
     lessonKey: authorizedSceneMaterial?.lessonKey || "scene:pending",
     sceneId: selectedScene?.id || "pending",
+    targetLanguage: targetLang,
+    nativeLanguage: nativeLang,
   }, {
     enabled: isAuthenticated
       && (selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "airport_family" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "family_home" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain")
