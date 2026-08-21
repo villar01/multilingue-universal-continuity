@@ -2768,6 +2768,25 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
   ],
 };
 
+const SCENE_SEMANTIC_CONTRAST_IDS: Record<string, string> = {
+  beach: "frequency-ever-always",
+  airport: "sound-there-their-theyre",
+  newyork: "report-say-tell",
+  museum: "phrasal-look-up-look-for",
+};
+
+export function getABCBookSemanticContrastForScene(input: {
+  sceneId: string;
+  nativeLanguage: string;
+  targetLanguage: string;
+}): ABCBookSemanticContrast | null {
+  const isPortugueseEnglish = input.nativeLanguage.toLowerCase().startsWith("pt") && input.targetLanguage.toLowerCase().startsWith("en");
+  const contrastId = SCENE_SEMANTIC_CONTRAST_IDS[input.sceneId];
+  if (!isPortugueseEnglish || !contrastId) return null;
+
+  return PORTUGUESE_ENGLISH_BOOK.semanticContrasts.find((contrast) => contrast.id === contrastId) ?? null;
+}
+
 export function getABCBookDelivery(input: { nativeLanguage: string; targetLanguage: string }): ABCBookDelivery | ABCBookUnavailableDelivery {
   const isPortugueseEnglish = input.nativeLanguage.toLowerCase().startsWith("pt") && input.targetLanguage.toLowerCase().startsWith("en");
   if (isPortugueseEnglish) {

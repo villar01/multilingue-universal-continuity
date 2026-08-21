@@ -10,7 +10,7 @@ import { getParetoAdvancedChallenge } from "./curriculum/paretoAdvancedChallenge
 import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
-import { getABCBookDelivery } from "./curriculum/abcBookContent";
+import { getABCBookDelivery, getABCBookSemanticContrastForScene } from "./curriculum/abcBookContent";
 import { getCommercialLanguageA1Units } from "./curriculum/commercialLanguageUnits";
 import { getScenePedagogicalDelivery } from "./curriculum/scenePedagogicalDelivery";
 
@@ -120,6 +120,15 @@ export const curriculumRouter = router({
       throw new TRPCError({ code: "NOT_FOUND", message: "A orientação pedagógica desta cena ainda não está disponível." });
     }
     return delivery;
+  }),
+
+  sceneSemanticContrast: protectedProcedure.input(accessInput.extend({
+    sceneId: z.string().trim().min(1).max(80),
+    targetLanguage: z.string().trim().min(2).max(16),
+    nativeLanguage: z.string().trim().min(2).max(16),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    return getABCBookSemanticContrastForScene(input);
   }),
 
   sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({

@@ -106,6 +106,16 @@ export default function ParetoPanel({
   const [completedSceneWords, setCompletedSceneWords] = useState<Set<string>>(() => new Set());
   const lessonKey = typeof window === "undefined" ? "/immersive-scene" : window.location.pathname;
   const paretoQuery = trpc.curriculum.pareto.useQuery({ lessonKey });
+  const sceneSemanticContrastQuery = trpc.curriculum.sceneSemanticContrast.useQuery({
+    lessonKey,
+    sceneId: currentScene || "pending",
+    targetLanguage: targetLang,
+    nativeLanguage: nativeLang,
+  }, {
+    enabled: isOpen && !!currentScene,
+    retry: false,
+    staleTime: 1000 * 60 * 30,
+  });
   const allWords = paretoQuery.data ?? [];
   const practiceTtsMut = trpc.tts.speak.useMutation();
   const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -278,6 +288,15 @@ export default function ParetoPanel({
                 {nextSceneWord ? "Começar ciclo da cena" : "Cena concluída"}
               </button>
             </div>
+          </div>
+        )}
+
+        {sceneSemanticContrastQuery.data && (
+          <div className="mx-4 mb-2 rounded-xl border border-violet-300/35 bg-violet-300/10 p-3 text-sm text-violet-50">
+            <p className="text-xs font-extrabold uppercase tracking-[0.08em] text-violet-200">Contraste de sentido</p>
+            <p className="mt-1 font-bold">{sceneSemanticContrastQuery.data.focus}</p>
+            <p className="mt-1 text-xs leading-relaxed text-violet-100/90">{sceneSemanticContrastQuery.data.contrast}</p>
+            <p className="mt-2 text-xs font-semibold text-violet-100">Antes de responder: {sceneSemanticContrastQuery.data.comprehensionPrompt}</p>
           </div>
         )}
 
