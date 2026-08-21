@@ -12,6 +12,7 @@ import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
 import { getABCBookDelivery } from "./curriculum/abcBookContent";
 import { getCommercialLanguageA1Units } from "./curriculum/commercialLanguageUnits";
+import { getScenePedagogicalDelivery } from "./curriculum/scenePedagogicalDelivery";
 
 const accessInput = z.object({ lessonKey: z.string().trim().min(1).max(160) });
 
@@ -108,6 +109,17 @@ export const curriculumRouter = router({
       nativeLanguage: input.nativeLanguage,
       userId: ctx.user.id,
     });
+  }),
+
+  sceneInteractionProgression: protectedProcedure.input(accessInput.extend({
+    sceneId: z.string().trim().min(1).max(80),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    const delivery = getScenePedagogicalDelivery(input.sceneId);
+    if (!delivery) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "A orientação pedagógica desta cena ainda não está disponível." });
+    }
+    return delivery;
   }),
 
   sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({

@@ -855,6 +855,17 @@ export default function ImmersiveScene() {
     staleTime: 1000 * 60 * 30,
     retry: false,
   });
+  const sceneInteractionProgressionQuery = trpc.curriculum.sceneInteractionProgression.useQuery({
+    lessonKey: authorizedSceneMaterial?.lessonKey || "scene:pending",
+    sceneId: selectedScene?.id || "pending",
+  }, {
+    enabled: isAuthenticated
+      && authorizedSceneMaterial?.sceneId === selectedScene?.id
+      && authorizedSceneMaterial?.targetLanguage === targetLang
+      && authorizedSceneMaterial?.nativeLanguage === nativeLang,
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
   const canonicalSceneMaterialQuery = trpc.curriculum.sceneCanonicalMaterial.useQuery({
     lessonKey: authorizedSceneMaterial?.lessonKey || "scene:pending",
     sceneId: selectedScene?.id || "pending",
@@ -3129,6 +3140,31 @@ export default function ImmersiveScene() {
                       <span className="text-[11px] text-cyan-100/65">O navegador pedirá permissão antes de gravar.</span>
                     </div>
                   </div>
+                </div>
+              )}
+              {canUseAuthorizedSceneInteractions && sceneInteractionProgressionQuery.data && (
+                <div className="mt-3 rounded-xl border border-indigo-300/30 bg-indigo-400/10 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-extrabold uppercase tracking-[0.08em] text-indigo-100">Roteiro de aprendizagem</p>
+                    <span className="text-[11px] font-semibold text-indigo-100/80">Professor visível · fala compatível</span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {sceneInteractionProgressionQuery.data.stages.map((stage, index) => {
+                      const activeStage = Math.min(
+                        sceneInteractionProgressionQuery.data.stages.length - 1,
+                        Math.floor((dlgStep / Math.max(1, activeSceneDialog.length - 1)) * sceneInteractionProgressionQuery.data.stages.length),
+                      );
+                      return (
+                        <span
+                          key={stage.id}
+                          className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${index === activeStage ? "border-indigo-200 bg-indigo-200 text-slate-950" : "border-indigo-200/25 bg-slate-950/15 text-indigo-100"}`}
+                        >
+                          {stage.label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-indigo-50/90">{sceneInteractionProgressionQuery.data.focus}</p>
                 </div>
               )}
               {dlgSuggestedHotspot && dlgAnswer !== null && (
