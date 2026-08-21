@@ -2725,9 +2725,9 @@ export default function ImmersiveScene() {
           <audio
             ref={dialogAudioElementRef}
             src={dialogAudioSource || undefined}
-            controls={Boolean(dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture))}
+            controls={Boolean(dialogAudioSource)}
             preload="auto"
-            className={dialogAudioSource && (dlgOpen || dialogAudioNeedsGesture)
+            className={dialogAudioSource
               ? "absolute z-[90] left-1/2 bottom-24 w-[min(360px,calc(100%-32px))] -translate-x-1/2 rounded-xl bg-slate-950/90 p-2 shadow-2xl"
               : "sr-only"}
             aria-label={`Áudio da fala em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`}
