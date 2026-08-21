@@ -17,7 +17,9 @@ describe("prontidão pedagógica protegida", () => {
 
   it("entrega prontidão somente pela rota de progresso protegida", () => {
     const routerSource = readFileSync(resolve(process.cwd(), "server/routers.ts"), "utf8");
-    expect(routerSource).toContain("pedagogicalReadiness: derivePedagogicalReadiness(progress ?? {})");
+    expect(routerSource).toContain("pedagogicalReadiness: derivePedagogicalReadiness(");
+    expect(routerSource).toContain("srsCorrect");
+    expect(routerSource).toContain("srsTotal");
     expect(routerSource).toContain("getCourseProgress: protectedProcedure");
   });
 

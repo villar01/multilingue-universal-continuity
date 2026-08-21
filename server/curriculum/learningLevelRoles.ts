@@ -42,8 +42,8 @@ export interface PedagogicalReadiness {
   nextLevel: PedagogicalLevel | null;
   observedLessonBand: Exclude<PedagogicalLevel, "technological">;
   completedLessons: number;
-  averageMastery: null;
-  masteryStatus: "awaiting_assessed_responses";
+  averageMastery: number | null;
+  masteryStatus: "awaiting_assessed_responses" | "derived_from_srs";
   meetsMasteryThreshold: boolean;
   evidenceStatus: "not_collected";
   canUnlockCurriculum: false;
@@ -52,6 +52,8 @@ export interface PedagogicalReadiness {
 export function derivePedagogicalReadiness(input: Partial<{
   completedLessons: number | null;
   totalPoints: number | null;
+  srsCorrect: number | null;
+  srsTotal: number | null;
 }>): PedagogicalReadiness {
   const completedLessons = Math.max(0, input.completedLessons ?? 0);
   const observedLessonBand: Exclude<PedagogicalLevel, "technological"> = completedLessons <= 10
@@ -60,9 +62,18 @@ export function derivePedagogicalReadiness(input: Partial<{
       ? "intermediate"
       : "advanced";
 
-  // O esquema atual preserva lições concluídas e pontos de motivação, mas ainda
-  // não persiste respostas avaliadas por evidência. Portanto, nenhum desses
-  // campos pode declarar domínio ou passagem curricular.
+  // Domínio derivado do SRS: somente respostas registradas pelo servidor podem
+  // contribuir para a medição de domínio. XP e lições concluídas não alteram
+  // o nível pedagógico nem liberam currículo.
+  const srsCorrect = Math.max(0, input.srsCorrect ?? 0);
+  const srsTotal = Math.max(0, input.srsTotal ?? 0);
+  const averageMastery: number | null = srsTotal >= 5
+    ? Math.round((srsCorrect / srsTotal) * 100) / 100
+    : null;
+  const masteryStatus: "awaiting_assessed_responses" | "derived_from_srs" = srsTotal >= 5
+    ? "derived_from_srs"
+    : "awaiting_assessed_responses";
+
   const currentLevel: Exclude<PedagogicalLevel, "technological"> = "initial";
   const nextLevel: PedagogicalLevel | null = "intermediate";
 
@@ -71,9 +82,9 @@ export function derivePedagogicalReadiness(input: Partial<{
     nextLevel,
     observedLessonBand,
     completedLessons,
-    averageMastery: null,
-    masteryStatus: "awaiting_assessed_responses",
-    meetsMasteryThreshold: false,
+    averageMastery,
+    masteryStatus,
+    meetsMasteryThreshold: false, // passagem curricular ainda requer evidências além do domínio SRS
     evidenceStatus: "not_collected",
     canUnlockCurriculum: false,
   };

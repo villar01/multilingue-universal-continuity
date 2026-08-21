@@ -1474,9 +1474,26 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
         }
 
         const progress = await db.getUserProgress(ctx.user.id, input.courseId);
+        // Buscar dados SRS reais: somente respostas calculadas pelo servidor
+        let srsCorrect = 0;
+        let srsTotal = 0;
+        try {
+          const dbInstance = await db.getDb();
+          if (dbInstance) {
+            const { srsProgress } = await import("../drizzle/schema");
+            const { eq, sql } = await import("drizzle-orm");
+            const srsRows = await dbInstance
+              .select({ correct: sql<number>`SUM(${srsProgress.totalCorrect})`, total: sql<number>`SUM(${srsProgress.totalCorrect} + ${srsProgress.totalWrong})` })
+              .from(srsProgress)
+              .where(eq(srsProgress.userId, ctx.user.id))
+              .limit(1);
+            srsCorrect = Number(srsRows[0]?.correct ?? 0);
+            srsTotal = Number(srsRows[0]?.total ?? 0);
+          }
+        } catch { /* SRS indisponível — prontidão usa somente lições */ }
         return {
           progress,
-          pedagogicalReadiness: derivePedagogicalReadiness(progress ?? {}),
+          pedagogicalReadiness: derivePedagogicalReadiness({ ...(progress ?? {}), srsCorrect, srsTotal }),
           pedagogicalLevels: Object.values(PEDAGOGICAL_LEVEL_PASSAGE),
         };
       }),
