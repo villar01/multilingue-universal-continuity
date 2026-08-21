@@ -10,6 +10,7 @@ const JAMES_SCENE_IDS = new Set([
   "airport_family", "paris", "kitchen", "restaurant", "supermarket", "hotel", "hospital",
 ]);
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const clipGuardSource = readFileSync("client/src/lib/sceneTeacherClipGuard.ts", "utf8");
 const PILOT_CLIPS = [...JAMES_TROPICAL_PILOT_CLIPS, ...SOPHIE_CAFE_PILOT_CLIPS];
 
 describe("Portuguese-English immersive scene teacher matrix", () => {
@@ -61,8 +62,9 @@ describe("Portuguese-English immersive scene teacher matrix", () => {
   });
 
   it("keeps every approved pilot clip behind the active scene and teacher identity guard", () => {
-    expect(sceneSource).toContain("activeClip.sceneId === scene.id");
-    expect(sceneSource).toContain("activeClip.teacherName === (overrideName || scene.teacherName)");
+    expect(sceneSource).toContain("const showPilotClip = shouldRenderCompatibleTeacherClip({");
+    expect(clipGuardSource).toContain("clip.sceneId === sceneId");
+    expect(clipGuardSource).toContain("clip.teacherName === teacherName");
 
     for (const scene of IMMERSIVE_SCENES) {
       const teacher = resolveSceneTeacherForTarget(scene, "en-US", "pt-BR").teacher;

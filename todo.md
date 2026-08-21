@@ -1757,11 +1757,19 @@
 - [ ] Organizar fluxo contínuo de execução assistida por fontes disponíveis, com responsabilidade de preparar, testar, evidenciar e bloquear regressões sem escrita autônoma sensível
 - [ ] Manter a execução interna contínua sem aguardar fontes auxiliares indisponíveis, preservando seu uso somente quando saúde e tarefa forem comprovadas
 - [ ] Preservar permanentemente configurações e correções validadas em histórico e contratos de regressão, sem apagar decisões anteriores aprovadas
+- [ ] Consolidar diretrizes principais em contratos centrais para que áudio, professor, mídia, progressão, rota e proteção não precisem ser reapresentados em cada correção
+- [x] Centralizar a decisão de renderizar clipe docente em uma única guarda de áudio, professor, cena e mídia compatíveis — `shouldRenderCompatibleTeacherClip` valida política, URL, cena e professor; as regressões de James, retrato, cenas de referência e matriz PT-BR→EN foram alinhadas; TypeScript e 405 arquivos/1011 testes aprovados
+- [ ] Transformar diretrizes repetidas em guardas executáveis e regressões, reduzindo decisões locais e repetição manual
+- [ ] Executar ciclo conjunto verificável de correção principal, revisão de leitura disponível e testes, sem aguardar fontes indisponíveis
+- [ ] Eliminar a necessidade de o usuário repetir pedidos principais, convertendo-os em contratos centrais, histórico preservado e regressões bloqueadoras
+- [ ] Declarar diretrizes como concluídas somente com código, regressão aprovada e comportamento verificável; manter planos e lacunas como pendências explícitas
 - [ ] Manter fontes disponíveis em tarefas concretas de correção, teste e evidência, bloqueando somente aquelas sem saúde ou permissão comprovada
+- [ ] Registrar estado de saúde e responsabilidade verificável de cada fonte de IA, sem declarar colaboração ativa sem serviço e tarefa comprovados
 - [ ] Encadear diagnóstico, revisão, execução, teste e evidência entre fontes de IA sem separar resultados nem elevar permissões sensíveis
 - [ ] Priorizar acima de tarefas secundárias a estabilidade das cenas, áudio, professores e preservação de correções validadas até a conclusão do aplicativo
 - [ ] Concluir com desempenho real: reduzir estados inválidos de áudio, preservar cenas e professores e validar regressões antes de qualquer expansão ou ação comercial
 - [ ] Garantir progressão pedagógica ascendente: primeiras cenas e recursos simples, com aumento verificável de vocabulário, estrutura, escrita, conversa e revisão nas etapas seguintes
+- [ ] Materializar quatro níveis pedagógicos: inicial, intermediário, avançado e tecnológico, com critérios verificáveis de conteúdo, interação e domínio para cada passagem
 - [ ] Centralizar a ordem pedagógica das cenas e apresentar níveis iniciais antes dos intermediários e avançados, sem alterar o conteúdo protegido
 - [ ] Estruturar cada interação como conceito simples, prática guiada, resposta, correção e aplicação crescente, usando movimento docente somente com mídia real compatível
 - [x] Codificar o contrato de interação progressiva por nível sem expor conteúdo curricular em pacotes públicos — contrato no servidor exige conceito, prática guiada, resposta, feedback e aplicação; autonomia sobe de escolha/repetição para cenário aberto; TypeScript e 404 arquivos/1009 testes aprovados

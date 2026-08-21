@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const source = fs.readFileSync(path.resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
+const clipGuardSource = fs.readFileSync(path.resolve(process.cwd(), "client/src/lib/sceneTeacherClipGuard.ts"), "utf8");
 
 describe("fallback de retrato do professor na cena imersiva", () => {
   it("mantém a foto original montada sob o clipe opcional", () => {
@@ -17,7 +18,7 @@ describe("fallback de retrato do professor na cena imersiva", () => {
     expect(source).toContain("if (activeClipHasExactAudioVideoPair) onExactClipFailed?.();");
     expect(source).toContain("else onClipFinished?.();");
     expect(source).toContain('onClipFinished={() => { setActiveJamesClipId(null); setActiveSophieClipId(null); }}');
-    expect(source).toContain('const showPilotClip = Boolean(');
+    expect(source).toContain("const showPilotClip = shouldRenderCompatibleTeacherClip({");
     expect(source).toContain('const showSyntheticMouth = false;');
   });
 
@@ -27,7 +28,8 @@ describe("fallback de retrato do professor na cena imersiva", () => {
     expect(source).toContain('kind: activeClip?.videoUrl ? "scripted" : "interactive",');
     expect(source).toContain('hasApprovedPreGeneratedVideo: Boolean(activeClip?.videoUrl),');
     expect(source).toContain("hasExactAudioVideoPair: activeClipHasExactAudioVideoPair,");
-    expect(source).toContain('teacherMedia.mode === "pre_generated_video"');
+    expect(source).toContain('import { shouldRenderCompatibleTeacherClip } from "@/lib/sceneTeacherClipGuard";');
+    expect(clipGuardSource).toContain('media.mode === "pre_generated_video" || media.mode === "audio_timed_motion_video"');
   });
 
   it("expõe a pose e a intenção de fala do clipe roteirizado sem aplicá-las a respostas livres", () => {

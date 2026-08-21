@@ -6,6 +6,7 @@ import { resolveCanonicalTeacherResource } from "../client/src/lib/teacherResour
 
 const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
 const audioSource = readFileSync(resolve(process.cwd(), "client/src/lib/audioSource.ts"), "utf8");
+const clipGuardSource = readFileSync(resolve(process.cwd(), "client/src/lib/sceneTeacherClipGuard.ts"), "utf8");
 
 describe("contrato compartilhado das 29 cenas imersivas", () => {
   it("resolve retrato, voz e política estável para cada cena PT-BR para EN sem misturar docentes", () => {
@@ -33,8 +34,9 @@ describe("contrato compartilhado das 29 cenas imersivas", () => {
   });
 
   it("mantém mídia visual restrita ao par aprovado em vez de reutilizar vídeo entre cenas", () => {
-    expect(sceneSource).toContain('teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video"');
-    expect(sceneSource).toContain("activeClip.sceneId === scene.id");
-    expect(sceneSource).toContain("activeClip.teacherName === (overrideName || scene.teacherName)");
+    expect(sceneSource).toContain("const showPilotClip = shouldRenderCompatibleTeacherClip({");
+    expect(clipGuardSource).toContain('media.mode === "pre_generated_video" || media.mode === "audio_timed_motion_video"');
+    expect(clipGuardSource).toContain("clip.sceneId === sceneId");
+    expect(clipGuardSource).toContain("clip.teacherName === teacherName");
   });
 });

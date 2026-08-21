@@ -4,6 +4,7 @@ import { JAMES_TROPICAL_PILOT_CLIPS } from "../shared/jamesTropicalPilotClips";
 import { SOPHIE_CAFE_PILOT_CLIPS } from "../shared/sophieCafePilotClips";
 
 const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const clipGuardSource = readFileSync("client/src/lib/sceneTeacherClipGuard.ts", "utf8");
 
 describe("congelamento das cenas de referência", () => {
   it("preserva os ativos aprovados, os docentes e os retratos originais de Praia Tropical e Café", () => {
@@ -38,8 +39,9 @@ describe("congelamento das cenas de referência", () => {
   });
 
   it("mantém movimento exclusivamente no ciclo real de áudio e bloqueia qualquer promoção cruzada de mídia", () => {
-    expect(sceneSource).toContain("activeClip.sceneId === scene.id");
-    expect(sceneSource).toContain("activeClip.teacherName === (overrideName || scene.teacherName)");
+    expect(sceneSource).toContain("const showPilotClip = shouldRenderCompatibleTeacherClip({");
+    expect(clipGuardSource).toContain("clip.sceneId === sceneId");
+    expect(clipGuardSource).toContain("clip.teacherName === teacherName");
     expect(sceneSource).toContain("audio.onplaying = () => {");
     expect(sceneSource).toContain("utterance.onstart = () => {");
     expect(sceneSource).toContain("const showSyntheticMouth = false;");

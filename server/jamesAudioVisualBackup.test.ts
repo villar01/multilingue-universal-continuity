@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { JAMES_TROPICAL_PILOT_CLIPS } from "../shared/jamesTropicalPilotClips";
 
 const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/ImmersiveScene.tsx"), "utf8");
+const clipGuardSource = readFileSync(resolve(process.cwd(), "client/src/lib/sceneTeacherClipGuard.ts"), "utf8");
 
 describe("backup audiovisual aprovado de James", () => {
   it("mantém o clipe lateral canônico da Praia Tropical associado à saudação publicada", () => {
@@ -24,7 +25,9 @@ describe("backup audiovisual aprovado de James", () => {
     expect(sceneSource).toContain('const JAMES_TROPICAL_INTRO_FALLBACK_URL = "/manus-storage/james-tropical-introduction-exact-fallback_2d892849.wav";');
     expect(sceneSource).toContain('playJamesTropicalClip("james-tropical-greeting")');
     expect(sceneSource).toContain("if (!clip) return null;");
-    expect(sceneSource).toContain('(teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")');
+    expect(sceneSource).toContain('import { shouldRenderCompatibleTeacherClip } from "@/lib/sceneTeacherClipGuard";');
+    expect(sceneSource).toContain("const showPilotClip = shouldRenderCompatibleTeacherClip({");
+    expect(clipGuardSource).toContain('media.mode === "pre_generated_video" || media.mode === "audio_timed_motion_video"');
     expect(sceneSource).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL,");
   });
 
@@ -42,7 +45,8 @@ describe("backup audiovisual aprovado de James", () => {
   });
 
   it("expõe vídeo exato ou movimento lateral temporizado, sem declarar sincronização labial fora do par exato", () => {
-    expect(sceneSource).toContain('(teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")');
+    expect(clipGuardSource).toContain("Audio-timed motion is allowed");
+    expect(clipGuardSource).toContain('media.mode === "pre_generated_video" || media.mode === "audio_timed_motion_video"');
     expect(sceneSource).toContain("hasExactAudioVideoPair: activeClipHasExactAudioVideoPair");
   });
 });

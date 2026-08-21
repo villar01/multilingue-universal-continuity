@@ -32,6 +32,7 @@ import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/imm
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
 import { getTargetLanguageTeachers } from "@/lib/sceneTeacherResolver";
 import { resolveCanonicalTeacherResource } from "@/lib/teacherResourceResolver";
+import { shouldRenderCompatibleTeacherClip } from "@/lib/sceneTeacherClipGuard";
 import { IMMERSIVE_SCENES, IMMERSIVE_VOICE_REFERENCE } from "@/lib/immersiveScenesCatalog";
 import { selectTeacherMedia, selectTeacherPoseAudioCue } from "@shared/teacherMediaStrategy";
 import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
@@ -262,12 +263,12 @@ function TeacherAvatar({
     hasAudioTimedMotionVideo: Boolean(activeClip?.videoUrl && isSpeaking && !activeClipHasExactAudioVideoPair),
   });
   const teacherPoseCue = activeClip ? selectTeacherPoseAudioCue(activeClip.trigger) : null;
-  const showPilotClip = Boolean(
-    (teacherMedia.mode === "pre_generated_video" || teacherMedia.mode === "audio_timed_motion_video")
-      && activeClip?.videoUrl
-      && activeClip.sceneId === scene.id
-      && activeClip.teacherName === (overrideName || scene.teacherName),
-  );
+  const showPilotClip = shouldRenderCompatibleTeacherClip({
+    media: teacherMedia,
+    clip: activeClip,
+    sceneId: scene.id,
+    teacherName: overrideName || scene.teacherName,
+  });
   const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;
   const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());
   return (
