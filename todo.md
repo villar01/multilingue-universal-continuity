@@ -2259,3 +2259,4 @@
 - [x] Reconstruir o exame final e gabarito revisado do Livro SOS Português–Inglês: preservar tradução pt-BR→inglês–inglês→pt-BR–lacunas cumulativas–respostas revisadas, corrigir capitalização, gramática e escolhas lexicais do original, e adicionar Pareto separado por bloco de revisão — quatro folhas novas, regressão dedicada, TypeScript e 835 testes aprovados
 - [ ] Ocultar hotspots e cartões de Pareto quando a Cena Imersiva informar que o acesso protegido ainda está pendente ou falhou
 - [ ] Substituir a orientação padrão contraditória da Cena Imersiva para não pedir ativação quando o material canônico já está disponível
+- [x] Corrigir o fundo preto da cena Família no Aeroporto, restaurando a imagem de cenário sem afetar professor, hotspots ou material protegido — imagem migrada para armazenamento estável do projeto, cenário validado visualmente com James, hotspots e Livro SOS preservados; TypeScript e 361 arquivos/907 testes aprovados

@@ -57,4 +57,10 @@ describe("catálogo automático de cobertura das 29 cenas", () => {
     expect(quickAccessSource).toContain("<PedagogicalQuickAccess />");
     expect(quickAccessSource).toContain("<FlyingSOSBook compact={useCompactSosBook} className={sosBookClassName} />");
   });
+
+  it("mantém o cenário Família no Aeroporto em armazenamento estável do projeto", () => {
+    const airportFamily = IMMERSIVE_SCENES.find((scene) => scene.id === "airport_family");
+    expect(airportFamily?.bgImage).toBe("/manus-storage/scene_airport_family_005d0f25.jpg");
+    expect(airportFamily?.bgImage).not.toContain("images.unsplash.com");
+  });
 });
