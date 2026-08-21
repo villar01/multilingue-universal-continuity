@@ -167,12 +167,12 @@ export default function TermsOfUse() {
 
       {/* Progress */}
       <div className="flex gap-2 mb-8">
-        {["age", "terms", "selfie", ...(isMinor ? ["parental"] : []), "done"].map((s, i) => (
+        {["age", "terms", "privacy", ...(isMinor ? ["parental"] : []), "done"].map((s, i) => (
           <div
             key={s}
             className={`h-2 rounded-full transition-all ${
               step === s ? "w-12 bg-purple-400" :
-              ["age", "terms", "selfie", "parental", "done"].indexOf(step) > i ? "w-8 bg-purple-600" : "w-8 bg-white/20"
+              ["age", "terms", "privacy", "parental", "done"].indexOf(step) > i ? "w-8 bg-purple-600" : "w-8 bg-white/20"
             }`}
           />
         ))}
