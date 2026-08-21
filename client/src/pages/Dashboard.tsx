@@ -92,10 +92,14 @@ export default function Dashboard() {
     { targetLanguage: targetLanguageCode },
     { enabled: !!user }
   );
+  const trialStatusQuery = trpc.trialAccess.status.useQuery(undefined, {
+    enabled: !!user,
+    retry: false,
+  });
   
   // Verificar se usuário tem plano premium
   const isPremium = user?.subscriptionType !== "free";
-  const freeLessonsLimit = 5;
+  const freeLessonsLimit = trialStatusQuery.data?.lessonLimit ?? 10;
   const premiumLessonsTotal = 200;
   
   // Usar dados reais ou fallback
@@ -245,17 +249,16 @@ export default function Dashboard() {
                       <Sparkles className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2">🎁 Versão Gratuita - 5 Lições</h3>
+                      <h3 className="text-xl font-bold mb-2">🎁 Avaliação protegida - {freeLessonsLimit} lições</h3>
                       <p className="text-gray-700 mb-4">
-                        Você está usando a versão gratuita com <strong>5 lições de demonstração</strong>. 
-                        Desbloqueie <strong>200 lições completas</strong>, <strong>todos os 69 idiomas</strong> e 
-                        recursos premium com o plano pago. Novas lições são adicionadas regularmente!
+                        Esta conta possui <strong>{freeLessonsLimit} acessos iniciais protegidos</strong> e período de avaliação de 14 dias.
+                        A plataforma oferece suporte a <strong>143 idiomas</strong>, com liberação de conteúdo conforme o idioma e o plano da conta.
                       </p>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge variant="secondary" className="bg-white">✅ 200 lições por idioma</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ 69 idiomas desbloqueados</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ Conteúdo infinito futuro</Badge>
-                        <Badge variant="secondary" className="bg-white">✅ Modo offline</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ {freeLessonsLimit} acessos de avaliação</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ 143 idiomas suportados</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Acesso curricular protegido</Badge>
+                        <Badge variant="secondary" className="bg-white">✅ Continuidade quando disponível</Badge>
                       </div>
               <Link href="/checkout">
                 <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
@@ -297,7 +300,7 @@ export default function Dashboard() {
                   {!isPremium && lessonsCompleted >= 4 && (
                     <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <p className="text-sm text-gray-700">
-                        🎉 <strong>Parabéns!</strong> Você completou {lessonsCompleted} de 5 lições gratuitas. 
+                        🎉 <strong>Parabéns!</strong> Você completou {lessonsCompleted} de {freeLessonsLimit} lições de avaliação. 
                         Faça upgrade para continuar aprendendo!
                       </p>
                     </div>
