@@ -2721,14 +2721,16 @@ export default function ImmersiveScene() {
 
         {/* O elemento de áudio precisa existir também com o diálogo fechado:
             os cartões de Wave, Ocean, Palm Tree e Sand usam a mesma voz neural. */}
-        <audio
-          ref={dialogAudioElementRef}
-          src={dialogAudioSource || undefined}
-          controls={false}
-          preload="auto"
-          className="sr-only"
-          aria-label={`Áudio da fala em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`}
-        />
+          <audio
+            ref={dialogAudioElementRef}
+            src={dialogAudioSource || undefined}
+            controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}
+            preload="auto"
+            className={dialogAudioNeedsGesture && dialogAudioSource
+              ? "absolute z-[90] left-1/2 bottom-24 w-[min(360px,calc(100%-32px))] -translate-x-1/2 rounded-xl bg-slate-950/90 p-2 shadow-2xl"
+              : "sr-only"}
+            aria-label={`Áudio da fala em ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`}
+          />
 
         {/* ── Dialog Panel: scrolling text + exercises ── */}
         {!(dlgOpen || (isSpeaking && activeDialogLineRef.current)) && activeSceneDialog.length > 0 && (

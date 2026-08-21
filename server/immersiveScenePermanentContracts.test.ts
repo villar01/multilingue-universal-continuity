@@ -12,10 +12,10 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("O retrato permanece sem boca sintética até haver mídia docente aprovada.");
   });
 
-  it("keeps a single visible, persistent dialogue audio control", () => {
+  it("keeps a single dialogue audio control with native recovery after autoplay is blocked", () => {
     expect(sceneSource).toContain("ref={dialogAudioElementRef}");
     expect(sceneSource).toContain("src={dialogAudioSource || undefined}");
-    expect(sceneSource).toContain("controls={false}");
+    expect(sceneSource).toContain("controls={Boolean(dialogAudioNeedsGesture && dialogAudioSource)}");
     expect(sceneSource).toContain("const replayVisibleDialogAudio = useCallback");
     expect(sceneSource).toContain("▶ Ouvir {(teachingScene ?? selectedScene).teacherName}");
     expect(sceneSource).not.toContain('audio.removeAttribute("src")');

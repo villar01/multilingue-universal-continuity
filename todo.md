@@ -1526,7 +1526,7 @@
 - [x] Propagar o perfil masculino de James ao sintetizador da ajuda nativa — Ouvir ajuda PT agora usa `MALE` quando a cena define professor masculino, em vez do padrão feminino fixo; TypeScript sem erros e 180 arquivos/404 testes aprovados
 - [ ] Substituir o caminho atual do áudio do diálogo, pois o aluno confirmou ausência total de som mesmo com arquivo gerado e eventos de reprodução técnicos
 - [ ] Resolver a tela publicada da Praia Tropical: diálogo aberto com James, frase Hello! My name is James… e botão Reiniciar inglês, porém sem som confirmado pelo aluno
-- [ ] Exibir controle de áudio nativo no diálogo publicado para que a reprodução neural tenha saída diretamente acionável e verificável pelo aluno
+- [x] Exibir controle de áudio nativo no diálogo publicado para que a reprodução neural tenha saída diretamente acionável e verificável pelo aluno — player nativo aparece somente quando a faixa preparada exige gesto após autoplay bloqueado; permanece oculto no fluxo normal e não cobre cartões ou exercícios. TypeScript e 370 arquivos/937 testes aprovados
 - [ ] Medir o sinal do MP3 de cinco segundos entregue no diálogo e trocar o provedor se o conteúdo for silencioso
 - [x] Restaurar a resposta do professor quando o aluno escreve pergunta em inglês, como “what is pool?”, no diálogo da Praia Tropical — o tutor retorna explicação imediata em inglês e apoio em português antes da validação de alternativas; interface preserva feedback, histórico e tentativa de fala. Regressões de fluxo, pergunta e vocabulário aprovadas
 - [ ] Aplicar progressivamente o contrato de professor real: perguntas livres, objetos da tela, vocabulário, correção, repetição e guia CEFR em todas as atividades do aplicativo
