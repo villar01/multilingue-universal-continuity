@@ -24,11 +24,14 @@ describe("contrato do chatbot da lição", () => {
 
   it("vincula o chat textual ao professor ativo da lição", () => {
     expect(chatbot).toContain("teacherName?: string;");
+    expect(chatbot).toContain("teacherId?: number;");
     expect(chatbot).toContain("teacherGender?: 'male' | 'female';");
     expect(chatbot).toContain("teacherName = 'Professor'");
     expect(chatbot).toContain("ml_chat_history_${lessonId}_${teacherName}");
     expect(lesson).toContain("teacherName={teacher?.name}");
+    expect(lesson).toContain("teacherId={teacher?.id}");
     expect(lesson).toContain("teacherGender={teacherVoice.gender}");
+    expect(chatbot).toContain("teacherId,");
     expect(chatbot).toContain("speakNaturalVoice(text, targetLanguage, { rate: 0.9, gender: teacherGender })");
   });
 });

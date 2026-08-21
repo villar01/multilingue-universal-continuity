@@ -11,11 +11,19 @@ import { generateLesson, generateExercises } from "./_core/lessonGenerator";
 import { sql } from "drizzle-orm";
 import * as db from "./db";
 
-async function resolveConversationTeacherName(userId: number): Promise<string | undefined> {
+async function resolveConversationTeacherName(userId: number, activeTeacherId?: number): Promise<string | undefined> {
   const database = await db.getDb();
   if (!database) return undefined;
   const { users, virtualTeachers } = await import("../drizzle/schema");
   const { eq } = await import("drizzle-orm");
+  if (activeTeacherId) {
+    const [activeTeacher] = await database
+      .select({ name: virtualTeachers.name })
+      .from(virtualTeachers)
+      .where(eq(virtualTeachers.id, activeTeacherId))
+      .limit(1);
+    if (activeTeacher?.name) return activeTeacher.name;
+  }
   const [user] = await database
     .select({ preferredTeacherId: users.preferredTeacherId })
     .from(users)
@@ -2375,6 +2383,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
+          teacherId: z.number().int().positive().optional(),
          history: z.array(
            z.object({
              role: z.enum(["user", "assistant", "system"]),
@@ -2402,7 +2411,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: input.userLevel,
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
-          teacherName: await resolveConversationTeacherName(ctx.user.id),
+          teacherName: await resolveConversationTeacherName(ctx.user.id, input.teacherId),
         };
 
         const learnerText = input.history.filter((message) => message.role === "user").slice(-1)[0]?.content || "";
@@ -2422,6 +2431,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
+          teacherId: z.number().int().positive().optional(),
           userMessage: z.string(),
         })
       )
@@ -2444,7 +2454,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: input.userLevel,
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
-          teacherName: await resolveConversationTeacherName(ctx.user.id),
+          teacherName: await resolveConversationTeacherName(ctx.user.id, input.teacherId),
         };
 
         const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, input.targetLanguage);

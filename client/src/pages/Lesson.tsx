@@ -1214,6 +1214,7 @@ export default function Lesson() {
               <div className="mb-6">
                 <AIChatbot
                   lessonId={parseInt(lessonId || '1')}
+                  teacherId={teacher?.id}
                   vocabulary={lesson.vocabularyDetailed}
                   languageCode={lesson.languageCode || 'en-US'}
                   level={resolvePracticeCEFRLevel((lesson as any).courseLevel)}

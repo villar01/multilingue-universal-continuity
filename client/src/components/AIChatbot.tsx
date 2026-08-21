@@ -15,6 +15,7 @@ interface Message {
 
 interface AIChatbotProps {
   lessonId: number;
+  teacherId?: number;
   vocabulary: Array<{
     word: string;
     translation: string;
@@ -31,7 +32,7 @@ interface AIChatbotProps {
  * Chatbot IA Conversacional para prática de idiomas
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
-export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor', teacherGender }: AIChatbotProps) {
+export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor', teacherGender }: AIChatbotProps) {
   const { profile } = useLanguage();
   const targetLanguage = languageCode || profile.targetCode;
   const nativeLanguage = profile.nativeCode;
@@ -145,6 +146,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
       targetLanguage,
       nativeLanguage,
       userLevel: level,
+      teacherId,
       history: messages.concat(userMessage).map(m => ({
         role: m.role,
         content: m.content
@@ -155,6 +157,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
       targetLanguage,
       nativeLanguage,
       userLevel: level,
+      teacherId,
       userMessage: userMessage.content,
     });
   };
