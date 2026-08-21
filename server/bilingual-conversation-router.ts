@@ -10,9 +10,24 @@ import { protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 import { sanitizeContent, logInteraction } from "./contentFilter";
 import { assessConversationText, ensureConversationAccess } from "./conversationSafetyGate";
+import * as db from "./db";
 
 const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 const cefrLevelSchema = z.enum(CEFR_LEVELS);
+
+async function resolveBilingualConversationTeacher(teacherId?: number): Promise<{ id: number; name: string } | undefined> {
+  if (!teacherId) return undefined;
+  const database = await db.getDb();
+  if (!database) return undefined;
+  const { virtualTeachers } = await import("../drizzle/schema");
+  const { eq } = await import("drizzle-orm");
+  const [teacher] = await database
+    .select({ id: virtualTeachers.id, name: virtualTeachers.name })
+    .from(virtualTeachers)
+    .where(eq(virtualTeachers.id, teacherId))
+    .limit(1);
+  return teacher?.name ? teacher : undefined;
+}
 
 function localeTag(language: string) {
   return language.split(/[-_]/)[0]?.toUpperCase() || "XX";
@@ -29,6 +44,7 @@ export const bilingualConversationRouter = router({
         targetLanguage: z.string(), // "English", "Spanish", etc.
         nativeLanguage: z.string(), // "Portuguese"
         userLevel: cefrLevelSchema,
+        teacherId: z.number().int().positive().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -81,6 +97,7 @@ Start the conversation now:`;
         targetLanguage: z.string(),
         nativeLanguage: z.string(),
         userLevel: cefrLevelSchema,
+        teacherId: z.number().int().positive().optional(),
         history: z.array(
           z.object({
             role: z.enum(["user", "assistant"]),
@@ -103,6 +120,7 @@ Start the conversation now:`;
         throw new Error("targetLanguage and nativeLanguage are required");
       }
       const safeResponse = "";
+      const activeTeacher = await resolveBilingualConversationTeacher(input.teacherId);
       const lastUserMessage = input.history.length > 0 ? input.history[input.history.length - 1]?.content : "";
       const inputSafety = await assessConversationText(ctx.user.id, lastUserMessage, input.targetLanguage);
       if (!inputSafety.allowed) {
@@ -114,7 +132,7 @@ Start the conversation now:`;
         };
       }
       
-      const systemPrompt = `You are a supportive language teacher teaching ${input.targetLanguage} to native ${input.nativeLanguage} speakers.
+      const systemPrompt = `You are ${activeTeacher?.name || "a supportive language teacher"} teaching ${input.targetLanguage} to native ${input.nativeLanguage} speakers.
 
 ⚠️ MANDATORY FORMAT - YOU MUST FOLLOW THIS EXACTLY:
 EVERY response MUST start with "[${nativeTag}]" followed by native-language text, then "[${targetTag}]" followed by target-language text.
@@ -169,7 +187,7 @@ NOW respond to the user's message following this EXACT format with [${nativeTag}
       logInteraction({
         userId: ctx.user.id,
         childProfileId: null,
-        teacherId: null,
+        teacherId: activeTeacher?.id ?? null,
         interactionType: 'bilingual_conversation',
         content: loggedUserMessage,
         teacherResponse: aiResponse,

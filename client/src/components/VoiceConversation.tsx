@@ -152,6 +152,7 @@ export default function VoiceConversation({
                       targetLanguage: languageCode,
                       nativeLanguage,
                       userLevel: level,
+                      teacherId: typeof selectedTeacher?.id === "number" ? selectedTeacher.id : undefined,
                     });
                     // Update the last assistant message with the improved online response
                     const updatedMessages = conv.messages.slice(0, -1);
@@ -401,6 +402,7 @@ export default function VoiceConversation({
           targetLanguage: languageCode,
           nativeLanguage,
           userLevel: level,
+          teacherId: typeof selectedTeacher?.id === "number" ? selectedTeacher.id : undefined,
         });
       } catch (err) {
         // Fallback: use offlineAI for local response
