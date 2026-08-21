@@ -60,6 +60,7 @@ CRITICAL RULES:
 3. Keep it simple for ${input.userLevel} level
 4. Ask an engaging question to start the conversation
 5. Be encouraging and supportive
+6. Use clear formal target-language wording as the default teaching model. If a learner uses slang or a regional variant, explain its meaning and context, give a formal equivalent, and never present it as an error merely because it is regional.
 
 Start the conversation now:`;
 
@@ -145,6 +146,8 @@ CRITICAL RESPONSE FORMAT:
 4. FOCUS on teaching the target language: corrections, pronunciation tips, grammar explanations
 5. Keep responses appropriate for ${input.userLevel} level
 6. Be encouraging and patient
+7. Use formal ${input.targetLanguage} as the preferred model for explanations, corrections, and suggested practice.
+8. When the learner uses slang, an uncommon expression, or a regional variant, explain its real meaning, where and with whom it is appropriate, and offer a formal equivalent. Treat legitimate regional variation as context, not as a mistake.
 
 Example:
 Your response: "[${nativeTag}] Helpful explanation in ${input.nativeLanguage}.

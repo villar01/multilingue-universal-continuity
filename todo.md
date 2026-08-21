@@ -1763,6 +1763,7 @@
 - [ ] Executar ciclo conjunto verificável de correção principal, revisão de leitura disponível e testes, sem aguardar fontes indisponíveis
 - [ ] Eliminar a necessidade de o usuário repetir pedidos principais, convertendo-os em contratos centrais, histórico preservado e regressões bloqueadoras
 - [ ] Declarar diretrizes como concluídas somente com código, regressão aprovada e comportamento verificável; manter planos e lacunas como pendências explícitas
+- [ ] Preservar todos os pedidos relevantes em requisitos rastreáveis, vinculados a evidência ou pendência explícita, sem perda silenciosa de solicitação
 - [ ] Manter fontes disponíveis em tarefas concretas de correção, teste e evidência, bloqueando somente aquelas sem saúde ou permissão comprovada
 - [ ] Registrar estado de saúde e responsabilidade verificável de cada fonte de IA, sem declarar colaboração ativa sem serviço e tarefa comprovados
 - [ ] Encadear diagnóstico, revisão, execução, teste e evidência entre fontes de IA sem separar resultados nem elevar permissões sensíveis
@@ -1774,6 +1775,9 @@
 - [ ] Centralizar a ordem pedagógica das cenas e apresentar níveis iniciais antes dos intermediários e avançados, sem alterar o conteúdo protegido
 - [ ] Estruturar cada interação como conceito simples, prática guiada, resposta, correção e aplicação crescente, usando movimento docente somente com mídia real compatível
 - [ ] Incluir progressivamente contrastes semânticos, formas parecidas, homófonos e locuções em vocabulário, Pareto e explicações, com significado contextual e verificação de compreensão
+- [x] Explicar gírias e expressões incomuns com contexto e alternativa formal, mantendo registro formal como resposta preferencial do professor — a conversa bilíngue instrui o docente a explicar significado, contexto e equivalente formal; TypeScript e 407 arquivos/1014 testes aprovados
+- [x] Explicar variações regionais por idioma com contexto de uso, equivalência formal e distinção clara entre variante legítima e erro — o contrato docente determina que variações regionais legítimas sejam tratadas como contexto, não como erro
+- [x] Tornar permanente a obrigação docente de explicar contrastes, gírias, variantes regionais e locuções com equivalente formal e verificação de compreensão — prompts de início e continuidade carregam o modelo formal prioritário e a orientação contextual; regressão dedicada aprovada
 - [ ] Priorizar no Livro SOS contrastes de significado, homófonos, palavras próximas e locuções, com explicação contextual e compreensão progressiva por nível
 - [x] Criar dentro do Livro SOS uma seção Pareto própria de estruturas de sentido, com memorização ativa, comparação contextual, pergunta de distinção e revisão progressiva — entrega protegida inclui ever/always, there/their/they're, say/tell e look up/look for, do inicial ao avançado, com Pareto e perguntas de compreensão; TypeScript e 406 arquivos/1013 testes aprovados
 - [ ] Definir no servidor o contrato de contraste semântico por nível, sem inserir pares de vocabulário protegidos no pacote público
