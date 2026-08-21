@@ -16,6 +16,7 @@ import {
 } from "@/lib/studyBase";
 import type { LanguageBlock, StudyEntry, StudyEntryKind } from "@/lib/curriculum-types";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ArrowLeft,
   BookOpen,
@@ -61,6 +62,7 @@ function getStoredLevel(): CEFRLevel {
 
 export default function StudyBase() {
   const [, setLocation] = useLocation();
+  const { profile } = useLanguage();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<StudyEntryKind | "all">("all");
   const [unit, setUnit] = useState<string | "all">(() => {
@@ -79,6 +81,9 @@ export default function StudyBase() {
   const [selectedBlock, setSelectedBlock] = useState<LanguageBlock | null>(null);
   const [blockDraft, setBlockDraft] = useState("");
   const [blockFeedback, setBlockFeedback] = useState("");
+  const [selectedCommercialUnitId, setSelectedCommercialUnitId] = useState<string | null>(null);
+  const [commercialDraft, setCommercialDraft] = useState("");
+  const [commercialFeedback, setCommercialFeedback] = useState("");
   const [comprehensionAnswers, setComprehensionAnswers] = useState<Record<string, number>>({});
   const [returnEntryId] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -89,6 +94,10 @@ export default function StudyBase() {
   const speakMutation = trpc.tts.speak.useMutation();
   const studyContentQuery = trpc.curriculum.studyBase.useQuery({ lessonKey: "/base-de-estudos" });
   const languageBlocksQuery = trpc.curriculum.languageBlocks.useQuery({ lessonKey: "/base-de-estudos", level });
+  const commercialUnitsQuery = trpc.curriculum.commercialLanguageUnits.useQuery({
+    lessonKey: "/base-de-estudos",
+    targetLanguage: profile.targetCode,
+  }, { retry: false });
   const returnTo = useMemo(() => {
     const destination = typeof window === "undefined"
       ? null
@@ -100,6 +109,8 @@ export default function StudyBase() {
   const structuredStudyUnits = studyContentQuery.data?.structuredUnits ?? [];
   const units = useMemo(() => getStudyUnits(studyEntries, level), [level, studyEntries]);
   const languageBlocks = languageBlocksQuery.data ?? [];
+  const commercialUnits = commercialUnitsQuery.data ?? [];
+  const selectedCommercialUnit = commercialUnits.find((unit) => unit.id === selectedCommercialUnitId) ?? commercialUnits[0] ?? null;
   const entries = useMemo(
     () => filterStudyEntriesByUnit(searchStudyBase(studyEntries, query, kind, level), unit),
     [kind, level, query, studyEntries, unit],
@@ -116,6 +127,12 @@ export default function StudyBase() {
     setUnit(returnedEntry.unit);
     setSelectedEntry(returnedEntry);
   }, [returnEntryId, selectedEntry, studyEntries]);
+
+  useEffect(() => {
+    setSelectedCommercialUnitId(commercialUnits[0]?.id ?? null);
+    setCommercialDraft("");
+    setCommercialFeedback("");
+  }, [profile.targetCode, commercialUnits]);
 
   const chooseStudyPath = useCallback((path: StudyPath) => {
     if (path === "consulta") {
@@ -158,7 +175,7 @@ export default function StudyBase() {
       audioRef.current = null;
     }
     try {
-      const result = await speakMutation.mutateAsync({ text: text.slice(0, 400), voiceLang: "en-US", gender: "male" });
+      const result = await speakMutation.mutateAsync({ text: text.slice(0, 400), voiceLang: profile.targetCode, gender: "male" });
       if (!result.success || !result.audioBase64) return;
       const bytes = Uint8Array.from(atob(result.audioBase64), (char) => char.charCodeAt(0));
       const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
@@ -172,7 +189,23 @@ export default function StudyBase() {
     } catch {
       // The written and Pareto practice paths stay usable if neural audio is temporarily unavailable.
     }
-  }, [speakMutation]);
+  }, [profile.targetCode, speakMutation]);
+
+  const reviewCommercialUnit = useCallback(() => {
+    if (!selectedCommercialUnit) return;
+    const draft = commercialDraft.trim();
+    if (!draft) {
+      setCommercialFeedback("Escreva uma frase curta usando a estrutura da unidade.");
+      return;
+    }
+    const normalizedDraft = draft.toLocaleLowerCase(profile.targetCode);
+    const normalizedAnchor = selectedCommercialUnit.reviewAnchor.toLocaleLowerCase(profile.targetCode).replace(/[.…?!]$/u, "");
+    setCommercialFeedback(
+      normalizedDraft.includes(normalizedAnchor)
+        ? "Boa construção. Você manteve a estrutura da unidade e pode variar uma informação agora."
+        : `Tente usar a âncora “${selectedCommercialUnit.reviewAnchor}” na sua frase para consolidar a unidade.`,
+    );
+  }, [commercialDraft, profile.targetCode, selectedCommercialUnit]);
 
   const askTeacher = useCallback(() => {
     if (!activeEntry) return;
@@ -400,6 +433,54 @@ export default function StudyBase() {
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-xl sm:p-7">
+            <section className="mb-6 rounded-2xl border border-emerald-300/30 bg-emerald-300/5 p-5" aria-labelledby="commercial-units-heading">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-emerald-200">Unidades A1 autorizadas</p>
+                  <h2 id="commercial-units-heading" className="mt-1 text-xl font-black text-white">{profile.targetFlag} {profile.targetName}</h2>
+                </div>
+                <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-100">Pareto · diálogo · escrita</span>
+              </div>
+
+              {commercialUnitsQuery.isLoading && <p className="mt-4 text-sm text-slate-300">Preparando suas unidades autorizadas...</p>}
+              {commercialUnits.length > 0 && (
+                <>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {commercialUnits.map((unit, index) => (
+                      <button
+                        key={unit.id}
+                        type="button"
+                        onClick={() => { setSelectedCommercialUnitId(unit.id); setCommercialDraft(""); setCommercialFeedback(""); }}
+                        className={`rounded-xl border px-3 py-2 text-left text-sm font-bold transition-colors ${selectedCommercialUnit?.id === unit.id ? "border-emerald-300 bg-emerald-300 text-slate-950" : "border-emerald-300/30 bg-slate-950/50 text-emerald-100 hover:bg-emerald-300/10"}`}
+                      >
+                        Unidade {index + 1}
+                      </button>
+                    ))}
+                  </div>
+                  {selectedCommercialUnit && (
+                    <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/60 p-4">
+                      <p className="text-sm font-semibold text-emerald-100">Orientação docente: {selectedCommercialUnit.teacherCue}</p>
+                      <p className="mt-3 text-xs font-bold uppercase tracking-[0.1em] text-slate-400">Vocabulário Pareto</p>
+                      <div className="mt-2 flex flex-wrap gap-2">{selectedCommercialUnit.paretoVocabulary.map((word) => <span key={word} className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-white">{word}</span>)}</div>
+                      <div className="mt-4 space-y-2 rounded-lg border border-white/10 bg-white/[0.03] p-3 text-sm">
+                        {selectedCommercialUnit.dialogue.map((turn, index) => <div key={`${turn.teacher}-${index}`}><p className="font-semibold text-white">Professor: {turn.teacher}</p><p className="mt-1 text-slate-300">Você: {turn.learner}</p></div>)}
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <Button type="button" onClick={() => playTargetVoice(selectedCommercialUnit.dialogue[0]?.teacher ?? "")} disabled={speakMutation.isPending} className="gap-2 bg-emerald-300 font-bold text-slate-950 hover:bg-emerald-200"><Headphones className="h-4 w-4" />Ouvir diálogo</Button>
+                        <span className="self-center text-sm text-slate-300">Pergunta: {selectedCommercialUnit.question.prompt}</span>
+                      </div>
+                      <p className="mt-4 text-sm font-semibold text-white">Escrita: {selectedCommercialUnit.writingPrompt}</p>
+                      <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                        <Input value={commercialDraft} onChange={(event) => setCommercialDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") reviewCommercialUnit(); }} placeholder={`Use “${selectedCommercialUnit.reviewAnchor}”`} className="border-white/15 bg-slate-950 text-white placeholder:text-slate-500" />
+                        <Button type="button" onClick={reviewCommercialUnit} className="bg-emerald-300 font-bold text-slate-950 hover:bg-emerald-200">Revisar escrita</Button>
+                      </div>
+                      {commercialFeedback && <p role="status" className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-50">{commercialFeedback}</p>}
+                    </div>
+                  )}
+                </>
+              )}
+              {commercialUnitsQuery.isError && <p className="mt-4 text-sm text-slate-300">As unidades do idioma selecionado serão apresentadas assim que estiverem autorizadas para esta lição.</p>}
+            </section>
             {selectedBlock && (
               <section className="mb-6 rounded-2xl border border-violet-300/30 bg-violet-300/10 p-5" aria-labelledby="language-block-heading">
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-violet-100">Bloco de linguagem · {selectedBlock.cefr}</p>
