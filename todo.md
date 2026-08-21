@@ -275,6 +275,7 @@
 - [x] Fase Ajustar: Correção detalhada de gramática e pronúncia — SmartReview chama análise gramatical por IA, explica cada correção e inclui exercício de microfone com pontuação de pronúncia
 - [x] Implementar sistema de adaptação ao nível do usuário — nível CEFR é salvo no perfil; SmartReview cruza XP e erros recorrentes para ajustar quantidade, foco e mensagem dos exercícios de reforço
 - [ ] Aplicar progressão CEFR gradual e coerente às cenas, lições, exercícios, conversas e revisões, do vocabulário concreto inicial à prática avançada — resolução central já unifica cenas, treino diário, jogos, conversa livre, roleplay e Revisão Inteligente; a auditoria dos demais fluxos curriculares permanece pendente
+- [ ] Vincular o vocabulário demonstrativo do modo AR ao nível CEFR selecionado, evitando que o mesmo conjunto inicial seja apresentado como prática avançada
 - [x] Migrar o hub de lições de agrupamentos beginner/intermediate/advanced para as seis etapas CEFR, distribuindo cenas e exercícios Pareto sem apagar o acervo existente — A1–C2 são persistidos no seletor; as cenas e práticas usam o estágio selecionado, mantendo todo o acervo; TypeScript sem erros, regressões e interface validados com 341 testes
 - [x] Migrar o filtro de clipes de prática para A1–C2 individuais, preservando idioma, categoria e acesso ao conteúdo existente — seletor apresenta as seis etapas, registros legados são normalizados sem alterar o banco e a filtragem é individual; TypeScript sem erros, regressões e interface validados com 343 testes
 - [x] Conectar o painel de progresso às estatísticas persistidas e apresentar A1–C2 calculado pelo XP, removendo métricas e níveis simulados — painel consulta progresso autenticado, exibe XP, lições, sequência e tempo reais, calcula metas CEFR e não inventa idiomas ou conquistas; TypeScript sem erros, regressões e interface validados com 346 testes
@@ -297,7 +298,7 @@
 
 - [ ] Definir arquitetura de evolução contínua revisável, benefícios por cliente, execução local opcional para GPU e defesa em camadas contra ataques, sem ativar serviços, pagamentos ou automações sem aprovação
 
-- [ ] Documentar a separação entre revisão por GitHub/Copilot, uso normal do app publicado sem instalação no cliente e instalação local opcional apenas para recursos de hardware específicos
+- [x] Documentar a separação entre revisão por GitHub/Copilot, uso normal do app publicado sem instalação no cliente e instalação local opcional apenas para recursos de hardware específicos — orientação operacional registrada em `docs/operation-boundaries-github-local.md`, sem alterar integrações ou serviços
 
 - [x] Implementar canal privado de suporte e opiniões para clientes autenticados, com acesso por proprietário, limites contra abuso, registro protegido e revisão humana antes de qualquer melhoria automática — rota /suporte, conversa privada, resposta exclusiva do proprietário, regressões e verificação visual; TypeScript e 855 testes aprovados
 
