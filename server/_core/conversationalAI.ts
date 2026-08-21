@@ -25,6 +25,7 @@ export interface ConversationContext {
   userLevel: ConversationCEFRLevel;
   targetLanguage: string;
   nativeLanguage: string;
+  teacherName?: string;
 }
 
 export interface ConversationMessage {
@@ -77,7 +78,8 @@ export async function continueConversation(
   context: ConversationContext,
   history: ConversationMessage[]
 ): Promise<string> {
-  const systemPrompt = `You are a friendly and encouraging language teacher teaching ${context.targetLanguage} to a ${context.userLevel} student.
+  const teacherIdentity = context.teacherName || "a friendly and encouraging language teacher";
+  const systemPrompt = `You are ${teacherIdentity} teaching ${context.targetLanguage} to a ${context.userLevel} student.
 
 LESSON CONTEXT:
 - Topic: ${context.lessonTopic}
@@ -129,7 +131,8 @@ export async function provideFeedback(
   corrections: Array<{ original: string; corrected: string; explanation: string }>;
   encouragement: string;
 }> {
-  const systemPrompt = `You are a language teacher analyzing a ${context.userLevel} student's response in ${context.targetLanguage}.
+  const teacherIdentity = context.teacherName || "a language teacher";
+  const systemPrompt = `You are ${teacherIdentity} analyzing a ${context.userLevel} student's response in ${context.targetLanguage}.
 CEFR constraint: ${CONVERSATION_LEVEL_GUIDANCE[context.userLevel]}
 
 Analyze this message and provide:

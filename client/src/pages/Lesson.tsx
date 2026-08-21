@@ -1215,6 +1215,7 @@ export default function Lesson() {
                   vocabulary={lesson.vocabularyDetailed}
                   languageCode={lesson.languageCode || 'en-US'}
                   level={resolvePracticeCEFRLevel((lesson as any).courseLevel)}
+                  teacherName={teacher?.name}
                 />
               </div>
             )}

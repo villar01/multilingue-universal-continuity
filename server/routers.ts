@@ -10,6 +10,25 @@ import { generateConversationStarter, continueConversation, provideFeedback, gen
 import { generateLesson, generateExercises } from "./_core/lessonGenerator";
 import { sql } from "drizzle-orm";
 import * as db from "./db";
+
+async function resolveConversationTeacherName(userId: number): Promise<string | undefined> {
+  const database = await db.getDb();
+  if (!database) return undefined;
+  const { users, virtualTeachers } = await import("../drizzle/schema");
+  const { eq } = await import("drizzle-orm");
+  const [user] = await database
+    .select({ preferredTeacherId: users.preferredTeacherId })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (!user?.preferredTeacherId) return undefined;
+  const [teacher] = await database
+    .select({ name: virtualTeachers.name })
+    .from(virtualTeachers)
+    .where(eq(virtualTeachers.id, user.preferredTeacherId))
+    .limit(1);
+  return teacher?.name || undefined;
+}
 import { createCheckoutSession } from "./stripe-checkout";
 import { createPixPayment, checkPixPaymentStatus } from "./pagbank-pix";
 import { moderationRouter } from "./moderation-router";
@@ -2383,6 +2402,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: input.userLevel,
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
+          teacherName: await resolveConversationTeacherName(ctx.user.id),
         };
 
         const learnerText = input.history.filter((message) => message.role === "user").slice(-1)[0]?.content || "";
@@ -2424,6 +2444,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           userLevel: input.userLevel,
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
+          teacherName: await resolveConversationTeacherName(ctx.user.id),
         };
 
         const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, input.targetLanguage);

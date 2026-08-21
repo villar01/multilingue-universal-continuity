@@ -23,13 +23,14 @@ interface AIChatbotProps {
   }>;
   languageCode: string;
   level?: CEFRLevel;
+  teacherName?: string;
 }
 
 /**
  * Chatbot IA Conversacional para prática de idiomas
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
-export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1' }: AIChatbotProps) {
+export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor' }: AIChatbotProps) {
   const { profile } = useLanguage();
   const targetLanguage = languageCode || profile.targetCode;
   const nativeLanguage = profile.nativeCode;
@@ -38,7 +39,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
     corrections: Array<{ original: string; corrected: string; explanation: string }>;
     encouragement: string;
   } | null>(null);
-  const storageKey = `ml_chat_history_${lessonId}`;
+  const storageKey = `ml_chat_history_${lessonId}_${teacherName}`;
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
@@ -52,7 +53,7 @@ export default function AIChatbot({ lessonId, vocabulary, languageCode, level = 
     return [
       {
         role: 'assistant',
-        content: `Prática de ${targetLanguage}: use o vocabulário desta lição. Comece com: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}.`,
+        content: `${teacherName}: prática de ${targetLanguage}. Use o vocabulário desta lição e comece com: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}.`,
         timestamp: new Date(),
       },
     ];

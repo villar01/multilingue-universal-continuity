@@ -21,4 +21,11 @@ describe("contrato do chatbot da lição", () => {
     expect(chatbot).toContain("Forma sugerida:");
     expect(chatbot).toContain("correction.explanation");
   });
+
+  it("vincula o chat textual ao professor ativo da lição", () => {
+    expect(chatbot).toContain("teacherName?: string;");
+    expect(chatbot).toContain("teacherName = 'Professor'");
+    expect(chatbot).toContain("ml_chat_history_${lessonId}_${teacherName}");
+    expect(lesson).toContain("teacherName={teacher?.name}");
+  });
 });
