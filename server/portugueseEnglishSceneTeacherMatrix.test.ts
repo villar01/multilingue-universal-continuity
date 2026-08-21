@@ -77,4 +77,23 @@ describe("Portuguese-English immersive scene teacher matrix", () => {
       }
     }
   });
+
+  it("routes authorized dialogue and phrase reading through the active teacher voice and gender", () => {
+    expect(sceneSource).toContain("teacherName: activeSceneTeacher.name");
+    expect(sceneSource).toContain("teacherImage: activeSceneTeacher.photo || selectedScene.teacherImage");
+    expect(sceneSource).toContain("teacherLang: activeSceneTeacher.voiceLang");
+    expect(sceneSource).toContain("teacherGender: activeSceneTeacher.gender || selectedScene.teacherGender");
+    expect(sceneSource).toContain("const activeTeachingScene = useMemo<Scene | null>(() => {");
+    expect(sceneSource).toContain("...teachingScene,");
+    expect(sceneSource).toContain("dialog: activeSceneDialog,");
+    expect(sceneSource).toContain("hotspots: activeSceneHotspots,");
+    expect(sceneSource).toContain('requestSpeechSafely(text, (teachingScene ?? selectedScene).teacherLang, (teachingScene ?? selectedScene).teacherGender, "hotspot")');
+    expect(sceneSource).toContain('const effectiveGender = teachingScene?.teacherName === "James"');
+
+    for (const scene of IMMERSIVE_SCENES) {
+      const teacher = resolveSceneTeacherForTarget(scene, "en-US", "pt-BR").teacher;
+      expect(teacher?.voiceLang).toBe("en-US");
+      expect(teacher?.gender).toBe(JAMES_SCENE_IDS.has(scene.id) ? "male" : "female");
+    }
+  });
 });
