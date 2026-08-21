@@ -18,4 +18,13 @@ describe("política de voz do professor na lição", () => {
     expect(source).toContain("voiceLang: teacherVoice.voiceLang");
     expect(source).toContain("gender: teacherVoice.gender");
   });
+
+  it("propaga o gênero selecionado ao vocabulário explicado e ao clipe da lição", () => {
+    const source = readFileSync(new URL("../client/src/pages/Lesson.tsx", import.meta.url), "utf8");
+    const vocabularyTeacher = source.slice(source.indexOf("<TeacherWithObject"), source.indexOf("</Suspense>", source.indexOf("<TeacherWithObject")));
+    const lessonClip = source.slice(source.indexOf("<AnimatedLessonClip"), source.indexOf("</Suspense>", source.indexOf("<AnimatedLessonClip")));
+
+    expect(vocabularyTeacher).toContain("gender: teacherVoice.gender");
+    expect(lessonClip).toContain("gender: teacherVoice.gender");
+  });
 });

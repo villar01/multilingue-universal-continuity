@@ -1126,6 +1126,7 @@ export default function Lesson() {
                       generateTeacherAudio.mutate({
                         text: word,
                         voiceLang: lesson.languageCode || 'en-US',
+                        gender: teacherVoice.gender,
                       });
                     }}
                     languageCode={lesson.languageCode?.split('-')[0] || 'en'}
@@ -1152,6 +1153,7 @@ export default function Lesson() {
                       generateTeacherAudio.mutate({
                         text,
                         voiceLang: lesson.languageCode || 'en-US',
+                        gender: teacherVoice.gender,
                       });
                     }}
                   />
