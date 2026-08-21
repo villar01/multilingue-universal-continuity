@@ -474,6 +474,7 @@
 - [ ] Retomar revisão externa de leitura por GitHub/Copilot como apoio aos defeitos ativos, sem alteração automática, publicação ou integração comercial
 - [x] Exigir sessão nas mutações legadas de TTS e lip-sync ainda expostas por `routers-tts.ts`, mantendo públicas somente consultas estáticas de idioma e sotaque — síntese, geração de lip-sync, phonemas, frames e melhoria agora exigem sessão; TypeScript e 356 arquivos/896 testes aprovados
 - [x] Bloquear as mutações públicas legadas de semeadura de conteúdo, conquistas e professores, exigindo proprietário autenticado antes de alterar o banco ou executar scripts — quatro semeaduras agora usam `adminProcedure`; TypeScript e 357 arquivos/897 testes aprovados
+- [x] Exigir sessão para aplicação de código de indicação, impedindo que visitantes recebam resultado de recompensa sem conta autenticada — `applyReferral` agora usa procedimento protegido; TypeScript e 358 arquivos/898 testes aprovados
 - [x] Streaming de respostas LLM palavra por palavra — useStreamingText integrado em LiveLessonTeacher
 - [x] Comprimir prompts para reduzir tokens — promptCompression.ts (client+server) integrado em aiProvider.ts generateAI
 - [x] Ativar modo turbo em todos endpoints AI (Ollama 1s check, LM Studio 1s check)

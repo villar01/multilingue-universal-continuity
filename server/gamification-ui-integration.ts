@@ -39,7 +39,7 @@ export const gamificationUIRouter = router({
       return { code, referralsCount: 5, totalXPEarned: 1500 };
     }),
 
-  applyReferral: publicProcedure
+  applyReferral: protectedProcedure
     .input(z.object({ code: z.string() }))
     .mutation(async ({ input }) => {
       return { success: true, xpReward: 100, message: "Código aplicado!" };
