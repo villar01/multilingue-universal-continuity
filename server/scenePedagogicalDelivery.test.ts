@@ -40,5 +40,9 @@ describe("entrega pedagógica progressiva das cenas", () => {
     expect(immersiveScene).toContain("Roteiro de aprendizagem");
     expect(immersiveScene).toContain("Professor visível · fala compatível");
     expect(immersiveScene).toContain("canUseAuthorizedSceneInteractions && sceneInteractionProgressionQuery.data");
+    expect(immersiveScene).toContain("sceneInteractionProgressionQuery.data.stages.map");
+    expect(immersiveScene).toContain("Math.floor((dlgStep / Math.max(1, activeSceneDialog.length - 1)) * sceneInteractionProgressionQuery.data.stages.length)");
+    expect(immersiveScene).toContain("index === activeStage");
+    expect(immersiveScene).toContain("sceneInteractionProgressionQuery.data.focus");
   });
 });
