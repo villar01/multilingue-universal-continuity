@@ -13,7 +13,6 @@ import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
-import { getHotspotLabel } from "../lib/hotspot-translations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -485,7 +484,7 @@ function VocabCard({
           <div>
             {/* Show the word in the target language (what student is learning) */}
             <div className="text-white font-bold" style={{ fontSize: "clamp(14px, 1.8vw, 18px)" }}>
-              {getHotspotLabel(hotspot.id, hotspot.label, langCode.split("-")[0].toLowerCase())}
+              {hotspot.label}
             </div>
             {/* Show native language translation below */}
             <div style={{ color: hotspot.color, fontSize: "clamp(10px, 1.2vw, 13px)" }}>
@@ -519,7 +518,7 @@ function VocabCard({
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-xs font-semibold active:scale-95 transition-transform"
             style={{ background: hotspot.color }}
           >
-            🔊 {getHotspotLabel(hotspot.id, hotspot.label, langCode)}
+            🔊 {hotspot.label}
           </button>
         </div>
 
@@ -865,8 +864,16 @@ export default function ImmersiveScene() {
     staleTime: 1000 * 60 * 30,
     retry: false,
   });
-  const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog || selectedScene?.dialog || [];
-  const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots || selectedScene?.hotspots || [];
+  const activeSceneDialog = canonicalSceneMaterialQuery.data?.dialog ?? [];
+  const activeSceneHotspots = canonicalSceneMaterialQuery.data?.hotspots ?? [];
+  const activeTeachingScene = useMemo<Scene | null>(() => {
+    if (!teachingScene) return null;
+    return {
+      ...teachingScene,
+      dialog: activeSceneDialog,
+      hotspots: activeSceneHotspots,
+    };
+  }, [activeSceneDialog, activeSceneHotspots, teachingScene]);
   const selectedSceneRequiresProtectedMaterial = selectedScene?.id === "beach" || selectedScene?.id === "airport" || selectedScene?.id === "airport_family" || selectedScene?.id === "cafe" || selectedScene?.id === "cinema" || selectedScene?.id === "desert" || selectedScene?.id === "family_home" || selectedScene?.id === "farm" || selectedScene?.id === "forest" || selectedScene?.id === "garden" || selectedScene?.id === "gym" || selectedScene?.id === "hospital" || selectedScene?.id === "library" || selectedScene?.id === "medieval" || selectedScene?.id === "metro" || selectedScene?.id === "museum" || selectedScene?.id === "office" || selectedScene?.id === "park" || selectedScene?.id === "paris" || selectedScene?.id === "port" || selectedScene?.id === "spa" || selectedScene?.id === "tokyo" || selectedScene?.id === "newyork" || selectedScene?.id === "kitchen" || selectedScene?.id === "restaurant" || selectedScene?.id === "hotel" || selectedScene?.id === "supermarket" || selectedScene?.id === "school" || selectedScene?.id === "mountain";
   const sceneMaterialAccessFailed = Boolean(
     selectedSceneRequiresProtectedMaterial
@@ -1462,7 +1469,7 @@ export default function ImmersiveScene() {
   const [notebookCount, setNotebookCount] = useState(() => loadNotebook().length);
   // Pareto Panel state
   const [paretoOpen, setParetoOpen] = useState(false);
-  const quizHotspots = selectedScene?.hotspots || [];
+  const quizHotspots = activeSceneHotspots;
   const quizQuestion = quizHotspots.length ? quizHotspots[quizIndex % quizHotspots.length] : null;
   const quizOptions = quizQuestion
     ? [quizQuestion.translation, ...quizHotspots
@@ -1636,7 +1643,7 @@ export default function ImmersiveScene() {
   }, [selectedScene?.id, stopTeacherAudio]);
 
   const startDialog = useCallback((scene: Scene) => {
-    const dialogueScene = teachingScene ?? scene;
+    const dialogueScene = activeTeachingScene ?? scene;
     // O cartão de objeto não pode ficar sobre o diálogo nem manter seu áudio
     // ativo quando o aluno inicia a fala principal do professor.
     setActiveHotspot(null);
@@ -1680,7 +1687,7 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio, teachingScene]);
+  }, [activeSceneDialog, activeTeachingScene, playJamesTropicalClip, playSophieCafeClip, playTeacherAudio, primeDialogAudioFromGesture, requestSpeechSafely, stopTeacherAudio]);
   useEffect(() => {
     if (isSpeaking && activeDialogLineRef.current && !dlgOpen) {
       setDlgOpen(true);
@@ -1693,7 +1700,7 @@ export default function ImmersiveScene() {
   }, [dialogSpeechRate, dlgAudioClock, dlgOpen, dlgWords, dlgWordIdx]);
   const dlgNext = useCallback(() => {
     if (!selectedScene) return;
-    const dialogueScene = teachingScene ?? selectedScene;
+    const dialogueScene = activeTeachingScene ?? selectedScene;
     const next = dlgStep + 1;
     if (next >= activeSceneDialog.length) {
       activeDialogLineRef.current = null;
@@ -1719,10 +1726,10 @@ export default function ImmersiveScene() {
       setDlgAudioClock(false);
       setDlgWords([]); setDlgWordIdx(0);
     }
-  }, [activeSceneDialog, dlgStep, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeSceneDialog, activeTeachingScene, dlgStep, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
 
   const askImmersiveTutor = useCallback(async (answer: string) => {
-    const scene = teachingScene ?? selectedScene;
+    const scene = activeTeachingScene ?? selectedScene;
     const question = answer.trim();
     if (!scene || !question) return;
     const requestId = ++dlgTutorRequestRef.current;
@@ -1804,10 +1811,10 @@ export default function ImmersiveScene() {
       window.clearTimeout(loadingTimeout);
       if (requestId === dlgTutorRequestRef.current) setDlgTutorLoading(false);
     }
-  }, [currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeTeachingScene, currentLangInfo.name, dialogTranslateMut, dlgTutorHistory, dlgTutorLoading, immersiveSceneTutorMut, nativeLang, nativeLangLabel, playJamesTropicalClip, primeDialogAudioFromGesture, requestSpeechSafely, selectedScene]);
 
   const validateDialogAnswer = useCallback((answer: string) => {
-    const scene = teachingScene ?? selectedScene;
+    const scene = activeTeachingScene ?? selectedScene;
     if (!scene) return;
     const line = activeSceneDialog[dlgStep];
     if (!line) return;
@@ -1849,7 +1856,7 @@ export default function ImmersiveScene() {
       return;
     }
     window.setTimeout(() => dlgNext(), 1400);
-  }, [activeSceneDialog, askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene, teachingScene]);
+  }, [activeSceneDialog, activeTeachingScene, askImmersiveTutor, dlgStep, dlgNext, isAuthenticated, playJamesTropicalClip, playSophieCafeClip, requestSpeechSafely, selectedScene]);
 
   const submitWrittenDialogAnswer = useCallback(() => {
     const question = dlgWrittenAnswer.trim();
@@ -1866,7 +1873,7 @@ export default function ImmersiveScene() {
   }, [askImmersiveTutor, dlgWrittenAnswer]);
 
   const replayTeacherSpeechFromGesture = useCallback(() => {
-    const scene = teachingScene ?? selectedScene;
+    const scene = activeTeachingScene ?? selectedScene;
     if (!scene) return;
     const lineText = activeSceneDialog[dlgStep]?.text || "";
     const phrase = (dlgTutorSpokenText || activeSpeechText || lineText).trim();
@@ -1898,7 +1905,7 @@ export default function ImmersiveScene() {
     if (scene.id === "beach" && scene.teacherName === "James") {
       playJamesTropicalClip("james-tropical-greeting");
     }
-  }, [activeSceneDialog, activeSpeechText, dialogAudioSource, dlgStep, dlgTutorSpokenText, playJamesTropicalClip, playLocalDialogFallback, primeDialogAudioFromGesture, replayVisibleDialogAudio, requestSpeechSafely, selectedScene, stopTeacherAudio, teachingScene]);
+  }, [activeSceneDialog, activeSpeechText, activeTeachingScene, dialogAudioSource, dlgStep, dlgTutorSpokenText, playJamesTropicalClip, playLocalDialogFallback, primeDialogAudioFromGesture, replayVisibleDialogAudio, requestSpeechSafely, selectedScene, stopTeacherAudio]);
 
   const stopDialogRecording = useCallback(() => {
     if (dlgRecorderRef.current?.state === "recording") {
@@ -2646,7 +2653,7 @@ export default function ImmersiveScene() {
             {quizFeedback && (
               <div className={`mt-4 rounded-xl border p-3 ${quizFeedback === "correct" ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-100" : "border-amber-300/40 bg-amber-300/10 text-amber-100"}`}>
                 <p className="text-sm font-bold">
-                  {quizFeedback === "correct" ? `Correto! “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}” é ${quizQuestion.translation}.` : `Quase. A estrela escondia “${getHotspotLabel(quizQuestion.id, quizQuestion.label, effectiveLang(selectedScene))}”.`}
+                  {quizFeedback === "correct" ? `Correto! “${quizQuestion.label}” é ${quizQuestion.translation}.` : `Quase. A estrela escondia “${quizQuestion.label}”.`}
                 </p>
                 <p className="mt-1 text-sm">Diga a palavra, escreva uma frase e fixe o vocabulário no Pareto.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -3413,7 +3420,7 @@ export default function ImmersiveScene() {
                     className="px-1.5 py-0.5 rounded-full text-white"
                     style={{ background: `${h.color}44`, border: `1px solid ${h.color}66`, fontSize: "clamp(8px, 1vw, 11px)" }}
                   >
-                    {h.icon} {getHotspotLabel(h.id, h.label, targetLang || "en-US")}
+                    {h.icon} {h.label}
                   </span>
                 ))}
                 {scene.hotspots.length > 4 && (
