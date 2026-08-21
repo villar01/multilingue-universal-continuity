@@ -2235,3 +2235,4 @@
 
 - [x] Reconstruir o exame final e gabarito revisado do Livro SOS Português–Inglês: preservar tradução pt-BR→inglês–inglês→pt-BR–lacunas cumulativas–respostas revisadas, corrigir capitalização, gramática e escolhas lexicais do original, e adicionar Pareto separado por bloco de revisão — quatro folhas novas, regressão dedicada, TypeScript e 835 testes aprovados
 - [ ] Ocultar hotspots e cartões de Pareto quando a Cena Imersiva informar que o acesso protegido ainda está pendente ou falhou
+- [ ] Substituir a orientação padrão contraditória da Cena Imersiva para não pedir ativação quando o material canônico já está disponível

@@ -141,7 +141,7 @@ function getSceneLocationDisclosure(scene: Scene): string {
 }
 
 function getSceneObjectGuidancePt(scene: Scene): string {
-  return `Ative o acesso para praticar com os objetos de ${scene.name}.`;
+  return `A cena ${scene.name} está pronta para explorar os objetos.`;
 }
 
 type ImmersiveCEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
