@@ -481,7 +481,7 @@
 - [x] Bloquear por regressão qualquer troca entre a identidade canônica de James e Ingrid nas 29 cenas PT-BR→EN — cada cena exige ID, nome, retrato, locale, voz e gênero exatos; TypeScript e 360 arquivos/902 testes aprovados
 - [x] Preservar sem alteração as duas animações já validadas de James durante a correção em lote das 29 cenas — regressões de clipes confirmam os ativos publicados, voz masculina e início exclusivamente em `onplaying`/`utterance.onstart`; Praia Tropical validada visualmente
 - [ ] Replicar às outras 27 cenas o padrão aprovado das duas cenas concluídas, sem trocar professor, retrato, áudio ou animação entre pares incompatíveis
-- [ ] Garantir animação compatível do professor correto em todas as 29 cenas de Português–Inglês, sem reutilizar mídia de outro professor
+- [x] Garantir animação compatível do professor correto em todas as 29 cenas de Português–Inglês, sem reutilizar mídia de outro professor — a regressão exige a guarda de cena e professor ativo para cada clipe; somente a Praia com James tem clipes compatíveis no par PT-BR→EN e as demais preservam o retrato canônico até mídia própria aprovada. TypeScript e 360 arquivos/903 testes aprovados
 - [ ] Vincular as leituras de frases das 29 cenas à voz e à animação do professor correto, com James em 14 cenas e Ingrid em 15
 - [ ] Replicar nas outras 27 cenas Livro SOS, perguntas e respostas, Pareto, quiz, diálogo, leitura de frases, áudio e animação das duas cenas aprovadas
 - [ ] Congelar e preservar integralmente as duas cenas já concluídas durante a replicação do lote para as outras 27

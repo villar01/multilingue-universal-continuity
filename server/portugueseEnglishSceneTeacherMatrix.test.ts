@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { IMMERSIVE_SCENES } from "../client/src/lib/immersiveScenesCatalog";
 import { resolveSceneTeacherForTarget } from "../client/src/lib/sceneTeacherResolver";
+import { JAMES_TROPICAL_PILOT_CLIPS } from "../shared/jamesTropicalPilotClips";
+import { SOPHIE_CAFE_PILOT_CLIPS } from "../shared/sophieCafePilotClips";
 
 const JAMES_SCENE_IDS = new Set([
   "beach", "forest", "newyork", "airport", "school", "cinema", "family_home",
   "airport_family", "paris", "kitchen", "restaurant", "supermarket", "hotel", "hospital",
 ]);
+const sceneSource = readFileSync("client/src/pages/ImmersiveScene.tsx", "utf8");
+const PILOT_CLIPS = [...JAMES_TROPICAL_PILOT_CLIPS, ...SOPHIE_CAFE_PILOT_CLIPS];
 
 describe("Portuguese-English immersive scene teacher matrix", () => {
   it("assigns exactly 14 James scenes and 15 Ingrid scenes across the 29 visual previews", () => {
@@ -52,6 +57,24 @@ describe("Portuguese-English immersive scene teacher matrix", () => {
           : "/manus-storage/teacher-ingrid-english_b938d99a.png",
         gender: usesJames ? "male" : "female",
       });
+    }
+  });
+
+  it("keeps every approved pilot clip behind the active scene and teacher identity guard", () => {
+    expect(sceneSource).toContain("activeClip.sceneId === scene.id");
+    expect(sceneSource).toContain("activeClip.teacherName === (overrideName || scene.teacherName)");
+
+    for (const scene of IMMERSIVE_SCENES) {
+      const teacher = resolveSceneTeacherForTarget(scene, "en-US", "pt-BR").teacher;
+      const compatibleClips = PILOT_CLIPS.filter((clip) => (
+        clip.sceneId === scene.id && clip.teacherName === teacher?.name
+      ));
+
+      if (scene.id === "beach") {
+        expect(compatibleClips).toHaveLength(JAMES_TROPICAL_PILOT_CLIPS.length);
+      } else {
+        expect(compatibleClips).toHaveLength(0);
+      }
     }
   });
 });
