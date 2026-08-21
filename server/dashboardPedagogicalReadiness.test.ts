@@ -13,7 +13,7 @@ describe("prontidão pedagógica no painel do aluno", () => {
 
   it("explica domínio e evidência sem converter XP ou seleção visual em desbloqueio", () => {
     expect(source).toContain("Prontidão pedagógica");
-    expect(source).toContain("Domínio observado no curso");
+    expect(source).toContain("Domínio derivado do SRS");
     expect(source).toContain("XP mantém somente sua função motivacional");
     expect(source).toContain("ela não libera currículo");
     expect(source).toContain("PEDAGOGICAL_LEVEL_LABELS");

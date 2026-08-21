@@ -27,6 +27,7 @@ describe("prontidão pedagógica protegida", () => {
     const dashboardSource = readFileSync(resolve(process.cwd(), "client/src/pages/DashboardReal.tsx"), "utf8");
     expect(dashboardSource).toContain("Etapa pedagógica confirmada:");
     expect(dashboardSource).toContain("Faixa observada pelas lições:");
-    expect(dashboardSource).toContain("respostas avaliadas registrarem as evidências pedagógicas exigidas");
+    expect(dashboardSource).toContain("ao menos 5 respostas avaliadas pelo servidor");
+    expect(dashboardSource).toContain("Domínio derivado do SRS");
   });
 });
