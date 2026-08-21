@@ -34,4 +34,24 @@ describe("Portuguese-English immersive scene teacher matrix", () => {
       expect(resolution.teacher?.photo).toMatch(/prof_james|teacher-ingrid-english/);
     }
   });
+
+  it("preserves the exact canonical identity bundle for every scene without cross-teacher substitution", () => {
+    for (const scene of IMMERSIVE_SCENES) {
+      const teacher = resolveSceneTeacherForTarget(scene, "en-US", "pt-BR").teacher;
+      const usesJames = JAMES_SCENE_IDS.has(scene.id);
+
+      expect(teacher).toMatchObject({
+        id: usesJames ? "scene-james-en-us" : "scene-ingrid-en-us",
+        name: usesJames ? "James" : "Ingrid",
+        nativeName: usesJames ? "James" : "Ingrid",
+        language: "English (US)",
+        langCode: "en",
+        voiceLang: "en-US",
+        photo: usesJames
+          ? "/manus-storage/prof_james_b9f2fff7.png"
+          : "/manus-storage/teacher-ingrid-english_b938d99a.png",
+        gender: usesJames ? "male" : "female",
+      });
+    }
+  });
 });
