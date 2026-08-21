@@ -30,7 +30,8 @@ import { ImmersionModeToggle } from "@/components/ImmersionModeToggle";
 import { createAudioRecorder, microphoneErrorMessage, requestMicrophoneStream } from "@/lib/microphoneAccess";
 import { findReferencedHotspotId, matchesImmersiveDialogAnswer } from "@/lib/immersiveDialogAnswer";
 import { getSceneTutorReply } from "@/lib/immersiveSceneTutor";
-import { getTargetLanguageTeachers, resolveSceneTeacherForTarget } from "@/lib/sceneTeacherResolver";
+import { getTargetLanguageTeachers } from "@/lib/sceneTeacherResolver";
+import { resolveCanonicalTeacherResource } from "@/lib/teacherResourceResolver";
 import { IMMERSIVE_SCENES, IMMERSIVE_VOICE_REFERENCE } from "@/lib/immersiveScenesCatalog";
 import { selectTeacherMedia, selectTeacherPoseAudioCue } from "@shared/teacherMediaStrategy";
 import type { DialogLine, Hotspot, Scene } from "@shared/immersiveSceneTypes";
@@ -760,12 +761,13 @@ export default function ImmersiveScene() {
   };
   // Full BCP-47 code for Web Speech API (e.g. 'es-ES', 'en-US')
   const effectiveSpeakLang = (_scene: { teacherLang: string }) => targetLang || "en-US";
-  const sceneTeacherResolution = useMemo(
+  const sceneTeacherResource = useMemo(
     () => selectedScene
-      ? resolveSceneTeacherForTarget(selectedScene, targetLang, profile.nativeCode)
-      : { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true },
+      ? resolveCanonicalTeacherResource(selectedScene, targetLang, profile.nativeCode)
+      : null,
     [profile.nativeCode, selectedScene, targetLang],
   );
+  const sceneTeacherResolution = sceneTeacherResource?.resolution || { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };
   const compatibleSceneTeachers = useMemo(
     () => sceneTeacherResolution.materialIsInTargetLanguage && !sceneTeacherResolution.lockedToLanguagePair ? getTargetLanguageTeachers(targetLang) : [],
     [sceneTeacherResolution.lockedToLanguagePair, sceneTeacherResolution.materialIsInTargetLanguage, targetLang],
