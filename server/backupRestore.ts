@@ -168,6 +168,26 @@ export async function listBackups(): Promise<BackupInfo[]> {
   }));
 }
 
+/** Confirma metadados íntegros e a disponibilidade do objeto sem baixar seu conteúdo. */
+export async function verifyBackupSnapshot(backupId: string): Promise<boolean> {
+  const database = await getDb();
+  if (!database) return false;
+  await ensureSnapshotTable(database);
+  const result = await executeQuery(
+    database,
+    "SELECT id, storage_key, checksum, file_size_bytes, status FROM backup_snapshots WHERE id = ? LIMIT 1",
+    [backupId],
+  );
+  const backup = ((result[0] ?? result) as Array<Record<string, unknown>>)[0];
+  if (!backup || backup.status !== "completed") return false;
+  if (!String(backup.storage_key ?? "").startsWith("backups/database/")) return false;
+  if (!/^[a-f0-9]{64}$/.test(String(backup.checksum ?? ""))) return false;
+  if (Number(backup.file_size_bytes ?? 0) <= 0) return false;
+
+  const object = await storageGet(String(backup.storage_key));
+  return Boolean(object?.url);
+}
+
 export async function restoreFromBackup(
   backupId: string,
   confirmation: string

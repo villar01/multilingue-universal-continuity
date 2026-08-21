@@ -32,7 +32,7 @@ describe("permanent Tropical Beach scene contracts", () => {
   });
 
   it("preserves James as the canonical Tropical Beach teacher and voice path", () => {
-    expect(sceneCatalogSource).toContain('teacherName:"James", teacherLang:"en-US", langCode:"en", teacherGender:"male"');
+    expect(sceneCatalogSource).toMatch(/id: "beach"[^}]*teacherName: "James"[^}]*teacherLang: "en-US"[^}]*teacherGender: "male"/);
     expect(teacherResolverSource).toContain('scene.teacherName.trim().toLowerCase() === "james"');
     expect(teacherResolverSource).toContain('return { teacher: null, materialIsInTargetLanguage: false, preserveScenePortrait: true };');
   });

@@ -33,7 +33,7 @@ describe("contrato regional de voz das cenas imersivas", () => {
 
   it("exige locale e gênero explícitos em toda cena para selecionar uma voz neural regional", () => {
     const teacherEntries = sceneData.match(/teacherName:/g) ?? [];
-    const voicedEntries = sceneData.match(/teacherName:"[^"]+", teacherLang:"[^"]+", langCode:"[^"]+", teacherGender:"(?:male|female)"/g) ?? [];
+    const voicedEntries = sceneData.match(/teacherName: "[^"]+", teacherLang: "[^"]+", langCode: "[^"]+", teacherGender: "(?:male|female)"/g) ?? [];
     expect(voicedEntries).toHaveLength(teacherEntries.length);
     expect(edgeSource).toContain("resolveVoice(voiceLang, gender)");
     expect(edgeSource).toContain("Nenhuma voz neural compatível está disponível");
@@ -41,7 +41,7 @@ describe("contrato regional de voz das cenas imersivas", () => {
 
   it("resolve uma voz neural regional para cada locale e gênero declarado pelas cenas", () => {
     const declaredVoices = Array.from(
-      sceneData.matchAll(/teacherName:"[^"]+", teacherLang:"([^"]+)", langCode:"[^"]+", teacherGender:"(male|female)"/g),
+      sceneData.matchAll(/teacherName: "[^"]+", teacherLang: "([^"]+)", langCode: "[^"]+", teacherGender: "(male|female)"/g),
       ([, language, gender]) => ({ language, gender: gender as "male" | "female" }),
     );
 

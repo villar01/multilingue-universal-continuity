@@ -163,7 +163,7 @@ export default function Pricing() {
             Escolha Seu Plano
           </h1>
           <p className="text-gray-600 text-lg">
-            Aprenda 54 idiomas com IA GPT-4 avançada e professores virtuais
+            Catálogo de 143 idiomas, com 58 ativos agora e 85 em preparação, além de professores virtuais
           </p>
           <p className="text-sm text-gray-500 mt-2">
             💳 Pagamento em BRL via PIX, Cartão ou Boleto | Preços em Reais Brasileiros

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { sdk } from "../_core/sdk";
-import { runScheduledBackup } from "../backupRestore";
+import { runScheduledBackup, verifyBackupSnapshot } from "../backupRestore";
 import { getDb } from "../db";
 import { notifyOwner } from "../_core/notification";
 
@@ -24,6 +24,7 @@ export async function handleScheduledBackup(req: Request, res: Response): Promis
     const bucket = String(Math.floor(Date.now() / (6 * 60 * 60 * 1000)));
     const backup = await runScheduledBackup(bucket);
     if (backup.status !== "completed") throw new Error("Backup snapshot did not complete");
+    if (!(await verifyBackupSnapshot(backup.id))) throw new Error("Backup snapshot verification failed");
     res.json({ ok: true, id: backup.id, skipped: backup.id !== `backup_scheduled_${bucket}` ? true : undefined });
   } catch (error) {
     await notifyOwner({

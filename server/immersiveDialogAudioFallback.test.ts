@@ -137,15 +137,23 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).not.toContain("scene.teacherAnimation\n              ?");
   });
 
-  it("oferece escolha direta da voz do navegador para visitante após o gesto do aluno", () => {
-    expect(source).toContain("const playGuestBrowserVoice");
-    expect(source).toContain("browser-dialog:");
-    expect(source).toContain("Usar voz do navegador");
-    expect(source).toContain("playGuestBrowserVoice(teacherSpeech.text");
+  it("bloqueia a reprodução de diálogo do visitante e oferece somente ativação de acesso", () => {
+    const unauthenticatedBranch = source.slice(
+      source.indexOf("const requestSpeechSafely = useCallback"),
+      source.indexOf("primeVisemeAudio();", source.indexOf("const requestSpeechSafely = useCallback")),
+    );
+    expect(unauthenticatedBranch).toContain("if (!isAuthenticated) {");
+    expect(unauthenticatedBranch).toContain("setDialogAuthRequired(true);");
+    expect(unauthenticatedBranch).toContain("Ative o acesso protegido para ouvir a fala do professor nesta cena.");
+    expect(unauthenticatedBranch).not.toContain("playPublicSceneDialogue");
+    expect(unauthenticatedBranch).not.toContain("playLocalDialogFallback");
+    expect(source).toContain('"Ativar acesso para ouvir"');
+    expect(source).not.toContain("const playGuestBrowserVoice");
+    expect(source).not.toContain("Usar voz do navegador");
   });
 
   it("troca avisos técnicos de voz e microfone por orientação positiva ao aluno", () => {
-    expect(source).toContain("Entre na sua conta para praticar com a voz do professor nesta cena.");
+    expect(source).toContain("Ative o acesso protegido para ouvir a fala do professor nesta cena.");
     expect(source).toContain("A explicação está pronta abaixo. Leia no seu ritmo e toque em Ouvir novamente quando quiser continuar.");
     expect(source).toContain("Vamos tentar mais uma vez: comece a falar depois de tocar em Gravar.");
     expect(source).toContain("Vamos praticar de outro modo: fale um pouco mais devagar ou escreva sua resposta.");
@@ -163,7 +171,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain("regionalVoices.find((voice) => !femaleVoicePattern.test(voice.name))");
     expect(source).toContain("|| nonFemaleRegionalVoice");
     expect(source).toContain("if (gender && !preferredVoice) return false;");
-    expect(source).toContain("playLocalDialogFallback(text, language, requestKey, gender)");
+    expect(source).toContain("playLocalDialogFallback(text, language, requestKey, effectiveGender)");
   });
 
   it("repete a tentativa local de James quando o navegador ainda está carregando as vozes", () => {

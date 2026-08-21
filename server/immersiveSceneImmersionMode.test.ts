@@ -12,12 +12,14 @@ describe("modo de imersão da cena", () => {
     expect(sceneSource).toContain("{!immersionMode && getDlgTranslation(activeSceneDialog[dlgStep])");
     expect(sceneSource).toContain("{dlgFeedback && (");
     expect(sceneSource).not.toContain("{!immersionMode && dlgFeedback &&");
-    expect(sceneSource).toContain("{!immersionMode && <>");
+    expect(sceneSource).toContain("{!immersionMode && isAuthenticated && <>");
     expect(sceneSource).toContain("{immersionMode ? \"?\" : `Ouvir ajuda ${nativeLangLabel}`}");
     expect(sceneSource).toContain('aria-label="Ouvir ajuda na língua nativa"');
     expect(sceneSource).toContain(">Estudar idioma</div>");
     expect(sceneSource).not.toContain("immersionTargetLanguageLabel");
-    expect(sceneSource).toContain("{immersionMode ? \"🔊 Hear introduction\" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`}");
+    expect(sceneSource).toContain("{isAuthenticated");
+    expect(sceneSource).toContain('"Ativar acesso para iniciar"');
+    expect(sceneSource).toContain('immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${selectedScene.teacherName}`');
     expect(sceneSource).toContain("{immersionMode ? \"Next →\" : \"Próxima →\"}");
     expect(sceneSource).toContain("{dialogAuthRequired && !isAuthenticated && (");
     expect(sceneSource).toContain("← Voltar");

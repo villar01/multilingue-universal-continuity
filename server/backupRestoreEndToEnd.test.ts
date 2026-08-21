@@ -4,6 +4,7 @@ const state = vi.hoisted(() => ({
   objects: new Map<string, Buffer>(),
   snapshots: new Map<string, Record<string, unknown>>(),
   queries: [] as string[],
+  events: [] as string[],
   database: null as any,
 }));
 
@@ -13,6 +14,7 @@ vi.mock("./db", () => ({
 
 vi.mock("./storage", () => ({
   storagePut: async (key: string, data: Buffer) => {
+    state.events.push(`storage:${key}`);
     state.objects.set(key, Buffer.from(data));
     return { key, url: `memory://${key}` };
   },
@@ -27,9 +29,13 @@ function makeDatabase() {
       promise: () => ({
         execute: async (query: string, values: unknown[] = []) => {
           state.queries.push(query);
+          if (query.startsWith("DELETE FROM")) state.events.push("delete");
           if (query === "SHOW TABLES") return [[{ Tables_in_test: "users" }, { Tables_in_test: "backup_snapshots" }], []];
           if (query.startsWith("SELECT * FROM `users`")) return [[{ id: 7, name: "Aluno de teste" }], []];
-          if (query.startsWith("SELECT id, backup_type")) return [[], []];
+          if (query.startsWith("SELECT id, backup_type")) {
+            const snapshot = [...state.snapshots.values()].find((item) => item.schedule_bucket === values[0]);
+            return [snapshot ? [snapshot] : [], []];
+          }
           if (query.startsWith("SELECT * FROM backup_snapshots WHERE id")) {
             const snapshot = state.snapshots.get(String(values[0]));
             return [snapshot ? [snapshot] : [], []];
@@ -63,6 +69,7 @@ describe("backup e restauração de ponta a ponta sem banco real", () => {
     state.objects.clear();
     state.snapshots.clear();
     state.queries.length = 0;
+    state.events.length = 0;
     state.database = makeDatabase();
     vi.stubGlobal("fetch", vi.fn(async (url: string) => {
       const payload = state.objects.get(url.replace("memory://", ""));
@@ -88,5 +95,22 @@ describe("backup e restauração de ponta a ponta sem banco real", () => {
     expect(state.queries.some((query) => query.startsWith("DELETE FROM `users`"))).toBe(true);
     expect(state.queries.some((query) => query.startsWith("INSERT INTO `users`"))).toBe(true);
     expect(state.objects.size).toBeGreaterThanOrEqual(2);
+
+    const restorePointStorageIndex = state.events.findLastIndex((event) => event.startsWith("storage:backups/database/backup_") && !event.includes("backup_e2e_users.mlb"));
+    const firstDeletionIndex = state.events.indexOf("delete");
+    expect(restorePointStorageIndex).toBeGreaterThanOrEqual(0);
+    expect(restorePointStorageIndex).toBeLessThan(firstDeletionIndex);
+  });
+
+  it("reutiliza a cópia da mesma janela e acumula uma nova cópia na janela seguinte", async () => {
+    const first = await createBackup("full", { id: "backup_scheduled_100", scheduleBucket: "100" });
+    const repeated = await createBackup("full", { id: "backup_scheduled_100_retry", scheduleBucket: "100" });
+    const next = await createBackup("full", { id: "backup_scheduled_101", scheduleBucket: "101" });
+
+    expect(first.status).toBe("completed");
+    expect(repeated).toMatchObject({ id: "backup_scheduled_100", status: "completed" });
+    expect(next).toMatchObject({ id: "backup_scheduled_101", status: "completed" });
+    expect(state.snapshots.size).toBe(2);
+    expect(state.objects.size).toBe(2);
   });
 });

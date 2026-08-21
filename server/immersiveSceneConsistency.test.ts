@@ -11,7 +11,7 @@ const INITIAL_LANGUAGE_VOICES = ["pt-BR", "en-US", "es-ES", "fr-FR", "it-IT", "d
 
 describe("consistência permanente das cenas e idiomas iniciais", () => {
   it("mantém a contagem declarada de 29 cenas sincronizada com a documentação", () => {
-    const sceneCount = (sceneCatalogSource.match(/^    id:"/gm) || []).length;
+    const sceneCount = (sceneCatalogSource.match(/\bid: "/g) || []).length;
     expect(sceneCount).toBe(29);
     expect(sceneCatalogSource).toContain("export const IMMERSIVE_SCENES: Scene[] = [");
     expect(contractSource).toContain("29 estruturas de cenário");
@@ -19,13 +19,13 @@ describe("consistência permanente das cenas e idiomas iniciais", () => {
   });
 
   it("mantém professor, retrato e voz em todas as cenas declaradas", () => {
-    const teacherAssignments = sceneCatalogSource.match(/teacherImage:"[^\"]+",\n?\s*teacherName:"[^\"]+", teacherLang:"[^\"]+", langCode:"[^\"]+"/g) || [];
+    const teacherAssignments = sceneCatalogSource.match(/teacherImage: "[^\"]+", teacherName: "[^\"]+", teacherLang: "[^\"]+", langCode: "[^\"]+"/g) || [];
     expect(teacherAssignments).toHaveLength(29);
     expect(sceneSource).toContain("const showSyntheticMouth = false;");
   });
 
   it("aplica a rejeição de faixa vazia pelo fluxo compartilhado das 29 cenas com reserva masculina para James", () => {
-    const sceneIds = sceneCatalogSource.match(/^    id:"[^"]+"/gm) || [];
+    const sceneIds = sceneCatalogSource.match(/\bid: "[^"]+"/g) || [];
     expect(sceneIds).toHaveLength(29);
     expect(sceneSource).toContain("const useFallbackForInvalidTrack");
     expect(sceneSource).toContain("!Number.isFinite(audio.duration) || audio.duration <= 0");
