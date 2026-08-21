@@ -1540,7 +1540,7 @@
 - [ ] Comparar motores faciais gratuitos executáveis localmente e selecionar a opção mais viável para fotos reais, áudio neural e GPU disponível, sem prometer custo zero de infraestrutura inexistente
 - [ ] Definir responsabilidades separadas: Qwen 2.5 para conteúdo e diagnóstico local, GitHub para histórico/CI e revisão assistida para propostas de código
 - [ ] Estruturar ciclo contínuo seguro: observar métricas e erros, gerar sugestão, abrir alteração revisável, executar TypeScript/testes, validar visualmente e somente então criar checkpoint
-- [ ] Impedir que o módulo de autoaperfeiçoamento altere produção, banco ou segurança diretamente sem validação e ponto de retorno
+- [x] Impedir que o módulo de autoaperfeiçoamento altere produção, banco ou segurança diretamente sem validação e ponto de retorno — diagnóstico exige backup verificável, registra apenas propostas e manutenção bloqueada, não executa código/publicação e não usa fallback remoto. Regressão dedicada, TypeScript e 368 arquivos/932 testes aprovados
 - [ ] Documentar implantação gradual sem custos iniciais e indicar quando uma GPU local ou hospedada passa a ser necessária para animação facial natural
 - [ ] Tornar o autoaperfeiçoamento permanente e retomável após reinicializações, com diagnóstico agendado, histórico auditável e estado persistido, sem execução autônoma destrutiva
 - [ ] Executar cada melhoria diretamente no ciclo erro → correção → teste → validação → checkpoint, sem reabrir auditorias já concluídas nem apresentar trabalho local como entrega
