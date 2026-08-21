@@ -29,6 +29,15 @@ describe("direito curricular após revogação parental", () => {
     state.responses = [];
   });
 
+  it("bloqueia o conteúdo curricular quando falta aceite de proteção", async () => {
+    state.responses = [[]];
+
+    await expect(getLearningContentEntitlement(71)).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      message: "Conclua o aceite de proteção antes de iniciar as lições.",
+    });
+  });
+
   it("bloqueia o conteúdo curricular de perfil infantil quando só resta consentimento revogado", async () => {
     state.responses = [
       [{ id: 1 }],
