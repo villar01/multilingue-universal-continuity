@@ -2756,6 +2756,76 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       comprehensionPrompt: "A frase corrige uma ideia ou informa a situação atual? Explique por que actually e currently não são intercambiáveis.",
       paretoPrompt: "Recupere actually, currently, meeting, online e working; escreva uma correção e uma informação de tempo presente.",
     },
+    {
+      id: "phrasal-turn-on-turn-off",
+      level: "initial",
+      kind: "multiword_expression",
+      focus: "turn on / turn off",
+      contrast: "turn on liga um aparelho; turn off desliga o mesmo aparelho.",
+      explanation: "Aprenda verbo e partícula juntos. A troca de on por off inverte a ação, mesmo que turn continue igual.",
+      examples: [
+        { target: "Turn on the kitchen light.", native: "Acenda a luz da cozinha.", meaning: "ligar" },
+        { target: "Turn off the oven after dinner.", native: "Desligue o forno depois do jantar.", meaning: "desligar" },
+      ],
+      comprehensionPrompt: "O aparelho deve começar ou parar de funcionar? Diga o resultado antes de escolher turn on ou turn off.",
+      paretoPrompt: "Recupere turn on, turn off, light, oven e dinner; descreva uma ação de ligar e outra de desligar.",
+    },
+    {
+      id: "sound-wear-where",
+      level: "initial",
+      kind: "homophone",
+      focus: "wear / where",
+      contrast: "wear é usar roupa ou acessório; where pergunta por lugar. As palavras soam parecidas, mas têm funções diferentes.",
+      explanation: "Olhe para a pergunta ou para a ação. Se a frase pede local, use where; se fala de roupa, use wear.",
+      examples: [
+        { target: "Where is your school bag?", native: "Onde está sua mochila escolar?", meaning: "pergunta de lugar" },
+        { target: "Wear your coat outside.", native: "Use seu casaco lá fora.", meaning: "usar roupa" },
+      ],
+      comprehensionPrompt: "A frase pergunta por um lugar ou descreve uma roupa? Explique a função da palavra antes de escrevê-la.",
+      paretoPrompt: "Recupere where, wear, school, bag, coat e outside; faça uma pergunta de lugar e uma orientação sobre roupa.",
+    },
+    {
+      id: "sound-hear-here",
+      level: "intermediate",
+      kind: "homophone",
+      focus: "hear / here",
+      contrast: "hear é perceber um som; here indica o lugar onde alguém ou algo está.",
+      explanation: "O som parecido não define a escrita. Escolha hear para audição e here para localização.",
+      examples: [
+        { target: "Can you hear the librarian?", native: "Você consegue ouvir a bibliotecária ou o bibliotecário?", meaning: "perceber um som" },
+        { target: "Please sit here and read.", native: "Por favor, sente-se aqui e leia.", meaning: "lugar" },
+      ],
+      comprehensionPrompt: "A frase fala de ouvir ou de lugar? Complete uma frase própria com a forma adequada.",
+      paretoPrompt: "Recupere hear, here, librarian, sit e read; descreva um som e indique um lugar na biblioteca.",
+    },
+    {
+      id: "phrasal-get-on-get-off",
+      level: "intermediate",
+      kind: "multiword_expression",
+      focus: "get on / get off",
+      contrast: "get on significa entrar em um transporte; get off significa sair dele.",
+      explanation: "A partícula mostra a direção do deslocamento. Aprenda a locução inteira com o veículo e a estação.",
+      examples: [
+        { target: "Get on the metro at Central Station.", native: "Entre no metrô na Estação Central.", meaning: "entrar no transporte" },
+        { target: "Get off at the next stop.", native: "Desça na próxima parada.", meaning: "sair do transporte" },
+      ],
+      comprehensionPrompt: "A pessoa está entrando ou saindo do transporte? Indique o sentido do trajeto antes de escolher a locução.",
+      paretoPrompt: "Recupere get on, get off, metro, station e stop; descreva o início e o fim de um trajeto curto.",
+    },
+    {
+      id: "phrasal-work-out-work-on",
+      level: "advanced",
+      kind: "multiword_expression",
+      focus: "work out / work on",
+      contrast: "work out pode significar fazer exercício ou encontrar uma solução; work on significa dedicar esforço a uma tarefa, habilidade ou projeto.",
+      explanation: "A partícula muda o foco da ação. Use o contexto para distinguir treino ou solução de trabalho contínuo sobre algo específico.",
+      examples: [
+        { target: "I work out at the gym after work.", native: "Eu me exercito na academia depois do trabalho.", meaning: "fazer exercício" },
+        { target: "We are working on a better training plan.", native: "Estamos trabalhando em um plano de treino melhor.", meaning: "dedicar esforço a uma tarefa" },
+      ],
+      comprehensionPrompt: "A ideia é treinar ou desenvolver uma tarefa? Explique como o complemento ajuda a decidir entre work out e work on.",
+      paretoPrompt: "Recupere work out, work on, gym, training e plan; descreva um hábito físico e um projeto em andamento.",
+    },
   ],
   sections: [
     {
@@ -2866,6 +2936,11 @@ const SCENE_SEMANTIC_CONTRAST_IDS: Record<string, string> = {
   restaurant: "quantity-few-little",
   hotel: "exchange-borrow-lend",
   office: "false-friend-actually-currently",
+  kitchen: "phrasal-turn-on-turn-off",
+  school: "sound-wear-where",
+  library: "sound-hear-here",
+  metro: "phrasal-get-on-get-off",
+  gym: "phrasal-work-out-work-on",
 };
 
 export function getABCBookSemanticContrastForScene(input: {

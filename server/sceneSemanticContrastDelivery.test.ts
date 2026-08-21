@@ -18,6 +18,11 @@ describe("contrastes semânticos contextuais no Pareto", () => {
     expect(getABCBookSemanticContrastForScene({ sceneId: "restaurant", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("few / little");
     expect(getABCBookSemanticContrastForScene({ sceneId: "hotel", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("borrow / lend");
     expect(getABCBookSemanticContrastForScene({ sceneId: "office", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("actually / currently");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "kitchen", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("turn on / turn off");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "school", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("wear / where");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "library", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("hear / here");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "metro", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("get on / get off");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "gym", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("work out / work on");
   });
 
   it("não fabrica contraste para idioma ou cena sem conteúdo aprovado", () => {
