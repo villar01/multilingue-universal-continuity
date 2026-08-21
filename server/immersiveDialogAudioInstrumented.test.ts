@@ -23,4 +23,12 @@ describe("controle instrumental do áudio imersivo", () => {
     expect(sceneSource).not.toContain('top-[160px] z-[75] h-9');
     expect(sceneSource).not.toContain('bottom-[112px] left-1/2 z-[75]');
   });
+
+  it("remove a fonte inválida antes da recuperação para não manter player residual", () => {
+    expect(sceneSource).toContain('audio.removeAttribute("src");');
+    expect(sceneSource).toContain("audio.load();");
+    expect(sceneSource).toContain("setDialogAudioSource(null);");
+    expect(sceneSource).toContain("setDialogAudioNeedsGesture(false);");
+    expect(sceneSource).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender))");
+  });
 });

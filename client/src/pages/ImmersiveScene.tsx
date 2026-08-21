@@ -1135,12 +1135,15 @@ export default function ImmersiveScene() {
       invalidTrackHandled = true;
       if (invalidTrackTimeout !== null) window.clearTimeout(invalidTrackTimeout);
       audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
       if (updatesActiveDialog()) setDlgAudioClock(false);
       stopVisemeSync();
       setAudioViseme(null);
       setDialogAudioSource(null);
       setDialogAudioDuration(null);
       setDialogAudioPosition(0);
+      setDialogAudioNeedsGesture(false);
       if (audioRef.current === audio) audioRef.current = null;
       if (dialogAudioObjectUrlRef.current === source) {
         URL.revokeObjectURL(source);
