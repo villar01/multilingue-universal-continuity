@@ -102,6 +102,18 @@ export type ABCBookContextGroup = {
   paretoPrompt: string;
 };
 
+export type ABCBookSemanticContrast = {
+  id: string;
+  level: "initial" | "intermediate" | "advanced";
+  kind: "near_meaning" | "homophone" | "multiword_expression";
+  focus: string;
+  contrast: string;
+  explanation: string;
+  examples: Array<{ target: string; native: string; meaning: string }>;
+  comprehensionPrompt: string;
+  paretoPrompt: string;
+};
+
 export type ABCAlphabetLetter = {
   letter: string;
   name: string;
@@ -1350,6 +1362,7 @@ export type ABCBookDelivery = {
   memorySteps: ABCBookMemoryStep[];
   sentenceStructure: ABCBookSentenceStructure;
   contextGroups: ABCBookContextGroup[];
+  semanticContrasts: ABCBookSemanticContrast[];
   languageBlocks: Array<{
     id: string;
     kind: "essential_phrase" | "everyday_expression" | "natural_reply" | "contextual_slang";
@@ -2597,6 +2610,65 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
     { english: "I would like water, please.", portuguese: "Eu gostaria de água, por favor.", focus: "Necessidade e cortesia" },
   ],
   languageBlocks: getLanguageBlocks("A1"),
+  semanticContrasts: [
+    {
+      id: "frequency-ever-always",
+      level: "initial",
+      kind: "near_meaning",
+      focus: "ever / always",
+      contrast: "always fala de hábito ou frequência constante; ever costuma aparecer em perguntas, negativas ou para reforçar uma experiência.",
+      explanation: "Não traduza as duas formas como 'sempre'. Escolha pela intenção: rotina constante ou pergunta sobre alguma vez na vida.",
+      examples: [
+        { target: "I always study in the morning.", native: "Eu sempre estudo de manhã.", meaning: "hábito constante" },
+        { target: "Do you ever study at night?", native: "Você alguma vez estuda à noite?", meaning: "pergunta sobre possibilidade ou experiência" },
+      ],
+      comprehensionPrompt: "A frase fala de rotina constante ou pergunta se algo acontece alguma vez? Explique antes de escolher ever ou always.",
+      paretoPrompt: "Recupere always, ever, study, morning e night; produza uma frase de rotina e uma pergunta de experiência.",
+    },
+    {
+      id: "sound-there-their-theyre",
+      level: "intermediate",
+      kind: "homophone",
+      focus: "there / their / they're",
+      contrast: "As três formas podem soar parecidas, mas there indica lugar, their indica posse e they're significa they are.",
+      explanation: "Use a função na frase para decidir a escrita. Som parecido não garante significado igual.",
+      examples: [
+        { target: "The books are there.", native: "Os livros estão ali.", meaning: "lugar" },
+        { target: "Their books are new.", native: "Os livros deles são novos.", meaning: "posse" },
+        { target: "They're reading now.", native: "Eles estão lendo agora.", meaning: "they are" },
+      ],
+      comprehensionPrompt: "A palavra indica lugar, dono ou a forma curta de they are? Reescreva a frase completa quando usar they're.",
+      paretoPrompt: "Recupere there, their, they, are, books e reading; classifique cada forma pela função antes de escrever.",
+    },
+    {
+      id: "report-say-tell",
+      level: "intermediate",
+      kind: "near_meaning",
+      focus: "say / tell",
+      contrast: "say destaca as palavras ditas; tell normalmente introduz a pessoa que recebe a informação ou uma história.",
+      explanation: "Compare a estrutura, não apenas a tradução: say something; tell someone something.",
+      examples: [
+        { target: "She said hello.", native: "Ela disse olá.", meaning: "palavras ditas" },
+        { target: "She told me the news.", native: "Ela me contou a notícia.", meaning: "informação para uma pessoa" },
+      ],
+      comprehensionPrompt: "Há uma pessoa recebendo a informação? Se houver, teste tell; se o foco for a fala, teste say.",
+      paretoPrompt: "Recupere say, tell, hello, news e me; monte uma frase com fala e outra com informação para alguém.",
+    },
+    {
+      id: "phrasal-look-up-look-for",
+      level: "advanced",
+      kind: "multiword_expression",
+      focus: "look up / look for",
+      contrast: "look up significa consultar informação; look for significa procurar algo que ainda não foi encontrado.",
+      explanation: "A palavra que vem depois de look muda a ação inteira. Aprenda a locução como unidade de sentido.",
+      examples: [
+        { target: "Look up the word in the dictionary.", native: "Consulte a palavra no dicionário.", meaning: "consultar informação" },
+        { target: "I am looking for my keys.", native: "Estou procurando minhas chaves.", meaning: "buscar algo" },
+      ],
+      comprehensionPrompt: "A tarefa é consultar uma informação ou procurar um objeto? Explique por que a partícula muda o sentido.",
+      paretoPrompt: "Recupere look up, look for, word, dictionary e keys; descreva uma consulta e uma busca em frases diferentes.",
+    },
+  ],
   sections: [
     {
       title: "Comece pela ideia completa",

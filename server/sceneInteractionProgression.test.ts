@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { IMMERSIVE_SCENES } from "../client/src/lib/immersiveScenesCatalog";
 import {
+  resolvePedagogicalLevel,
+  resolvePedagogicalLevelContract,
   resolveSceneInteractionProgression,
   type InteractionStage,
 } from "./curriculum/sceneInteractionProgression";
@@ -43,5 +45,15 @@ describe("progressão de interação das cenas", () => {
       expect(scene.dialog).toEqual([]);
       expect(scene.hotspots).toEqual([]);
     }
+  });
+
+  it("formaliza inicial, intermediário, avançado e tecnológico sem fingir unidade tecnológica publicada", () => {
+    expect(resolvePedagogicalLevel("beginner")).toBe("initial");
+    expect(resolvePedagogicalLevel("intermediate")).toBe("intermediate");
+    expect(resolvePedagogicalLevel("advanced")).toBe("advanced");
+    expect(resolvePedagogicalLevelContract("technological")).toMatchObject({
+      responseExpectation: "solve_authentic_multistep_task",
+      requiresApprovedUnit: true,
+    });
   });
 });

@@ -1770,8 +1770,13 @@
 - [ ] Concluir com desempenho real: reduzir estados inválidos de áudio, preservar cenas e professores e validar regressões antes de qualquer expansão ou ação comercial
 - [ ] Garantir progressão pedagógica ascendente: primeiras cenas e recursos simples, com aumento verificável de vocabulário, estrutura, escrita, conversa e revisão nas etapas seguintes
 - [ ] Materializar quatro níveis pedagógicos: inicial, intermediário, avançado e tecnológico, com critérios verificáveis de conteúdo, interação e domínio para cada passagem
+- [ ] Codificar o nível tecnológico e os critérios de passagem entre os quatro níveis, mantendo conteúdo tecnológico específico como pendência até haver unidades aprovadas
 - [ ] Centralizar a ordem pedagógica das cenas e apresentar níveis iniciais antes dos intermediários e avançados, sem alterar o conteúdo protegido
 - [ ] Estruturar cada interação como conceito simples, prática guiada, resposta, correção e aplicação crescente, usando movimento docente somente com mídia real compatível
+- [ ] Incluir progressivamente contrastes semânticos, formas parecidas, homófonos e locuções em vocabulário, Pareto e explicações, com significado contextual e verificação de compreensão
+- [ ] Priorizar no Livro SOS contrastes de significado, homófonos, palavras próximas e locuções, com explicação contextual e compreensão progressiva por nível
+- [x] Criar dentro do Livro SOS uma seção Pareto própria de estruturas de sentido, com memorização ativa, comparação contextual, pergunta de distinção e revisão progressiva — entrega protegida inclui ever/always, there/their/they're, say/tell e look up/look for, do inicial ao avançado, com Pareto e perguntas de compreensão; TypeScript e 406 arquivos/1013 testes aprovados
+- [ ] Definir no servidor o contrato de contraste semântico por nível, sem inserir pares de vocabulário protegidos no pacote público
 - [x] Codificar o contrato de interação progressiva por nível sem expor conteúdo curricular em pacotes públicos — contrato no servidor exige conceito, prática guiada, resposta, feedback e aplicação; autonomia sobe de escolha/repetição para cenário aberto; TypeScript e 404 arquivos/1009 testes aprovados
 - [x] Exibir o player somente após duração de áudio validada, evitando controles persistentes em 0:00 enquanto a faixa falha ou ainda prepara — a fonte só chega ao controle após duração positiva e conversão comum aceita base64 puro ou data URL; TypeScript e 402 arquivos/1003 testes aprovados
 - [ ] Tocar exatamente a resposta escrita já confirmada de James e acionar seu deslocamento lateral somente no início real dessa fala; repetir o mesmo contrato para a apresentação inicial, sem movimento silencioso ou conteúdo falado diferente do texto exibido
