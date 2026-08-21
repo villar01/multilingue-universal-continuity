@@ -273,7 +273,12 @@ export default function DashboardReal() {
   const currentLevelOption = LEVEL_OPTIONS.find(l => l.id === selectedLevel)!;
   const pedagogicalReadiness = courseProgressData?.pedagogicalReadiness;
   const pedagogicalLevels = courseProgressData?.pedagogicalLevels ?? [];
-  const masteryPercent = pedagogicalReadiness ? Math.round(pedagogicalReadiness.averageMastery * 100) : 0;
+  const masteryPercent = typeof pedagogicalReadiness?.averageMastery === "number"
+    ? Math.round(pedagogicalReadiness.averageMastery * 100)
+    : null;
+  const observedLessonBand = pedagogicalReadiness
+    ? PEDAGOGICAL_LEVEL_LABELS[pedagogicalReadiness.observedLessonBand]
+    : null;
   const currentPedagogicalLevel = pedagogicalReadiness
     ? PEDAGOGICAL_LEVEL_LABELS[pedagogicalReadiness.currentLevel]
     : null;
@@ -374,7 +379,7 @@ export default function DashboardReal() {
                   <div className="space-y-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge className="bg-indigo-600 text-white hover:bg-indigo-600">
-                        Etapa atual: {currentPedagogicalLevel}
+                        Etapa pedagógica confirmada: {currentPedagogicalLevel}
                       </Badge>
                       {nextPedagogicalLevel && (
                         <Badge variant="outline" className="border-indigo-200 bg-white text-indigo-800">
@@ -382,13 +387,20 @@ export default function DashboardReal() {
                         </Badge>
                       )}
                     </div>
-                    <div>
-                      <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-                        <span className="font-medium text-slate-700">Domínio observado no curso</span>
-                        <span className="font-bold text-indigo-700">{masteryPercent}%</span>
+                    {masteryPercent === null ? (
+                      <div className="rounded-lg border border-indigo-100 bg-white/80 p-3 text-sm text-slate-700">
+                        <p className="font-medium">Faixa observada pelas lições: {observedLessonBand}</p>
+                        <p className="mt-1 text-xs text-slate-600">O domínio será calculado quando respostas avaliadas registrarem as evidências pedagógicas exigidas.</p>
                       </div>
-                      <Progress value={masteryPercent} className="h-3 bg-indigo-100" />
-                    </div>
+                    ) : (
+                      <div>
+                        <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                          <span className="font-medium text-slate-700">Domínio observado no curso</span>
+                          <span className="font-bold text-indigo-700">{masteryPercent}%</span>
+                        </div>
+                        <Progress value={masteryPercent} className="h-3 bg-indigo-100" />
+                      </div>
+                    )}
                     <div className="rounded-lg border border-indigo-100 bg-white/80 p-3 text-sm text-slate-700">
                       <div className="flex items-start gap-2">
                         {pedagogicalReadiness.meetsMasteryThreshold ? (
@@ -399,7 +411,7 @@ export default function DashboardReal() {
                         <p>
                           {pedagogicalReadiness.meetsMasteryThreshold
                             ? "O domínio mínimo da próxima etapa foi alcançado. A passagem continua dependendo das evidências pedagógicas exigidas."
-                            : "Continue as atividades guiadas e as respostas contextualizadas para construir a evidência necessária para a próxima etapa."}
+                            : "Continue as atividades guiadas e as respostas contextualizadas; elas registrarão as evidências necessárias para a próxima etapa."}
                         </p>
                       </div>
                     </div>

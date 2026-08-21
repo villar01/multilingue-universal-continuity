@@ -40,10 +40,12 @@ export function describePedagogicalLevel(level: PedagogicalLevel): LearningLevel
 export interface PedagogicalReadiness {
   currentLevel: Exclude<PedagogicalLevel, "technological">;
   nextLevel: PedagogicalLevel | null;
+  observedLessonBand: Exclude<PedagogicalLevel, "technological">;
   completedLessons: number;
-  averageMastery: number;
+  averageMastery: null;
+  masteryStatus: "awaiting_assessed_responses";
   meetsMasteryThreshold: boolean;
-  evidenceStatus: "pending_verification";
+  evidenceStatus: "not_collected";
   canUnlockCurriculum: false;
 }
 
@@ -52,30 +54,27 @@ export function derivePedagogicalReadiness(input: Partial<{
   totalPoints: number | null;
 }>): PedagogicalReadiness {
   const completedLessons = Math.max(0, input.completedLessons ?? 0);
-  const totalPoints = Math.max(0, input.totalPoints ?? 0);
-  const averageMastery = completedLessons > 0
-    ? Math.min(1, totalPoints / completedLessons / 100)
-    : 0;
-
-  const currentLevel: Exclude<PedagogicalLevel, "technological"> = completedLessons <= 10
+  const observedLessonBand: Exclude<PedagogicalLevel, "technological"> = completedLessons <= 10
     ? "initial"
     : completedLessons <= 35
       ? "intermediate"
       : "advanced";
-  const nextLevel: PedagogicalLevel | null = currentLevel === "initial"
-    ? "intermediate"
-    : currentLevel === "intermediate"
-      ? "advanced"
-      : "technological";
-  const nextContract = nextLevel ? PEDAGOGICAL_LEVEL_PASSAGE[nextLevel] : null;
+
+  // O esquema atual preserva lições concluídas e pontos de motivação, mas ainda
+  // não persiste respostas avaliadas por evidência. Portanto, nenhum desses
+  // campos pode declarar domínio ou passagem curricular.
+  const currentLevel: Exclude<PedagogicalLevel, "technological"> = "initial";
+  const nextLevel: PedagogicalLevel | null = "intermediate";
 
   return {
     currentLevel,
     nextLevel,
+    observedLessonBand,
     completedLessons,
-    averageMastery: Number(averageMastery.toFixed(3)),
-    meetsMasteryThreshold: nextContract ? averageMastery >= nextContract.minimumMastery : false,
-    evidenceStatus: "pending_verification",
+    averageMastery: null,
+    masteryStatus: "awaiting_assessed_responses",
+    meetsMasteryThreshold: false,
+    evidenceStatus: "not_collected",
     canUnlockCurriculum: false,
   };
 }
