@@ -27,7 +27,9 @@ describe("política de voz do professor na lição", () => {
     const lessonClip = source.slice(source.indexOf("<AnimatedLessonClip"), source.indexOf("</Suspense>", source.indexOf("<AnimatedLessonClip")));
 
     expect(vocabularyTeacher).toContain("gender: teacherVoice.gender");
+    expect(vocabularyTeacher).toContain("voiceLang: teacherVoice.voiceLang");
     expect(lessonClip).toContain("gender: teacherVoice.gender");
+    expect(lessonClip).toContain("voiceLang: teacherVoice.voiceLang");
   });
 
   it("usa a voz do professor ativo na dicção de pronúncia", () => {

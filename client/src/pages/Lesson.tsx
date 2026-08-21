@@ -1125,7 +1125,7 @@ export default function Lesson() {
                     onSpeak={(word) => {
                       generateTeacherAudio.mutate({
                         text: word,
-                        voiceLang: lesson.languageCode || 'en-US',
+                        voiceLang: teacherVoice.voiceLang,
                         gender: teacherVoice.gender,
                       });
                     }}
@@ -1152,7 +1152,7 @@ export default function Lesson() {
                     onSpeak={(text) => {
                       generateTeacherAudio.mutate({
                         text,
-                        voiceLang: lesson.languageCode || 'en-US',
+                        voiceLang: teacherVoice.voiceLang,
                         gender: teacherVoice.gender,
                       });
                     }}
