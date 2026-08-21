@@ -126,6 +126,13 @@ const LEGACY_LEVEL_TO_CEFR: Record<string, CourseLevel> = {
   negocios_tecnologia: "B2",
 };
 
+const PEDAGOGICAL_LEVEL_LABELS: Record<string, string> = {
+  initial: "Inicial",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
+  technological: "Tecnológico",
+};
+
 // Mantido como referência canônica de capacidade técnica; o painel comercial não o usa como promessa de currículo ativo.
 void ACTIVE_LANGUAGE_COUNT;
 
@@ -190,6 +197,10 @@ export default function DashboardReal() {
   );
   // Fallback: se não encontrar o level exato, usar o primeiro curso do idioma
   const courseId = matchedCourse?.id ?? (languageCourses as any[])?.[0]?.id ?? 0;
+  const { data: courseProgressData, isLoading: loadingPedagogicalReadiness } = trpc.progress.getCourseProgress.useQuery(
+    { courseId },
+    { enabled: courseId > 0 && !!user, retry: false }
+  );
 
   // Buscar lições do curso correspondente ao idioma + nível
   const { data: courseData, isLoading: loadingLessons } = trpc.lessons.getByCourse.useQuery(
@@ -251,6 +262,14 @@ export default function DashboardReal() {
 
   const selectedLanguage = languages?.find(l => l.id === selectedLanguageId);
   const currentLevelOption = LEVEL_OPTIONS.find(l => l.id === selectedLevel)!;
+  const pedagogicalReadiness = courseProgressData?.pedagogicalReadiness;
+  const masteryPercent = pedagogicalReadiness ? Math.round(pedagogicalReadiness.averageMastery * 100) : 0;
+  const currentPedagogicalLevel = pedagogicalReadiness
+    ? PEDAGOGICAL_LEVEL_LABELS[pedagogicalReadiness.currentLevel]
+    : null;
+  const nextPedagogicalLevel = pedagogicalReadiness?.nextLevel
+    ? PEDAGOGICAL_LEVEL_LABELS[pedagogicalReadiness.nextLevel]
+    : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -322,6 +341,69 @@ export default function DashboardReal() {
         <div data-tour="tour-dash-lessons" className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
+
+            {/* ── PRONTIDÃO PEDAGÓGICA PROTEGIDA ─────────────────────── */}
+            <Card className="border-2 border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg text-indigo-950">
+                  <GraduationCap className="h-5 w-5 text-indigo-600" />
+                  Prontidão pedagógica
+                </CardTitle>
+                <CardDescription>
+                  A passagem de etapa considera domínio demonstrado e evidências pedagógicas. XP mantém somente sua função motivacional.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingPedagogicalReadiness ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-48" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-4 w-72" />
+                  </div>
+                ) : pedagogicalReadiness ? (
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge className="bg-indigo-600 text-white hover:bg-indigo-600">
+                        Etapa atual: {currentPedagogicalLevel}
+                      </Badge>
+                      {nextPedagogicalLevel && (
+                        <Badge variant="outline" className="border-indigo-200 bg-white text-indigo-800">
+                          Próxima etapa: {nextPedagogicalLevel}
+                        </Badge>
+                      )}
+                    </div>
+                    <div>
+                      <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                        <span className="font-medium text-slate-700">Domínio observado no curso</span>
+                        <span className="font-bold text-indigo-700">{masteryPercent}%</span>
+                      </div>
+                      <Progress value={masteryPercent} className="h-3 bg-indigo-100" />
+                    </div>
+                    <div className="rounded-lg border border-indigo-100 bg-white/80 p-3 text-sm text-slate-700">
+                      <div className="flex items-start gap-2">
+                        {pedagogicalReadiness.meetsMasteryThreshold ? (
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        ) : (
+                          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
+                        )}
+                        <p>
+                          {pedagogicalReadiness.meetsMasteryThreshold
+                            ? "O domínio mínimo da próxima etapa foi alcançado. A passagem continua dependendo das evidências pedagógicas exigidas."
+                            : "Continue as atividades guiadas e as respostas contextualizadas para construir a evidência necessária para a próxima etapa."}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      {pedagogicalReadiness.completedLessons} lições registradas neste curso. A seleção de nível acima organiza a visualização das lições; ela não libera currículo.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-600">
+                    Selecione um idioma e um curso para acompanhar sua prontidão pedagógica.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
             {/* ── SELETOR DE NÍVEL ─────────────────────────────────────── */}
             <Card className="border-2 border-blue-100 shadow-sm">
