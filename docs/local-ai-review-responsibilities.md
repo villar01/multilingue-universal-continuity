@@ -12,8 +12,9 @@ Este documento separa as funções de diagnóstico, revisão e decisão para evi
 ## Ciclo permitido
 
 1. Um erro reproduzível, log ou regressão abre uma tarefa no `todo.md`.
-2. Um diagnóstico local opcional pode propor uma alteração, sem executá-la autonomamente.
-3. A alteração passa por revisão de código, TypeScript, testes e validação proporcional ao risco.
-4. Um checkpoint preserva o estado verificado; decisões comerciais ou externas continuam exigindo autorização explícita.
+2. Métricas agregadas permitidas, logs sanitizados e regressões podem orientar um diagnóstico local opcional, que apenas propõe uma alteração revisável.
+3. Uma pessoa abre e revisa a alteração proposta; nenhuma sugestão altera arquivos, banco, mídia, preço, segurança ou produção sozinha.
+4. A alteração passa por TypeScript, testes e validação visual proporcional ao risco.
+5. Um checkpoint preserva o estado verificado; decisões comerciais ou externas continuam exigindo autorização explícita.
 
 > O serviço local de IA é **opcional**. A ausência de Ollama, Qwen ou GPU nunca pode bloquear estudo, segurança, conteúdo autenticado ou a continuidade do aplicativo.
