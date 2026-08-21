@@ -41,7 +41,10 @@ describe("backup audiovisual aprovado de James", () => {
     expect(introBranch.indexOf('playJamesTropicalClip("james-tropical-greeting")')).toBeLessThan(introBranch.indexOf("void playTeacherAudio("));
     expect(greeting?.audioVideoExactPair).not.toBe(true);
     expect(sceneSource).toContain("audio.onplaying = () => {");
-    expect(sceneSource).toContain("setActiveJamesClipId(confirmedJamesClipId);");
+    expect(sceneSource).toContain("const promotePendingJamesClipForSpokenText = useCallback");
+    expect(sceneSource).toContain("pendingClip.dialogue !== spokenText");
+    expect(sceneSource).toContain("promotePendingJamesClipForSpokenText(phrase);");
+    expect(sceneSource).toContain("promotePendingJamesClipForSpokenText(text);");
   });
 
   it("expõe vídeo exato ou movimento lateral temporizado, sem declarar sincronização labial fora do par exato", () => {

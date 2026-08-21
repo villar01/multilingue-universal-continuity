@@ -43,8 +43,8 @@ describe("integração de clipes de James na Praia Tropical", () => {
     ]);
     expect(sceneSource).toContain("const pendingJamesClipIdRef = useRef<JamesTropicalPilotClipId | null>(null);");
     expect(sceneSource).toContain("pendingJamesClipIdRef.current = clip.id;");
-    expect(sceneSource).toContain("if (teachingScene?.id === \"beach\" && teachingScene.teacherName === \"James\" && pendingJamesClipIdRef.current) {");
-    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(sceneSource).toContain("const promotePendingJamesClipForSpokenText = useCallback");
+    expect(sceneSource).toContain("pendingClip.dialogue !== spokenText");
     expect(sceneSource).toContain('const jamesObjectClipId = activeTeacherScene.teacherName === "James"');
     expect(sceneSource).toContain('playJamesTropicalClip(jamesObjectClipId)');
     expect(sceneSource).toContain('palm: "james-tropical-point-palm"');
@@ -90,7 +90,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
 
   it("mantém a mesma regra para a reserva local: clipe só inicia em utterance.onstart e termina com a voz", () => {
     expect(sceneSource).toContain("utterance.onstart = () => {");
-    expect(sceneSource).toContain('teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current');
+    expect(sceneSource).toContain("promotePendingJamesClipForSpokenText(text);");
     expect(sceneSource).toContain("const finish = () => {");
     expect(sceneSource).toContain("pendingJamesClipIdRef.current = null;");
   });
@@ -104,7 +104,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(dialogStart).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(dialogStart).toContain('"james-tropical-introduction"');
     expect(sceneSource).toContain("audio.onplaying = () => {");
-    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(sceneSource).toContain("promotePendingJamesClipForSpokenText(phrase);");
   });
 
   it("rearma o clipe lateral e mostra a mesma frase acima do retrato ao repetir a fala confirmada", () => {
@@ -112,7 +112,7 @@ describe("integração de clipes de James na Praia Tropical", () => {
     expect(replayFlow).toContain('playJamesTropicalClip("james-tropical-greeting");');
     expect(replayFlow).toContain("setActiveJamesClipId(null);");
     expect(replayFlow).toContain("await audio.play();");
-    expect(replayFlow).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(replayFlow).toContain("promotePendingJamesClipForSpokenText(activeSpeechText);");
     expect(sceneSource).toContain("const visibleGreeting = isSpeaking && spokenText?.trim() ? spokenText.trim() : greeting;");
     expect(sceneSource).toContain("const showTeacherBubble = showGreeting || Boolean(isSpeaking && spokenText?.trim());");
     expect(sceneSource).toContain("<div>{visibleGreeting}</div>");

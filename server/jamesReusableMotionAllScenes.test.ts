@@ -7,7 +7,9 @@ const sceneSource = readFileSync(resolve(process.cwd(), "client/src/pages/Immers
 describe("James motion promotion in immersive scenes", () => {
   it("uses only the approved lateral clip after the audio player confirms playback", () => {
     expect(sceneSource).toContain("audio.onplaying = () => {");
-    expect(sceneSource).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(sceneSource).toContain("const promotePendingJamesClipForSpokenText = useCallback");
+    expect(sceneSource).toContain("pendingClip.dialogue !== spokenText");
+    expect(sceneSource).toContain("promotePendingJamesClipForSpokenText(phrase);");
     expect(sceneSource).toContain("showPilotClip && activeClip?.videoUrl");
     expect(sceneSource).not.toContain("JAMES_NEUTRAL_MOTION_URL");
     expect(sceneSource).not.toContain("showNeutralJamesMotion");

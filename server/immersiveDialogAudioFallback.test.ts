@@ -87,7 +87,7 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(dialogStart).toContain("JAMES_TROPICAL_INTRO_FALLBACK_URL");
     expect(dialogStart).toContain('"james-tropical-introduction"');
     expect(source).toContain("audio.onplaying = () => {");
-    expect(source).toContain("setActiveJamesClipId(pendingJamesClipIdRef.current);");
+    expect(source).toContain("promotePendingJamesClipForSpokenText(phrase);");
   });
 
   it("usa reservas masculinas curtas para os quatro objetos da Praia Tropical sem ativar vídeo de fala diferente", () => {

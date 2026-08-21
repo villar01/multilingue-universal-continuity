@@ -13,7 +13,7 @@ describe("fronteira entre diálogo e prova facial", () => {
 
   it("usa o início real de áudio como condição do movimento de clipe aprovado", () => {
     const playback = source.slice(source.indexOf("audio.onplaying = () => {"), source.indexOf("audio.onended = () => {"));
-    expect(playback).toContain("setActiveJamesClipId");
+    expect(playback).toContain("promotePendingJamesClipForSpokenText(phrase);");
     expect(playback).toContain("setActiveSophieClipId");
   });
 });

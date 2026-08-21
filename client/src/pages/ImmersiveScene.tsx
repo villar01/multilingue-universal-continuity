@@ -693,6 +693,18 @@ export default function ImmersiveScene() {
     pendingJamesClipIdRef.current = clip.id;
     return clip;
   }, [selectedScene?.id, selectedScene?.teacherName]);
+  const promotePendingJamesClipForSpokenText = useCallback((spokenText: string) => {
+    if (selectedScene?.id !== "beach" || selectedScene.teacherName !== "James") return false;
+    const pendingClipId = pendingJamesClipIdRef.current;
+    const pendingClip = pendingClipId
+      ? JAMES_TROPICAL_PILOT_CLIPS.find((candidate) => candidate.id === pendingClipId && candidate.videoUrl)
+      : null;
+    if (!pendingClip || pendingClip.dialogue !== spokenText) return false;
+
+    setActiveJamesClipId(pendingClip.id);
+    pendingJamesClipIdRef.current = null;
+    return true;
+  }, [selectedScene?.id, selectedScene?.teacherName]);
   const playSophieCafeClip = useCallback((clipId: SophieCafePilotClipId) => {
     if (selectedScene?.id !== "cafe" || selectedScene.teacherName !== "Sophie") return null;
     const clip = SOPHIE_CAFE_PILOT_CLIPS.find((candidate) => candidate.id === clipId && candidate.videoUrl);
@@ -1054,10 +1066,7 @@ export default function ImmersiveScene() {
         // A reserva local também tem um evento real de início de áudio. Assim,
         // o movimento lateral já aprovado só aparece quando a fala de fato
         // começou — nunca no clique, na preparação ou no silêncio.
-        if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current) {
-          setActiveJamesClipId(pendingJamesClipIdRef.current);
-          pendingJamesClipIdRef.current = null;
-        }
+        promotePendingJamesClipForSpokenText(text);
         if (teachingScene?.id === "cafe" && teachingScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
           setActiveSophieClipId(pendingSophieClipIdRef.current);
           pendingSophieClipIdRef.current = null;
@@ -1075,7 +1084,7 @@ export default function ImmersiveScene() {
       return true;
     };
     return startWithAvailableVoices(2);
-  }, [dialogSpeechRate, stopVisemeSync, teachingScene?.id, teachingScene?.teacherName]);
+  }, [dialogSpeechRate, promotePendingJamesClipForSpokenText, stopVisemeSync, teachingScene?.id, teachingScene?.teacherName]);
 
   useEffect(() => () => stopTeacherAudio(), [stopTeacherAudio]);
 
@@ -1168,12 +1177,7 @@ export default function ImmersiveScene() {
       setIsSpeaking(true);
       setDialogAudioNeedsGesture(false);
       if (activeDialogLineRef.current === phrase) setDlgOpen(true);
-      const confirmedJamesClipId = pendingJamesClipIdRef.current
-        || (requestKey === "james-tropical-introduction" ? "james-tropical-greeting" : null);
-      if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && confirmedJamesClipId) {
-        setActiveJamesClipId(confirmedJamesClipId);
-        pendingJamesClipIdRef.current = null;
-      }
+      promotePendingJamesClipForSpokenText(phrase);
       if (teachingScene?.id === "cafe" && teachingScene.teacherName === "Sophie" && pendingSophieClipIdRef.current) {
         setActiveSophieClipId(pendingSophieClipIdRef.current);
         pendingSophieClipIdRef.current = null;
@@ -1268,7 +1272,7 @@ export default function ImmersiveScene() {
       return;
     }
     setDlgAudioNotice(`Voz de ${teachingScene?.teacherName || "professor"} pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para iniciar.`);
-  }, [dialogSpeechRate, playLocalDialogFallback, stopVisemeSync, teachingScene?.teacherGender, teachingScene?.teacherName]);
+  }, [dialogSpeechRate, playLocalDialogFallback, promotePendingJamesClipForSpokenText, stopVisemeSync, teachingScene?.teacherGender, teachingScene?.teacherName]);
 
   const replayVisibleDialogAudio = useCallback(async () => {
     const audio = dialogAudioElementRef.current;
@@ -1290,17 +1294,14 @@ export default function ImmersiveScene() {
       // Alguns navegadores resolvem play() sem emitir onplaying no elemento
       // visualmente oculto. A promessa resolvida também confirma reprodução;
       // só então promovemos o clipe lateral pendente.
-      if (teachingScene?.id === "beach" && teachingScene.teacherName === "James" && pendingJamesClipIdRef.current) {
-        setActiveJamesClipId(pendingJamesClipIdRef.current);
-        pendingJamesClipIdRef.current = null;
-      }
+      promotePendingJamesClipForSpokenText(activeSpeechText);
       setDlgAudioNotice("");
       setDialogAudioNeedsGesture(false);
     } catch {
       setDialogAudioNeedsGesture(true);
       setDlgAudioNotice(`Toque em Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || targetLang)} para escutar a frase e continuar a prática.`);
     }
-  }, [dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, targetLang, teachingScene?.id, teachingScene?.teacherGender, teachingScene?.teacherLang, teachingScene?.teacherName]);
+  }, [activeSpeechText, dialogAudioSource, dialogSpeechRate, playJamesTropicalClip, promotePendingJamesClipForSpokenText, targetLang, teachingScene?.id, teachingScene?.teacherGender, teachingScene?.teacherLang, teachingScene?.teacherName]);
 
   const primeDialogAudioFromGesture = useCallback(() => {
     try {
