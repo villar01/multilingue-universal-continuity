@@ -28,5 +28,6 @@
 | Hotel e Hospital — verificação final | O Hospital renderizou com **James** e hotspots em inglês: **Doctor, Nurse, Medicine, Hospital Bed, X-Ray**. O Hotel renderizou cenário e James, mas manteve rótulos em italiano, portanto requer correção curricular PT-BR→EN antes de aprovação final. |
 | Hotel — após a correção PT-BR→EN | O Hotel renderizou com **James** e hotspots em inglês: **Reception, Chandelier, Column, Armchair, Plant, Lamp**. A regressão também confirma que os diálogos localizados usam James nas cenas da matriz dele e Ingrid nas cenas dela. |
 | Casa da Família e Aeroporto — verificação final | As duas cenas renderizaram com **James**, cenário visível e hotspots em inglês. A Casa mostrou **Bedroom, Window, Television, Family, Table, Sofa, Door, Kitchen**; o Aeroporto mostrou **Gate, Sign, Window, People, Person, Floor**. |
+| Floresta e Nova York — verificação final | As duas cenas renderizaram com **James**, cenário visível e hotspots em inglês. A Floresta mostrou **Tree, Sun, Bird, Flower, Mushroom, River**; Nova York mostrou **Statue, Building, Sun, City, Window, Water**. |
 
 Esta verificação cobre apenas a renderização visual de prévia. O material pedagógico continua protegido pelo fluxo autenticado e as regras de voz, retrato e clipes são cobertas pela suíte de regressão.
