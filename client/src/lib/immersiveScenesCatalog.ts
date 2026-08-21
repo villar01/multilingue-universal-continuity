@@ -7,6 +7,22 @@ export const IMMERSIVE_VOICE_REFERENCE = {
   gender: "male" as const,
 } as const;
 
+export const PEDAGOGICAL_DIFFICULTY_ORDER = {
+  beginner: 0,
+  intermediate: 1,
+  advanced: 2,
+} as const;
+
+export function orderScenesByPedagogicalLevel<T extends { difficulty: keyof typeof PEDAGOGICAL_DIFFICULTY_ORDER }>(scenes: T[]): T[] {
+  return scenes
+    .map((scene, originalIndex) => ({ scene, originalIndex }))
+    .sort((left, right) => {
+      const difficultyDifference = PEDAGOGICAL_DIFFICULTY_ORDER[left.scene.difficulty] - PEDAGOGICAL_DIFFICULTY_ORDER[right.scene.difficulty];
+      return difficultyDifference || left.originalIndex - right.originalIndex;
+    })
+    .map(({ scene }) => scene);
+}
+
 /**
  * Catálogo de prévias visuais. Falas, vocabulário, hotspots e diálogos são
  * buscados exclusivamente por procedimentos autenticados após a autorização.
@@ -42,3 +58,9 @@ export const IMMERSIVE_SCENES: Scene[] = [
   { id: "family_home", name: "Casa da Família", nameEn: "Family at Home", flag: "🏠", bgImage: "https://d2xsxph8kpxj0f.cloudfront.net/310519663082627627/2PrAxuVNSTauUZFfMWq3zJ/scene_family_home-o3WNxh4WSTa7fkpvh4ALxF.webp", teacherImage: "/manus-storage/prof_james_b9f2fff7.png", teacherName: "James", teacherLang: "en-US", langCode: "en", teacherGender: "male", difficulty: "beginner", premium: false, dialog: [], hotspots: [] },
   { id: "airport_family", name: "Família no Aeroporto", nameEn: "Family at Airport", flag: "✈️🏠", bgImage: "/manus-storage/scene_airport_family_005d0f25.jpg", teacherImage: "/manus-storage/prof_james_b9f2fff7.png", teacherName: "James", teacherLang: "en-US", langCode: "en", teacherGender: "male", difficulty: "intermediate", premium: false, dialog: [], hotspots: [] },
 ];
+
+IMMERSIVE_SCENES.splice(
+  0,
+  IMMERSIVE_SCENES.length,
+  ...orderScenesByPedagogicalLevel(IMMERSIVE_SCENES),
+);

@@ -1764,6 +1764,7 @@
 - [ ] Eliminar a necessidade de o usuário repetir pedidos principais, convertendo-os em contratos centrais, histórico preservado e regressões bloqueadoras
 - [ ] Declarar diretrizes como concluídas somente com código, regressão aprovada e comportamento verificável; manter planos e lacunas como pendências explícitas
 - [ ] Preservar todos os pedidos relevantes em requisitos rastreáveis, vinculados a evidência ou pendência explícita, sem perda silenciosa de solicitação
+- [ ] Executar melhorias contínuas somente com correção, regressão e preservação de contratos no mesmo ciclo de validação
 - [ ] Manter fontes disponíveis em tarefas concretas de correção, teste e evidência, bloqueando somente aquelas sem saúde ou permissão comprovada
 - [ ] Registrar estado de saúde e responsabilidade verificável de cada fonte de IA, sem declarar colaboração ativa sem serviço e tarefa comprovados
 - [ ] Encadear diagnóstico, revisão, execução, teste e evidência entre fontes de IA sem separar resultados nem elevar permissões sensíveis
@@ -1772,7 +1773,8 @@
 - [ ] Garantir progressão pedagógica ascendente: primeiras cenas e recursos simples, com aumento verificável de vocabulário, estrutura, escrita, conversa e revisão nas etapas seguintes
 - [ ] Materializar quatro níveis pedagógicos: inicial, intermediário, avançado e tecnológico, com critérios verificáveis de conteúdo, interação e domínio para cada passagem
 - [ ] Codificar o nível tecnológico e os critérios de passagem entre os quatro níveis, mantendo conteúdo tecnológico específico como pendência até haver unidades aprovadas
-- [ ] Centralizar a ordem pedagógica das cenas e apresentar níveis iniciais antes dos intermediários e avançados, sem alterar o conteúdo protegido
+- [x] Centralizar a ordem pedagógica das cenas e apresentar níveis iniciais antes dos intermediários e avançados, sem alterar o conteúdo protegido — o catálogo mantém 29 prévias e é ordenado em memória por nível, preservando dados e proteção curricular; TypeScript e 408 arquivos/1015 testes aprovados
+- [x] Aplicar uma sequência central de cenas por nível pedagógico, incluindo a etapa tecnológica como futura expansão protegida — níveis beginner, intermediate e advanced são ordenados de forma estável; a etapa tecnológica permanece contratada como expansão protegida até haver unidades aprovadas
 - [ ] Estruturar cada interação como conceito simples, prática guiada, resposta, correção e aplicação crescente, usando movimento docente somente com mídia real compatível
 - [ ] Incluir progressivamente contrastes semânticos, formas parecidas, homófonos e locuções em vocabulário, Pareto e explicações, com significado contextual e verificação de compreensão
 - [x] Explicar gírias e expressões incomuns com contexto e alternativa formal, mantendo registro formal como resposta preferencial do professor — a conversa bilíngue instrui o docente a explicar significado, contexto e equivalente formal; TypeScript e 407 arquivos/1014 testes aprovados
