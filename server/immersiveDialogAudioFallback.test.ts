@@ -113,6 +113,10 @@ describe("áudio e estado visual do diálogo imersivo", () => {
     expect(source).toContain('reportAudioEvent("play-rejected", error instanceof Error ? error.name : "unknown");');
     expect(source).toContain('reportAudioEvent("error", audio.error?.message || String(audio.error?.code ?? "unknown"));');
     expect(source).toContain("if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)) {");
+    const autoplayRejection = source.slice(source.indexOf("if (autoPlay) {"), source.indexOf("setDlgAudioNotice(`Voz de"));
+    expect(autoplayRejection).not.toContain("playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)");
+    expect(autoplayRejection).toContain("setDialogAudioNeedsGesture(true);");
+    expect(autoplayRejection).toContain("Resposta pronta. Toque em Ouvir ${teachingScene?.teacherName || \"professor\"} para ouvir.");
     expect(source).not.toContain("phrase: phrase");
   });
 

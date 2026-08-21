@@ -1240,10 +1240,6 @@ export default function ImmersiveScene() {
           setDlgOpen(true);
           setDialogAudioNeedsGesture(true);
         }
-        if (playLocalDialogFallback(phrase, _language, requestKey, teachingScene?.teacherGender)) {
-          setDlgAudioNotice("");
-          return;
-        }
         setDlgAudioNotice(`Resposta pronta. Toque em Ouvir ${teachingScene?.teacherName || "professor"} para ouvir.`);
       });
       return;
