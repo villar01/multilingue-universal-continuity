@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 
 import { isTemporarilyAbuseBlocked, recordAbuseSignal } from "./_core/abuseProtection";
+import { __resetSecurityIncidentReporterForTests, reportSecurityIncident } from "./securityIncidentReporter";
 
 // ── Rate Limiting ─────────────────────────────────────────────
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -129,6 +130,7 @@ export function buildContentSecurityPolicy(): string {
 export function securityMiddleware(req: Request, res: Response, next: NextFunction): void {
   const clientIp = getClientIp(req);
   const userAgent = req.headers['user-agent'] || '';
+  const requestScope = req.path || req.originalUrl || "/application";
   const now = Date.now();
   cleanExpiredBucketsWhenDue(now);
 
@@ -164,6 +166,8 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   // legítima de cena em resposta 429.
   const globalLimit = getRateLimitBucket(req) ? GLOBAL_API_RATE_LIMIT : GLOBAL_PAGE_ASSET_RATE_LIMIT;
   if ((globalRequestCounts.get(clientIp)?.count ?? 0) > globalLimit) {
+    recordAbuseSignal(clientIp, "rate-limit", now);
+    void reportSecurityIncident({ kind: "global_rate_limit", endpoint: requestScope, now });
     res.status(429).json({ error: 'Servidor sobrecarregado. Tente novamente.' });
     return;
   }
@@ -186,6 +190,7 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
       ipData.count++;
       if (ipData.count > bucket.max) {
         recordAbuseSignal(clientIp, "rate-limit", now);
+        void reportSecurityIncident({ kind: "api_rate_limit", endpoint: requestScope, now });
         res.status(429).json({ error: 'Limite de requisicoes excedido.' });
         return;
       }
@@ -195,6 +200,7 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
   // Suspicious User Agent
   if (isSuspiciousUserAgent(userAgent)) {
     recordAbuseSignal(clientIp, "scanner", now);
+    void reportSecurityIncident({ kind: "suspicious_user_agent", endpoint: requestScope, now });
     console.warn("[SECURITY] Suspicious user-agent blocked");
     res.status(403).json({ error: 'Acesso negado.' });
     return;
@@ -207,11 +213,13 @@ export function securityMiddleware(req: Request, res: Response, next: NextFuncti
       if (typeof value === 'string') {
         if (detectSqlInjection(value)) {
           recordAbuseSignal(clientIp, "malicious-input", now);
+          void reportSecurityIncident({ kind: "sql_injection", endpoint: requestScope, now });
           console.warn(`[SECURITY] SQL injection pattern blocked at ${path}.${key}`);
           return true;
         }
         if (detectXss(value)) {
           recordAbuseSignal(clientIp, "malicious-input", now);
+          void reportSecurityIncident({ kind: "xss_attempt", endpoint: requestScope, now });
           console.warn(`[SECURITY] XSS pattern blocked at ${path}.${key}`);
           return true;
         }
@@ -254,4 +262,5 @@ export function __resetSecurityStateForTests(): void {
   requestCounts.clear();
   globalRequestCounts.clear();
   lastBucketCleanupAt = 0;
+  __resetSecurityIncidentReporterForTests();
 }

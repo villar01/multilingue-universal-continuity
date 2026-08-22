@@ -2387,3 +2387,10 @@
 - [x] Restaurar animações dos professores nas cenas imersivas — animation estava fixada em 'none' impedindo qualquer movimento; agora usa teacher-breathe em repouso e head-sway ao falar; TypeScript e 416 arquivos/1039 testes aprovados, Aeroporto verificado visualmente
 - [ ] Fazer push final para GitHub em 24/08/2026 (último dia antes do limite free) com a versão mais completa do app
 - [ ] Fazer push para GitHub após cada marco publicado para manter backup sempre atualizado
+- [x] Implementar alerta privado ao proprietário quando rate limit, scanner, SQL injection ou XSS forem bloqueados, sem expor IP bruto ou detalhes defensivos ao cliente
+- [x] Registrar incidentes de segurança com contexto minimizado para relatórios privados e recomendações de resposta que dependam da decisão do proprietário
+- [ ] Comunicar benefícios de privacidade, proteção de acesso e continuidade ao cliente sem divulgar regras, limites, rotas ou mecanismos operacionais de segurança
+- [ ] Criar canal de feedback discreto em todas as telas, com armazenamento privado e notificação para feedback crítico
+- [ ] Criar painel privado do proprietário para feedbacks, incidentes, métricas de uso e recomendações de manutenção ou vendas que nunca executem ações comerciais automaticamente
+- [ ] Implantar verificação periódica e idempotente de qualidade de cenas, áudio e matriz docente, com relatório privado e sem interromper clientes ativos
+- [ ] Mapear dados sensíveis e aplicar criptografia autenticada a campos que precisem ser armazenados, com chaves fora do código e regressões contra exposição em APIs, alertas e logs
