@@ -27,16 +27,6 @@ const ImmersiveAdventure = lazy(() => import("@/components/ImmersiveAdventure"))
 const ACTIVE_LANGUAGE_LABEL = `${ACTIVE_LANGUAGE_COUNT} idiomas ativos`;
 const CATALOG_LANGUAGE_LABEL = `${TOTAL_LANGUAGES} no catálogo`;
 
-// ─── Vocabulário demo ─────────────────────────────────────────────────────────
-const DEMO_VOCAB = [
-  { word: "Hello", translation: "Olá", phonetic: "rê-LÓU", emoji: "👋", imageKeyword: "greeting", examples: [{ en: "Hello, how are you?", pt: "Olá, como vai você?" }] },
-  { word: "Beautiful", translation: "Bonito/a", phonetic: "BIÚ-ti-ful", emoji: "✨", imageKeyword: "beautiful flower", examples: [{ en: "What a beautiful day!", pt: "Que dia bonito!" }] },
-  { word: "Family", translation: "Família", phonetic: "FÊ-mi-li", emoji: "👨‍👩‍👧‍👦", imageKeyword: "family", examples: [{ en: "My family is important.", pt: "Minha família é importante." }] },
-  { word: "Food", translation: "Comida", phonetic: "FÚUD", emoji: "🍽️", imageKeyword: "delicious food", examples: [{ en: "I love Brazilian food.", pt: "Eu amo comida brasileira." }] },
-  { word: "Music", translation: "Música", phonetic: "MIÚ-zik", emoji: "🎵", imageKeyword: "music concert", examples: [{ en: "Music makes me happy.", pt: "Música me faz feliz." }] },
-  { word: "Travel", translation: "Viajar", phonetic: "TRÊ-vel", emoji: "✈️", imageKeyword: "travel adventure", examples: [{ en: "I love to travel.", pt: "Eu adoro viajar." }] },
-];
-
 // ─── Modos disponíveis ────────────────────────────────────────────────────────
 const MODES = [
   {
@@ -210,20 +200,17 @@ export default function ARMode() {
   // Connect to real SRS vocabulary from user's learning progress
   const targetLangCode = localStorage.getItem("ml_target_lang") || "en-US";
   const languageCode = targetLangCode.split("-")[0] || "en";
-  const { data: srsCards } = trpc.srs.getDue.useQuery(
-    { targetLanguage: targetLangCode, limit: 20 },
+  const { data: arVocabulary } = trpc.arVocabulary.forLearner.useQuery(
+    { targetLanguage: targetLangCode },
     { enabled: !!user, staleTime: 5 * 60 * 1000 } // cache 5min no cliente
   );
-  // Use SRS vocabulary if available, fallback to DEMO_VOCAB
-  const vocabulary = (srsCards && srsCards.length > 0)
-    ? srsCards.map((c: any) => ({
-        word: c.word,
-        translation: c.translation || c.word,
-        phonetic: c.phonetic || "",
-        emoji: "📚",
-        imageKeyword: c.word,
-      }))
-    : DEMO_VOCAB;
+  const vocabulary = arVocabulary?.words.map((word) => ({
+    word: word.word,
+    translation: word.translation,
+    phonetic: word.pronunciation,
+    emoji: word.arObject,
+    imageKeyword: word.word,
+  })) || [];
 
   const handleSpeak = useCallback(async (text: string) => {
     try {
@@ -265,7 +252,14 @@ export default function ARMode() {
             </div>
           }>
             {activeInternal === "ar-vocab" && (
-              <ARVocabulary vocabulary={vocabulary} languageCode={targetLangCode} onSpeak={handleSpeak} />
+              vocabulary.length > 0 ? (
+                <ARVocabulary vocabulary={vocabulary} languageCode={targetLangCode} onSpeak={handleSpeak} />
+              ) : (
+                <section className="mx-auto max-w-lg rounded-2xl border border-indigo-300/25 bg-white/5 p-6 text-center text-white">
+                  <p className="text-lg font-semibold">Vocabulário AR em preparação</p>
+                  <p className="mt-2 text-sm text-white/70">Este idioma ainda não tem catálogo AR revisado para o seu estágio. O sistema não substitui a prática por palavras de outro nível ou idioma.</p>
+                </section>
+              )
             )}
             {activeInternal === "camera-translate" && (
               <CameraTranslator targetLanguage="English" nativeLanguage="Português" />

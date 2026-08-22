@@ -76,6 +76,7 @@ import { filterLessonsForEntitlement, getAuthorizedTrialLessonIds, getLearningCo
 import { curriculumRouter } from './curriculum-router';
 import { demoA1Router } from './demo-a1-router';
 import { beachDemoRouter } from './beach-demo-router';
+import { arVocabularyRouter } from './ar-vocabulary-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
@@ -141,6 +142,7 @@ export const appRouter = router({
   curriculum: curriculumRouter,
   demoA1: demoA1Router,
   beachDemo: beachDemoRouter,
+  arVocabulary: arVocabularyRouter,
   sceneDialogueVoice: router({
     speak: publicProcedure
       .input(z.object({
