@@ -6,6 +6,7 @@ import { getDb } from "../db";
 import { customerSupportThreads, metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
 import { buildOwnerActivitySeries } from "../ownerActivitySummary";
+import { getBackupReadiness } from "../backupRestore";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -106,6 +107,10 @@ export const systemRouter = router({
   getOwnerSupportSummary: adminProcedure.query(async () => {
     const abuse = getAbuseProtectionSummary();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const backupReadiness = await getBackupReadiness().catch((): Awaited<ReturnType<typeof getBackupReadiness>> => ({
+      status: "attention" as const,
+      reason: "Não foi possível verificar os metadados do último snapshot agora",
+    }));
     let recentEvents: Array<{ severity: string; resolved: boolean | null; createdAt: Date | null }> = [];
     let supportThreads: Array<{ category: string; status: string; priority: string; createdAt: Date | null }> = [];
     let usageRecords: Array<{ createdAt: Date | null }> = [];
@@ -170,6 +175,17 @@ export const systemRouter = router({
         title: "Revisar contenções temporárias ativas",
         detail: "Há bloqueios automáticos ativos; confirme se a contenção continua proporcional.",
       }] : []),
+      ...(backupReadiness.status !== "ready" ? [{
+        id: "review-backup-readiness",
+        priority: "high" as const,
+        title: "Revisar a prontidão do backup",
+        detail: "O último snapshot precisa de revisão. O aplicativo continua disponível e nenhuma restauração automática será executada.",
+      }] : [{
+        id: "maintain-external-backup-copy",
+        priority: "low" as const,
+        title: "Manter uma cópia externa independente",
+        detail: "O snapshot mais recente está pronto para exportação manual. A cópia externa é uma camada adicional e não substitui a rotina protegida.",
+      }]),
       ...(unresolvedEvents === 0 && abuse.activeBlocks === 0 ? [{
         id: "maintain-security-review",
         priority: "low" as const,
@@ -197,6 +213,12 @@ export const systemRouter = router({
         assistedRequestsLast7Days: activity.reduce((total, day) => total + day.assistedRequests, 0),
         incidentsLast7Days: activity.reduce((total, day) => total + day.securityIncidents, 0),
         customerReturnsLast7Days: activity.reduce((total, day) => total + day.customerReturns, 0),
+      },
+      backup: {
+        status: backupReadiness.status,
+        ageMs: backupReadiness.ageMs ?? null,
+        recommendation: backupReadiness.reason,
+        exportReady: backupReadiness.status === "ready",
       },
       suggestions,
       privacy: {

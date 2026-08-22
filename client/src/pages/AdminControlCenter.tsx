@@ -453,6 +453,29 @@ export default function AdminControlCenter() {
               </CardContent>
             </Card>
             <Card className="bg-gray-900 border-gray-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base text-white">Prontidão de backup</CardTitle>
+                <p className="text-xs text-gray-400">Status agregado do último snapshot. Não exibe chaves, identificadores ou conteúdo de alunos.</p>
+              </CardHeader>
+              <CardContent className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <Database className={`h-5 w-5 ${ownerSupport.data?.backup.exportReady ? "text-emerald-400" : "text-amber-300"}`} />
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {ownerSupport.data?.backup.exportReady ? "Snapshot pronto para exportação" : "Snapshot requer revisão"}
+                    </p>
+                    <p className="text-xs text-gray-400">{ownerSupport.data?.backup.recommendation ?? "Consultando o histórico protegido…"}</p>
+                  </div>
+                </div>
+                <Badge className={ownerSupport.data?.backup.exportReady
+                  ? "border-emerald-500/30 bg-emerald-500/20 text-emerald-200"
+                  : "border-amber-500/30 bg-amber-500/20 text-amber-100"}
+                >
+                  {ownerSupport.data?.backup.exportReady ? "Verificado" : "Revisar"}
+                </Badge>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-900 border-gray-800">
               <CardHeader className="pb-2"><CardTitle className="text-base text-white">Retorno de clientes</CardTitle></CardHeader>
               <CardContent className="flex flex-wrap items-center justify-between gap-4">
                 <div className="grid grid-cols-2 gap-3 text-center md:grid-cols-4">

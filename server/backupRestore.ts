@@ -14,6 +14,14 @@ export interface BackupInfo {
   status: "completed" | "failed" | "restoring";
 }
 
+export type BackupReadiness = {
+  status: "ready" | "attention" | "awaiting_snapshot";
+  latestBackupId?: string;
+  latestCreatedAt?: number;
+  ageMs?: number;
+  reason: string;
+};
+
 type SnapshotPayload = {
   version: 1;
   createdAt: number;
@@ -133,6 +141,14 @@ export async function createBackup(
     const plain = Buffer.from(JSON.stringify(snapshot), "utf8");
     const encrypted = encryptSnapshot(plain);
     const checksum = createHash("sha256").update(encrypted).digest("hex");
+
+    // Confirma o artefato antes do envio: nunca dispara restauração nem altera dados do aluno.
+    const verifiedPlain = decryptSnapshot(encrypted);
+    const verifiedChecksum = createHash("sha256").update(encrypted).digest("hex");
+    if (!verifiedPlain.equals(plain) || verifiedChecksum !== checksum) {
+      throw new Error("Snapshot integrity verification failed before storage");
+    }
+
     const storageKey = `backups/database/${backupId}.mlb`;
     await storagePut(storageKey, encrypted, "application/octet-stream");
     const totalRecords = snapshotTables.reduce((sum, table) => sum + table.rows.length, 0);
@@ -166,6 +182,47 @@ export async function listBackups(): Promise<BackupInfo[]> {
     createdAt: Number(row.created_at),
     status: String(row.status) as BackupInfo["status"],
   }));
+}
+
+/** Avalia somente metadados: não baixa, restaura ou modifica dados. */
+export async function getBackupReadiness(now = Date.now()): Promise<BackupReadiness> {
+  const database = await getDb();
+  if (!database) return { status: "attention", reason: "Banco indisponível para verificar o histórico de snapshots" };
+  await ensureSnapshotTable(database);
+  const result = await executeQuery(database,
+    "SELECT id, status, created_at, completed_at, file_size_bytes, checksum, tables_backed_up FROM backup_snapshots ORDER BY created_at DESC LIMIT 1"
+  );
+  const row = ((result[0] ?? result) as unknown as Array<Record<string, unknown>>)[0];
+  if (!row) return { status: "awaiting_snapshot", reason: "Nenhum snapshot concluído foi registrado ainda" };
+
+  const latestCreatedAt = Number(row.created_at ?? 0);
+  const ageMs = Math.max(0, now - latestCreatedAt);
+  const tables = Array.isArray(row.tables_backed_up)
+    ? row.tables_backed_up
+    : JSON.parse(String(row.tables_backed_up ?? "[]"));
+  const ready = row.status === "completed"
+    && Number(row.file_size_bytes ?? 0) > 32
+    && /^[a-f0-9]{64}$/i.test(String(row.checksum ?? ""))
+    && Array.isArray(tables)
+    && tables.length > 0;
+
+  if (!ready) {
+    return {
+      status: "attention",
+      latestBackupId: String(row.id),
+      latestCreatedAt,
+      ageMs,
+      reason: "O último snapshot não possui metadados completos para exportação segura",
+    };
+  }
+
+  return {
+    status: "ready",
+    latestBackupId: String(row.id),
+    latestCreatedAt,
+    ageMs,
+    reason: "Snapshot cifrado, com checksum e tabelas registradas, pronto para exportação manual",
+  };
 }
 
 export async function restoreFromBackup(
