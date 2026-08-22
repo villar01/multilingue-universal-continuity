@@ -6,10 +6,11 @@ export type MaintenanceSnapshot = {
   unresolvedCriticalSupport: number;
   performanceStatus: "healthy" | "degraded" | "unknown";
   securityStatus: "healthy" | "degraded" | "unknown";
+  qualityStatus: "healthy" | "degraded" | "unknown";
 };
 
 export type MaintenanceAlert = {
-  id: "backup" | "recovery-kit" | "support" | "performance" | "security";
+  id: "backup" | "recovery-kit" | "support" | "performance" | "security" | "quality";
   level: MaintenanceAlertLevel;
   message: string;
 };
@@ -38,6 +39,9 @@ export function deriveMaintenanceAlerts(snapshot: MaintenanceSnapshot, now = new
   }
   if (snapshot.securityStatus !== "healthy") {
     alerts.push({ id: "security", level: snapshot.securityStatus === "degraded" ? "critical" : "warning", message: "Segurança precisa de verificação." });
+  }
+  if (snapshot.qualityStatus !== "healthy") {
+    alerts.push({ id: "quality", level: snapshot.qualityStatus === "degraded" ? "critical" : "warning", message: "Cenas, áudio e professores precisam de revisão." });
   }
 
   return alerts;

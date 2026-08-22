@@ -50,11 +50,19 @@ export const controlCenterRouter = router({
       sql`SELECT COUNT(*) as cnt FROM customer_support_threads WHERE status = 'open' AND priority = 'high'`
     );
     const unresolvedCriticalSupport = Number(((supportResult as any)[0] as any[])[0]?.cnt ?? 0);
+    const qualityResult = await db.execute(
+      sql`SELECT detected_issues FROM maintenance_runs WHERE source = 'immersive_quality' ORDER BY created_at DESC LIMIT 1`
+    );
+    const qualityRow = ((qualityResult as any)[0] as any[])[0] as { detected_issues?: unknown } | undefined;
+    const qualityStatus = !qualityRow
+      ? "unknown"
+      : Number(qualityRow.detected_issues ?? 0) > 0 ? "degraded" : "healthy";
 
     return deriveMaintenanceAlerts({
       unresolvedCriticalSupport,
       performanceStatus: "unknown",
       securityStatus: "unknown",
+      qualityStatus,
     });
   }),
 

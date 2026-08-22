@@ -1,4 +1,4 @@
-export type MaintenanceVerificationKind = "backup_snapshot" | "typescript" | "unit_tests" | "production_smoke" | "teacher_media";
+export type MaintenanceVerificationKind = "backup_snapshot" | "typescript" | "unit_tests" | "production_smoke" | "teacher_media" | "scene_catalog";
 export type MaintenanceVerificationStatus = "passed" | "failed" | "not_run";
 
 export interface BackupSnapshotEvidence {
@@ -97,9 +97,11 @@ export function decideMaintenancePublication(
  */
 export function createScheduledMaintenanceAssessment(
   backupVerification: MaintenanceVerification,
+  additionalVerifications: readonly MaintenanceVerification[] = [],
 ): ScheduledMaintenanceAssessment {
   const verifications: readonly MaintenanceVerification[] = [
     backupVerification,
+    ...additionalVerifications,
     {
       kind: "typescript",
       status: "not_run",

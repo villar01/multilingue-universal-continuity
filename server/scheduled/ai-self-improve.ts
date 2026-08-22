@@ -11,6 +11,7 @@ import { getDb } from "../db";
 import { generateAI } from "../aiProvider";
 import { notifyOwner } from "../_core/notification";
 import { assessBackupForMaintenance, createScheduledMaintenanceAssessment, type ScheduledMaintenanceAssessment } from "../../shared/continuousMaintenanceContract";
+import { verifyImmersiveQuality } from "../immersiveQualityVerifier";
 
 interface TelemetryRow {
   event_type: string;
@@ -65,6 +66,23 @@ async function recordBlockedMaintenanceRun(
   ]);
 }
 
+async function recordQualityVerification(
+  pool: { execute: (query: string, values?: unknown[]) => Promise<unknown> },
+  quality: ReturnType<typeof verifyImmersiveQuality>,
+): Promise<void> {
+  await pool.execute(`
+    INSERT INTO maintenance_runs
+      (source, decision, summary, detected_issues, verifications)
+    VALUES (?, ?, ?, ?, ?)
+  `, [
+    "immersive_quality",
+    "blocked",
+    quality.summary,
+    quality.issueCount,
+    JSON.stringify(quality.verifications),
+  ]);
+}
+
 export async function runAISelfImprove(): Promise<{ success: boolean; message: string; insightId?: number }> {
   const db = await getDb();
   const today = new Date().toISOString().split("T")[0];
@@ -87,7 +105,8 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
       checksum: typeof backupRow.checksum === "string" ? backupRow.checksum : null,
       completedAtMs: toTimestampMs(backupRow.completed_at),
     } : null);
-    const maintenanceAssessment = createScheduledMaintenanceAssessment(backupVerification);
+    const qualityReport = verifyImmersiveQuality();
+    const maintenanceAssessment = createScheduledMaintenanceAssessment(backupVerification, qualityReport.verifications);
 
     if (backupVerification.status !== "passed") {
       await recordBlockedMaintenanceRun(
@@ -101,6 +120,14 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
         content: "A manutenção não foi iniciada porque o backup recente e verificável não está disponível. Nenhuma alteração foi aplicada ao aplicativo.",
       });
       return { success: false, message: "Backup verificado indisponível; manutenção bloqueada." };
+    }
+
+    await recordQualityVerification(pool, qualityReport);
+    if (qualityReport.status === "failed") {
+      await notifyOwner({
+        title: "Verificação preventiva de cenas requer revisão",
+        content: "A checagem determinística encontrou uma inconsistência em cenas, voz ou matriz docente. Nenhuma alteração foi aplicada; revise o painel privado de manutenção.",
+      });
     }
 
     // 1. Coletar telemetria das últimas 24h
@@ -121,10 +148,10 @@ export async function runAISelfImprove(): Promise<{ success: boolean; message: s
       await recordBlockedMaintenanceRun(
         pool,
         maintenanceAssessment,
-        "Diagnóstico agendado concluído sem telemetria nas últimas 24 horas.",
-        0,
+        `Diagnóstico agendado concluído sem telemetria nas últimas 24 horas. ${qualityReport.summary}`,
+        qualityReport.issueCount,
       );
-      return { success: true, message: "Sem telemetria para analisar nas últimas 24h." };
+      return { success: true, message: `Sem telemetria para analisar nas últimas 24h. ${qualityReport.summary}` };
     }
 
     // 2. Formatar dados para o LLM

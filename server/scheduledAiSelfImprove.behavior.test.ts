@@ -49,42 +49,47 @@ describe("execução diagnóstica agendada", () => {
   it("conclui quando o conector retorna linhas e cabeçalho sem tupla", async () => {
     setupClient("direct", [
       [{ status: "completed", checksum: "checksum", completed_at: Date.now() }],
+      { insertId: 70 },
       [{ event_type: "error", context: "lesson-view", count: 2 }],
       { insertId: 71 },
       { insertId: 41 },
     ]);
 
     await expect(runAISelfImprove()).resolves.toMatchObject({ success: true, insightId: 41 });
-    expect(state.execute).toHaveBeenCalledTimes(4);
-    expect(state.execute.mock.calls[2]?.[0]).toContain("INSERT INTO maintenance_runs");
+    expect(state.execute).toHaveBeenCalledTimes(5);
+    expect(state.execute.mock.calls[1]?.[0]).toContain("INSERT INTO maintenance_runs");
+    expect(state.execute.mock.calls[3]?.[0]).toContain("INSERT INTO maintenance_runs");
     expect(state.notifyOwner).not.toHaveBeenCalled();
   });
 
   it("mantém compatibilidade com o retorno MySQL em tupla", async () => {
     setupClient("tuple", [
       [[{ status: "completed", checksum: "checksum", completed_at: Date.now() }], []],
+      [{ insertId: 70 }, []],
       [[{ event_type: "error", context: "lesson-view", count: 2 }], []],
       [{ insertId: 72 }, []],
       [{ insertId: 42 }, []],
     ]);
 
     await expect(runAISelfImprove()).resolves.toMatchObject({ success: true, insightId: 42 });
-    expect(state.execute).toHaveBeenCalledTimes(4);
+    expect(state.execute).toHaveBeenCalledTimes(5);
   });
 
   it("persiste a evidência bloqueada mesmo quando não há telemetria para analisar", async () => {
     setupClient("direct", [
       [{ status: "completed", checksum: "checksum", completed_at: Date.now() }],
+      { insertId: 70 },
       [],
       { insertId: 73 },
     ]);
 
     await expect(runAISelfImprove()).resolves.toMatchObject({
       success: true,
-      message: "Sem telemetria para analisar nas últimas 24h.",
+      message: expect.stringContaining("Sem telemetria para analisar nas últimas 24h."),
     });
-    expect(state.execute).toHaveBeenCalledTimes(3);
-    expect(state.execute.mock.calls[2]?.[0]).toContain("INSERT INTO maintenance_runs");
+    expect(state.execute).toHaveBeenCalledTimes(4);
+    expect(state.execute.mock.calls[1]?.[0]).toContain("INSERT INTO maintenance_runs");
+    expect(state.execute.mock.calls[3]?.[0]).toContain("INSERT INTO maintenance_runs");
   });
 
   it("bloqueia o diagnóstico e avisa o proprietário quando não existe backup verificável", async () => {

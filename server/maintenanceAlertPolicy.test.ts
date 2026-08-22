@@ -9,6 +9,7 @@ describe("maintenance alert policy", () => {
       unresolvedCriticalSupport: 1,
       performanceStatus: "healthy",
       securityStatus: "healthy",
+      qualityStatus: "healthy",
     }, now);
 
     expect(alerts).toEqual(expect.arrayContaining([
@@ -24,8 +25,22 @@ describe("maintenance alert policy", () => {
       unresolvedCriticalSupport: 0,
       performanceStatus: "healthy",
       securityStatus: "healthy",
+      qualityStatus: "healthy",
     }, now);
 
     expect(alerts).toEqual([]);
+  });
+
+  it("sinaliza apenas ao proprietário quando a última verificação de qualidade reprovou", () => {
+    const alerts = deriveMaintenanceAlerts({
+      backupVerifiedAt: new Date("2026-08-10T12:00:00Z"),
+      recoveryKitVerifiedAt: new Date("2026-08-10T12:00:00Z"),
+      unresolvedCriticalSupport: 0,
+      performanceStatus: "healthy",
+      securityStatus: "healthy",
+      qualityStatus: "degraded",
+    }, now);
+
+    expect(alerts).toEqual([expect.objectContaining({ id: "quality", level: "critical" })]);
   });
 });
