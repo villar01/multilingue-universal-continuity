@@ -320,10 +320,6 @@ function TeacherAvatar({
         style={{
           position: "relative",
           width: "100%",
-          willChange: "transform",
-          animation: isSpeaking
-            ? "teacher-talk 2.2s ease-in-out infinite"
-            : "teacher-idle 5s ease-in-out infinite",
           filter: isSpeaking
             ? "drop-shadow(0 8px 40px rgba(99,102,241,0.7)) brightness(1.08)"
             : "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",
