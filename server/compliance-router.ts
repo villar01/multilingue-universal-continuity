@@ -10,6 +10,7 @@ import { and, desc, eq, sql, type SQL } from "drizzle-orm";
 import { securityEvents } from "../drizzle/schema";
 import { createParentalConsentNotification } from "./parentalConsentPrivacy";
 import { notifyOwner } from "./_core/notification";
+import { encryptParentalField } from "./fieldEncryption";
 
 export const complianceRouter = router({
 
@@ -120,9 +121,9 @@ export const complianceRouter = router({
            is_minor, user_age)
           VALUES (
             ${ctx.user.id},
-            ${input.guardianName},
-            ${input.guardianDocument || null},
-            ${input.guardianEmail || null},
+            ${encryptParentalField(input.guardianName, "guardian_name")},
+            ${input.guardianDocument ? encryptParentalField(input.guardianDocument, "guardian_document") : null},
+            ${input.guardianEmail ? encryptParentalField(input.guardianEmail, "guardian_email") : null},
             ${input.relationship},
             ${input.confirmedTerms ? 1 : 0},
             ${input.confirmedMoralConduct ? 1 : 0},

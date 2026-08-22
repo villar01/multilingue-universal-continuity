@@ -2219,9 +2219,9 @@ export const parentalConsents = mysqlTable("parental_consents", {
   id: int("id").primaryKey().autoincrement(),
   userId: int("user_id").notNull().references(() => users.id),
   // Dados do responsável
-  guardianName: varchar("guardian_name", { length: 200 }).notNull(),
-  guardianDocument: varchar("guardian_document", { length: 50 }), // CPF/ID
-  guardianEmail: varchar("guardian_email", { length: 200 }),
+  guardianName: varchar("guardian_name", { length: 768 }).notNull(),
+  guardianDocument: varchar("guardian_document", { length: 768 }), // Cifrado no servidor
+  guardianEmail: varchar("guardian_email", { length: 768 }), // Cifrado no servidor
   relationship: varchar("relationship", { length: 50 }).notNull(), // pai, mae, responsavel
   // Confirmações
   confirmedTerms: boolean("confirmed_terms").notNull().default(false),

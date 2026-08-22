@@ -2393,4 +2393,5 @@
 - [ ] Criar canal de feedback discreto em todas as telas, com armazenamento privado e notificação para feedback crítico
 - [ ] Criar painel privado do proprietário para feedbacks, incidentes, métricas de uso e recomendações de manutenção ou vendas que nunca executem ações comerciais automaticamente
 - [ ] Implantar verificação periódica e idempotente de qualidade de cenas, áudio e matriz docente, com relatório privado e sem interromper clientes ativos
-- [ ] Mapear dados sensíveis e aplicar criptografia autenticada a campos que precisem ser armazenados, com chaves fora do código e regressões contra exposição em APIs, alertas e logs
+- [x] Mapear dados sensíveis e aplicar criptografia autenticada a campos que precisem ser armazenados, com chaves fora do código e regressões contra exposição em APIs, alertas e logs — consentimento parental cifra nome, documento e e-mail com AES-256-GCM, autentica cada campo como dado associado e deriva chave fora do código; migração não destrutiva aplicada e 418 arquivos / 1044 testes aprovados
+- [ ] Expandir no Livro SOS, gramática e Pareto protegido os contrastes de always, ever, never, already, yet e still, com posição na frase, forma afirmativa/interrogativa/negativa, sentido contextual, exemplos práticos e verificação de compreensão
