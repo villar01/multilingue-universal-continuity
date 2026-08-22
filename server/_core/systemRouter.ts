@@ -3,10 +3,11 @@ import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getAbuseProtectionSummary } from "./abuseProtection";
 import { getDb } from "../db";
-import { customerSupportThreads, metrics, securityEvents } from "../../drizzle/schema";
+import { aiInsights, customerSupportThreads, metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
 import { buildOwnerActivitySeries } from "../ownerActivitySummary";
 import { getBackupReadiness } from "../backupRestore";
+import { projectAssistedImprovement } from "../assistedImprovementProjection";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -227,6 +228,27 @@ export const systemRouter = router({
         containsVisitorIdentifiers: false,
       },
     };
+  }),
+
+  getAssistedImprovementReports: adminProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      if (!db) return [];
+      const rows = await db.select({
+        id: aiInsights.id,
+        title: aiInsights.title,
+        recommendations: aiInsights.recommendations,
+        severity: aiInsights.severity,
+        createdAt: aiInsights.createdAt,
+      }).from(aiInsights)
+        .where(eq(aiInsights.insightType, "performance_issue"))
+        .orderBy(desc(aiInsights.createdAt))
+        .limit(8);
+      return rows.map(projectAssistedImprovement);
+    } catch (error) {
+      console.error("[getAssistedImprovementReports] Failed to project assisted reports", error);
+      return [];
+    }
   }),
 
   logSecurityEvent: adminProcedure

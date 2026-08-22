@@ -12,6 +12,7 @@ import { generateAI } from "../aiProvider";
 import { notifyOwner } from "../_core/notification";
 import { assessBackupForMaintenance, createScheduledMaintenanceAssessment, type ScheduledMaintenanceAssessment } from "../../shared/continuousMaintenanceContract";
 import { verifyImmersiveQuality } from "../immersiveQualityVerifier";
+import { createAssistedImprovementReport } from "../improvementProposal";
 
 interface TelemetryRow {
   event_type: string;
@@ -198,14 +199,22 @@ IMPORTANTE: Toda recomendação é somente uma proposta para revisão humana. Nu
     if (!content) throw new Error("LLM não retornou conteúdo");
 
     const diagnosis = typeof content === "string" ? JSON.parse(content) : content;
+    const improvementReport = createAssistedImprovementReport({
+      topIssue: diagnosis.topIssue,
+      recommendations: diagnosis.recommendations,
+      proposedActions: diagnosis.proposedActions,
+      securityAlerts: diagnosis.securityAlerts,
+      telemetryRows,
+      totalErrors,
+    });
 
     // O diagnóstico é sempre uma proposta bloqueada: ele não executa TypeScript,
     // regressões ou publicação e nunca altera produção por conta própria.
     await recordBlockedMaintenanceRun(
       pool,
       maintenanceAssessment,
-      String(diagnosis.topIssue || "Diagnóstico agendado concluído para revisão."),
-      totalErrors + Number(diagnosis.securityAlerts?.length || 0),
+      improvementReport.summary,
+      improvementReport.totalErrors + improvementReport.securityAlertCount,
     );
 
     // 4. Salvar insight no banco
@@ -215,35 +224,35 @@ IMPORTANTE: Toda recomendação é somente uma proposta para revisão humana. Nu
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       "performance_issue",
-      `Análise Diária ${today}: ${diagnosis.topIssue}`,
-      diagnosis.diagnosis,
+      `Análise Diária ${today}: ${improvementReport.summary}`,
+      JSON.stringify({ decision: improvementReport.decision, evidence: improvementReport.evidence }),
       "app_telemetry",
       0,
-      JSON.stringify(diagnosis.recommendations),
-      totalErrors > 10 ? "critical" : totalErrors > 3 ? "warning" : "info",
+      JSON.stringify(improvementReport),
+      improvementReport.totalErrors > 10 ? "critical" : improvementReport.totalErrors > 3 ? "warning" : "info",
       "new"
     ]);
 
     const insightId = extractInsertId(insertResult);
 
     // 5. Notificar owner se há alertas de segurança ou erros críticos
-    const hasSecurityAlerts = diagnosis.securityAlerts?.length > 0;
-    const hasCriticalErrors = totalErrors > 10;
+    const hasSecurityAlerts = improvementReport.securityAlertCount > 0;
+    const hasCriticalErrors = improvementReport.totalErrors > 10;
 
     if (hasSecurityAlerts || hasCriticalErrors) {
       const securitySection = hasSecurityAlerts
-        ? `\n\n🔴 ALERTAS DE SEGURANÇA (requerem sua aprovação):\n${diagnosis.securityAlerts.map((a: string) => `• ${a}`).join("\n")}`
+        ? "\n\nHá alertas de segurança agregados para sua revisão privada."
         : "";
 
       await notifyOwner({
         title: `⚠️ IA Autoaperfeiçoamento: ${hasCriticalErrors ? "Erros Críticos" : "Alerta de Segurança"}`,
-        content: `Análise de ${today}\n\nProblema principal: ${diagnosis.topIssue}\n\n${diagnosis.diagnosis}${securitySection}\n\nAcesse o painel admin para revisar e aprovar recomendações.`
+        content: `Análise de ${today}\n\nResumo: ${improvementReport.summary}\n\n${improvementReport.proposals.length} propostas foram bloqueadas para sua revisão. Nenhuma alteração foi aplicada.${securitySection}\n\nAcesse o painel admin para revisar as evidências agregadas.`
       });
     }
 
     return {
       success: true,
-      message: `Análise concluída. ${diagnosis.recommendations.length} recomendações geradas. ${hasSecurityAlerts ? "⚠️ Alertas de segurança enviados para aprovação." : ""}`,
+      message: `Análise concluída. ${improvementReport.proposals.length} propostas aguardam revisão. ${hasSecurityAlerts ? "Alertas de segurança foram sinalizados para aprovação." : ""}`,
       insightId
     };
 

@@ -107,6 +107,10 @@ export default function AdminControlCenter() {
     undefined,
     { refetchInterval: 60000 },
   );
+  const assistedImprovement = trpc.system.getAssistedImprovementReports.useQuery(
+    undefined,
+    { refetchInterval: 60000 },
+  );
 
   // ── Mutations ──
   const applyKnowledge = trpc.controlCenter.applyKnowledge.useMutation({
@@ -425,6 +429,36 @@ export default function AdminControlCenter() {
               </CardContent>
             </Card>
           </div>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-gray-300 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-purple-300" /> Diagnósticos assistidos — revisão manual
+              </CardTitle>
+              <p className="text-xs text-gray-500">As sugestões são bloqueadas para revisão. Nenhuma ação é executada por este painel.</p>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {(assistedImprovement.data ?? []).map((report) => (
+                <div key={report.id} className="rounded-lg border border-gray-700 bg-gray-800 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-white">{report.title}</p>
+                      <p className="mt-1 text-xs text-gray-400">{report.summary}</p>
+                    </div>
+                    <Badge className="shrink-0 bg-purple-500/15 text-purple-200 border-purple-500/30 text-xs">REVISÃO</Badge>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-400">
+                    <span>{report.evidenceCount} evidência{report.evidenceCount === 1 ? "" : "s"} agregada{report.evidenceCount === 1 ? "" : "s"}</span>
+                    <span>{report.proposalCount} proposta{report.proposalCount === 1 ? "" : "s"} bloqueada{report.proposalCount === 1 ? "" : "s"}</span>
+                    {report.securityAlertCount > 0 && <span className="text-orange-300">{report.securityAlertCount} alerta{report.securityAlertCount === 1 ? "" : "s"} para revisão</span>}
+                  </div>
+                </div>
+              ))}
+              {(assistedImprovement.data ?? []).length === 0 && (
+                <p className="py-3 text-sm text-gray-500">Nenhum diagnóstico assistido pendente no momento.</p>
+              )}
+            </CardContent>
+          </Card>
 
           <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4 flex items-center justify-between">
