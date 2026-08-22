@@ -1,4 +1,5 @@
 import { ENV } from "./env";
+import { getLocalQwenAvailability } from "./llm-free";
 
 export type Role = "system" | "user" | "assistant" | "tool" | "function";
 
@@ -57,6 +58,11 @@ export type ToolChoice =
 
 export type InvokeParams = {
   messages: Message[];
+  /**
+   * Opt-in explícito do fluxo pedagógico para tentar um Qwen local já
+   * confirmado. Ausente ou falso mantém o fallback protegido como padrão.
+   */
+  allowLocalQwen?: boolean;
   tools?: Tool[];
   toolChoice?: ToolChoice;
   tool_choice?: ToolChoice;
@@ -268,6 +274,7 @@ const normalizeResponseFormat = ({
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   const {
     messages,
+    allowLocalQwen = false,
     tools,
     toolChoice,
     tool_choice,
@@ -280,20 +287,20 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   // ── PRIORIDADE 1: IA LOCAL (Ollama Qwen2.5 — gratuito, offline, privado) ──
   // Se Ollama estiver disponível, usa IA local primeiro (sem custo de API remota)
   // Modelo 1.5b para respostas rápidas (< 500 tokens), 3b para tarefas complexas
-  if (!tools && !outputSchema && !output_schema && !responseFormat && !response_format) {
+  if (allowLocalQwen && !tools && !outputSchema && !output_schema && !responseFormat && !response_format) {
     try {
-      const localResp = await fetch("http://localhost:11434/api/tags", {
-        method: "GET",
-        signal: AbortSignal.timeout(1000),
-      });
-      if (localResp.ok) {
+      const localStatus = await getLocalQwenAvailability();
+      if (localStatus.available && localStatus.selectedModel) {
         // Determinar se é uma tarefa rápida ou complexa baseado no tamanho das mensagens
         const totalContent = messages.reduce((sum, m) => {
           const c = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
           return sum + c.length;
         }, 0);
         const isFast = totalContent < 2000;
-        const model = isFast ? "qwen2.5:1.5b" : "qwen2.5:3b";
+        const preferredModel = isFast ? "qwen2.5:1.5b" : "qwen2.5:3b";
+        const model = localStatus.selectedModel === "qwen2.5:3b" || preferredModel === localStatus.selectedModel
+          ? preferredModel
+          : localStatus.selectedModel;
         const maxTokens = isFast ? 500 : 2000;
         const timeout = isFast ? 15000 : 30000;
         console.log(`[LLM] Usando IA local (${model}) — gratuito e offline`);

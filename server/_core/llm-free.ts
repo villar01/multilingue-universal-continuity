@@ -22,6 +22,43 @@ interface LLMResponse {
   }>;
 }
 
+const LOCAL_QWEN_MODELS = ["qwen2.5:1.5b", "qwen2.5:3b"] as const;
+
+export type LocalQwenAvailability = {
+  available: boolean;
+  selectedModel: (typeof LOCAL_QWEN_MODELS)[number] | null;
+  reason: "ready" | "ollama_unreachable" | "qwen_model_missing";
+};
+
+/**
+ * A porta do Ollama não é evidência suficiente de disponibilidade. Só marcamos
+ * o provedor local como pronto quando um dos modelos Qwen aprovados estiver
+ * instalado e listado pela própria instância.
+ */
+export async function getLocalQwenAvailability(): Promise<LocalQwenAvailability> {
+  try {
+    const response = await fetch("http://localhost:11434/api/tags", {
+      method: "GET",
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) {
+      return { available: false, selectedModel: null, reason: "ollama_unreachable" };
+    }
+
+    const payload = await response.json() as { models?: Array<{ name?: string }> };
+    const installedNames = new Set(
+      (payload.models ?? []).map((model) => model.name?.trim().toLowerCase()).filter(Boolean),
+    );
+    const selectedModel = [...LOCAL_QWEN_MODELS].reverse().find((model) => installedNames.has(model)) ?? null;
+
+    return selectedModel
+      ? { available: true, selectedModel, reason: "ready" }
+      : { available: false, selectedModel: null, reason: "qwen_model_missing" };
+  } catch {
+    return { available: false, selectedModel: null, reason: "ollama_unreachable" };
+  }
+}
+
 /**
  * Invoca Ollama local (Qwen2.5:3b — 100% gratuito e offline)
  * 
@@ -33,13 +70,18 @@ export async function invokeLLMLocal(params: {
   temperature?: number;
   max_tokens?: number;
 }): Promise<LLMResponse> {
+  const availability = await getLocalQwenAvailability();
+  if (!availability.available || !availability.selectedModel) {
+    throw new Error("Ollama local com modelo Qwen2.5 aprovado não está disponível.");
+  }
+
   const response = await fetch("http://localhost:11434/api/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "qwen2.5:3b",
+      model: availability.selectedModel,
       messages: params.messages,
       stream: false,
       options: {
@@ -72,15 +114,7 @@ export async function invokeLLMLocal(params: {
  * Verifica se Ollama local está disponível
  */
 export async function isLocalAvailable(): Promise<boolean> {
-  try {
-    const response = await fetch("http://localhost:11434/api/tags", {
-      method: "GET",
-      signal: AbortSignal.timeout(5000),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
+  return (await getLocalQwenAvailability()).available;
 }
 
 /**
@@ -124,9 +158,9 @@ export async function invokeLLMSmart(params: {
 }): Promise<LLMResponse> {
   // Prioridade 1: Ollama local (Qwen2.5:3b)
   try {
-    const localAvailable = await isLocalAvailable();
-    if (localAvailable) {
-      console.log("[IA] Usando Ollama local (Qwen2.5:3b) — gratuito e offline");
+    const localStatus = await getLocalQwenAvailability();
+    if (localStatus.available && localStatus.selectedModel) {
+      console.log(`[IA] Usando Ollama local (${localStatus.selectedModel}) — gratuito e offline`);
       return await invokeLLMLocal(params);
     }
   } catch (error) {

@@ -26,6 +26,7 @@ export interface ConversationContext {
   targetLanguage: string;
   nativeLanguage: string;
   teacherName?: string;
+  allowLocalQwen?: boolean;
 }
 
 export interface ConversationMessage {
@@ -111,7 +112,10 @@ IMPORTANT:
       }))
     ];
 
-    const response = await invokeLLM({ messages });
+    const response = await invokeLLM({
+      messages,
+      allowLocalQwen: context.allowLocalQwen === true,
+    });
 
     return ((response.choices[0].message.content as string) as string)?.trim() || "";
   } catch (error) {

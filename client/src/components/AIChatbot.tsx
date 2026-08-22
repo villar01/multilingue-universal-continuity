@@ -70,6 +70,20 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
     } catch {}
   }, [messages, storageKey]);
   const [input, setInput] = useState('');
+  const localQwenConsentKey = `ml_local_qwen_consent_${lessonId}`;
+  const [allowLocalQwen, setAllowLocalQwen] = useState(() => {
+    try {
+      return localStorage.getItem(localQwenConsentKey) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const updateLocalQwenConsent = (enabled: boolean) => {
+    setAllowLocalQwen(enabled);
+    try {
+      localStorage.setItem(localQwenConsentKey, String(enabled));
+    } catch {}
+  };
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -149,6 +163,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
       nativeLanguage,
       userLevel: level,
       teacherId,
+      allowLocalQwen,
       history: messages.concat(userMessage).map(m => ({
         role: m.role,
         content: m.content
@@ -160,6 +175,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
       nativeLanguage,
       userLevel: level,
       teacherId,
+      allowLocalQwen,
       userMessage: userMessage.content,
     });
   };
@@ -352,6 +368,19 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
 
       {/* Input area */}
       <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+        {!immersionMode && (
+          <label className="mb-3 flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={allowLocalQwen}
+              onChange={(event) => updateLocalQwenConsent(event.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              Usar provedor local de prática quando disponível. Esta opção é voluntária e pode ser desligada a qualquer momento.
+            </span>
+          </label>
+        )}
         <div className="flex items-end gap-2">
           <div className="flex-1 relative">
             <textarea

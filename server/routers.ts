@@ -2419,6 +2419,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
           teacherId: z.number().int().positive().optional(),
+          allowLocalQwen: z.boolean().optional().default(false),
          history: z.array(
            z.object({
              role: z.enum(["user", "assistant", "system"]),
@@ -2447,6 +2448,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
           teacherName: await resolveConversationTeacherName(ctx.user.id, input.teacherId),
+          allowLocalQwen: input.allowLocalQwen,
         };
 
         const learnerText = input.history.filter((message) => message.role === "user").slice(-1)[0]?.content || "";
@@ -2467,6 +2469,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           targetLanguage: z.string(),
           nativeLanguage: z.string(),
           teacherId: z.number().int().positive().optional(),
+          allowLocalQwen: z.boolean().optional().default(false),
           userMessage: z.string(),
         })
       )
@@ -2490,6 +2493,7 @@ Make words practical and commonly used. Vary difficulty from 1-5. Include at lea
           targetLanguage: input.targetLanguage,
           nativeLanguage: input.nativeLanguage,
           teacherName: await resolveConversationTeacherName(ctx.user.id, input.teacherId),
+          allowLocalQwen: input.allowLocalQwen,
         };
 
         const inputSafety = await assessConversationText(ctx.user.id, input.userMessage, input.targetLanguage);
