@@ -12,6 +12,7 @@ import { ParetoPracticeCycle } from "../components/ParetoPracticeCycle";
 import { resolvePracticeCEFRLevel } from "@/lib/lesson-levels";
 import type { ParetoWord } from "../lib/vocab-pareto";
 import { getLessonStrings, getSelectedTeacherLang } from "../lib/lesson-i18n";
+import { getUIStrings } from "@/lib/i18n";
 import { stopEdgeTTS } from "@/lib/edgeTTSClient";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -616,6 +617,7 @@ export default function ImmersiveScene() {
   const [, setLocation] = useLocation();
   // ── Single source of truth: LanguageContext ──
   const { profile, setProfile, immersionMode } = useLanguage();
+  const targetUI = getUIStrings(profile.targetCode);
   const { isAuthenticated, loading: isAuthLoading } = useAuth();
   const sceneReturnTo = useMemo(() => {
     if (typeof window === "undefined") return "/";
@@ -2784,7 +2786,7 @@ export default function ImmersiveScene() {
             }}
           >
             {isAuthenticated
-              ? immersionMode ? "🔊 Hear introduction" : `🔊 Ouvir apresentação de ${(teachingScene ?? selectedScene).teacherName}`
+              ? immersionMode ? `🔊 ${targetUI.listen}` : `🔊 Ouvir apresentação de ${(teachingScene ?? selectedScene).teacherName}`
               : "Ativar acesso para iniciar"}
           </button>
         )}
@@ -2847,7 +2849,7 @@ export default function ImmersiveScene() {
               <div className={`flex items-center justify-between gap-2 ${dlgExpanded ? "mb-3 border-b border-white/10 pb-2" : ""}`}>
                 {!immersionMode && <span className="text-xs font-black uppercase tracking-[0.16em] text-indigo-200">Diálogo da cena</span>}
                 <span className="min-w-0 flex-1 truncate text-xs font-semibold text-white/80">{activeSceneDialog[dlgStep].text}</span>
-                <button type="button" onClick={() => setDlgExpanded((expanded) => !expanded)} aria-expanded={dlgExpanded} className="shrink-0 rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-extrabold text-cyan-100 hover:bg-cyan-400/20">{dlgExpanded ? "Recolher" : "Abrir"}</button>
+                <button type="button" onClick={() => setDlgExpanded((expanded) => !expanded)} aria-expanded={dlgExpanded} className="shrink-0 rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-extrabold text-cyan-100 hover:bg-cyan-400/20">{immersionMode ? targetUI.continue : dlgExpanded ? "Recolher" : "Abrir"}</button>
                 <button
                   type="button"
                   onClick={() => {
@@ -2859,14 +2861,14 @@ export default function ImmersiveScene() {
                   }}
                   className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-white hover:bg-white/20"
                 >
-                  Fechar
+                  {immersionMode ? targetUI.cancel : "Fechar"}
                 </button>
               </div>
               {dlgExpanded && <div className="mt-3">
               {/* Speaker label */}
               <div className="flex items-center gap-2 mb-2">
                 <span style={{ fontSize: "11px", fontWeight: 700, color: activeSceneDialog[dlgStep].speaker === 'teacher' ? '#818cf8' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  {activeSceneDialog[dlgStep].speaker === 'teacher' ? `🏫 ${(teachingScene ?? selectedScene).teacherName}` : '👤 Você'}
+                  {activeSceneDialog[dlgStep].speaker === 'teacher' ? `🏫 ${(teachingScene ?? selectedScene).teacherName}` : immersionMode ? '👤' : '👤 Você'}
                 </span>
                 {!immersionMode && dlgTranslationLoading && !isPortugueseLocale(nativeLang) && (
                   <span className="text-[11px] text-cyan-100/65">Traduzindo para {nativeLangLabel}…</span>
@@ -2912,7 +2914,7 @@ export default function ImmersiveScene() {
                       : isSpeaking
                         ? `Reiniciar ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`
                         : isAuthenticated
-                          ? `Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`
+                          ? immersionMode ? targetUI.listen : `Ouvir ${getSpokenLanguageLabel(teachingScene?.teacherLang || selectedScene?.teacherLang || targetLang)}`
                           : "Ativar acesso para ouvir"}
                   </button>
                   {dialogAudioNeedsGesture && dialogAudioSource && (
@@ -2935,7 +2937,7 @@ export default function ImmersiveScene() {
                         className={dialogSpeechRate === rate.value
                           ? "rounded-full bg-cyan-300 px-2 py-1 text-[10px] font-extrabold text-slate-950"
                           : "rounded-full px-2 py-1 text-[10px] font-bold text-slate-200 hover:bg-white/10"}
-                        title={`Ouvir fala e ajuda em ${rate.value}×`}
+                        title={immersionMode ? `${targetUI.listen} ${rate.value}×` : `Ouvir fala e ajuda em ${rate.value}×`}
                       >
                         {immersionMode ? `${rate.value}×` : rate.label}
                       </button>
@@ -2995,13 +2997,13 @@ export default function ImmersiveScene() {
               )}
               {activeSceneDialog[dlgStep] && (
                 <div className="mt-3 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
-                  <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre a fala atual, sua resposta, a cena ou uma palavra:</p>
+                      {!immersionMode && <p className="mb-2 text-xs font-semibold text-cyan-100">Pergunte ao professor sobre a fala atual, sua resposta, a cena ou uma palavra:</p>}
                   <div className="flex gap-2">
                     <input
                       value={dlgWrittenAnswer}
                       onChange={(event) => setDlgWrittenAnswer(event.target.value)}
                       onKeyDown={(event) => { if (event.key === "Enter") submitTeacherQuestion(); }}
-                      placeholder="Ex.: What is pool?"
+                        placeholder={immersionMode ? targetUI.typeMessage : "Ex.: What is pool?"}
                       className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                       autoComplete="off"
                     />
@@ -3010,12 +3012,12 @@ export default function ImmersiveScene() {
                       onClick={submitTeacherQuestion}
                       className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950 disabled:opacity-50"
                     >
-                      {dlgTutorLoading ? "Respondendo…" : "Perguntar"}
+                      {dlgTutorLoading ? (immersionMode ? targetUI.loading : "Respondendo…") : (immersionMode ? targetUI.send : "Perguntar")}
                     </button>
                   </div>
                   {dlgFeedback && (
                     <div ref={dlgFeedbackRef} className="mt-3 rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 py-2">
-                      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Resposta escrita do professor</p>
+                      {!immersionMode && <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Resposta escrita do professor</p>}
                       <div role="status" aria-live="polite" className="whitespace-pre-line text-sm font-medium text-amber-100">
                         {dlgFeedback}
                       </div>
@@ -3024,7 +3026,7 @@ export default function ImmersiveScene() {
                         onClick={replayTeacherSpeechFromGesture}
                         className="mt-3 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-indigo-500"
                       >
-                        🔊 Ouvir resposta de {(teachingScene ?? selectedScene).teacherName}
+                        {immersionMode ? `🔊 ${targetUI.listen}` : `🔊 Ouvir resposta de ${(teachingScene ?? selectedScene).teacherName}`}
                       </button>
                       <div className="mt-3 border-t border-amber-300/20 pt-3">
                         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-amber-100">Aprofundar esta dúvida no curso ABC</p>
@@ -3037,7 +3039,7 @@ export default function ImmersiveScene() {
                       </div>
                     </div>
                   )}
-                  {localizedSceneDialogueQuery.data?.status === "ready" && localizedSceneDialogueQuery.data.turns.length > 0 && (
+                  {!immersionMode && localizedSceneDialogueQuery.data?.status === "ready" && localizedSceneDialogueQuery.data.turns.length > 0 && (
                     <section className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-950/20 px-3 py-2" aria-label="Material localizado da cena">
                       <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-emerald-100">Material localizado da cena</p>
                       <div className="space-y-2 text-sm text-emerald-50">
@@ -3064,7 +3066,7 @@ export default function ImmersiveScene() {
                     </section>
                   )}
                   <div className="mt-3 rounded-lg border border-violet-300/20 bg-violet-400/5 p-2.5">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-violet-100">Começar só pelas palavras Pareto</p>
+                    {!immersionMode && <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-violet-100">Começar só pelas palavras Pareto</p>}
                     <div className="mt-2 flex flex-wrap gap-2">
                       {activeSceneHotspots.slice(0, 6).map((hotspot) => (
                         <button
@@ -3117,14 +3119,14 @@ export default function ImmersiveScene() {
                     </button>
                   ))}
                   <div className="mt-2 rounded-xl border border-cyan-200/20 bg-cyan-500/5 p-3">
-                    <p className="mb-2 text-xs font-semibold text-cyan-100">Ou escreva sua resposta no idioma estudado:</p>
+                    {!immersionMode && <p className="mb-2 text-xs font-semibold text-cyan-100">Ou escreva sua resposta no idioma estudado:</p>}
                     <div className="flex gap-2">
                       <input
                         value={dlgWrittenAnswer}
                         onChange={(event) => setDlgWrittenAnswer(event.target.value)}
                         onKeyDown={(event) => { if (event.key === "Enter") submitWrittenDialogAnswer(); }}
                         disabled={dlgAnswer !== null}
-                        placeholder="Digite sua resposta no idioma estudado"
+                        placeholder={immersionMode ? targetUI.typeMessage : "Digite sua resposta no idioma estudado"}
                         className="min-w-0 flex-1 rounded-lg border border-white/20 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-300"
                         autoComplete="off"
                       />
@@ -3134,7 +3136,7 @@ export default function ImmersiveScene() {
                         disabled={dlgAnswer !== null}
                         className="rounded-lg bg-cyan-300 px-3 py-2 text-sm font-extrabold text-slate-950 disabled:opacity-50"
                       >
-                        {dlgTutorLoading ? "Respondendo…" : "Responder"}
+                        {dlgTutorLoading ? (immersionMode ? targetUI.loading : "Respondendo…") : (immersionMode ? targetUI.send : "Responder")}
                       </button>
                     </div>
                     {dlgFeedback && (
@@ -3150,14 +3152,14 @@ export default function ImmersiveScene() {
                         className="inline-flex items-center gap-2 rounded-lg border border-emerald-300/45 bg-emerald-400/10 px-3 py-2 text-sm font-extrabold text-emerald-100 hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {dlgIsRecording ? <Square size={15} fill="currentColor" /> : <Mic size={16} />}
-                        {dlgIsRecording ? "Parar gravação" : dlgIsProcessingSpeech ? "Transcrevendo…" : "Responder com microfone"}
+                        {dlgIsRecording ? (immersionMode ? targetUI.cancel : "Parar gravação") : dlgIsProcessingSpeech ? (immersionMode ? targetUI.loading : "Transcrevendo…") : (immersionMode ? targetUI.speak : "Responder com microfone")}
                       </button>
-                      <span className="text-[11px] text-cyan-100/65">O navegador pedirá permissão antes de gravar.</span>
+                      {!immersionMode && <span className="text-[11px] text-cyan-100/65">O navegador pedirá permissão antes de gravar.</span>}
                     </div>
                   </div>
                 </div>
               )}
-              {canUseAuthorizedSceneInteractions && sceneInteractionProgressionQuery.data && (() => {
+              {!immersionMode && canUseAuthorizedSceneInteractions && sceneInteractionProgressionQuery.data && (() => {
                 const activeStageIndex = Math.min(
                   sceneInteractionProgressionQuery.data.stages.length - 1,
                   Math.floor((dlgStep / Math.max(1, activeSceneDialog.length - 1)) * sceneInteractionProgressionQuery.data.stages.length),
@@ -3190,20 +3192,20 @@ export default function ImmersiveScene() {
               })()}
               {dlgSuggestedHotspot && dlgAnswer !== null && (
                 <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-400/10 p-3">
-                  <span className="text-xs font-semibold text-amber-100">Objeto visível: {dlgSuggestedHotspot.label}</span>
+                  {!immersionMode && <span className="text-xs font-semibold text-amber-100">Objeto visível: {dlgSuggestedHotspot.label}</span>}
                   <button
                     type="button"
                     onClick={() => setPracticeHotspot(dlgSuggestedHotspot)}
                     className="rounded-lg bg-amber-300 px-3 py-2 text-xs font-extrabold text-slate-950"
                   >
-                    Praticar com Pareto
+                    {immersionMode ? targetUI.practiceHere : "Praticar com Pareto"}
                   </button>
                   <button
                     type="button"
                     onClick={dlgNext}
                     className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/15"
                   >
-                    Continuar diálogo
+                    {immersionMode ? targetUI.continue : "Continuar diálogo"}
                   </button>
                 </div>
               )}
@@ -3213,7 +3215,7 @@ export default function ImmersiveScene() {
                   onClick={dlgNext}
                   style={{ marginTop: '12px', padding: '8px 20px', borderRadius: '8px', background: 'rgba(99,102,241,0.7)', color: '#fff', fontWeight: 600, fontSize: '14px', border: '1px solid rgba(99,102,241,0.5)', cursor: 'pointer' }}
                 >
-                  {immersionMode ? "Next →" : "Continuar →"}
+                  {immersionMode ? `${targetUI.next} →` : "Continuar →"}
                 </button>
               )}
               </div>}
@@ -3261,7 +3263,7 @@ export default function ImmersiveScene() {
             className="flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-full btn-press"
             style={{ background: "rgba(99,102,241,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(99,102,241,0.5)", fontSize: "clamp(11px, 1.3vw, 14px)" }}
           >
-            {immersionMode ? "Next →" : "Próxima →"}
+            {immersionMode ? `${targetUI.next} →` : "Próxima →"}
           </button>
         </div>
         {!isAuthenticated && !dialogAuthRequired && (

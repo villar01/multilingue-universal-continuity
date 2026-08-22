@@ -57,7 +57,7 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("const fallback = getFreeDialogQuestionReply(question, scene.hotspots);");
     expect(sceneSource).toContain("const line = activeSceneDialog[dlgStep];");
     expect(sceneSource).toContain("setDlgTutorHistory");
-    expect(sceneSource).toContain('placeholder="Ex.: What is pool?"');
+    expect(sceneSource).toContain('placeholder={immersionMode ? targetUI.typeMessage : "Ex.: What is pool?"}');
   });
 
   it("exibe uma resposta imediatamente e tenta a voz somente após o envio escrito", () => {

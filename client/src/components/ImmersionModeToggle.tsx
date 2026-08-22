@@ -12,7 +12,7 @@ export function ImmersionModeToggle({ compact = false }: { compact?: boolean }) 
       type="button"
       role="switch"
       aria-checked={immersionMode}
-      aria-label={immersionMode ? "Voltar ao modo guiado" : "Ativar modo de imersão"}
+      aria-label={immersionMode ? targetUI.immersive : `↔ ${targetUI.immersive}`}
       onClick={() => setImmersionMode(!immersionMode)}
       className={`inline-flex items-center rounded-full border py-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-400 ${compact ? "gap-1 px-2 sm:gap-2 sm:px-3" : "gap-2 px-3"}`}
       style={{
@@ -20,11 +20,11 @@ export function ImmersionModeToggle({ compact = false }: { compact?: boolean }) 
         background: immersionMode ? "rgba(22,163,74,.15)" : "rgba(255,255,255,.08)",
         color: "inherit",
       }}
-      title={immersionMode ? "Voltar ao modo guiado" : "Ativar modo de imersão"}
+      title={immersionMode ? targetUI.immersive : `↔ ${targetUI.immersive}`}
     >
       <Languages size={15} aria-hidden="true" />
-      <span className={compact ? "hidden sm:inline" : undefined}>{immersionMode ? targetUI.immersive : "Modo imersão"}</span>
-      {compact && <span className="sr-only">{immersionMode ? targetUI.immersive : "Modo imersão"}</span>}
+      <span className={compact ? "hidden sm:inline" : undefined}>{targetUI.immersive}</span>
+      {compact && <span className="sr-only">{targetUI.immersive}</span>}
       {!compact && <span className="opacity-70">{immersionMode ? "ON" : "OFF"}</span>}
     </button>
   );

@@ -13,4 +13,23 @@ describe("acessibilidade do modo imersão", () => {
     expect(sceneSource).toContain('title="Mudar idioma a estudar"');
     expect(sceneSource).toContain(">Estudar idioma</div>");
   });
+
+  it("usa rótulos no idioma-alvo e oculta auxiliares nativos sem remover ajuda ou saída", () => {
+    const sceneSource = fs.readFileSync(
+      path.resolve(import.meta.dirname, "../client/src/pages/ImmersiveScene.tsx"),
+      "utf8",
+    );
+    const toggleSource = fs.readFileSync(
+      path.resolve(import.meta.dirname, "../client/src/components/ImmersionModeToggle.tsx"),
+      "utf8",
+    );
+
+    expect(sceneSource).toContain('const targetUI = getUIStrings(profile.targetCode)');
+    expect(sceneSource).toContain('immersionMode ? `${targetUI.next} →`');
+    expect(sceneSource).toContain('!immersionMode && localizedSceneDialogueQuery.data?.status === "ready"');
+    expect(sceneSource).toContain('immersionMode ? "?" : `Ouvir ajuda ${nativeLangLabel}`');
+    expect(sceneSource).toContain('immersionMode ? targetUI.cancel : "Fechar"');
+    expect(toggleSource).toContain('{targetUI.immersive}');
+    expect(toggleSource).not.toContain('"Modo imersão"');
+  });
 });
