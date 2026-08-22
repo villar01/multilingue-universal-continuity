@@ -455,6 +455,13 @@ export default function Home() {
                 <li className="flex items-start gap-1"><span className="text-red-300 mt-0.5">•</span> O acesso de aprendizagem permanece protegido por conta e aceite de segurança</li>
               </ul>
             </div>
+            <div className="mt-3 rounded-2xl border border-cyan-200/30 bg-slate-950/25 px-5 py-4 text-left">
+              <p className="text-sm font-bold text-cyan-100">Privacidade, acesso protegido e continuidade</p>
+              <p className="mt-1 text-xs leading-relaxed text-white/80">
+                As aulas são acessadas por conta, com proteção apropriada à idade e canal privado para dúvidas e sugestões. Verificações preventivas ajudam a manter uma experiência de estudo confiável.
+              </p>
+              <Link href="/terms" className="mt-2 inline-flex text-xs font-semibold text-cyan-200 underline underline-offset-2 hover:text-white">Entenda como cuidamos da sua experiência</Link>
+            </div>
           </div>
 
           {/* Stats row */}
