@@ -13,6 +13,7 @@ import { IMMERSIVE_SCENES } from '@/lib/immersiveScenesCatalog';
 import type { Scene, Hotspot } from '@shared/immersiveSceneTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getScriptedExerciseFeedback } from '@/lib/scriptedExerciseFeedback';
+import { getUIStrings } from '@/lib/i18n';
 
 // ── Scene definitions (from ImmersiveScene) ─────────────────────────────────
 const SCENES = IMMERSIVE_SCENES;
@@ -126,7 +127,8 @@ export default function SceneLesson({
   onComplete,
   onBack,
 }: SceneLessonProps) {
-  const { profile } = useLanguage();
+  const { profile, immersionMode } = useLanguage();
+  const targetUI = getUIStrings(languageCode);
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null);
   const [sceneContent, setSceneContent] = useState<SceneLessonContent | null>(null);
   const [tab, setTab] = useState<'scene' | 'objects' | 'exercises' | 'test' | 'chat'>('scene');
@@ -179,13 +181,13 @@ export default function SceneLesson({
       {
         onSuccess: (data: SceneLessonContent) => {
           setSceneContent(data);
-          const introduction = [data.teacherIntro, data.sceneDescription, data.sceneDescriptionTranslation]
+          const introduction = [data.teacherIntro, data.sceneDescription, !immersionMode ? data.sceneDescriptionTranslation : undefined]
             .filter((part): part is string => Boolean(part?.trim()))
             .join('\n\n');
           setChatHistory(introduction ? [{ role: 'assistant', content: introduction }] : []);
           setExercises((data.questions || []).map((question, index) => ({
             type: 'spelling' as const,
-            question: `${question.question}\n${question.questionInTarget}`,
+            question: immersionMode ? question.questionInTarget : `${question.question}\n${question.questionInTarget}`,
             questionPt: question.question,
             answer: question.suggestedAnswer,
             hint: question.answerTranslation,
@@ -314,7 +316,7 @@ export default function SceneLesson({
           )}
           <div style={{ fontSize: 24 }}>{teacherEmoji}</div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>Cenas com Professor</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{immersionMode ? targetUI.selectScene : 'Cenas com Professor'}</div>
             <div style={{ fontSize: 11, color: '#888' }}>{SCENES.length} ambientes fotográficos interativos</div>
           </div>
         </div>
@@ -374,7 +376,7 @@ export default function SceneLesson({
       <div style={{ maxWidth: 480, margin: '0 auto', fontFamily: 'system-ui, sans-serif', background: '#0f0f1a', borderRadius: 20, overflow: 'hidden' }}>
         <div style={{ padding: '60px 24px', textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>{selectedScene.flag}</div>
-          <div style={{ fontSize: 18, color: '#fff', fontWeight: 700, marginBottom: 8 }}>Preparando {selectedScene.name}...</div>
+          <div style={{ fontSize: 18, color: '#fff', fontWeight: 700, marginBottom: 8 }}>{immersionMode ? targetUI.loading : `Preparando ${selectedScene.name}...`}</div>
           <div style={{ fontSize: 13, color: '#888' }}>{selectedScene.teacherName} está entrando na cena e preparando exercícios 🎬</div>
         </div>
       </div>
@@ -414,7 +416,7 @@ export default function SceneLesson({
               cursor: 'pointer',
             }}
           >
-            {t === 'scene' ? '🖼️ Cena' : t === 'objects' ? '📦 Objetos' : t === 'exercises' ? '📝 Exercícios' : t === 'test' ? '✅ Teste' : '💬 Chat'}
+            {t === 'scene' ? `🖼️ ${immersionMode ? targetUI.immersive : 'Cena'}` : t === 'objects' ? `📦 ${immersionMode ? targetUI.vocabulary : 'Objetos'}` : t === 'exercises' ? `📝 ${immersionMode ? targetUI.exercise : 'Exercícios'}` : t === 'test' ? `✅ ${immersionMode ? targetUI.score : 'Teste'}` : `💬 ${immersionMode ? targetUI.conversation : 'Chat'}`}
           </button>
         ))}
       </div>
@@ -491,10 +493,10 @@ export default function SceneLesson({
               <div style={{ background: `${selectedHotspot.color}15`, border: `1px solid ${selectedHotspot.color}40`, borderRadius: 14, padding: '14px', marginBottom: 14 }}>
                 <div style={{ fontSize: 28, textAlign: 'center', marginBottom: 8 }}>{selectedHotspot.icon}</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', textAlign: 'center', marginBottom: 4 }}>{selectedHotspot.label}</div>
-                <div style={{ fontSize: 14, color: '#aaa', textAlign: 'center', marginBottom: 8 }}>= {selectedHotspot.translation}</div>
+                {!immersionMode && <div style={{ fontSize: 14, color: '#aaa', textAlign: 'center', marginBottom: 8 }}>= {selectedHotspot.translation}</div>}
                 <div style={{ fontSize: 13, color: '#FFD700', textAlign: 'center', marginBottom: 4, fontStyle: 'italic' }}>'{selectedHotspot.pronunciation}'</div>
                 <div style={{ fontSize: 13, color: '#ddd', textAlign: 'center', marginBottom: 12 }}>{selectedHotspot.example}</div>
-                {profile.nativeCode?.startsWith('pt') && (
+                {!immersionMode && profile.nativeCode?.startsWith('pt') && (
                   <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{selectedHotspot.examplePt}</div>
                 )}
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
@@ -514,7 +516,7 @@ export default function SceneLesson({
 
             {/* Dialog section */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 11, color: '#888', marginBottom: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>💬 Diálogo com o professor:</div>
+              {!immersionMode && <div style={{ fontSize: 11, color: '#888', marginBottom: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>💬 Diálogo com o professor:</div>}
               {selectedScene.dialog.map((line, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, flexDirection: line.speaker === 'user' ? 'row-reverse' : 'row' }}>
                   <div style={{ width: 28, height: 28, borderRadius: '50%', overflow: 'hidden', border: `1px solid ${phaseColor}`, flexShrink: 0 }}>
@@ -535,11 +537,11 @@ export default function SceneLesson({
                     lineHeight: 1.5,
                   }}>
                     <div>{line.text}</div>
-                    {profile.nativeCode?.startsWith('pt') && (
+                    {!immersionMode && profile.nativeCode?.startsWith('pt') && (
                       <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{line.textPt}</div>
                     )}
                     {line.speaker === 'teacher' && (
-                      <button onClick={() => speakWord(line.text)} style={{ marginTop: 4, background: 'none', border: 'none', color: phaseColor, fontSize: 11, cursor: 'pointer', padding: 0 }}>🔊 Ouvir</button>
+                      <button onClick={() => speakWord(line.text)} style={{ marginTop: 4, background: 'none', border: 'none', color: phaseColor, fontSize: 11, cursor: 'pointer', padding: 0 }}>🔊 {immersionMode ? targetUI.listen : 'Ouvir'}</button>
                     )}
                   </div>
                 </div>
@@ -548,10 +550,10 @@ export default function SceneLesson({
 
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setTab('exercises')} style={{ flex: 1, background: `${phaseColor}20`, border: `1px solid ${phaseColor}40`, borderRadius: 12, padding: '12px', color: phaseColor, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
-                📝 Exercícios
+                📝 {immersionMode ? targetUI.exercise : 'Exercícios'}
               </button>
               <button onClick={() => setTab('chat')} style={{ flex: 1, background: phaseColor, border: 'none', borderRadius: 12, padding: '12px', color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
-                💬 Conversar
+                💬 {immersionMode ? targetUI.conversation : 'Conversar'}
               </button>
             </div>
           </div>
@@ -560,9 +562,9 @@ export default function SceneLesson({
         {/* ── TAB: OBJECTS (vocabulary list) ─────────────────────────────── */}
         {tab === 'objects' && (
           <div>
-            <div style={{ fontSize: 13, color: '#888', marginBottom: 12 }}>
+            {!immersionMode && <div style={{ fontSize: 13, color: '#888', marginBottom: 12 }}>
               Clique em um objeto para ouvir e aprender! ({selectedScene.hotspots.length} objetos)
-            </div>
+            </div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
               {selectedScene.hotspots.map((hotspot, i) => (
                 <button
@@ -586,8 +588,8 @@ export default function SceneLesson({
                   <div style={{ fontSize: 28, marginBottom: 4 }}>{hotspot.icon}</div>
                   <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{hotspot.label}</div>
                   {hotspot.pronunciation && <div style={{ fontSize: 11, color: '#FFD700', fontStyle: 'italic' }}>'{hotspot.pronunciation}'</div>}
-                  <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>{hotspot.translation}</div>
-                  {learnedWords.has(hotspot.id) && <div style={{ fontSize: 10, color: '#10b981', marginTop: 4 }}>✓ Aprendido</div>}
+                  {!immersionMode && <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>{hotspot.translation}</div>}
+                  {learnedWords.has(hotspot.id) && !immersionMode && <div style={{ fontSize: 10, color: '#10b981', marginTop: 4 }}>✓ Aprendido</div>}
                 </button>
               ))}
             </div>
@@ -624,7 +626,7 @@ export default function SceneLesson({
                   </div>
                   <div style={{ flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: '0 16px 16px 16px', padding: '12px 14px', border: `1px solid ${phaseColor}30` }}>
                     <div style={{ fontSize: 15, color: '#fff', fontWeight: 600, marginBottom: 4 }}>{exercises[currentExercise].question}</div>
-                    <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>{exercises[currentExercise].questionPt}</div>
+                    {!immersionMode && <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>{exercises[currentExercise].questionPt}</div>}
                   </div>
                 </div>
 
@@ -659,7 +661,7 @@ export default function SceneLesson({
                     value={exerciseAnswer}
                     onChange={e => setExerciseAnswer(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleExerciseAnswer()}
-                    placeholder="Digite sua resposta..."
+                    placeholder={immersionMode ? targetUI.typeMessage : "Digite sua resposta..."}
                     style={{ width: '100%', background: 'rgba(255,255,255,0.07)', border: `1px solid ${phaseColor}40`, borderRadius: 12, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none', marginBottom: 16, boxSizing: 'border-box' }}
                   />
                 )}
@@ -810,7 +812,7 @@ export default function SceneLesson({
                           setCurrentExercise(i => i + 1);
                         }
                       }}
-                      placeholder="Digite sua resposta..."
+                      placeholder={immersionMode ? targetUI.typeMessage : "Digite sua resposta..."}
                       style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${phaseColor}40`, borderRadius: 12, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none' }}
                     />
                     <button
@@ -897,7 +899,7 @@ export default function SceneLesson({
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSendChat()}
-                placeholder={`Responda em ${targetLanguage}...`}
+                placeholder={immersionMode ? targetUI.typeMessage : `Responda em ${targetLanguage}...`}
                 style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${phaseColor}40`, borderRadius: 12, padding: '10px 14px', color: '#fff', fontSize: 13, outline: 'none' }}
               />
               <button

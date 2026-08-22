@@ -37,7 +37,7 @@ describe("contrato global de reprodução de voz", () => {
     const pedagogicalLesson = readClient("components/PedagogicalLesson.tsx");
 
     expect(sceneLesson).toContain("speakNaturalVoice(word, languageCode");
-    expect(sceneLesson).toContain("🔊 Ouvir");
+    expect(sceneLesson).toContain("🔊 {immersionMode ? targetUI.listen : 'Ouvir'}");
     expect(pedagogicalLesson).toContain("speakEdgeTTS(text, languageCode)");
     expect(pedagogicalLesson).toContain("onClick={() => speakWord(line.text)}");
   });
