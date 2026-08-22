@@ -71,6 +71,8 @@ const NAV_IDIOMAS = [
 ];
 const NAV_PLATAFORMA = [
   { label: "Aprendizado Natural 🌟", icon: "🧠", href: "/natural-learning" },
+  { label: "Demonstração A1 · 3 lições", icon: "🎓", href: "/demo" },
+  { label: "Amostra Praia Tropical", icon: "🏖️", href: "/demo-scene" },
   { label: "Cenas Imersivas AR", icon: "🌍", href: "/immersive-scene" },
   { label: "Professores com IA", icon: "👨‍🏫", href: "/ar-teacher" },
   { label: "Treino de Vocabulário", icon: "📚", href: "/dashboard" },
@@ -439,6 +441,20 @@ export default function Home() {
             <p className="text-white/40 text-xs text-center mt-3">
               Sem cartão de crédito · Acesso imediato · Cancele quando quiser
             </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <Link href="/demo">
+                <button className="w-full rounded-xl border border-cyan-200/45 bg-cyan-200/10 px-4 py-3 text-left transition-colors hover:bg-cyan-200/20">
+                  <span className="block text-sm font-bold text-cyan-100">Experimentar 3 lições A1</span>
+                  <span className="mt-1 block text-xs text-white/75">Veja a progressão de 10 etapas sem criar conta.</span>
+                </button>
+              </Link>
+              <Link href="/demo-scene">
+                <button className="w-full rounded-xl border border-amber-200/45 bg-amber-200/10 px-4 py-3 text-left transition-colors hover:bg-amber-200/20">
+                  <span className="block text-sm font-bold text-amber-100">Conhecer a Praia Tropical</span>
+                  <span className="mt-1 block text-xs text-white/75">Pratique três interações guiadas com James.</span>
+                </button>
+              </Link>
+            </div>
 
             {/* Cadastro e proteção apropriada à idade */}
             <div className="mt-4 bg-red-600/30 border-2 border-red-400/60 rounded-2xl px-5 py-4 text-left">
