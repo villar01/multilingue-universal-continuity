@@ -15,5 +15,7 @@ describe("evidência persistente do portão headless da Cena Imersiva", () => {
     expect(script).toContain('img[alt="James"]');
     expect(script).toContain('".immersive-start-dialog"');
     expect(script).toContain("Ouvir apresentação de James");
+    expect(script).toContain(".immersive-dialog[role=\"dialog\"]");
+    expect(script).toContain("O painel inferior do diálogo não permaneceu visível");
   });
 });

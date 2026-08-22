@@ -84,7 +84,14 @@ async function run() {
     if (pageText.includes("Ativar acesso")) {
       throw new Error("A cena autenticada permaneceu no estado de ativação de acesso.");
     }
-    console.log("Checagem autenticada da Cena Imersiva aprovada: Praia Tropical, James e Iniciar Diálogo renderizados.");
+    await page.locator(".immersive-start-dialog").click();
+    const dialogPanel = page.locator('.immersive-dialog[role="dialog"]');
+    await dialogPanel.waitFor({ state: "visible", timeout: 12_000 });
+    const panelBox = await dialogPanel.boundingBox();
+    if (!panelBox || panelBox.y < 0 || panelBox.y + panelBox.height > 720) {
+      throw new Error("O painel inferior do diálogo não permaneceu visível na apresentação autenticada.");
+    }
+    console.log("Checagem autenticada da Cena Imersiva aprovada: Praia Tropical, James, Iniciar Diálogo e painel inferior visível.");
   } finally {
     await browser.close();
   }
