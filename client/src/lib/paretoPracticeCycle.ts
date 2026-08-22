@@ -49,7 +49,7 @@ export function checkParetoRecall(answer: string, term: ParetoPracticeTerm): Par
 
 /** Mantém uma frase-modelo curta para a montagem guiada antes da criação independente. */
 export function getParetoAssemblyModel(term: ParetoPracticeTerm): string {
-  return term.example?.trim() || `I see ${term.word}.`;
+  return term.example?.trim() || term.word;
 }
 
 /** Confirma a ordem da frase-modelo sem exigir capitalização ou espaços idênticos. */

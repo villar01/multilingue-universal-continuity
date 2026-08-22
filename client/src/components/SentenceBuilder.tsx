@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
+import { useMemo } from "react";
 import { trpc } from '@/lib/trpc';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { useAuth } from '@/_core/hooks/useAuth';
 import type { CEFRLevel } from '@/lib/lesson-levels';
+import { ParetoPracticeCycle } from '@/components/ParetoPracticeCycle';
+import type { ParetoPracticeTerm } from '@/lib/paretoPracticeCycle';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface SentencePattern {
@@ -143,12 +146,26 @@ export default function SentenceBuilder({
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [xp, setXp] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [paretoIndex, setParetoIndex] = useState<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const structureMutation = trpc.polyLesson.structureTraining.useMutation();
   const chatMutation = trpc.polyLesson.structureChat.useMutation();
 
   const currentPattern = patterns[patternIdx];
+  const paretoTerms = useMemo<ParetoPracticeTerm[]>(() => vocabulary
+    .filter((item) => item.word.trim() && item.translation.trim())
+    .slice(0, 6)
+    .map((item) => {
+      const isInCurrentExample = currentPattern?.example.toLocaleLowerCase().includes(item.word.toLocaleLowerCase()) ?? false;
+      return {
+        word: item.word,
+        translation: item.translation,
+        example: isInCurrentExample ? currentPattern?.example : undefined,
+        exampleTranslation: isInCurrentExample ? currentPattern?.exampleTranslation : undefined,
+      };
+    }), [currentPattern?.example, currentPattern?.exampleTranslation, vocabulary]);
+  const activeParetoTerm = paretoIndex === null ? null : paretoTerms[paretoIndex] ?? null;
 
   // Init slots from current pattern
   useEffect(() => {
@@ -437,6 +454,33 @@ export default function SentenceBuilder({
             <button onClick={() => setTab('chat')} style={{ width: '100%', background: phaseColor, border: 'none', borderRadius: 12, padding: '12px', color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
               💬 Conversar sobre esta estrutura
             </button>
+
+            {paretoTerms.length > 0 && (
+              <section style={{ marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 14 }} aria-label="Prática Pareto da estrutura">
+                <div style={{ fontSize: 12, color: phaseColor, fontWeight: 800, marginBottom: 6 }}>🧠 Prática Pareto da estrutura</div>
+                <p style={{ fontSize: 12, color: '#aaa', lineHeight: 1.45, marginBottom: 10 }}>Recupere, escreva, monte e crie frases com as palavras reais desta lição.</p>
+                {!activeParetoTerm ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {paretoTerms.map((term, index) => (
+                      <button key={`${term.word}-${index}`} type="button" onClick={() => setParetoIndex(index)} style={{ background: `${phaseColor}15`, border: `1px solid ${phaseColor}45`, borderRadius: 18, padding: '6px 10px', color: '#fff', fontSize: 12, cursor: 'pointer' }}>
+                        {term.word}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <ParetoPracticeCycle
+                    embedded
+                    term={activeParetoTerm}
+                    level={cefrLevel}
+                    feedbackLanguage={nativeLanguage}
+                    onSpeak={speakText}
+                    onComplete={() => setXp((current) => current + 20)}
+                    onNext={() => setParetoIndex((current) => current === null || current >= paretoTerms.length - 1 ? null : current + 1)}
+                    onClose={() => setParetoIndex(null)}
+                  />
+                )}
+              </section>
+            )}
           </div>
         )}
 
