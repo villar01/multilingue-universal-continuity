@@ -15,6 +15,8 @@ describe("refinamento do tutor imersivo", () => {
   });
 
   it("não repete fala neural quando a resposta imediata já foi entregue", () => {
-    expect(immersiveSceneSource).toContain("if (!fallback?.immediate) {\n        requestSpeechSafely(targetReply");
+    // A IA sempre fala a resposta real — o placeholder inicial é substituído pela resposta correta
+    expect(immersiveSceneSource).toContain("Sempre fala a resposta real da IA (substitui o placeholder imediato)");
+    expect(immersiveSceneSource).not.toContain("if (!fallback?.immediate) {\n        requestSpeechSafely(targetReply");
   });
 });

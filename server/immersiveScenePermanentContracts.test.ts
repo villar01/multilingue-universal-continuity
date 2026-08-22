@@ -65,7 +65,8 @@ describe("permanent Tropical Beach scene contracts", () => {
     expect(sceneSource).toContain("setDlgFeedback(immediateFeedback);");
     expect(sceneSource).toContain('requestSpeechSafely(immediateReply.replace(/^[^:]+:\\s*/, ""), scene.teacherLang, scene.teacherGender, "teacher", true);');
     expect(sceneSource).toContain('role="status" aria-live="polite"');
-    expect(sceneSource).toContain("if (fallback?.immediate) {");
+    // fallback.immediate é placeholder — a IA protegida sempre é chamada quando autenticado
+    expect(sceneSource).toContain("CORREÇÃO: fallback.immediate é apenas placeholder");
   });
 
   it("separa pergunta livre do avanço automático das alternativas roteirizadas", () => {
