@@ -4,6 +4,7 @@ import { getDb } from "./db";
 import { sql } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { deriveMaintenanceAlerts } from "./maintenanceAlertPolicy";
+import { deriveAvailabilityGuidance } from "./serviceAvailabilityPolicy";
 
 export const controlCenterRouter = router({
 
@@ -287,6 +288,60 @@ export const controlCenterRouter = router({
       });
 
       return { success: true, newBatch: nextBatch };
+    }),
+
+  // ── Availability impact (owner review only) ───────────────────────────────
+  getAvailabilityImpactSummary: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const result = await db.execute(
+      sql`SELECT decision, summary, detected_issues, created_at
+          FROM maintenance_runs
+          WHERE source = 'availability_policy'
+          ORDER BY created_at DESC
+          LIMIT 7`
+    );
+    const reports = ((result as any)[0] as Array<Record<string, unknown>>).map((report) => ({
+      state: report.decision === "eligible" ? "operational" : report.decision === "blocked" ? "degraded_or_outage" : "review_required",
+      affectedCapabilities: Number(report.detected_issues ?? 0),
+      createdAt: report.created_at ?? null,
+      guidance: String(report.summary ?? ""),
+    }));
+    return { reports };
+  }),
+
+  recordAvailabilityImpact: protectedProcedure
+    .input(z.object({
+      state: z.enum(["operational", "degraded", "outage"]),
+      affectedCapabilities: z.array(z.enum(["immersive_scene", "lesson", "audio", "account", "payment"])).max(5),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const guidance = deriveAvailabilityGuidance({
+        state: input.state,
+        startedAt: Date.now(),
+        affectedCapabilities: input.affectedCapabilities,
+      });
+      const decision = input.state === "operational" ? "eligible" : "blocked";
+      await db.execute(
+        sql`INSERT INTO maintenance_runs (source, decision, summary, detected_issues, verifications)
+            VALUES (
+              'availability_policy',
+              ${decision},
+              ${guidance.customerMessage},
+              ${input.affectedCapabilities.length},
+              ${JSON.stringify([
+                { kind: "owner_review", status: "passed", evidence: "Registro agregado criado por decisão manual do proprietário" },
+                { kind: "financial_action", status: "not_run", evidence: "Créditos, descontos e reembolsos exigem revisão manual conforme os termos" },
+              ])}
+            )`
+      );
+      return {
+        recorded: true,
+        customerMessage: guidance.customerMessage,
+        compensation: guidance.compensation,
+      };
     }),
 
   // ── Emergency Mode ─────────────────────────────────────────────────────────

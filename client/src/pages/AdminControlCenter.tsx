@@ -103,6 +103,10 @@ export default function AdminControlCenter() {
     undefined,
     { refetchInterval: 60000 },
   );
+  const availabilityImpacts = trpc.controlCenter.getAvailabilityImpactSummary.useQuery(
+    undefined,
+    { refetchInterval: 60000 },
+  );
 
   // ── Mutations ──
   const applyKnowledge = trpc.controlCenter.applyKnowledge.useMutation({
@@ -148,6 +152,12 @@ export default function AdminControlCenter() {
 
   const blockUser = trpc.controlCenter.blockUser.useMutation({
     onSuccess: () => toast.success("🚫 Usuário bloqueado"),
+  });
+  const recordAvailabilityImpact = trpc.controlCenter.recordAvailabilityImpact.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.customerMessage);
+      availabilityImpacts.refetch();
+    },
   });
 
   const health = systemHealth.data;
@@ -487,6 +497,28 @@ export default function AdminControlCenter() {
                   ].map(([label, value]) => <div key={String(label)} className="rounded-lg border border-gray-700 bg-gray-800/60 px-4 py-3"><p className="text-xl font-bold text-white">{value}</p><p className="text-xs text-gray-400">{label}</p></div>)}
                 </div>
                 <a href="/suporte" className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">Abrir mensagens privadas</a>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base text-white">Registro de continuidade</CardTitle>
+                <p className="text-xs text-gray-400">Registre uma avaliação agregada. Ela não concede crédito, desconto, reembolso ou qualquer condição automaticamente.</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" className="border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10" onClick={() => recordAvailabilityImpact.mutate({ state: "operational", affectedCapabilities: [] })} disabled={recordAvailabilityImpact.isPending}>
+                    Registrar operação normal
+                  </Button>
+                  <Button size="sm" variant="outline" className="border-amber-500/40 text-amber-100 hover:bg-amber-500/10" onClick={() => recordAvailabilityImpact.mutate({ state: "degraded", affectedCapabilities: ["immersive_scene"] })} disabled={recordAvailabilityImpact.isPending}>
+                    Registrar impacto parcial
+                  </Button>
+                  <Button size="sm" variant="outline" className="border-red-500/40 text-red-100 hover:bg-red-500/10" onClick={() => recordAvailabilityImpact.mutate({ state: "outage", affectedCapabilities: ["immersive_scene", "lesson"] })} disabled={recordAvailabilityImpact.isPending}>
+                    Registrar indisponibilidade
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Registros recentes: {availabilityImpacts.data?.reports.length ?? 0}. Cada registro exige sua revisão antes de qualquer decisão comercial.
+                </p>
               </CardContent>
             </Card>
             <Card className="bg-gray-900 border-gray-800">
