@@ -3,7 +3,7 @@ import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getAbuseProtectionSummary } from "./abuseProtection";
 import { getDb } from "../db";
-import { metrics, securityEvents } from "../../drizzle/schema";
+import { customerSupportThreads, metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
 
 export const systemRouter = router({
@@ -106,6 +106,7 @@ export const systemRouter = router({
     const abuse = getAbuseProtectionSummary();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     let recentEvents: Array<{ severity: string; resolved: boolean | null }> = [];
+    let supportThreads: Array<{ category: string; status: string; priority: string }> = [];
 
     try {
       const db = await getDb();
@@ -114,6 +115,11 @@ export const systemRouter = router({
           severity: securityEvents.severity,
           resolved: securityEvents.resolved,
         }).from(securityEvents).where(gte(securityEvents.createdAt, sevenDaysAgo));
+        supportThreads = await db.select({
+          category: customerSupportThreads.category,
+          status: customerSupportThreads.status,
+          priority: customerSupportThreads.priority,
+        }).from(customerSupportThreads).where(gte(customerSupportThreads.updatedAt, sevenDaysAgo));
       }
     } catch (error) {
       console.error("[getOwnerSupportSummary] Failed to aggregate operational events", error);
@@ -123,7 +129,22 @@ export const systemRouter = router({
     const highPriorityEvents = recentEvents.filter(
       (event) => event.resolved !== true && (event.severity === "high" || event.severity === "critical"),
     ).length;
+    const openSupportThreads = supportThreads.filter((thread) => thread.status !== "closed").length;
+    const securityReports = supportThreads.filter((thread) => thread.category === "security" && thread.status !== "closed").length;
+    const productFeedback = supportThreads.filter((thread) => (thread.category === "feedback" || thread.category === "idea" || thread.category === "bug") && thread.status !== "closed").length;
     const suggestions = [
+      ...(securityReports > 0 ? [{
+        id: "review-customer-security-reports",
+        priority: "high" as const,
+        title: "Revisar relatos privados de segurança",
+        detail: "Há relatos de segurança aguardando revisão do proprietário no canal privado.",
+      }] : []),
+      ...(productFeedback > 0 ? [{
+        id: "review-customer-feedback",
+        priority: "medium" as const,
+        title: "Revisar melhorias enviadas por clientes",
+        detail: "Há opiniões, ideias ou problemas aguardando classificação no canal privado.",
+      }] : []),
       ...(highPriorityEvents > 0 ? [{
         id: "review-high-priority-events",
         priority: "high" as const,
@@ -151,6 +172,11 @@ export const systemRouter = router({
         highPriorityEvents,
         activeAbuseBlocks: abuse.activeBlocks,
         activeAbuseRecords: abuse.activeRecords,
+      },
+      customerFeedback: {
+        openThreads: openSupportThreads,
+        securityReports,
+        productFeedback,
       },
       suggestions,
       privacy: {

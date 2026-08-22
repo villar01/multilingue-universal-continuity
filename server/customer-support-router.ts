@@ -4,6 +4,7 @@ import { z } from "zod";
 import { customerSupportMessages, customerSupportThreads } from "../drizzle/schema";
 import { getDb } from "./db";
 import { adminProcedure, protectedProcedure, router } from "./_core/trpc";
+import { notifyOwner } from "./_core/notification";
 
 const contentSchema = z.string().trim().min(1, "Escreva uma mensagem.").max(1500, "A mensagem pode ter no máximo 1.500 caracteres.");
 
@@ -25,6 +26,22 @@ async function assertMessageLimit(userId: number) {
   }
 }
 
+export async function notifyOwnerOfCriticalSupport(
+  category: "help" | "bug" | "feedback" | "idea" | "security" | "sales",
+  sendNotification: typeof notifyOwner = notifyOwner,
+) {
+  if (category !== "security") return false;
+  try {
+    return await sendNotification({
+      title: "Novo relato de segurança para revisão",
+      content: "Um cliente enviou um relato privado de segurança. Abra o painel de suporte para revisar; nenhum conteúdo ou identificador foi incluído neste alerta.",
+    });
+  } catch (error) {
+    console.error("[CustomerSupport] Critical support notification failed", error);
+    return false;
+  }
+}
+
 export const customerSupportRouter = router({
   create: protectedProcedure.input(z.object({
     subject: z.string().trim().min(3).max(180),
@@ -35,11 +52,13 @@ export const customerSupportRouter = router({
     const db = await requireDb();
     const result = await db.insert(customerSupportThreads).values({
       userId: ctx.user.id, subject: input.subject, category: input.category,
+      priority: input.category === "security" ? "high" : "normal",
     });
     const threadId = Number(result[0].insertId);
     await db.insert(customerSupportMessages).values({
       threadId, authorUserId: ctx.user.id, authorRole: "customer", content: input.content,
     });
+    await notifyOwnerOfCriticalSupport(input.category);
     return { threadId };
   }),
 

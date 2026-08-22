@@ -10,6 +10,7 @@ import { OfflineStatusBar } from "./components/OfflineStatusBar";
 import { TourButton } from "./components/TourSpotlight";
 import { DownloadManager } from "./components/DownloadManager";
 import UpdatesNotificationBanner from "./components/UpdatesNotificationBanner";
+import { FeedbackButton } from "./components/FeedbackButton";
 import { registerServiceWorker } from "./lib/registerSW";
 import { ImmersiveSceneRecoveryBoundary } from "./components/ImmersiveSceneRecoveryBoundary";
 import { LessonRecoveryBoundary } from "./components/LessonRecoveryBoundary";
@@ -451,6 +452,7 @@ function App() {
               <Router />
             </LearningAccessGate>
           </Suspense>
+          <FeedbackButton />
           <LipSyncSetupGuide />
           <QuickStudyAccess />
           <LocalAINotification />

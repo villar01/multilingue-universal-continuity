@@ -61,12 +61,19 @@ describe("system operational data access", () => {
       activeAbuseBlocks: expect.any(Number),
       activeAbuseRecords: expect.any(Number),
     });
+    expect(summary.customerFeedback).toEqual({
+      openThreads: expect.any(Number),
+      securityReports: expect.any(Number),
+      productFeedback: expect.any(Number),
+    });
     expect(summary.privacy).toEqual({
       containsPersonalData: false,
       containsStudentContent: false,
       containsVisitorIdentifiers: false,
     });
     expect(JSON.stringify(summary)).not.toMatch(/email|ipAddress|userAgent|conversation/i);
+    expect(summary.customerFeedback).not.toHaveProperty("content");
+    expect(summary.customerFeedback).not.toHaveProperty("subject");
   });
 
   it("rejects security-event writes for a non-administrator", async () => {

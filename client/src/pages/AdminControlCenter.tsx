@@ -453,6 +453,19 @@ export default function AdminControlCenter() {
               </CardContent>
             </Card>
             <Card className="bg-gray-900 border-gray-800">
+              <CardHeader className="pb-2"><CardTitle className="text-base text-white">Retorno de clientes</CardTitle></CardHeader>
+              <CardContent className="flex flex-wrap items-center justify-between gap-4">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  {[
+                    ["Em aberto", ownerSupport.data?.customerFeedback.openThreads ?? 0],
+                    ["Segurança", ownerSupport.data?.customerFeedback.securityReports ?? 0],
+                    ["Melhorias", ownerSupport.data?.customerFeedback.productFeedback ?? 0],
+                  ].map(([label, value]) => <div key={String(label)} className="rounded-lg border border-gray-700 bg-gray-800/60 px-4 py-3"><p className="text-xl font-bold text-white">{value}</p><p className="text-xs text-gray-400">{label}</p></div>)}
+                </div>
+                <a href="/suporte" className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">Abrir mensagens privadas</a>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-900 border-gray-800">
               <CardHeader><CardTitle className="text-base text-white">Sugestões e críticas operacionais</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 {(ownerSupport.data?.suggestions ?? []).map((suggestion) => (
