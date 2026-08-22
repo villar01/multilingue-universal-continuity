@@ -487,7 +487,7 @@
 - [x] Adicionar teste de integração do roleplay com `generateAIBatch` real e cache ativo/verificado — `roleplayFollowUps.production.test.ts` utiliza fronteiras reais do provedor e banco de cache verificável
 - [x] Reduzir timeout de fallback para 2 segundos (online→offline)
 - [x] Ativar cache agressivo com TTL curto (2 segundos)
-- [ ] Implementar prefetch de respostas comuns
+- [x] Implementar prefetch de respostas comuns — após autorização explícita da mesma lição e cena, a Cena Imersiva aquece somente diálogo localizado, progressão e material canônico protegidos; não antecipa TTS, gravação nem tutor de IA. TypeScript sem erros e 450 arquivos / 1107 testes aprovados
 - [ ] Retomar revisão externa de leitura por GitHub/Copilot como apoio aos defeitos ativos, sem alteração automática, publicação ou integração comercial
 - [x] Exigir sessão nas mutações legadas de TTS e lip-sync ainda expostas por `routers-tts.ts`, mantendo públicas somente consultas estáticas de idioma e sotaque — síntese, geração de lip-sync, phonemas, frames e melhoria agora exigem sessão; TypeScript e 356 arquivos/896 testes aprovados
 - [x] Bloquear as mutações públicas legadas de semeadura de conteúdo, conquistas e professores, exigindo proprietário autenticado antes de alterar o banco ou executar scripts — quatro semeaduras agora usam `adminProcedure`; TypeScript e 357 arquivos/897 testes aprovados

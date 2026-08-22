@@ -840,6 +840,7 @@ export default function ImmersiveScene() {
   const googleTtsMut = trpc.ttsGoogle.generate.useMutation();
   const sceneDialogueVoiceMut = trpc.sceneDialogueVoice.speak.useMutation();
   const authorizeLessonMut = trpc.trialAccess.authorizeLesson.useMutation();
+  const curriculumUtils = trpc.useUtils();
   const authorizeSceneLessonRef = useRef(authorizeLessonMut.mutateAsync);
   useEffect(() => {
     authorizeSceneLessonRef.current = authorizeLessonMut.mutateAsync;
@@ -928,20 +929,38 @@ export default function ImmersiveScene() {
     const lessonKey = `scene:${selectedScene.id}`;
     void authorizeSceneLesson(lessonKey)
       .then((access) => {
-        if (!cancelled) {
-          setAuthorizedSceneMaterial(access.allowed ? {
+        if (!cancelled && access.allowed) {
+          const authorizedMaterial = {
             lessonKey,
             sceneId: selectedScene.id,
             targetLanguage: targetLang,
             nativeLanguage: nativeLang,
-          } : null);
+          };
+          setAuthorizedSceneMaterial(authorizedMaterial);
+          // O prefetch não cria resposta, áudio ou conteúdo novo. Ele apenas
+          // aquece as três consultas protegidas que a própria cena já usará,
+          // depois da autorização explícita desta mesma lição.
+          void Promise.all([
+            curriculumUtils.curriculum.localizedSceneDialogue.prefetch({
+              ...authorizedMaterial,
+            }, { staleTime: 1000 * 60 * 30 }),
+            curriculumUtils.curriculum.sceneInteractionProgression.prefetch({
+              lessonKey: authorizedMaterial.lessonKey,
+              sceneId: authorizedMaterial.sceneId,
+            }, { staleTime: 1000 * 60 * 30 }),
+            curriculumUtils.curriculum.sceneCanonicalMaterial.prefetch({
+              ...authorizedMaterial,
+            }, { staleTime: 1000 * 60 * 30 }),
+          ]).catch(() => undefined);
+        } else if (!cancelled) {
+          setAuthorizedSceneMaterial(null);
         }
       })
       .catch(() => {
         if (!cancelled) setAuthorizedSceneMaterial(null);
       });
     return () => { cancelled = true; };
-  }, [authorizeSceneLesson, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
+  }, [authorizeSceneLesson, curriculumUtils, isAuthenticated, nativeLang, selectedScene?.id, targetLang]);
 
   useEffect(() => {
     setSceneMaterialTimedOut(false);
