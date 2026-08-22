@@ -334,6 +334,11 @@ function TeacherAvatar({
             height: "auto",
             objectFit: "contain",
             borderRadius: "12px",
+            // Movimento visível sem tremor: will-change ativa composição acelerada
+            willChange: "transform",
+            animation: isSpeaking  // will-change ativa composição no navegador
+              ? "teacher-talk 2.2s ease-in-out infinite"
+              : "teacher-idle 5s ease-in-out infinite",
           }}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -2133,17 +2138,29 @@ export default function ImmersiveScene() {
             0%,100% { opacity: 1; }
             50% { opacity: 0.97; }
          }
-         /* ── Natural head sway (gentle side-to-side) ── */
-         @keyframes head-sway {
-           0%,100% { transform: rotate(0deg) translateY(0); }
-           25% { transform: rotate(-1.5deg) translateY(-2px); }
-           50% { transform: rotate(0deg) translateY(-3px); }
-           75% { transform: rotate(1.5deg) translateY(-2px); }
+         /* ── Presença suave em repouso: leve pulsação de opacidade ── */
+         @keyframes teacher-presence {
+           0%,100% { opacity: 1; }
+           50% { opacity: 0.93; }
          }
-         /* ── Gentle float while speaking (no rotation to avoid shake) ── */
-         @keyframes teacher-float {
-            0%,100% { opacity: 1; }
-            50% { opacity: 0.98; }
+         /* ── Brilho ao falar: opacidade ligeiramente mais viva ── */
+         @keyframes teacher-glow {
+           0%,100% { opacity: 1; }
+           40% { opacity: 0.96; }
+           70% { opacity: 1; }
+         }
+         /* ── Flutuação suave em repouso: composição acelerada ── */
+         @keyframes teacher-idle {
+           0%   { transform: translateY(0px); }
+           50%  { transform: translateY(-6px); }
+           100% { transform: translateY(0px); }
+         }
+         /* ── Movimento ao falar: leve balanço vertical ── */
+         @keyframes teacher-talk {
+           0%   { transform: translateY(0px); }
+           30%  { transform: translateY(-4px); }
+           60%  { transform: translateY(-2px); }
+           100% { transform: translateY(0px); }
          }
           /* ── Eye blink (natural every 3-5 seconds) ── */
           @keyframes eye-blink {
