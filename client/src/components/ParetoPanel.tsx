@@ -116,6 +116,15 @@ export default function ParetoPanel({
     retry: false,
     staleTime: 1000 * 60 * 30,
   });
+  const rhetoricalFiguresQuery = trpc.curriculum.rhetoricalFigures.useQuery({
+    lessonKey,
+    targetLanguage: targetLang,
+    nativeLanguage: nativeLang,
+  }, {
+    enabled: isOpen,
+    retry: false,
+    staleTime: 1000 * 60 * 30,
+  });
   const allWords = paretoQuery.data ?? [];
   const practiceTtsMut = trpc.tts.speak.useMutation();
   const practiceAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -307,6 +316,25 @@ export default function ParetoPanel({
             </div>
             <p className="mt-2 text-xs font-semibold text-violet-100">Antes de responder: {sceneSemanticContrastQuery.data.comprehensionPrompt}</p>
             <p className="mt-1 text-xs text-violet-100/85">Prática Pareto: {sceneSemanticContrastQuery.data.paretoPrompt}</p>
+          </div>
+        )}
+
+        {rhetoricalFiguresQuery.data && (
+          <div className="mx-4 mb-2 rounded-xl border border-amber-300/35 bg-amber-300/10 p-3 text-sm text-amber-50">
+            <p className="text-xs font-extrabold uppercase tracking-[0.08em] text-amber-200">Figuras de linguagem e registro</p>
+            <p className="mt-1 font-bold">{rhetoricalFiguresQuery.data.focus}</p>
+            <p className="mt-1 text-xs leading-relaxed text-amber-100/90">{rhetoricalFiguresQuery.data.contrast}</p>
+            <p className="mt-2 text-xs leading-relaxed text-amber-100/85">{rhetoricalFiguresQuery.data.explanation}</p>
+            <div className="mt-2 space-y-1.5 border-l-2 border-amber-300/40 pl-2.5">
+              {rhetoricalFiguresQuery.data.examples.map((example) => (
+                <div key={example.target} className="text-xs leading-relaxed text-amber-50">
+                  <p className="font-semibold">{example.target}</p>
+                  <p className="text-amber-100/85">{example.native} <span className="text-amber-200">— {example.meaning}</span></p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs font-semibold text-amber-100">Prática: {rhetoricalFiguresQuery.data.comprehensionPrompt}</p>
+            <p className="mt-1 text-xs text-amber-100/85">Pareto: {rhetoricalFiguresQuery.data.paretoPrompt}</p>
           </div>
         )}
 

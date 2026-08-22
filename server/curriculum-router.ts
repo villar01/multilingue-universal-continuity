@@ -11,6 +11,7 @@ import { localizeParetoWords } from "./curriculum/localizedPareto";
 import { localizeSceneDialogue } from "./curriculum/localizedSceneMaterial";
 import { getSecureSceneSeedForLanguage } from "./curriculum/secureSceneSeeds";
 import { getABCBookDelivery, getABCBookSemanticContrastForScene } from "./curriculum/abcBookContent";
+import { getCommercialRhetoricalFigures } from "./curriculum/commercialRhetoricalFigures";
 import { getCommercialLanguageA1Units } from "./curriculum/commercialLanguageUnits";
 import { getScenePedagogicalDelivery } from "./curriculum/scenePedagogicalDelivery";
 
@@ -129,6 +130,14 @@ export const curriculumRouter = router({
   })).query(async ({ ctx, input }) => {
     await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
     return getABCBookSemanticContrastForScene(input);
+  }),
+
+  rhetoricalFigures: protectedProcedure.input(accessInput.extend({
+    targetLanguage: z.string().trim().min(2).max(16),
+    nativeLanguage: z.string().trim().min(2).max(16),
+  })).query(async ({ ctx, input }) => {
+    await assertCurriculumDelivery(ctx.user.id, input.lessonKey);
+    return getCommercialRhetoricalFigures(input);
   }),
 
   sceneCanonicalMaterial: protectedProcedure.input(accessInput.extend({
