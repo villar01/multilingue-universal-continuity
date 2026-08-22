@@ -8,7 +8,7 @@ const routers = readFileSync(resolve(process.cwd(), "server/routers.ts"), "utf8"
 
 describe("contrato do chatbot da lição", () => {
   it("usa o perfil de idioma selecionado e CEFR recebido, sem valores fixos", () => {
-    expect(chatbot).toContain("const { profile } = useLanguage()");
+    expect(chatbot).toContain("const { profile, immersionMode } = useLanguage()");
     expect(chatbot).toContain("const nativeLanguage = profile.nativeCode");
     expect(chatbot).toContain("userLevel: level");
     expect(chatbot).not.toContain('targetLanguage: "English"');
@@ -36,5 +36,14 @@ describe("contrato do chatbot da lição", () => {
     expect(chatbot).toContain("speakNaturalVoice(text, targetLanguage, { rate: 0.9, gender: teacherGender })");
     expect(routers).toContain("teacherId: z.number().int().positive().optional()");
     expect(routers).toContain("resolveConversationTeacherName(ctx.user.id, input.teacherId)");
+  });
+
+  it("oculta apoio nativo não essencial e preserva texto, voz e envio no idioma-alvo durante a imersão", () => {
+    expect(chatbot).toContain("const targetUI = getUIStrings(targetLanguage)");
+    expect(chatbot).toContain('{!immersionMode && latestFeedback && (');
+    expect(chatbot).toContain('placeholder={immersionMode ? targetUI.typeMessage');
+    expect(chatbot).toContain('title={isRecording ? targetUI.cancel : targetUI.speak}');
+    expect(chatbot).toContain('aria-label={targetUI.send}');
+    expect(chatbot).toContain('{!immersionMode && <p className="text-xs text-gray-500 mt-2 text-center">');
   });
 });

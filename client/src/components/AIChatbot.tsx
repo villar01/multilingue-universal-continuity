@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { speakText as speakNaturalVoice } from '@/hooks/useNaturalVoice';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getUIStrings } from '@/lib/i18n';
 import type { CEFRLevel } from '@/lib/lesson-levels';
 import { microphoneErrorMessage, requestMicrophoneStream } from '@/lib/microphoneAccess';
 
@@ -33,9 +34,10 @@ interface AIChatbotProps {
  * Corrige gramática, sugere melhorias e pratica vocabulário da lição
  */
 export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCode, level = 'A1', teacherName = 'Professor', teacherGender }: AIChatbotProps) {
-  const { profile } = useLanguage();
+  const { profile, immersionMode } = useLanguage();
   const targetLanguage = languageCode || profile.targetCode;
   const nativeLanguage = profile.nativeCode;
+  const targetUI = getUIStrings(targetLanguage);
   const [latestFeedback, setLatestFeedback] = useState<{
     feedback: string;
     corrections: Array<{ original: string; corrected: string; explanation: string }>;
@@ -55,7 +57,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
     return [
       {
         role: 'assistant',
-        content: `${teacherName}: prática de ${targetLanguage}. Use o vocabulário desta lição e comece com: ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}.`,
+        content: `${teacherName}: ${targetUI.practiceHere}. ${vocabulary.slice(0, 3).map(v => v.word).join(', ')}.`,
         timestamp: new Date(),
       },
     ];
@@ -102,7 +104,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
       ]);
     },
     onError: (error: any) => {
-      toast.error('Erro na conversa: ' + error.message);
+      toast.error(immersionMode ? targetUI.error : 'Erro na conversa: ' + error.message);
     },
   });
   const feedbackMutation = trpc.conversationAI.feedback.useMutation({
@@ -234,8 +236,8 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
       <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
         <Bot className="h-6 w-6" />
         <div className="flex-1">
-          <h3 className="font-semibold">Prática de conversa com IA</h3>
-          <p className="text-xs text-blue-100">{nativeLanguage} → {targetLanguage} · {level}</p>
+          <h3 className="font-semibold">{immersionMode ? targetUI.conversation : "Prática de conversa com IA"}</h3>
+          <p className="text-xs text-blue-100">{immersionMode ? `${targetLanguage} · ${level}` : `${nativeLanguage} → ${targetLanguage} · ${level}`}</p>
         </div>
         <div className="flex items-center gap-1.5 bg-white/20 px-2 py-1 rounded-full text-xs">
           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -244,9 +246,9 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
       </div>
 
       <div className="grid grid-cols-3 gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2 text-center text-xs">
-        <div><strong className="block text-blue-700">{conversationStats.turns}</strong><span className="text-slate-500">turnos</span></div>
-        <div><strong className="block text-blue-700">{conversationStats.learnerWords}</strong><span className="text-slate-500">palavras</span></div>
-        <div><strong className="block text-blue-700">{conversationStats.practicedWords.length}</strong><span className="text-slate-500">vocábulos praticados</span></div>
+        <div><strong className="block text-blue-700">{conversationStats.turns}</strong>{!immersionMode && <span className="text-slate-500">turnos</span>}</div>
+        <div><strong className="block text-blue-700">{conversationStats.learnerWords}</strong>{!immersionMode && <span className="text-slate-500">palavras</span>}</div>
+        <div><strong className="block text-blue-700">{conversationStats.practicedWords.length}</strong>{!immersionMode && <span className="text-slate-500">vocábulos praticados</span>}</div>
       </div>
 
       {/* Messages */}
@@ -294,7 +296,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
                 <button
                   onClick={() => playAudio(msg.content)}
                   className="mt-1 ml-2 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                  title="Ouvir pronúncia"
+                  title={targetUI.listen}
                 >
                   <Volume2 className="h-3.5 w-3.5 text-gray-600" />
                 </button>
@@ -326,7 +328,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
           </div>
         )}
 
-        {latestFeedback && (
+        {!immersionMode && latestFeedback && (
           <section className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm" aria-label="Feedback gramatical da resposta">
             <p className="font-semibold text-emerald-900">Feedback do professor</p>
             <p className="mt-1 text-emerald-900">{latestFeedback.feedback}</p>
@@ -356,7 +358,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={`Escreva ou fale em ${targetLanguage}...`}
+              placeholder={immersionMode ? targetUI.typeMessage : `Escreva ou fale em ${targetLanguage}...`}
               className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none resize-none text-sm"
               rows={2}
               disabled={chatMutation.isPending}
@@ -365,7 +367,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
               onClick={startRecording}
               disabled={chatMutation.isPending}
               className="absolute right-3 bottom-3 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-              title={isRecording ? 'Encerrar microfone' : 'Falar resposta'}
+              title={isRecording ? targetUI.cancel : targetUI.speak}
               aria-pressed={isRecording}
             >
               <Mic className={`h-4 w-4 ${isRecording ? 'text-red-500' : 'text-gray-600'}`} />
@@ -375,6 +377,7 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
           <button
             onClick={handleSend}
             disabled={!input.trim() || chatMutation.isPending}
+            aria-label={targetUI.send}
             className="flex-shrink-0 p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             {chatMutation.isPending ? (
@@ -385,9 +388,9 @@ export default function AIChatbot({ lessonId, teacherId, vocabulary, languageCod
           </button>
         </div>
 
-        <p className="text-xs text-gray-500 mt-2 text-center">
+        {!immersionMode && <p className="text-xs text-gray-500 mt-2 text-center">
           💡 Dica: use o vocabulário da lição. O feedback gramatical aparece após cada tentativa.
-        </p>
+        </p>}
       </div>
     </div>
   );
