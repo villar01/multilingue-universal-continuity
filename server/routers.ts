@@ -3779,6 +3779,7 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
     structureTraining: protectedProcedure
       .input(z.object({
         targetLanguage: z.string(),
+        targetLanguageCode: z.string().optional(),
         nativeLanguage: z.string().min(2),
         cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
         phase: z.string(),
@@ -3788,6 +3789,8 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
       .mutation(async ({ input, ctx }) => {
         await ensureConversationAccess(ctx.user.id);
         const { invokeLLM } = await import('./_core/llm');
+        const { getSentencePracticeGrammar } = await import('./_core/languageLogic');
+        const grammar = getSentencePracticeGrammar(input.targetLanguageCode || input.targetLanguage, input.nativeLanguage);
         const phaseLabel: Record<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2', string> = {
           A1: 'concreto e introdutório', A2: 'cotidiano elementar', B1: 'independente em situações comuns',
           B2: 'independente com ideias mais complexas', C1: 'avançado e preciso', C2: 'domínio muito avançado',
@@ -3796,10 +3799,16 @@ Provide 3 questions about the family (who is in the photo, what are they doing, 
           ? 'Use estas palavras do vocabulário da aula: ' + input.vocabulary.slice(0, 8).join(', ') + '.'
           : '';
         const prompt = `Você é um professor de ${input.targetLanguage} ensinando nativos de ${input.nativeLanguage}.
-Nível CEFR: ${input.cefrLevel} (${phaseLabel[input.cefrLevel]}). Lição: ${input.lessonTitle || 'vocabulário geral'}.
-${vocabHint}
+	Nível CEFR: ${input.cefrLevel} (${phaseLabel[input.cefrLevel]}). Lição: ${input.lessonTitle || 'vocabulário geral'}.
+	${vocabHint}
+	GRAMÁTICA DO IDIOMA-ALVO:
+	- Ordem: ${grammar.wordOrder}
+	- Adjetivo: ${grammar.adjectivePosition}
+	- Regra de ensino: ${grammar.teachingRule}
+	${grammar.portugueseContrast ? `- Comparação: ${grammar.portugueseContrast}` : ''}
+	Nunca copie a ordem sintática do idioma nativo para a frase-alvo.
 
-Crie um módulo de ESTRUTURA FRASAL como nativos aprendem: observação → substituição → criação.
+	Crie um módulo de ESTRUTURA FRASAL como nativos aprendem: observação → substituição → criação.
 Retorne JSON com esta estrutura exata:
 {
   "patterns": [
@@ -3823,7 +3832,7 @@ Retorne APENAS o JSON, sem markdown.`;
           const content = typeof response.choices[0].message.content === 'string'
             ? response.choices[0].message.content
             : JSON.stringify(response.choices[0].message.content);
-          return JSON.parse(content);
+          return { ...JSON.parse(content), grammar };
         } catch {
           return { patterns: [] };
         }

@@ -22,6 +22,13 @@ interface ChatMessage {
   content: string;
 }
 
+interface GrammarGuide {
+  wordOrder: string;
+  adjectivePosition: string;
+  teachingRule: string;
+  portugueseContrast: string | null;
+}
+
 interface SentenceBuilderProps {
   targetLanguage: string;
   languageCode: string;
@@ -128,6 +135,7 @@ export default function SentenceBuilder({
     : 'adulto';
 
   const [patterns, setPatterns] = useState<SentencePattern[]>(() => buildVocabularyPatterns(vocabulary));
+  const [grammarGuide, setGrammarGuide] = useState<GrammarGuide | null>(null);
   const [patternIdx, setPatternIdx] = useState(0);
   const [slots, setSlots] = useState<SentencePattern['slots']>([]);
   const [tab, setTab] = useState<'observe' | 'build' | 'chunks' | 'chat'>('observe');
@@ -161,13 +169,14 @@ export default function SentenceBuilder({
   useEffect(() => {
     if (!user) return;
     structureMutation.mutate(
-      { targetLanguage, nativeLanguage, cefrLevel, phase, lessonTitle, vocabulary: vocabulary.slice(0, 8).map(v => v.word) },
+      { targetLanguage, targetLanguageCode: languageCode, nativeLanguage, cefrLevel, phase, lessonTitle, vocabulary: vocabulary.slice(0, 8).map(v => v.word) },
       {
         onSuccess: (data) => {
           if (data?.patterns?.length) {
             setPatterns(data.patterns as SentencePattern[]);
             setPatternIdx(0);
           }
+          setGrammarGuide((data as { grammar?: GrammarGuide }).grammar || null);
         },
       }
     );
@@ -238,6 +247,13 @@ export default function SentenceBuilder({
       </div>
 
       {/* Pattern progress */}
+      {grammarGuide && (
+        <div style={{ margin: '10px 16px 0', padding: '9px 11px', borderRadius: 10, background: `${phaseColor}14`, border: `1px solid ${phaseColor}35`, fontSize: 11, color: '#d9d9e8', lineHeight: 1.45 }}>
+          <strong style={{ color: '#fff' }}>{grammarGuide.wordOrder}</strong> · {grammarGuide.adjectivePosition}
+          <div style={{ marginTop: 3 }}>{grammarGuide.teachingRule}</div>
+          {grammarGuide.portugueseContrast && <div style={{ marginTop: 3, color: '#bdbddd' }}>{grammarGuide.portugueseContrast}</div>}
+        </div>
+      )}
       <div style={{ padding: '8px 16px', display: 'flex', gap: 6, alignItems: 'center' }}>
         {patterns.map((_, i) => (
           <div key={i} onClick={() => setPatternIdx(i)} style={{ flex: 1, height: 4, borderRadius: 2, background: i === patternIdx ? phaseColor : i < patternIdx ? phaseColor + '60' : 'rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'all 0.3s' }} />

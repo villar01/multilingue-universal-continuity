@@ -534,6 +534,73 @@ export function getLanguageRule(langCode: string): LanguageRule | null {
   return HARDCODED_RULES[langCode] || HARDCODED_RULES[code] || null;
 }
 
+export type SentencePracticeGrammar = {
+  wordOrder: string;
+  adjectivePosition: string;
+  teachingRule: string;
+  portugueseContrast: string | null;
+};
+
+const COMMERCIAL_SENTENCE_GRAMMAR: Record<string, Omit<SentencePracticeGrammar, "portugueseContrast">> = {
+  en: {
+    wordOrder: "Subject + Verb + Object (SVO)",
+    adjectivePosition: "Adjective before the noun",
+    teachingRule: "Build the sentence in English order; keep the adjective before the noun.",
+  },
+  pt: {
+    wordOrder: "Sujeito + Verbo + Objeto (SVO)",
+    adjectivePosition: "Adjetivo geralmente após o substantivo",
+    teachingRule: "Construa a frase em português e ajuste gênero e concordância quando necessário.",
+  },
+  es: {
+    wordOrder: "Sujeto + Verbo + Objeto (SVO)",
+    adjectivePosition: "Adjetivo geralmente depois do substantivo",
+    teachingRule: "Forme a frase em espanhol e mantenha artigo, substantivo e adjetivo em concordância.",
+  },
+  fr: {
+    wordOrder: "Sujet + Verbe + Objet (SVO)",
+    adjectivePosition: "Adjetivo geralmente depois do substantivo, com exceções frequentes antes",
+    teachingRule: "Forme a frase em francês e trate a posição do adjetivo como parte do vocabulário da expressão.",
+  },
+  it: {
+    wordOrder: "Soggetto + Verbo + Oggetto (SVO)",
+    adjectivePosition: "Aggettivo generalmente dopo il nome",
+    teachingRule: "Forme a frase em italiano e mantenha concordância de gênero e número entre substantivo e adjetivo.",
+  },
+  de: {
+    wordOrder: "Sujeito + Verbo finito em segunda posição + complementos",
+    adjectivePosition: "Adjetivo antes do substantivo, com terminação adequada",
+    teachingRule: "Forme a oração principal em alemão com o verbo finito na segunda posição; não copie a ordem do português.",
+  },
+};
+
+const COMMERCIAL_LANGUAGE_ALIASES: Record<string, string> = {
+  english: "en", "inglês": "en", ingles: "en",
+  portuguese: "pt", português: "pt", portugues: "pt",
+  spanish: "es", espanhol: "es",
+  french: "fr", francês: "fr", frances: "fr",
+  italian: "it", italiano: "it",
+  german: "de", alemão: "de", alemao: "de", deutsch: "de",
+};
+
+export function getSentencePracticeGrammar(targetLanguage: string, nativeLanguage: string): SentencePracticeGrammar {
+  const normalized = targetLanguage.trim().toLowerCase();
+  const code = COMMERCIAL_LANGUAGE_ALIASES[normalized] || normalized.split("-")[0];
+  const grammar = COMMERCIAL_SENTENCE_GRAMMAR[code] || {
+    wordOrder: "Siga a ordem canônica do idioma-alvo",
+    adjectivePosition: "Use a posição de adjetivo própria do idioma-alvo",
+    teachingRule: "Não copie automaticamente a ordem do idioma nativo; observe a estrutura do idioma estudado.",
+  };
+  const nativeIsPortuguese = /^pt|portugu[eê]s/i.test(nativeLanguage.trim());
+
+  return {
+    ...grammar,
+    portugueseContrast: nativeIsPortuguese && code !== "pt"
+      ? "Compare com o português apenas para notar diferenças; monte a frase sempre pela ordem do idioma estudado."
+      : null,
+  };
+}
+
 // ============================================================
 // PROMPT PARA IA GERAR REGRAS DINAMICAMENTE
 // Para idiomas sem regras hardcodadas
