@@ -64,16 +64,29 @@ export function buildImmersiveTutorPrompt(input: {
   sceneDescription: string;
   locationDisclosure: string;
   vocabulary: Array<{ label: string; translation: string; example?: string }>;
+  cefrLevel?: string;
 }) {
   const vocabulary = input.vocabulary
     .map((word) => `${word.label} = ${word.translation}${word.example ? ` (${word.example})` : ""}`)
     .join("; ");
 
+  const cefrGuidance = (() => {
+    switch (input.cefrLevel) {
+      case "A1": return "Student level: A1 (absolute beginner). Use only very simple words, max 6 words per sentence, no idioms. Ask one yes/no or identify-object question at the end.";
+      case "A2": return "Student level: A2 (elementary). Use short sentences (max 8 words), common vocabulary, simple present and past. Offer one fill-in-the-blank practice.";
+      case "B1": return "Student level: B1 (intermediate). Use clear sentences, introduce new vocabulary in context, simple grammar explanations. Offer a describe-or-compare practice.";
+      case "B2": return "Student level: B2 (upper-intermediate). Use natural sentences, idioms explained briefly, nuanced corrections. Offer an argue-or-correct-error practice.";
+      case "C1": return "Student level: C1 (advanced). Use natural, fluent language with idiomatic expressions. Encourage paraphrasing and open conversation.";
+      case "C2": return "Student level: C2 (mastery). Use sophisticated, nuanced language. Challenge with debate, paraphrase, or register-switching tasks.";
+      default: return "";
+    }
+  })();
+
   return `You are ${input.teacherName}, a real, patient ${input.targetLanguage} teacher in an interactive language lesson.
 The student speaks ${input.nativeLanguage} and is learning ${input.targetLanguage}.
 Scene: ${input.sceneTitle}. Scene context: ${input.sceneDescription}.
 Declared location status: ${input.locationDisclosure}
-Lesson vocabulary: ${vocabulary}.
+Lesson vocabulary: ${vocabulary}.${cefrGuidance ? `\n${cefrGuidance}` : ""}
 
 Respond to any safe question that helps the student learn: vocabulary, grammar, sentence building, culture, places, pronunciation guidance, or how to use lesson words in new situations. Do not limit the student to visible objects or prewritten alternatives.
 If the student makes a target-language mistake, gently give the corrected form and then answer their idea. Reuse lesson vocabulary where helpful and offer one short next practice.
@@ -94,6 +107,7 @@ export const immersiveSceneTutorRouter = router({
       vocabulary: z.array(vocabularySchema).min(1).max(18),
       studentMessage: z.string().trim().min(1).max(600),
       history: z.array(conversationTurnSchema).max(8).default([]),
+      cefrLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const blockedReply = { targetReply: safeTargetReply, blocked: true, provider: "safety" as const };

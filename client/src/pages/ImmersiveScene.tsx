@@ -1804,6 +1804,7 @@ export default function ImmersiveScene() {
         vocabulary: scene.hotspots.map((hotspot) => ({ label: hotspot.label, translation: hotspot.translation, example: hotspot.example })),
         studentMessage: question,
         history: dlgTutorHistory.slice(-6),
+        cefrLevel: sceneCefrLevel(scene) as "A1" | "A2" | "B1" | "B2" | "C1" | "C2",
       });
       if (requestId !== dlgTutorRequestRef.current) return;
       const targetReply = result.targetReply.trim() || fallback?.text.replace(/^[^:]+:\s*/, "") || "I can help you practise this lesson. What would you like to learn?";

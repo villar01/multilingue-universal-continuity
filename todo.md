@@ -2385,3 +2385,5 @@
 - [x] Corrigir os rótulos e conteúdos pedagógicos remanescentes em italiano na cena Hotel quando o par selecionado for PT-BR→EN — variante protegida mostra Reception, Chandelier, Column, Armchair, Plant e Lamp; semente italiana preservada e verificação visual aprovada. TypeScript e 365 arquivos/924 testes aprovados
 - [x] Vincular o nome exibido no diálogo localizado ao professor ativo da matriz, evitando Ingrid nas cenas de James — diálogos derivados agora escolhem James nas 14 cenas dele e Ingrid nas 15 restantes; regressão dedicada aprovada
 - [x] Restaurar animações dos professores nas cenas imersivas — animation estava fixada em 'none' impedindo qualquer movimento; agora usa teacher-breathe em repouso e head-sway ao falar; TypeScript e 416 arquivos/1039 testes aprovados, Aeroporto verificado visualmente
+- [ ] Fazer push final para GitHub em 24/08/2026 (último dia antes do limite free) com a versão mais completa do app
+- [ ] Fazer push para GitHub após cada marco publicado para manter backup sempre atualizado
