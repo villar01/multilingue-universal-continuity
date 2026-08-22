@@ -65,7 +65,15 @@ describe("system operational data access", () => {
       openThreads: expect.any(Number),
       securityReports: expect.any(Number),
       productFeedback: expect.any(Number),
+      salesInterest: expect.any(Number),
     });
+    expect(summary.activity).toMatchObject({
+      assistedRequestsLast7Days: expect.any(Number),
+      incidentsLast7Days: expect.any(Number),
+      customerReturnsLast7Days: expect.any(Number),
+      daily: expect.any(Array),
+    });
+    expect(summary.activity.daily).toHaveLength(7);
     expect(summary.privacy).toEqual({
       containsPersonalData: false,
       containsStudentContent: false,

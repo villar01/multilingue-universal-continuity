@@ -455,14 +455,26 @@ export default function AdminControlCenter() {
             <Card className="bg-gray-900 border-gray-800">
               <CardHeader className="pb-2"><CardTitle className="text-base text-white">Retorno de clientes</CardTitle></CardHeader>
               <CardContent className="flex flex-wrap items-center justify-between gap-4">
-                <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="grid grid-cols-2 gap-3 text-center md:grid-cols-4">
                   {[
                     ["Em aberto", ownerSupport.data?.customerFeedback.openThreads ?? 0],
                     ["Segurança", ownerSupport.data?.customerFeedback.securityReports ?? 0],
                     ["Melhorias", ownerSupport.data?.customerFeedback.productFeedback ?? 0],
+                    ["Interesse", ownerSupport.data?.customerFeedback.salesInterest ?? 0],
                   ].map(([label, value]) => <div key={String(label)} className="rounded-lg border border-gray-700 bg-gray-800/60 px-4 py-3"><p className="text-xl font-bold text-white">{value}</p><p className="text-xs text-gray-400">{label}</p></div>)}
                 </div>
                 <a href="/suporte" className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">Abrir mensagens privadas</a>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-base text-white">Atividade agregada · últimos 7 dias</CardTitle>
+                <p className="text-xs text-gray-400">Contagens de recursos assistidos, incidentes e retornos. Não contém aluno, conversa, dispositivo ou identificador.</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-3 md:grid-cols-7">
+                  {(ownerSupport.data?.activity.daily ?? []).map((day) => <div key={day.day} className="rounded-lg border border-gray-700 bg-gray-800/60 p-3 text-center"><p className="text-xs text-gray-500">{day.day.slice(5).split("-").reverse().join("/")}</p><p className="mt-2 text-lg font-bold text-cyan-200">{day.assistedRequests}</p><p className="text-[10px] text-gray-400">recursos</p><p className="mt-2 text-sm font-semibold text-orange-200">{day.securityIncidents}</p><p className="text-[10px] text-gray-400">incidentes</p><p className="mt-2 text-sm font-semibold text-violet-200">{day.customerReturns}</p><p className="text-[10px] text-gray-400">retornos</p></div>)}
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-gray-900 border-gray-800">

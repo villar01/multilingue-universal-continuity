@@ -5,6 +5,7 @@ import { getAbuseProtectionSummary } from "./abuseProtection";
 import { getDb } from "../db";
 import { customerSupportThreads, metrics, securityEvents } from "../../drizzle/schema";
 import { sql, eq, and, gte, desc } from "drizzle-orm";
+import { buildOwnerActivitySeries } from "../ownerActivitySummary";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -105,8 +106,9 @@ export const systemRouter = router({
   getOwnerSupportSummary: adminProcedure.query(async () => {
     const abuse = getAbuseProtectionSummary();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    let recentEvents: Array<{ severity: string; resolved: boolean | null }> = [];
-    let supportThreads: Array<{ category: string; status: string; priority: string }> = [];
+    let recentEvents: Array<{ severity: string; resolved: boolean | null; createdAt: Date | null }> = [];
+    let supportThreads: Array<{ category: string; status: string; priority: string; createdAt: Date | null }> = [];
+    let usageRecords: Array<{ createdAt: Date | null }> = [];
 
     try {
       const db = await getDb();
@@ -114,12 +116,15 @@ export const systemRouter = router({
         recentEvents = await db.select({
           severity: securityEvents.severity,
           resolved: securityEvents.resolved,
+          createdAt: securityEvents.createdAt,
         }).from(securityEvents).where(gte(securityEvents.createdAt, sevenDaysAgo));
         supportThreads = await db.select({
           category: customerSupportThreads.category,
           status: customerSupportThreads.status,
           priority: customerSupportThreads.priority,
+          createdAt: customerSupportThreads.createdAt,
         }).from(customerSupportThreads).where(gte(customerSupportThreads.updatedAt, sevenDaysAgo));
+        usageRecords = await db.select({ createdAt: metrics.createdAt }).from(metrics).where(gte(metrics.createdAt, sevenDaysAgo));
       }
     } catch (error) {
       console.error("[getOwnerSupportSummary] Failed to aggregate operational events", error);
@@ -132,6 +137,8 @@ export const systemRouter = router({
     const openSupportThreads = supportThreads.filter((thread) => thread.status !== "closed").length;
     const securityReports = supportThreads.filter((thread) => thread.category === "security" && thread.status !== "closed").length;
     const productFeedback = supportThreads.filter((thread) => (thread.category === "feedback" || thread.category === "idea" || thread.category === "bug") && thread.status !== "closed").length;
+    const salesInterest = supportThreads.filter((thread) => thread.category === "sales" && thread.status !== "closed").length;
+    const activity = buildOwnerActivitySeries({ usageRecords, incidentRecords: recentEvents, feedbackRecords: supportThreads });
     const suggestions = [
       ...(securityReports > 0 ? [{
         id: "review-customer-security-reports",
@@ -144,6 +151,12 @@ export const systemRouter = router({
         priority: "medium" as const,
         title: "Revisar melhorias enviadas por clientes",
         detail: "Há opiniões, ideias ou problemas aguardando classificação no canal privado.",
+      }] : []),
+      ...(salesInterest > 0 ? [{
+        id: "review-customer-plan-interest",
+        priority: "medium" as const,
+        title: "Revisar interesses comerciais no canal privado",
+        detail: "Há pessoas que sinalizaram interesse. Avalie cada conversa antes de apresentar plano, preço ou qualquer condição.",
       }] : []),
       ...(highPriorityEvents > 0 ? [{
         id: "review-high-priority-events",
@@ -177,6 +190,13 @@ export const systemRouter = router({
         openThreads: openSupportThreads,
         securityReports,
         productFeedback,
+        salesInterest,
+      },
+      activity: {
+        daily: activity,
+        assistedRequestsLast7Days: activity.reduce((total, day) => total + day.assistedRequests, 0),
+        incidentsLast7Days: activity.reduce((total, day) => total + day.securityIncidents, 0),
+        customerReturnsLast7Days: activity.reduce((total, day) => total + day.customerReturns, 0),
       },
       suggestions,
       privacy: {
