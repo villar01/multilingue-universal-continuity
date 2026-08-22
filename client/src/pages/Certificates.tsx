@@ -21,7 +21,7 @@ export default function Certificates() {
   const { data: myCerts, refetch: refetchCerts } = trpc.certificates.list.useQuery(undefined, { enabled: !!user });
   const issueCert = trpc.certificates.issue.useMutation();
 
-  const generateCertificateCanvas = (userName: string, langName: string, langFlag: string, date: string) => {
+  const generateCertificateCanvas = (userName: string, langName: string, langFlag: string, date: string, validationCode?: string | null) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const ctx = canvas.getContext("2d");
@@ -150,7 +150,7 @@ export default function Certificates() {
 
     ctx.fillStyle = "#4f46e5";
     ctx.font = "14px Georgia, serif";
-    ctx.fillText("CERTIFICADO AUTÊNTICO", 600, 800);
+    ctx.fillText(validationCode ? `VERIFICAÇÃO: ${validationCode}` : "CERTIFICADO AUTÊNTICO", 600, 800);
 
     return canvas.toDataURL("image/png");
   };
@@ -169,7 +169,8 @@ export default function Certificates() {
         eligibility.userName || user.name || "Estudante",
         selectedLang.name,
         selectedLang.flag,
-        date
+        date,
+        res.validationCode
       );
 
       if (dataUrl) {
@@ -187,7 +188,7 @@ export default function Certificates() {
     }
   };
 
-  const handleDownloadExisting = (cert: { userName: string; languageName: string; targetLanguage: string; issuedAt?: Date | null }) => {
+  const handleDownloadExisting = (cert: { userName: string; languageName: string; targetLanguage: string; issuedAt?: Date | null; validationCode?: string | null }) => {
     const lang = LANGUAGES_57.find(l => l.code === cert.targetLanguage);
     const date = cert.issuedAt
       ? new Date(cert.issuedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
@@ -197,7 +198,8 @@ export default function Certificates() {
       cert.userName,
       cert.languageName,
       lang?.flag || "🌐",
-      date
+      date,
+      cert.validationCode
     );
     if (dataUrl) {
       const link = document.createElement("a");

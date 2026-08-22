@@ -2139,6 +2139,8 @@ export const certificates = mysqlTable("certificates", {
   userName: varchar("user_name", { length: 100 }).notNull(),
   targetLanguage: varchar("target_language", { length: 20 }).notNull(),
   languageName: varchar("language_name", { length: 50 }).notNull(),
+  validationCode: varchar("validation_code", { length: 48 }).unique(),
+  revokedAt: timestamp("revoked_at"),
   issuedAt: timestamp("issued_at").defaultNow(),
 });
 export type Certificate = typeof certificates.$inferSelect;

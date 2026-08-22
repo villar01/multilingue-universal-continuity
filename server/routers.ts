@@ -79,6 +79,7 @@ import { beachDemoRouter } from './beach-demo-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
+import { randomBytes } from 'node:crypto';
 
 const financeAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== 'admin') {
@@ -88,6 +89,10 @@ const financeAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
 });
 
 type BattleQuizQuestion = { question: string; options: string[]; correct: number; word: string };
+
+function createCertificateValidationCode() {
+  return `MLU-${randomBytes(16).toString("hex").toUpperCase()}`;
+}
 
 async function createBattleQuiz(input: {
   targetLanguage: string;
@@ -4088,20 +4093,61 @@ Máximo 2 frases por resposta.`,
       .mutation(async ({ ctx, input }) => {
         const dbInstance = await db.getDb();
         if (!dbInstance) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-        const { certificates } = await import("../drizzle/schema");
+        const { certificates, globalRanking } = await import("../drizzle/schema");
         const { eq, and } = await import("drizzle-orm");
+        const ranking = await dbInstance.select().from(globalRanking).where(eq(globalRanking.userId, ctx.user.id));
+        const level = Math.floor((ranking[0]?.totalXp || 0) / 500) + 1;
+        if (level < 5) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "A conclusão pedagógica exigida para este certificado ainda não foi alcançada." });
+        }
         const existing = await dbInstance.select().from(certificates).where(and(eq(certificates.userId, ctx.user.id), eq(certificates.targetLanguage, input.targetLanguage)));
-        if (existing[0]) return { certificateId: existing[0].id, alreadyExists: true };
-        const result = await dbInstance.insert(certificates).values({ userId: ctx.user.id, userName: ctx.user.name || "Estudante", targetLanguage: input.targetLanguage, languageName: input.languageName });
-        return { certificateId: (result as any).insertId, alreadyExists: false };
+        if (existing[0]) {
+          const validationCode = existing[0].validationCode || createCertificateValidationCode();
+          if (!existing[0].validationCode) {
+            await dbInstance.update(certificates).set({ validationCode }).where(eq(certificates.id, existing[0].id));
+          }
+          return { certificateId: existing[0].id, validationCode, alreadyExists: true };
+        }
+        const validationCode = createCertificateValidationCode();
+        const result = await dbInstance.insert(certificates).values({ userId: ctx.user.id, userName: ctx.user.name || "Estudante", targetLanguage: input.targetLanguage, languageName: input.languageName, validationCode });
+        return { certificateId: (result as any).insertId, validationCode, alreadyExists: false };
       }),
     list: protectedProcedure.query(async ({ ctx }) => {
       const dbInstance = await db.getDb();
       if (!dbInstance) return [];
       const { certificates } = await import("../drizzle/schema");
       const { eq } = await import("drizzle-orm");
-      return dbInstance.select().from(certificates).where(eq(certificates.userId, ctx.user.id));
+      const issued = await dbInstance.select().from(certificates).where(eq(certificates.userId, ctx.user.id));
+      return Promise.all(issued.map(async (certificate) => {
+        if (certificate.validationCode) return certificate;
+        const validationCode = createCertificateValidationCode();
+        await dbInstance.update(certificates).set({ validationCode }).where(eq(certificates.id, certificate.id));
+        return { ...certificate, validationCode };
+      }));
     }),
+    validate: publicProcedure
+      .input(z.object({ code: z.string().trim().regex(/^MLU-[A-F0-9]{32}$/) }))
+      .query(async ({ input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        const { certificates } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        const matches = await dbInstance
+          .select({ languageName: certificates.languageName, targetLanguage: certificates.targetLanguage, issuedAt: certificates.issuedAt, revokedAt: certificates.revokedAt })
+          .from(certificates)
+          .where(eq(certificates.validationCode, input.code))
+          .limit(1);
+        const certificate = matches[0];
+        if (!certificate) return { valid: false as const, status: "not_found" as const };
+        if (certificate.revokedAt) return { valid: false as const, status: "revoked" as const };
+        return {
+          valid: true as const,
+          status: "active" as const,
+          languageName: certificate.languageName,
+          targetLanguage: certificate.targetLanguage,
+          issuedAt: certificate.issuedAt,
+        };
+      }),
   }),
 
   // ── Vision: Detecção de Objetos via IA (sem TensorFlow) ──────────────

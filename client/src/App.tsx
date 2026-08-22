@@ -56,6 +56,7 @@ const Achievements = lazy(() => import("./pages/Achievements"));
 const LessonHistory = lazy(() => import("./pages/LessonHistory"));
 const BattleMode = lazy(() => import("./pages/BattleMode"));
 const Certificates = lazy(() => import("./pages/Certificates"));
+const CertificateValidation = lazy(() => import("./pages/CertificateValidation"));
 const PronunciationHistory = lazy(() => import("./pages/PronunciationHistory"));
 const StructuredLesson = lazy(() => import("./pages/StructuredLesson"));
 const ImmersiveScene = lazy(() => import("./pages/ImmersiveScene"));
@@ -395,6 +396,7 @@ function Router() {
         <Route path="/lesson-history" component={ResilientLessonHistory} />
         <Route path="/battle" component={ResilientBattleMode} />
         <Route path="/certificates" component={ResilientCertificates} />
+        <Route path="/certificate-validation" component={CertificateValidation} />
         <Route path="/pronunciation-history" component={ResilientPronunciationHistory} />
         <Route path="/structured-lesson" component={ResilientStructuredLesson} />
         <Route path="/immersive-scene" component={ResilientImmersiveScene} />
