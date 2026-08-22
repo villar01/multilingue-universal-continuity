@@ -9,7 +9,7 @@ const paretoPanel = readFileSync(resolve(root, "client/src/components/ParetoPane
 
 describe("contrastes semânticos contextuais no Pareto", () => {
   it("reaproveita contrastes do Livro SOS por cena e mantém sua progressão", () => {
-    expect(getABCBookSemanticContrastForScene({ sceneId: "beach", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("ever / always");
+    expect(getABCBookSemanticContrastForScene({ sceneId: "beach", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("always / ever / never / already / yet / still");
     expect(getABCBookSemanticContrastForScene({ sceneId: "airport", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("there / their / they're");
     expect(getABCBookSemanticContrastForScene({ sceneId: "newyork", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("say / tell");
     expect(getABCBookSemanticContrastForScene({ sceneId: "museum", nativeLanguage: "pt-BR", targetLanguage: "en-US" })?.focus).toBe("look up / look for");
@@ -48,6 +48,9 @@ describe("contrastes semânticos contextuais no Pareto", () => {
     expect(curriculumRouter).not.toMatch(/sceneSemanticContrast:\s*publicProcedure/);
     expect(paretoPanel).toContain("trpc.curriculum.sceneSemanticContrast.useQuery");
     expect(paretoPanel).toContain("Contraste de sentido");
+    expect(paretoPanel).toContain("sceneSemanticContrastQuery.data.explanation");
+    expect(paretoPanel).toContain("sceneSemanticContrastQuery.data.examples.map");
     expect(paretoPanel).toContain("Antes de responder:");
+    expect(paretoPanel).toContain("Prática Pareto:");
   });
 });

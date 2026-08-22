@@ -296,7 +296,17 @@ export default function ParetoPanel({
             <p className="text-xs font-extrabold uppercase tracking-[0.08em] text-violet-200">Contraste de sentido</p>
             <p className="mt-1 font-bold">{sceneSemanticContrastQuery.data.focus}</p>
             <p className="mt-1 text-xs leading-relaxed text-violet-100/90">{sceneSemanticContrastQuery.data.contrast}</p>
+            <p className="mt-2 text-xs leading-relaxed text-violet-100/85">{sceneSemanticContrastQuery.data.explanation}</p>
+            <div className="mt-2 space-y-1.5 border-l-2 border-violet-300/40 pl-2.5">
+              {sceneSemanticContrastQuery.data.examples.map((example) => (
+                <div key={example.target} className="text-xs leading-relaxed text-violet-50">
+                  <p className="font-semibold">{example.target}</p>
+                  <p className="text-violet-100/85">{example.native} <span className="text-violet-200">— {example.meaning}</span></p>
+                </div>
+              ))}
+            </div>
             <p className="mt-2 text-xs font-semibold text-violet-100">Antes de responder: {sceneSemanticContrastQuery.data.comprehensionPrompt}</p>
+            <p className="mt-1 text-xs text-violet-100/85">Prática Pareto: {sceneSemanticContrastQuery.data.paretoPrompt}</p>
           </div>
         )}
 

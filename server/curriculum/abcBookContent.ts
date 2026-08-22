@@ -105,7 +105,7 @@ export type ABCBookContextGroup = {
 export type ABCBookSemanticContrast = {
   id: string;
   level: "initial" | "intermediate" | "advanced";
-  kind: "near_meaning" | "homophone" | "multiword_expression";
+  kind: "near_meaning" | "homophone" | "multiword_expression" | "rhetorical_figure";
   focus: string;
   contrast: string;
   explanation: string;
@@ -2633,15 +2633,21 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       id: "frequency-ever-always",
       level: "initial",
       kind: "near_meaning",
-      focus: "ever / always",
-      contrast: "always fala de hábito ou frequência constante; ever costuma aparecer em perguntas, negativas ou para reforçar uma experiência.",
-      explanation: "Não traduza as duas formas como 'sempre'. Escolha pela intenção: rotina constante ou pergunta sobre alguma vez na vida.",
+      focus: "always / ever / never / already / yet / still",
+      contrast: "always indica uma rotina sem exceção no contexto; ever pergunta ou reforça se algo aconteceu alguma vez; never nega uma experiência; already marca algo concluído antes do esperado; yet organiza expectativa em perguntas e negativas; still mostra continuidade.",
+      explanation: "Não traduza uma palavra isolada. Em Do you ever study at night?, ever pergunta se isso acontece alguma vez e também pode soar como 'você já estudou à noite?'. Em I have never studied at night, never significa 'nunca'. Already, yet e still dependem do ponto no tempo: algo já concluído, ainda não concluído ou que continua acontecendo.",
       examples: [
-        { target: "I always study in the morning.", native: "Eu sempre estudo de manhã.", meaning: "hábito constante" },
-        { target: "Do you ever study at night?", native: "Você alguma vez estuda à noite?", meaning: "pergunta sobre possibilidade ou experiência" },
+        { target: "I always study in the morning.", native: "Eu sempre estudo de manhã.", meaning: "hábito constante; no contexto, não há exceção" },
+        { target: "Do you ever study at night?", native: "Você estuda à noite alguma vez? / Você já estudou à noite?", meaning: "pergunta sobre experiência ou possibilidade" },
+        { target: "Have you ever visited London?", native: "Você já visitou Londres alguma vez?", meaning: "experiência de vida até agora" },
+        { target: "I have never visited London.", native: "Eu nunca visitei Londres.", meaning: "experiência negada" },
+        { target: "I have already finished the exercise.", native: "Eu já terminei o exercício.", meaning: "conclusão anterior ao momento esperado" },
+        { target: "Have you finished the exercise yet?", native: "Você já terminou o exercício?", meaning: "pergunta sobre conclusão esperada" },
+        { target: "I have not finished the exercise yet.", native: "Eu ainda não terminei o exercício.", meaning: "conclusão ainda pendente" },
+        { target: "She is still studying.", native: "Ela ainda está estudando.", meaning: "ação que continua" },
       ],
-      comprehensionPrompt: "A frase fala de rotina constante ou pergunta se algo acontece alguma vez? Explique antes de escolher ever ou always.",
-      paretoPrompt: "Recupere always, ever, study, morning e night; produza uma frase de rotina e uma pergunta de experiência.",
+      comprehensionPrompt: "A frase mostra hábito constante, experiência até agora, negação, conclusão, expectativa pendente ou continuidade? Justifique antes de escolher always, ever, never, already, yet ou still.",
+      paretoPrompt: "Recupere always, ever, never, already, yet, still, study e exercise. Escreva: uma rotina, uma pergunta de experiência, uma frase negativa, uma conclusão e uma ação que continua.",
     },
     {
       id: "sound-there-their-theyre",
@@ -3007,6 +3013,23 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       comprehensionPrompt: "O desenvolvimento é natural ou depende de cuidado deliberado? Explique a escolha pelo agente da ação.",
       paretoPrompt: "Recupere grow, raise, flowers, vegetables, garden e market; compare crescimento e cultivo em contexto.",
     },
+    {
+      id: "rhetoric-figures-register",
+      level: "advanced",
+      kind: "rhetorical_figure",
+      focus: "figuras de linguagem: metáfora, personificação, hipérbole, onomatopeia e pleonasmo enfático",
+      contrast: "Figuras de linguagem acrescentam imagem, ênfase ou efeito sonoro. Elas não mudam a gramática básica, mas mudam o tom: uma conversa formal normalmente prefere a forma literal quando a clareza é mais importante.",
+      explanation: "Aprenda a reconhecer o efeito e o registro. Metáfora compara sem usar like/as; personificação dá ação humana a algo não humano; hipérbole exagera de propósito; onomatopeia imita um som; pleonasmo pode reforçar uma ideia, mas deve ser evitado quando torna a comunicação formal redundante.",
+      examples: [
+        { target: "She is a ray of sunshine.", native: "Ela é um raio de sol.", meaning: "metáfora: pessoa alegre, não luz literal" },
+        { target: "The wind whispered through the trees.", native: "O vento sussurrou entre as árvores.", meaning: "personificação: o vento recebe uma ação humana" },
+        { target: "I have told you a million times.", native: "Eu já lhe disse isso um milhão de vezes.", meaning: "hipérbole: exagero intencional, não contagem literal" },
+        { target: "Bang! The door closed.", native: "Pá! A porta se fechou.", meaning: "onomatopeia: palavra que reproduz um som" },
+        { target: "I saw it with my own eyes.", native: "Eu vi isso com meus próprios olhos.", meaning: "ênfase/pleonasmo intencional; em texto formal conciso, I saw it pode bastar" },
+      ],
+      comprehensionPrompt: "A expressão é literal ou cria imagem, ação humana, exagero, som ou ênfase? Reescreva uma frase em forma literal e diga em qual situação a forma figurada é adequada.",
+      paretoPrompt: "Recupere sunshine, wind, whisper, million, bang, eyes e see. Identifique a figura em cada exemplo e crie uma frase figurada apropriada e uma alternativa formal literal.",
+    },
   ],
   sections: [
     {
@@ -3023,6 +3046,18 @@ const PORTUGUESE_ENGLISH_BOOK: ABCBookDelivery = {
       title: "Fixe pelo Pareto",
       text: "Priorize palavras frequentes, recupere sem olhar, escreva uma frase e volte ao termo em novos intervalos. O objetivo é lembrar e usar, não apenas reconhecer.",
       example: "need · help · time · ticket · water",
+    },
+    {
+      title: "Frequência, experiência e tempo na frase",
+      text: "Always fala de uma rotina constante no contexto: I always check my notes. Ever costuma aparecer em perguntas de experiência: Have you ever used this app?; nessa pergunta, a tradução natural pode ser 'Você já usou este aplicativo alguma vez?'. Use never para negar uma experiência, already para algo já concluído, yet em perguntas ou negativas sobre algo ainda esperado e still para algo que continua. Compare a intenção antes de traduzir.",
+      example: "I have already started. / Have you started yet? / I have not started yet. / She is still waiting.",
+      paretoPrompt: "Classifique cada frase como rotina, experiência, negação, conclusão, expectativa ou continuidade. Depois escreva uma frase própria para cada situação.",
+    },
+    {
+      title: "Figuras de linguagem: entender o efeito e escolher o registro",
+      text: "Metáfora, personificação, hipérbole, onomatopeia e pleonasmo enfático aparecem em conversas, histórias, músicas e anúncios. Primeiro descubra o sentido literal. Depois observe o efeito: imagem, humor, emoção, som ou ênfase. Em pedido profissional, orientação de segurança ou instrução importante, prefira a versão literal e clara.",
+      example: "The city never sleeps. — A cidade nunca dorme. (personificação: a cidade é sempre ativa.) / The city is active all night. (versão literal e formal.)",
+      paretoPrompt: "Identifique o efeito de uma frase figurada, reescreva-a literalmente e produza um exemplo próprio que preserve respeito e clareza.",
     },
     {
       title: "Use e corrija",

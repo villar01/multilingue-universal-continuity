@@ -13,7 +13,8 @@ describe("contrastes semânticos do Livro SOS", () => {
     expect(delivery.available).toBe(true);
     if (!delivery.available) return;
 
-    expect(delivery.semanticContrasts.map((contrast) => contrast.id)).toEqual([
+    const sceneContrasts = delivery.semanticContrasts.filter((contrast) => contrast.kind !== "rhetorical_figure");
+    expect(sceneContrasts.map((contrast) => contrast.id)).toEqual([
       "frequency-ever-always",
       "movement-bring-take",
       "description-fun-funny",
@@ -44,8 +45,12 @@ describe("contrastes semânticos do Livro SOS", () => {
       "history-historic-historical",
       "garden-grow-raise",
     ]);
-    expect(delivery.semanticContrasts).toHaveLength(29);
-    expect(delivery.semanticContrasts.every((contrast) => contrast.comprehensionPrompt.length > 0 && contrast.paretoPrompt.length > 0)).toBe(true);
+    expect(sceneContrasts).toHaveLength(29);
+    expect(sceneContrasts.every((contrast) => contrast.comprehensionPrompt.length > 0 && contrast.paretoPrompt.length > 0)).toBe(true);
+    expect(delivery.semanticContrasts.find((contrast) => contrast.id === "rhetoric-figures-register")).toMatchObject({
+      kind: "rhetorical_figure",
+      level: "advanced",
+    });
     const ranks = delivery.semanticContrasts.map((contrast) => SEMANTIC_CONTRAST_LEVEL_ORDER[contrast.level]);
     expect(ranks.every((rank, index) => index === 0 || rank >= ranks[index - 1])).toBe(true);
   });
