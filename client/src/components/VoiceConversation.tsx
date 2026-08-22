@@ -12,6 +12,7 @@ import { ParetoPracticeCycle } from "@/components/ParetoPracticeCycle";
 import type { ParetoPracticeTerm } from "@/lib/paretoPracticeCycle";
 import type { CEFRLevel } from "@/lib/lesson-levels";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getUIStrings } from "@/lib/i18n";
 
 interface Message {
   role: "user" | "assistant";
@@ -40,10 +41,17 @@ export default function VoiceConversation({
   teacher: selectedTeacher,
   level = "A1",
 }: VoiceConversationProps) {
-  const { profile } = useLanguage();
+  const { profile, immersionMode } = useLanguage();
   const nativeLanguage = profile.nativeCode;
+  const targetUI = getUIStrings(languageCode);
   const nativeTag = nativeLanguage.split(/[-_]/)[0]?.toUpperCase() || "XX";
   const targetTag = languageCode.split(/[-_]/)[0]?.toUpperCase() || "XX";
+  const visibleMessageContent = (content: string) => {
+    if (!immersionMode) return content;
+    const targetMarker = `[${targetTag}]`;
+    const targetStart = content.indexOf(targetMarker);
+    return targetStart >= 0 ? content.slice(targetStart + targetMarker.length).trim() : content;
+  };
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -338,7 +346,7 @@ export default function VoiceConversation({
 
         recognitionRef.current.start();
       }
-      toast.info("🎤 Gravando... Fale agora!");
+      toast.info(immersionMode ? targetUI.speak : "🎤 Gravando... Fale agora!");
     } catch (error: any) {
       console.error("[VoiceConversation] Microphone error:", error);
       toast.error(microphoneErrorMessage(error));
@@ -531,9 +539,9 @@ export default function VoiceConversation({
       {/* Connection Status */}
       <div className="flex items-center justify-between gap-2 text-sm">
         {isOnline ? (
-          <><Wifi className="w-4 h-4 text-green-500" /> <span className="text-green-600">Online · voz neural e retrato do professor</span></>
+          <><Wifi className="w-4 h-4 text-green-500" /> {!immersionMode && <span className="text-green-600">Online · voz neural e retrato do professor</span>}</>
         ) : (
-          <><WifiOff className="w-4 h-4 text-orange-500" /> <span className="text-orange-600">Offline · retrato do professor disponível</span></>
+          <><WifiOff className="w-4 h-4 text-orange-500" /> {!immersionMode && <span className="text-orange-600">Offline · retrato do professor disponível</span>}</>
         )}
         <UserGuide nativeLang="pt-BR" compact triggerClassName="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" />
       </div>
@@ -566,13 +574,13 @@ export default function VoiceConversation({
           >
             <div className="flex items-start gap-2">
               <span className="font-semibold text-sm">
-                {msg.role === "user" ? "Você:" : `${activeTeacher.name}:`}
+                {msg.role === "user" ? (immersionMode ? "" : "Você:") : `${activeTeacher.name}:`}
               </span>
               <span className="text-xs text-gray-500">
                 {msg.timestamp.toLocaleTimeString()}
               </span>
             </div>
-            <p className="mt-1 whitespace-pre-wrap">{msg.content}</p>
+            <p className="mt-1 whitespace-pre-wrap">{visibleMessageContent(msg.content)}</p>
           </div>
         ))}
       </div>
@@ -582,16 +590,16 @@ export default function VoiceConversation({
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4" aria-label="Prática Pareto da conversa por voz">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-bold text-amber-950">Prática Pareto da conversa</p>
-              <p className="mt-1 text-xs text-amber-900">Recupere, escreva e crie uma frase com o vocabulário desta lição.</p>
+              {!immersionMode && <p className="text-sm font-bold text-amber-950">Prática Pareto da conversa</p>}
+              {!immersionMode && <p className="mt-1 text-xs text-amber-900">Recupere, escreva e crie uma frase com o vocabulário desta lição.</p>}
             </div>
-            {activeParetoTerm && <Button variant="outline" size="sm" onClick={() => setActiveParetoTerm(null)}>Fechar prática</Button>}
+            {activeParetoTerm && <Button variant="outline" size="sm" onClick={() => setActiveParetoTerm(null)}>{immersionMode ? targetUI.cancel : "Fechar prática"}</Button>}
           </div>
           {!activeParetoTerm && (
             <div className="mt-3 flex flex-wrap gap-2">
               {paretoTerms.map((term) => (
                 <Button key={term.word} size="sm" variant="outline" className="border-amber-300 bg-white text-amber-950 hover:bg-amber-100" onClick={() => setActiveParetoTerm(term)}>
-                  Praticar {term.word}
+                  {immersionMode ? `${targetUI.practiceHere}: ${term.word}` : `Praticar ${term.word}`}
                 </Button>
               ))}
             </div>
@@ -608,7 +616,7 @@ export default function VoiceConversation({
       {currentTranscript && (
         <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
           <p className="text-sm text-gray-700">
-            <strong>Transcrito:</strong> {currentTranscript}
+            {!immersionMode && <strong>Transcrito:</strong>} {currentTranscript}
           </p>
         </div>
       )}
@@ -616,7 +624,7 @@ export default function VoiceConversation({
       {/* Real-time Transcript */}
       {interimTranscript && (
         <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
-          <p className="text-sm text-blue-600 font-semibold mb-1">Você está dizendo:</p>
+          {!immersionMode && <p className="text-sm text-blue-600 font-semibold mb-1">Você está dizendo:</p>}
           <p className="text-lg text-blue-900">{interimTranscript}</p>
         </div>
       )}
@@ -633,12 +641,12 @@ export default function VoiceConversation({
           {isRecording ? (
             <>
               <MicOff className="w-5 h-5" />
-              Parar Gravação
+              {immersionMode ? targetUI.cancel : "Parar Gravação"}
             </>
           ) : (
             <>
               <Mic className="w-5 h-5" />
-              {isProcessing ? "Processando..." : "Falar com Professor"}
+              {isProcessing ? targetUI.loading : (immersionMode ? targetUI.speak : "Falar com Professor")}
             </>
           )}
         </Button>
@@ -650,7 +658,7 @@ export default function VoiceConversation({
         {isSpeaking && (
           <div className="flex items-center gap-2 text-green-600">
             <Volume2 className="w-5 h-5 animate-pulse" />
-            <span className="text-sm">Professor falando...</span>
+            <span className="text-sm">{immersionMode ? targetUI.listen : "Professor falando..."}</span>
           </div>
         )}
       </div>
