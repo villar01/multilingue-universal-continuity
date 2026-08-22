@@ -48,6 +48,30 @@ function toTimestampMs(value: unknown): number | null {
   return null;
 }
 
+function parseDiagnosisContent(content: unknown): Record<string, unknown> {
+  if (content && typeof content === "object") return content as Record<string, unknown>;
+  if (typeof content === "string") {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed && typeof parsed === "object") return parsed as Record<string, unknown>;
+    } catch {
+      // A saída não estruturada ainda é convertida em uma proposta bloqueada.
+    }
+  }
+
+  return {
+    topIssue: "Diagnóstico assistido retornou uma resposta não estruturada.",
+    recommendations: [{
+      action: "Revisar as evidências agregadas e confirmar o diagnóstico antes de qualquer decisão.",
+      priority: "low",
+      isSecurity: false,
+      estimatedImpact: "Nenhuma alteração é aplicada até revisão manual.",
+    }],
+    proposedActions: [],
+    securityAlerts: [],
+  };
+}
+
 async function recordBlockedMaintenanceRun(
   pool: { execute: (query: string, values?: unknown[]) => Promise<unknown> },
   maintenanceAssessment: ScheduledMaintenanceAssessment,
@@ -192,13 +216,15 @@ IMPORTANTE: Toda recomendação é somente uma proposta para revisão humana. Nu
       max_tokens: 1400,
       preferredProvider: "ollama",
       useCache: false,
-      allowRemoteFallback: false,
+      // O Qwen local continua prioritário quando disponível. Se não houver
+      // modelo confirmado, a cadeia integrada recebe somente telemetria agregada.
+      allowRemoteFallback: true,
     });
 
     const content = localDiagnosis.content;
     if (!content) throw new Error("LLM não retornou conteúdo");
 
-    const diagnosis = typeof content === "string" ? JSON.parse(content) : content;
+    const diagnosis = parseDiagnosisContent(content);
     const improvementReport = createAssistedImprovementReport({
       topIssue: diagnosis.topIssue,
       recommendations: diagnosis.recommendations,

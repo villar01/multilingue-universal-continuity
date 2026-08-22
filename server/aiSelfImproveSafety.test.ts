@@ -21,9 +21,10 @@ describe("autoaperfeiçoamento agendado seguro", () => {
     expect(source).not.toContain("autoFixable");
   });
 
-  it("mantém o diagnóstico local e sem fallback remoto", () => {
+  it("prioriza o diagnóstico local e usa fallback agregado explicitamente declarado", () => {
     expect(source).toContain('preferredProvider: "ollama"');
-    expect(source).toContain("allowRemoteFallback: false");
+    expect(source).toContain("allowRemoteFallback: true");
+    expect(source).toContain("a cadeia integrada recebe somente telemetria agregada");
     expect(source).toContain("Nunca sugira ou execute correções automáticas");
   });
 });

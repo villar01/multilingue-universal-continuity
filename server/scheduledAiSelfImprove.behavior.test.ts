@@ -5,6 +5,7 @@ const state = vi.hoisted(() => ({
   results: [] as unknown[],
   execute: vi.fn(),
   notifyOwner: vi.fn(),
+  generateAI: vi.fn(),
 }));
 
 vi.mock("./db", () => ({
@@ -12,15 +13,7 @@ vi.mock("./db", () => ({
 }));
 
 vi.mock("./aiProvider", () => ({
-  generateAI: async () => ({
-    content: JSON.stringify({
-      topIssue: "Falha isolada de interface",
-      diagnosis: "O diagnóstico registra uma falha controlada.",
-      recommendations: [{ action: "Revisar tela", priority: "low", isSecurity: false, estimatedImpact: "low" }],
-      autoFixable: [],
-      securityAlerts: [],
-    }),
-  }),
+  generateAI: state.generateAI,
 }));
 
 vi.mock("./_core/notification", () => ({
@@ -44,6 +37,16 @@ describe("execução diagnóstica agendada", () => {
     state.results = [];
     state.execute = vi.fn();
     state.notifyOwner.mockReset();
+    state.generateAI.mockReset();
+    state.generateAI.mockResolvedValue({
+      content: JSON.stringify({
+        topIssue: "Falha isolada de interface",
+        diagnosis: "O diagnóstico registra uma falha controlada.",
+        recommendations: [{ action: "Revisar tela", priority: "low", isSecurity: false, estimatedImpact: "low" }],
+        autoFixable: [],
+        securityAlerts: [],
+      }),
+    });
   });
 
   it("conclui quando o conector retorna linhas e cabeçalho sem tupla", async () => {
@@ -105,5 +108,20 @@ describe("execução diagnóstica agendada", () => {
     expect(state.execute).toHaveBeenCalledTimes(2);
     expect(state.execute.mock.calls[1]?.[0]).toContain("INSERT INTO maintenance_runs");
     expect(state.notifyOwner).toHaveBeenCalledOnce();
+  });
+
+  it("usa fallback explícito e mantém proposta bloqueada se o provedor responder texto não estruturado", async () => {
+    state.generateAI.mockResolvedValueOnce({ content: "Revise as evidências do painel." });
+    setupClient("direct", [
+      [{ status: "completed", checksum: "checksum", completed_at: Date.now() }],
+      { insertId: 75 },
+      [{ event_type: "error", context: "scene", count: 1 }],
+      { insertId: 76 },
+      { insertId: 43 },
+    ]);
+
+    await expect(runAISelfImprove()).resolves.toMatchObject({ success: true, insightId: 43 });
+    expect(state.generateAI).toHaveBeenCalledWith(expect.objectContaining({ allowRemoteFallback: true }));
+    expect(state.execute.mock.calls[4]?.[1]?.[5]).toContain("blocked_for_owner_review");
   });
 });
