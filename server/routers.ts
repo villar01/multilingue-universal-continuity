@@ -75,6 +75,7 @@ import { permitsEnglishLessonFallback } from './lessonFallbackLanguage';
 import { filterLessonsForEntitlement, getAuthorizedTrialLessonIds, getLearningContentEntitlement, trialAccessRouter } from './trial-access-router';
 import { curriculumRouter } from './curriculum-router';
 import { demoA1Router } from './demo-a1-router';
+import { beachDemoRouter } from './beach-demo-router';
 import { checkContent, sanitizeContent, logInteraction } from './contentFilter';
 import { getTeacherVoiceCoverage } from './teacherVoiceCoverage';
 import { assessConversationOutput, assessConversationText, ensureConversationAccess } from './conversationSafetyGate';
@@ -134,6 +135,7 @@ export const appRouter = router({
   voice: voiceRouter,
   curriculum: curriculumRouter,
   demoA1: demoA1Router,
+  beachDemo: beachDemoRouter,
   sceneDialogueVoice: router({
     speak: publicProcedure
       .input(z.object({

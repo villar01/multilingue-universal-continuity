@@ -318,6 +318,7 @@ const MyTeacher = lazy(() => import("./pages/MyTeacher"));
 const ImmersiveLesson = lazy(() => import("./pages/ImmersiveLesson"));
 const LessonsHub = lazy(() => import("./pages/LessonsHub"));
 const Demo = lazy(() => import("./pages/DemoA1"));
+const BeachDemo = lazy(() => import("./pages/BeachDemo"));
 const ImmersiveDialogue = lazy(() => import("./pages/ImmersiveDialogue"));
 const NaturalLearning = lazy(() => import("./pages/NaturalLearning"));
 const NaturalLesson = lazy(() => import("./pages/NaturalLesson"));
@@ -348,6 +349,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+        <Route path="/demo-scene" component={BeachDemo} />
         <Route path="/onboarding" component={ResilientOnboarding} />
         <Route path="/dashboard" component={ResilientDashboardReal} />
         <Route path="/dashboard-real" component={ResilientDashboardReal} />
