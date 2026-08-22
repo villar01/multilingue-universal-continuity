@@ -317,7 +317,7 @@ const DailyMemoryPage = lazy(() => import("./pages/DailyMemoryPage"));
 const MyTeacher = lazy(() => import("./pages/MyTeacher"));
 const ImmersiveLesson = lazy(() => import("./pages/ImmersiveLesson"));
 const LessonsHub = lazy(() => import("./pages/LessonsHub"));
-const Demo = lazy(() => import("./pages/Demo"));
+const Demo = lazy(() => import("./pages/DemoA1"));
 const ImmersiveDialogue = lazy(() => import("./pages/ImmersiveDialogue"));
 const NaturalLearning = lazy(() => import("./pages/NaturalLearning"));
 const NaturalLesson = lazy(() => import("./pages/NaturalLesson"));
